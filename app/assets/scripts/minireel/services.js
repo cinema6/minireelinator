@@ -482,7 +482,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     var service = data.service || card.type;
                                     var id = data.videoid || data.imageid || data.id;
 
-                                    return ThumbnailService.getThumbsFor(service, id)
+                                    return ThumbnailService.getThumbsFor(service, id, data)
                                         .ensureFulfillment();
                                 }
                             })).then(function map(thumbs) {
@@ -1095,7 +1095,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     });
             };
 
-            this.getThumbsFor = function(service, id) {
+            _private.fetchKalturaThumbs = function(videoid, partnerid) {
+                function getThumb(width) {
+                    return 'https://cdnapisec.kaltura.com/p/' + partnerid +
+                        '/thumbnail/entry_id/' + videoid + '/width/' + width;
+                }
+                return {
+                    small: getThumb(270),
+                    large: getThumb(540)
+                };
+            };
+
+            this.getThumbsFor = function(service, id, data) {
                 var key = service + ':' + id;
                 return cache.get(key) ||
                     cache.put(key, (function() {
@@ -1122,6 +1133,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel($q.when(_private.fetchJWPlayerThumbs(id)));
                         case 'vine':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, id));
+                        case 'kaltura':
+                            return new ThumbModel($q.when(_private.fetchKalturaThumbs(id,
+                                data.partnerid)));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -1211,6 +1225,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 case 'brightcove':
                     return 'https://players.brightcove.net/' + data.accountid + '/' +
                         data.playerid + '_' + data.embedid + '/index.html?videoId=' + id;
+                case 'kaltura':
+                    return 'https://www.kaltura.com/index.php/extwidget/preview/partner_id/' +
+                        data.partnerid + '/uiconf_id/' + data.playerid + '/entry_id/' + id +
+                        '/embed/iframe';
                 }
             };
 
@@ -1218,11 +1236,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|' +
-                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard|instagram|brightcove')
+                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard|instagram|brightcove|' +
+                            'kaltura')
                     ) || [])[0],
                     embedService = (text.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|jwplatform|' +
-                            'wistia|vzaar|vidyard|instagram|brightcove')
+                            'wistia|vzaar|vidyard|instagram|brightcove|kaltura')
                     ) || [])[0],
                     embed = /<iframe|<script/.test(text) ? 'embed' : null,
                     type = !!urlService ? 'url' : embed,
@@ -1313,6 +1332,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 } else {
                                     return null;
                                 }
+                            },
+                            kaltura: function(url) {
+                                var dataMatch = url.pathname.match(new RegExp('\\/index\\.php\\/' +
+                                    'extwidget\\/preview\\/partner_id\\/(\\d+)\\/uiconf_id\\/' +
+                                    '(\\d+)\\/entry_id\\/([^\\/]+)\\/embed'));
+                                return (dataMatch) ? {
+                                    partnerid: dataMatch[1],
+                                    playerid: dataMatch[2],
+                                    id: dataMatch[3]
+                                } : null;
                             }
                         },
                         embed: {
@@ -1386,6 +1415,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return result;
                                 }
                                 return null;
+                            },
+                            kaltura: function(embed) {
+                                var partnerMatch = embed.match(/partner_id\/(\d+)/);
+                                var playerMatch = embed.match(/uiconf_id\/(\d+)/);
+                                var idMatch = embed.match(/entry_id=([^&]+)&/) ||
+                                    embed.match(/entry_id":\s*"([^"]+)"/) ||
+                                    embed.match(/entry_id\/([^\/"]+)/);
+                                return (partnerMatch && playerMatch && idMatch) ? {
+                                    partnerid: partnerMatch[1],
+                                    playerid: playerMatch[1],
+                                    id: idMatch[1]
+                                } : null;
                             }
                         }
                     };
@@ -2151,6 +2192,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'videoBallot':
                         case 'htmlvideo':
                         case 'brightcove':
+                        case 'kaltura':
                             return 'video';
                         default:
                             return card.type || null;
@@ -2337,6 +2379,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     playerid: copy(null),
                     embedid: copy(null),
                     accountid: copy(null),
+                    partnerid: copy(null),
                     start: trimmer(),
                     end: trimmer(),
                     moat: copy(null)
@@ -2726,7 +2769,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function videoThumbsValue() {
                     return function(data) {
-                        return ThumbnailService.getThumbsFor(data.service, data.videoid)
+                        return ThumbnailService.getThumbsFor(data.service, data.videoid, data)
                             .ensureFulfillment()
                             .then(function(thumbs) {
                                 return {
@@ -2748,7 +2791,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     };
                                 });
                         } else {
-                            return ThumbnailService.getThumbsFor(data.service, data.imageid)
+                            return ThumbnailService.getThumbsFor(data.service, data.imageid, data)
                                 .ensureFulfillment()
                                 .then(function(thumbs) {
                                     return {
@@ -2762,7 +2805,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function instagramThumbsValue() {
                     return function(data) {
-                        return ThumbnailService.getThumbsFor('instagram', data.id)
+                        return ThumbnailService.getThumbsFor('instagram', data.id, data)
                             .ensureFulfillment()
                             .then(function(thumbs) {
                                 return {
@@ -2982,6 +3025,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         accountid: copy(null),
                         playerid: copy(null),
                         embedid: copy(null),
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
+                    kaltura: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        partnerid: copy(null),
+                        playerid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
                         moat: copy(null)

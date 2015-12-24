@@ -68,7 +68,13 @@
                         width: 600,
                         allRatios: true
                     });
-                    expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('instagram', 'abc123');
+                    expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('instagram', 'abc123', {
+                        id: 'abc123',
+                        thumbs: {
+                            small: 'small.jpg',
+                            large: 'large.jpg'
+                        }
+                    });
                 });
             });
 
