@@ -2352,8 +2352,8 @@ fa,
     }
 
     input[type="radio"] + label span.radio__input {
-      border: 4px solid #ffffff;
-      background-color: #ffffff;
+      border: 4px solid #f5f5f5;
+      background-color: #f5f5f5;
     }
 
     input[type="radio"]:checked + label span.radio__input {
@@ -4572,6 +4572,7 @@ div.tree-multiselect span.section-name {
             -webkit-box-shadow: none;
             -moz-box-shadow: none;
             box-shadow: none;
+            background: #f5f5f5;
         }
             .campaignWrap .form__textBox:focus {
                 border: 1px solid #49B8B9;
@@ -4582,17 +4583,44 @@ div.tree-multiselect span.section-name {
             -webkit-box-shadow: none;
             -moz-box-shadow: none;
             box-shadow: none;
+            background: #f5f5f5;
+        }
+        .ui--active ~ .select2-container--default.select2-container--open.select2-container--below .select2-selection--multiple,
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            background:#f5f5f5;
+        }
+        .select2-container--default .select2-results>.select2-results__options {
+            background: #f5f5f5;
+        }
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: #75DBCD;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #49B8B9;
         }
         .campaignWrap .tree-multiselect .section.sectionHead {
             border: 1px solid #ddd;
             -webkit-box-shadow: none;
             -moz-box-shadow: none;
             box-shadow: none;
+            background: #f5f5f5;
         }
             .campaignWrap div.sectionHead div.title {
                 -webkit-box-shadow: none;
                 -moz-box-shadow: none;
-                box-shadow: none;            
+                box-shadow: none;
+                background: #f5f5f5;
+            }
+            .campaignWrap div.tree-multiselect > div.selections {
+                border: 1px solid #ddd;
+            }
+            .campaignWrap .tree-multiselect>.selections>.section,
+            .campaignWrap .tree-multiselect>.selections>.section>.title {
+                background: #f5f5f5;
+            }
+            .campaignWrap .tree-multiselect>.selections>.section>.title:hover {
+                background: #49B8B9;
+                color: #fff;
             }
         .campaignWrap .tree-multiselect .section.sectionHead.in--focus {
             border: 1px solid #49B8B9;
@@ -4602,12 +4630,15 @@ div.tree-multiselect span.section-name {
             -webkit-box-shadow: none;
             -moz-box-shadow: none;
             box-shadow: none;
+            background: #f5f5f5;
+            box-sizing: border-box;
         }
             .campaignWrap .pmtDropdown__btn:focus {
                 border: 1px solid #49B8B9;
             }
         .campaignWrap .pmtDropdown__menu {
             border: 1px solid #eee;
+            background: #f5f5f5;
         }
         .campaignWrap .selections {
             border: 1px solid #eee;
