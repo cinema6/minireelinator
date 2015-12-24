@@ -755,7 +755,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 var data = card.data;
                 var service = data.service || card.type;
                 var id = data.videoid || data.imageid || data.id;
-                return ThumbnailService.getThumbsFor(service, id).small;
+                return ThumbnailService.getThumbsFor(service, id, data).small;
             };
 
             this.remove = function(card) {

@@ -98,7 +98,10 @@ define(['app'], function(appModule) {
                     }
                 };
                 CampaignCardsCtrl.getThumb(input);
-                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', 'abc123');
+                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', 'abc123', {
+                    videoid: 'abc123',
+                    service: 'youtube'
+                });
             });
 
             it('should get thumbs for an image card', function() {
@@ -109,7 +112,10 @@ define(['app'], function(appModule) {
                     }
                 };
                 CampaignCardsCtrl.getThumb(input);
-                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('flickr', 'abc123');
+                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('flickr', 'abc123', {
+                    imageid: 'abc123',
+                    service: 'flickr'
+                });
             });
 
             it('should get thumbs for an instagram card', function() {
@@ -120,7 +126,9 @@ define(['app'], function(appModule) {
                     type: 'instagram'
                 };
                 CampaignCardsCtrl.getThumb(input);
-                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('instagram', 'abc123');
+                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('instagram', 'abc123', {
+                    id: 'abc123'
+                });
             });
         });
 
