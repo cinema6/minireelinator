@@ -1,7 +1,7 @@
 define(['app', 'angular'], function(appModule, angular) {
     'use strict';
 
-    describe('Vidyard directive', function() {
+    describe('Brightcove directive', function() {
         var $rootScope,
             $scope,
             $compile,

@@ -87,14 +87,15 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             function thumbFor(card) {
-                var service = card.data.service,
-                    id = card.data.videoid,
+                var data = card.data,
+                    service = data.service,
+                    id = data.videoid,
                     thumb = card.thumb;
 
                 if (thumb) { return $q.when(thumb); }
 
                 if (service && id) {
-                    return ThumbnailService.getThumbsFor(service, id)
+                    return ThumbnailService.getThumbsFor(service, id, data)
                         .ensureFulfillment()
                         .then(function(thumbs) {
                             return thumbs.large;
