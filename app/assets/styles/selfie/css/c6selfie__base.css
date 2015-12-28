@@ -4667,3 +4667,100 @@ div.tree-multiselect span.section-name {
             margin-left: auto;
             margin-right: auto;
         }
+    /*Website Scraping styles*/
+    .assetLoader__status {
+        background: #fff;
+        height: 160px;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        margin-bottom: 2em;
+    }
+        .assetLoader__status--icon i.fa {
+            font-size: 48px;
+            line-height: 60px;
+            margin-top: 40px;
+        }
+        .assetLoader__status-error .assetLoader__status--icon {
+            color: #ed0000;
+        }
+        .assetLoader__status .assetLoader__status--text {
+            bottom: 10px;
+            position: absolute;
+            width: 60%;
+            color: #888;
+        }
+        .assetLoader__status-success .assetLoader__status--icon {
+            color: #00BC65;
+        }
+
+    /*Scraping Modal styles*/
+    .linkItems ul {
+        list-style-type: none;
+    }
+    .linkItems i.fa {
+        margin-right: 0.5em;
+    }
+    .linkItems ul li {
+        background: #fff;
+        border-top: 1px solid #ccc;
+        padding: 0.5em 0;
+    }
+        .linkItems ul li:last-child {
+            border-bottom: 1px solid #ccc;
+        }
+    .linkItems .checkbox--wrap {
+        display: block;
+        height: 36px;
+    }
+        .linkItems .checkbox--wrap input {
+            vertical-align: text-bottom;
+            margin: 0;
+        }
+    .linkItem__title {
+        padding: 0;
+    }
+        .linkItem__title i.fa{
+            font-size: 36px;
+            vertical-align: middle;
+        }
+    /*Social links colors*/
+        .linkItem__title .fa-facebook-square:before {
+            color: #3a5795;
+        }
+        .linkItem__title .fa-twitter-square:before {
+            color: #2caae1;
+        }
+        .linkItem__title .fa-instagram-square:before {
+            color: #125688;
+        }
+        .linkItem__title .fa-youtube-square:before {
+            color: #cc181e;
+        }
+        .linkItem__title .fa-pinterest-square:before {
+            color: #bb0000;
+        }
+        .linkItem__title .fa-vimeo-square:before {
+            color: #162221;
+        }
+    .logoImport__wrap {
+        max-width: 120px;
+        max-height: 120px;
+        margin: 10px auto;
+    }
+        .logoImport__wrap img {
+            max-height: 100px;
+            width: auto;
+            max-width: 100px;
+            margin-top: 10px;
+        }
+    .logoImport {
+        margin-top: 1em;
+    }
+        .logoImport .checkbox--wrap {
+            vertical-align: middle;
+        }
