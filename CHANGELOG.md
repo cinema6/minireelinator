@@ -7,6 +7,7 @@
   * [DESIGN]: Updated background for the create/edit campaign screen
   * [DESIGN]: Added custom radio buttons
   * [DESIGN]: Updated the preview size on manage campaigns
+  * [DESIGN]: Added styles for URL scraping
 
 
 ## v1.30.1 (December 18, 2015)
