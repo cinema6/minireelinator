@@ -371,7 +371,10 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                     describe('when the card does not have a custom thumb', function() {
                         it('should get thumbs from Thumbnail Service', function() {
-                            expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123');
+                            expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123', {
+                                service: 'youtube',
+                                videoid: '123'
+                            });
                             expect(SelfieCampaignsCtrl.metaData['cam-3']).toEqual({
                                 sponsor: 'Diageo',
                                 logo: 'diageo.jpg',

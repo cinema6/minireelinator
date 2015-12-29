@@ -80,6 +80,13 @@
                                 embedid: 'default'
                             })).toBe('https://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=4655415742001');
                         });
+                        
+                        it('should create a kaltura url', function() {
+                            expect(fromData('kaltura', '1_dsup2iqd', {
+                                playerid: '32784031',
+                                partnerid: '2054981'
+                            })).toBe('https://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/32784031/entry_id/1_dsup2iqd/embed/iframe');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -296,6 +303,125 @@
                             };
                             expect(fromUrl(embed)).toEqual(expected);
                         });
+                        
+                        it('should parse a kaltura url', function() {
+                            var url = 'http://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/32334692/entry_id/1_dsup2iqd/embed/auto?&flashvars[streamerType]=auto';
+                            expect(fromUrl(url)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+
+                        it('should parse a kaltura auto embed code', function() {
+                            var autoEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981?autoembed=true&entry_id=1_dsup2iqd&playerId=kaltura_player_1450890477&cache_st=1450890477&width=400&height=333&flashvars[streamerType]=auto"></script>';
+                            expect(fromUrl(autoEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+
+                        it('should parse a kaltura dynamic embed code', function() {
+                            var dynamicEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981"></script>\n' +
+                                '<div id="kaltura_player_1450892308" style="width: 400px; height: 333px;"><a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
+                                '<a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a></div>\n' +
+                                '<script>\n' +
+                                'kWidget.embed({\n' +
+                                '  "targetId": "kaltura_player_1450892308",\n' +
+                                '  "wid": "_2054981",\n' +
+                                '  "uiconf_id": 32334692,\n' +
+                                '  "flashvars": {\n' +
+                                '    "streamerType": "auto"\n' +
+                                '  },\n' +
+                                '  "cache_st": 1450892308,\n' +
+                                '  "entry_id": "1_dsup2iqd"\n' +
+                                '});\n' +
+                                '</script>';
+                            expect(fromUrl(dynamicEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+                        
+                        it('should parse a kaltura thumbnail embed', function() {
+                            var thumbnailEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981"></script>\n' +
+                                '<div id="kaltura_player_1450892865" style="width: 400px; height: 333px;"><a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
+                                '<a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a></div>\n' +
+                                '<script>\n' +
+                                'kWidget.thumbEmbed({\n' +
+                                '  "targetId": "kaltura_player_1450892865",\n' +
+                                '  "wid": "_2054981",\n' +
+                                '  "uiconf_id": 32334692,\n' +
+                                '  "flashvars": {\n' +
+                                '    "streamerType": "auto"\n' +
+                                '  },\n' +
+                                '  "cache_st": 1450892865,\n' +
+                                '  "entry_id": "1_dsup2iqd"\n' +
+                                '});\n' +
+                                '</script>';
+                            expect(fromUrl(thumbnailEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+                        
+                        it('should parse a kaltura iframe embed', function() {
+                            var iframeEmbed = '<iframe src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981?iframeembed=true&playerId=kaltura_player_1450893164&entry_id=1_dsup2iqd&flashvars[streamerType]=auto" width="400" height="333" allowfullscreen webkitallowfullscreen mozAllowFullScreen frameborder="0"><a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
+                                '<a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a></iframe>';
+                            expect(fromUrl(iframeEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+                        
+                        it('should parse a kaltura legacy flash embed', function() {
+                            var legacyFlashEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981"></script>\n' +
+                                '<object id="kaltura_player_1450893338" name="kaltura_player_1450893338" type="application/x-shockwave-flash" allowFullScreen="true" allowNetworking="all" allowScriptAccess="always" height="333" width="400" bgcolor="#000000" data="http://cdnapi.kaltura.com/index.php/kwidget/cache_st/1450893338/wid/_2054981/uiconf_id/32334692/entry_id/1_dsup2iqd">\n' +
+                                '	<param name="allowFullScreen" value="true" />\n' +
+                                '	<param name="allowNetworking" value="all" />\n' +
+                                '	<param name="allowScriptAccess" value="always" />\n' +
+                                '	<param name="bgcolor" value="#000000" />\n' +
+                                '	<param name="flashVars" value="&streamerType=auto" />\n' +
+                                '	<param name="movie" value="http://cdnapi.kaltura.com/index.php/kwidget/cache_st/1450893338/wid/_2054981/uiconf_id/32334692/entry_id/1_dsup2iqd" />\n' +
+                                '	<a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
+                                '<a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a>\n' +
+                                '</object>';
+                            expect(fromUrl(legacyFlashEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
 
                         it('should return null if the url is not valid', function() {
                             expect(fromUrl('apple.com')).toBeNull();
@@ -309,6 +435,7 @@
                             expect(fromUrl('http://embed.vidyard.com/Eu6TAcwwJZaHDlfiJTsW-A')).toBeNull();
                             expect(fromUrl('http://players.brightcove.net/INVALID/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=123')).toBeNull();
                             expect(fromUrl('http://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=INVALID')).toBeNull();
+                            expect(fromUrl('http://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/entry_id/1_dsup2iqd/embed/auto?&flashvars[streamerType]=auto')).toBeNull();
                         });
                     });
 

@@ -2227,6 +2227,43 @@ VideoCardController           , c6embed) {
                 }
             };
         }])
+        
+        .directive('kalturaPlayer', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    videoid: '@',
+                    partnerid: '@',
+                    playerid: '@'
+                },
+                link: function(scope, $element) {
+                    function loadPreview(videoid, partnerid, playerid) {
+                        if(!(videoid && partnerid && playerid)) { return; }
+                        
+                        $element.empty();
+                        var random = Math.floor(Math.random() * 9000000000) + 1000000000;
+                        var script = angular.element('<script></script>');
+                        script.attr('src', 'https://cdnapisec.kaltura.com/p/' + partnerid +
+                            '/sp/' + partnerid + '00/embedIframeJs/uiconf_id/' + playerid +
+                            '/partner_id/' + partnerid + '?autoembed=true&entry_id=' + videoid +
+                            '&playerId=kaltura_player_' + random + '&cache_st=' + random +
+                            '&flashvars[streamerType]=auto');
+                        var div = angular.element('<div></div>');
+                        div.attr('id', 'kaltura_player_' + random);
+                        div.attr('style', 'width: 100%; height: 100%;');
+                        $element.append(div);
+                        $element.append(script);
+                        $element.addClass('kalturaPreview');
+                    }
+                    
+                    scope.$watch(function() {
+                        return [scope.videoid, scope.partnerid, scope.playerid].join('|');
+                    }, function() {
+                        loadPreview(scope.videoid, scope.partnerid, scope.playerid);
+                    });
+                }
+            };
+        }])
 
         .directive('videoPreview', ['c6UrlMaker','$timeout','VideoService',
         function                   ( c6UrlMaker , $timeout , VideoService ) {
