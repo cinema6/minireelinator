@@ -19,7 +19,7 @@
 
             describe('@public', function() {
                 describe('methods', function() {
-                    describe('urlFromData(service, id)', function() {
+                    describe('urlFromData(service, id, data)', function() {
                         function fromData() {
                             return VideoService.urlFromData.apply(VideoService, arguments);
                         }
@@ -53,8 +53,8 @@
                         });
 
                         it('should create a wistia url', function() {
-                            expect(fromData('wistia', '12345', 'cinema6.wistia.com')).toBe('https://cinema6.wistia.com/medias/12345?preview=true');
-                            expect(fromData('wistia', '12345', 'home.wistia.com')).toBe('https://home.wistia.com/medias/12345?preview=true');
+                            expect(fromData('wistia', '12345', { hostname: 'cinema6.wistia.com' })).toBe('https://cinema6.wistia.com/medias/12345?preview=true');
+                            expect(fromData('wistia', '12345', { hostname: 'home.wistia.com' })).toBe('https://home.wistia.com/medias/12345?preview=true');
                         });
 
                         it('should create a jwplayer url', function() {
@@ -72,6 +72,21 @@
                             expect(fromData('instagram', '-xCZTNtOdo')).toBe('https://instagram.com/p/-xCZTNtOdo');
                             expect(fromData('instagram', '12345')).toBe('https://instagram.com/p/12345');
                         });
+                        
+                        it('should create a brightcove url', function() {
+                            expect(fromData('brightcove', '4655415742001', {
+                                accountid: '4652941506001',
+                                playerid: '71cf5be9-7515-44d8-bb99-29ddc6224ff8',
+                                embedid: 'default'
+                            })).toBe('https://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=4655415742001');
+                        });
+                        
+                        it('should create a kaltura url', function() {
+                            expect(fromData('kaltura', '1_dsup2iqd', {
+                                playerid: '32784031',
+                                partnerid: '2054981'
+                            })).toBe('https://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/32784031/entry_id/1_dsup2iqd/embed/iframe');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -83,7 +98,7 @@
                             expect(fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11')).toEqual({
                                 service: 'youtube',
                                 id: 'jFJUz1DO20Q',
-                                hostname: 'www.youtube.com'
+                                data: { }
                             });
                         });
 
@@ -91,7 +106,7 @@
                             expect(fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11')).toEqual({
                                 service: 'youtube',
                                 id: 'jFJUz1DO20Q',
-                                hostname: 'www.youtube.com'
+                                data: { }
                             });
                         });
 
@@ -99,7 +114,7 @@
                             expect(fromUrl('<iframe width="560" height="315" src="https://www.youtube.com/embed/jFJUz1DO20Q?list=PLFD1E8B0910A73A12" frameborder="0" allowfullscreen></iframe>')).toEqual({
                                 service: 'youtube',
                                 id: 'jFJUz1DO20Q',
-                                hostname: null
+                                data: { }
                             });
                         });
 
@@ -107,7 +122,7 @@
                             expect(fromUrl('http://vimeo.com/89495751')).toEqual({
                                 service: 'vimeo',
                                 id: '89495751',
-                                hostname: 'vimeo.com'
+                                data: { }
                             });
                         });
 
@@ -115,7 +130,7 @@
                             expect(fromUrl('<iframe src="https://player.vimeo.com/video/89495751?color=ffffff" width="500" height="192" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/89495751">molt.</a> from <a href="https://vimeo.com/user13462546">▲Bipolar Spider▲</a> on <a href="https://vimeo.com">Vimeo</a>.</p>')).toEqual({
                                 service: 'vimeo',
                                 id: '89495751',
-                                hostname: null
+                                data: { }
                             });
                         });
 
@@ -123,7 +138,7 @@
                             expect(fromUrl('http://www.dailymotion.com/video/x120oui_vincent-and-the-doctor-vincent-van-gogh-visits-the-museum-doctor-who-museum-scene_shortfilms?search_algo=2')).toEqual({
                                 service: 'dailymotion',
                                 id: 'x120oui',
-                                hostname: 'www.dailymotion.com'
+                                data: { }
                             });
                         });
 
@@ -131,7 +146,7 @@
                             expect(fromUrl('http://dai.ly/x120oui')).toEqual({
                                 service: 'dailymotion',
                                 id: 'x120oui',
-                                hostname: 'dai.ly'
+                                data: { }
                             });
                         });
 
@@ -139,7 +154,7 @@
                             expect(fromUrl('<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/x120oui" allowfullscreen></iframe><br /><a href="http://www.dailymotion.com/video/x120oui_vincent-van-gogh-visits-the-museum-doctor-who-museum-scene-vincent-and-the-doctor_shortfilms" target="_blank">Vincent van Gogh visits the Museum (Doctor Who...</a> <i>by <a href="http://www.dailymotion.com/PuertoLibre" target="_blank">PuertoLibre</a></i>')).toEqual({
                                 service: 'dailymotion',
                                 id: 'x120oui',
-                                hostname: null
+                                data: { }
                             });
                         });
 
@@ -147,7 +162,7 @@
                             expect(fromUrl('https://vine.co/v/12345')).toEqual({
                                 service: 'vine',
                                 id: '12345',
-                                hostname: 'vine.co'
+                                data: { }
                             });
                         });
 
@@ -155,7 +170,7 @@
                             expect(fromUrl('http://vzaar.tv/1380051')).toEqual({
                                 service: 'vzaar',
                                 id: '1380051',
-                                hostname: 'vzaar.tv'
+                                data: { }
                             });
                         });
 
@@ -163,7 +178,9 @@
                             expect(fromUrl('https://cinema6.wistia.com/medias/12345')).toEqual({
                                 service: 'wistia',
                                 id: '12345',
-                                hostname: 'cinema6.wistia.com'
+                                data: {
+                                    hostname: 'cinema6.wistia.com'
+                                }
                             });
                         });
 
@@ -171,7 +188,7 @@
                             expect(fromUrl('https://content.jwplatform.com/previews/iGznZrKK-n5DiyUyn')).toEqual({
                                 service: 'jwplayer',
                                 id: 'iGznZrKK-n5DiyUyn',
-                                hostname: 'content.jwplatform.com'
+                                data: { }
                             });
                         });
 
@@ -181,7 +198,7 @@
                             var expected = {
                                 service: 'jwplayer',
                                 id: 'iGznZrKK-n5DiyUyn',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(scriptEmbed)).toEqual(expected);
                             expect(fromUrl(iframeEmbed)).toEqual(expected);
@@ -192,7 +209,7 @@
                             var expected = {
                                 service: 'wistia',
                                 id: '9iqvphjp4u',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(inlineEmbed)).toEqual(expected);
                         });
@@ -202,7 +219,7 @@
                             var expected = {
                                 service: 'vzaar',
                                 id: '5700429',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(embedCode)).toEqual(expected);
                         });
@@ -211,7 +228,7 @@
                             expect(fromUrl('http://embed.vidyard.com/share/Eu6TAcwwJZaHDlfiJTsW-A')).toEqual({
                                 service: 'vidyard',
                                 id: 'Eu6TAcwwJZaHDlfiJTsW-A',
-                                hostname: 'embed.vidyard.com'
+                                data: { }
                             });
                         });
 
@@ -221,7 +238,7 @@
                             var expected = {
                                 service: 'vidyard',
                                 id: 'Eu6TAcwwJZaHDlfiJTs_W-A',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(scriptEmbed)).toEqual(expected);
                             expect(fromUrl(iframeEmbed)).toEqual(expected);
@@ -231,7 +248,7 @@
                             expect(fromUrl('https://www.instagram.com/p/-xCZTNtOdo/')).toEqual({
                                 service: 'instagram',
                                 id: '-xCZTNtOdo',
-                                hostname: 'www.instagram.com'
+                                data: { }
                             });
                         });
                         
@@ -240,9 +257,170 @@
                             var expected = {
                                 service: 'instagram',
                                 id: '-xCZTNtOdo',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(embedCode)).toEqual(expected);
+                        });
+
+                        it('should parse a brightcove url', function() {
+                            var url = 'http://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=4655415742001';
+                            var expected = {
+                                service: 'brightcove',
+                                id: '4655415742001',
+                                data: {
+                                    accountid: '4652941506001',
+                                    playerid: '71cf5be9-7515-44d8-bb99-29ddc6224ff8',
+                                    embedid: 'default'
+                                }
+                            };
+                            expect(fromUrl(url)).toEqual(expected);
+                        });
+
+                        it('should parse a brightcove standard embed code', function() {
+                            var embed = '<iframe src=\'//players.brightcove.net/4652941506001/default_default/index.html?videoId=4655415742001\' allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>';
+                            var expected = {
+                                service: 'brightcove',
+                                id: '4655415742001',
+                                data: {
+                                    accountid: '4652941506001',
+                                    playerid: 'default',
+                                    embedid: 'default'
+                                }
+                            };
+                            expect(fromUrl(embed)).toEqual(expected);
+                        });
+                        
+                        it('should parse a brightcove advanced embed code', function() {
+                            var embed = '<video\n  data-video-id="4655415742001"\n  data-account="4652941506001"\n  data-player="default"\n  data-embed="default"\n  class="video-js" controls></video>\n<script src="//players.brightcove.net/4652941506001/default_default/index.min.js"></script>';
+                            var expected = {
+                                service: 'brightcove',
+                                id: '4655415742001',
+                                data: {
+                                    accountid: '4652941506001',
+                                    playerid: 'default',
+                                    embedid: 'default'
+                                }
+                            };
+                            expect(fromUrl(embed)).toEqual(expected);
+                        });
+                        
+                        it('should parse a kaltura url', function() {
+                            var url = 'http://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/32334692/entry_id/1_dsup2iqd/embed/auto?&flashvars[streamerType]=auto';
+                            expect(fromUrl(url)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+
+                        it('should parse a kaltura auto embed code', function() {
+                            var autoEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981?autoembed=true&entry_id=1_dsup2iqd&playerId=kaltura_player_1450890477&cache_st=1450890477&width=400&height=333&flashvars[streamerType]=auto"></script>';
+                            expect(fromUrl(autoEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+
+                        it('should parse a kaltura dynamic embed code', function() {
+                            var dynamicEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981"></script>\n' +
+                                '<div id="kaltura_player_1450892308" style="width: 400px; height: 333px;"><a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
+                                '<a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a></div>\n' +
+                                '<script>\n' +
+                                'kWidget.embed({\n' +
+                                '  "targetId": "kaltura_player_1450892308",\n' +
+                                '  "wid": "_2054981",\n' +
+                                '  "uiconf_id": 32334692,\n' +
+                                '  "flashvars": {\n' +
+                                '    "streamerType": "auto"\n' +
+                                '  },\n' +
+                                '  "cache_st": 1450892308,\n' +
+                                '  "entry_id": "1_dsup2iqd"\n' +
+                                '});\n' +
+                                '</script>';
+                            expect(fromUrl(dynamicEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+                        
+                        it('should parse a kaltura thumbnail embed', function() {
+                            var thumbnailEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981"></script>\n' +
+                                '<div id="kaltura_player_1450892865" style="width: 400px; height: 333px;"><a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
+                                '<a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a></div>\n' +
+                                '<script>\n' +
+                                'kWidget.thumbEmbed({\n' +
+                                '  "targetId": "kaltura_player_1450892865",\n' +
+                                '  "wid": "_2054981",\n' +
+                                '  "uiconf_id": 32334692,\n' +
+                                '  "flashvars": {\n' +
+                                '    "streamerType": "auto"\n' +
+                                '  },\n' +
+                                '  "cache_st": 1450892865,\n' +
+                                '  "entry_id": "1_dsup2iqd"\n' +
+                                '});\n' +
+                                '</script>';
+                            expect(fromUrl(thumbnailEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+                        
+                        it('should parse a kaltura iframe embed', function() {
+                            var iframeEmbed = '<iframe src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981?iframeembed=true&playerId=kaltura_player_1450893164&entry_id=1_dsup2iqd&flashvars[streamerType]=auto" width="400" height="333" allowfullscreen webkitallowfullscreen mozAllowFullScreen frameborder="0"><a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
+                                '<a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a></iframe>';
+                            expect(fromUrl(iframeEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
+                        });
+                        
+                        it('should parse a kaltura legacy flash embed', function() {
+                            var legacyFlashEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981"></script>\n' +
+                                '<object id="kaltura_player_1450893338" name="kaltura_player_1450893338" type="application/x-shockwave-flash" allowFullScreen="true" allowNetworking="all" allowScriptAccess="always" height="333" width="400" bgcolor="#000000" data="http://cdnapi.kaltura.com/index.php/kwidget/cache_st/1450893338/wid/_2054981/uiconf_id/32334692/entry_id/1_dsup2iqd">\n' +
+                                '	<param name="allowFullScreen" value="true" />\n' +
+                                '	<param name="allowNetworking" value="all" />\n' +
+                                '	<param name="allowScriptAccess" value="always" />\n' +
+                                '	<param name="bgcolor" value="#000000" />\n' +
+                                '	<param name="flashVars" value="&streamerType=auto" />\n' +
+                                '	<param name="movie" value="http://cdnapi.kaltura.com/index.php/kwidget/cache_st/1450893338/wid/_2054981/uiconf_id/32334692/entry_id/1_dsup2iqd" />\n' +
+                                '	<a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
+                                '<a href="http://corp.kaltura.com/Video-Solutions">Video Solutions</a>\n' +
+                                '<a href="http://corp.kaltura.com/Products/Features/Video-Player">Video Player</a>\n' +
+                                '</object>';
+                            expect(fromUrl(legacyFlashEmbed)).toEqual({
+                                service: 'kaltura',
+                                id: '1_dsup2iqd',
+                                data: {
+                                    partnerid: '2054981',
+                                    playerid: '32334692'
+                                }
+                            });
                         });
 
                         it('should return null if the url is not valid', function() {
@@ -254,7 +432,10 @@
                             expect(fromUrl('http://www.youtube.c')).toBeNull();
                             expect(fromUrl('http://www.vzaar.t/123')).toBeNull();
                             expect(fromUrl('http://www.jwplayer.com/123')).toBeNull();
-                            expect(fromUrl('http://embed.vidyard.com/Eu6TAcwwJZaHDlfiJTsW-A'));
+                            expect(fromUrl('http://embed.vidyard.com/Eu6TAcwwJZaHDlfiJTsW-A')).toBeNull();
+                            expect(fromUrl('http://players.brightcove.net/INVALID/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=123')).toBeNull();
+                            expect(fromUrl('http://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=INVALID')).toBeNull();
+                            expect(fromUrl('http://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/entry_id/1_dsup2iqd/embed/auto?&flashvars[streamerType]=auto')).toBeNull();
                         });
                     });
 

@@ -22,7 +22,9 @@ define(['app'], function(appModule) {
                 campaign,
                 logos,
                 paymentMethods,
-                updateRequest;
+                updateRequest,
+                advertiser,
+                user;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -89,6 +91,15 @@ define(['app'], function(appModule) {
                             token: 'pay-3'
                         }
                     ];
+                    advertiser = {
+                        id: 'a-123'
+                    };
+                    user = {
+                        id: 'u-123',
+                        org: {
+                            id: 'o-123'
+                        }
+                    };
 
                     selfieState = c6State.get('Selfie');
                     selfieState.cModel = {
@@ -147,6 +158,8 @@ define(['app'], function(appModule) {
                     beforeEach(function() {
                         campaignState.cParent.updateRequest = updateRequest;
                         campaignState.cParent.campaign = campaign;
+                        campaignState.cParent.advertiser = advertiser;
+                        campaignState.cParent.user = user;
 
                         campaignState.beforeModel();
                     });
@@ -161,8 +174,9 @@ define(['app'], function(appModule) {
                         expect(campaignState.card).toEqual(updateRequest.data.cards[0]);
                     });
 
-                    it('the advertiser and original campaign should be set', function() {
-                        expect(campaignState.advertiser).toEqual(selfieState.cModel.advertiser);
+                    it('the advertiser, user and original campaign should be set', function() {
+                        expect(campaignState.advertiser).toEqual(advertiser);
+                        expect(campaignState.user).toEqual(user);
                         expect(campaignState._campaign).toEqual(campaign);
                     });
                 });
@@ -171,6 +185,8 @@ define(['app'], function(appModule) {
                     beforeEach(function() {
                         campaignState.cParent.updateRequest = null;
                         campaignState.cParent.campaign = campaign;
+                        campaignState.cParent.advertiser = advertiser;
+                        campaignState.cParent.user = user;
 
                         campaignState.beforeModel();
                     });
@@ -188,7 +204,8 @@ define(['app'], function(appModule) {
                     });
 
                     it('the advertiser and original campaign should be set', function() {
-                        expect(campaignState.advertiser).toEqual(selfieState.cModel.advertiser);
+                        expect(campaignState.advertiser).toEqual(advertiser);
+                        expect(campaignState.user).toEqual(user);
                         expect(campaignState._campaign).toEqual(campaign);
                     });
                 });
@@ -247,7 +264,7 @@ define(['app'], function(appModule) {
 
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-99999'});
-                        expect(SelfieLogoService.getLogos).toHaveBeenCalled();
+                        expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(campaign.org);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
                             logos: logos,
@@ -260,6 +277,7 @@ define(['app'], function(appModule) {
                     it('should get payment methods for the current users org and all interests and logos', function() {
                         delete campaign.org;
                         campaignState.campaign = campaign;
+                        campaignState.user = user;
 
                         $rootScope.$apply(function() {
                             campaignState.model().then(success, failure);
@@ -267,7 +285,7 @@ define(['app'], function(appModule) {
 
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: selfieState.cModel.org.id});
-                        expect(SelfieLogoService.getLogos).toHaveBeenCalled();
+                        expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(user.org.id);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
                             logos: logos,

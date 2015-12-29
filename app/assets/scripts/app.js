@@ -253,8 +253,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 //var self = this;
 
                 function clean(model) {
-                    var advertiser = model.advertiser,
-                        customer = model.customer;
+                    var advertiser = model.advertiser;
 
                     delete model.id;
                     delete model.created;
@@ -262,9 +261,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     delete model.email;
                     delete model.permissions;
 
-                    if (advertiser && customer) {
+                    if (advertiser) {
                         model.advertiser = advertiser.id;
-                        model.customer = customer.id;
                     }
 
                     return model;
@@ -517,58 +515,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }, this);
             }]);
 
-            $provide.constant('CustomerAdapter', ['config','$http','cinema6','$q',
-            function                             ( config , $http , cinema6 , $q ) {
-                var adapter = this;
-
-                function url(end) {
-                    return config.apiBase + '/account/' + end;
-                }
-
-                function decorateAll(customers) {
-                    return $q.all(customers.map(function(customer) {
-                        return adapter.decorate(customer);
-                    }));
-                }
-
-                this.decorate = function(customer) {
-                    return $q.all({
-                        advertisers: $q.all(customer.advertisers.map(function(id) {
-                            return cinema6.db.find('advertiser', id);
-                        }))
-                    }).then(function(data) {
-                        return extend(customer, data);
-                    });
-                };
-
-                this.findAll = function() {
-                    return $http.get(url('customers'))
-                        .then(pick('data'))
-                        .then(decorateAll);
-                };
-
-                this.find = function(type, id) {
-                    return $http.get(url('customer/' + id), { cache: true })
-                        .then(pick('data'))
-                        .then(this.decorate)
-                        .then(putInArray);
-                };
-
-                this.findQuery = function(type, query) {
-                    return $http.get(url('customers'), { params: query })
-                        .then(pick('data'))
-                        .then(decorateAll);
-                };
-
-                ['create', 'update', 'erase'].forEach(function(method) {
-                    this[method] = function() {
-                        return $q.reject(
-                            new Error('CustomerAdapter.' + method + '() is not implemented.')
-                        );
-                    };
-                }, this);
-            }]);
-
             $provide.constant('AdvertiserAdapter', ['config','$http','$q',
             function                               ( config , $http , $q ) {
                 function url(end) {
@@ -639,9 +585,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             advertiser: undefined,
                             advertiserId: campaign.advertiser.id,
 
-                            customer: undefined,
-                            customerId: campaign.customer.id,
-
                             cards: cards,
                             miniReels: campaign.miniReels.map(makeCreativeWrapper),
 
@@ -692,7 +635,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
                     })).then(function(cards) {
                         return $q.all({
-                            customer: getDbModel('customer')(campaign.customerId),
                             advertiser: getDbModel('advertiser')(campaign.advertiserId),
 
                             miniReels: $q.all(campaign.miniReels.map(function(data) {
@@ -811,7 +753,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         return extend(campaign, {
                             created: undefined,
                             // advertiserId: undefined,
-                            // customerId: undefined,
                             cards: campaign.cards ? cards : undefined
                         });
                     });
@@ -1108,11 +1049,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter','CustomerAdapter',
+                 'VoteAdapter','OrgAdapter','UserAdapter',
                  'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
                  'PaymentMethodAdapter', 'UpdateRequestAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter , CustomerAdapter ,
+                  VoteAdapter , OrgAdapter , UserAdapter ,
                   CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
                   PaymentMethodAdapter, UpdateRequestAdapter ) {
 
@@ -1127,7 +1068,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 SelfieCampaignAdapter,
                 PaymentMethodAdapter,
                 AdvertiserAdapter,
-                CustomerAdapter,
                 UpdateRequestAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
@@ -1146,7 +1086,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 campaign: CampaignAdapter,
                 selfieCampaign: SelfieCampaignAdapter,
                 paymentMethod: PaymentMethodAdapter,
-                customer: CustomerAdapter,
                 updateRequest: UpdateRequestAdapter
             };
 

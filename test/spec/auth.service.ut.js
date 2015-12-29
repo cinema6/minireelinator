@@ -10,8 +10,7 @@
 
             var org,
                 user,
-                advertiser,
-                customer;
+                advertiser;
 
             beforeEach(function(){
                 org = {
@@ -21,10 +20,6 @@
 
                 advertiser = {
                     id: 'a-1234'
-                };
-
-                customer = {
-                    id: 'cus-1234'
                 };
 
                 module(appModule.name);
@@ -60,9 +55,6 @@
                         case 'advertiser':
                             response = advertiser;
                             break;
-                        case 'customer':
-                            response = customer;
-                            break;
                     }
 
                     return $q.when(response);
@@ -81,7 +73,6 @@
                         id: 'u-956a985182e6aa',
                         org: 'o-44342fd02ee28d',
                         advertiser: 'a-1234',
-                        customer: 'cus-1234',
                         config: {}
                     };
 
@@ -89,7 +80,7 @@
                         id: 'u-956a985182e6aa',
                         token: '4510d0785dcfa5',
                         newPassword: 'password2'
-                    }).respond(200, extend(userJSON, { org: org, advertiser: advertiser, customer: customer }));
+                    }).respond(200, extend(userJSON, { org: org, advertiser: advertiser }));
 
                     AuthService.resetPassword('u-956a985182e6aa', '4510d0785dcfa5', 'password2')
                         .then(success, failure);
@@ -102,11 +93,9 @@
                     expect(success.calls.mostRecent().args[0].org).toBe(org);
                 });
 
-                it('should attached the advertiser and customer', function() {
+                it('should attached the advertiser', function() {
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', userJSON.advertiser);
-                    expect(cinema6.db.find).toHaveBeenCalledWith('customer', userJSON.customer);
                     expect(success.calls.mostRecent().args[0].advertiser).toBe(advertiser);
-                    expect(success.calls.mostRecent().args[0].customer).toBe(customer);
                 });
 
                 it('should resolve to the cinema6.db user model', function() {
@@ -181,15 +170,14 @@
                 });
 
                 it('will resolve promise if successfull',function(){
-                    var mockUser = { id: 'userX', org: 'o-44342fd02ee28d', advertiser: 'a-1234', customer: 'cus-1234' };
+                    var mockUser = { id: 'userX', org: 'o-44342fd02ee28d', advertiser: 'a-1234' };
                     $httpBackend.expectPOST('/api/auth/login').respond(200,mockUser);
                     AuthService.login('userX','foobar').then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).toHaveBeenCalledWith('org', mockUser.org);
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: advertiser, customer: customer }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: advertiser }));
                     expect(successSpy.calls.mostRecent().args[0].org).toBe(org);
                     expect(successSpy.calls.mostRecent().args[0].advertiser).toBe(advertiser);
-                    expect(successSpy.calls.mostRecent().args[0].customer).toBe(customer);
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
@@ -203,13 +191,13 @@
                     expect(failureSpy).toHaveBeenCalledWith('Unable to find user.');
                 });
 
-                it('should not call for org, advertiser or customer if not defined', function() {
+                it('should not call for org or advertiser if not defined', function() {
                     var mockUser = { id: 'userX' };
                     $httpBackend.expectPOST('/api/auth/login').respond(200,mockUser);
                     AuthService.login('userX','foobar').then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).not.toHaveBeenCalled();
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
@@ -223,15 +211,14 @@
                 });
 
                 it('will resolve promise if successfull',function(){
-                    var mockUser = { id: 'userX', org: 'o-44342fd02ee28d', advertiser: 'a-1234', customer: 'cus-1234' };
+                    var mockUser = { id: 'userX', org: 'o-44342fd02ee28d', advertiser: 'a-1234' };
                     $httpBackend.expectGET('/api/auth/status').respond(200,mockUser);
                     AuthService.checkStatus().then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).toHaveBeenCalledWith('org', mockUser.org);
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: advertiser, customer: customer }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: advertiser }));
                     expect(successSpy.calls.mostRecent().args[0].org).toBe(org);
                     expect(successSpy.calls.mostRecent().args[0].advertiser).toBe(advertiser);
-                    expect(successSpy.calls.mostRecent().args[0].customer).toBe(customer);
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
@@ -251,18 +238,18 @@
                     AuthService.checkStatus().then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).toHaveBeenCalledWith('org', mockUser.org);
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: undefined, customer: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: undefined }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
 
-                it('should not call for org, advertiser or customer if not defined', function() {
+                it('should not call for org or advertiser if not defined', function() {
                     var mockUser = { id: 'userX' };
                     $httpBackend.expectGET('/api/auth/status').respond(200,mockUser);
                     AuthService.checkStatus().then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).not.toHaveBeenCalled();
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });

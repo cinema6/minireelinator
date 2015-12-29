@@ -157,7 +157,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             minViewTime: -1,
                             advertiser: null,
                             brand: null,
-                            customer: null,
                             logos: {
                                 square: null
                             },
@@ -169,16 +168,15 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             pricing: {},
                             status: 'active'
                         }),
-                        customers: cinema6.db.findAll('customer')
+                        advertisers: cinema6.db.findAll('advertiser')
                     });
                 };
             }]);
         }])
 
-        .controller('CampaignsNewController', ['$scope','c6State','c6Computed','c6AsyncQueue',
-        function                              ( $scope , c6State , c6Computed , c6AsyncQueue ) {
-            var c = c6Computed($scope),
-                queue = c6AsyncQueue(),
+        .controller('CampaignsNewController', ['$scope','c6State','c6AsyncQueue',
+        function                              ( $scope , c6State , c6AsyncQueue ) {
+            var queue = c6AsyncQueue(),
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
             function optionsByName(items, type) {
@@ -193,17 +191,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }, { None: null });
             }
 
-            c(this, 'advertiserOptions', function() {
-                var customer = this.model.customer;
-
-                return optionsByName(customer && customer.advertisers || [], 'advertisers');
-            }, ['CampaignsNewCtrl.model.customer']);
-
             this.initWithModel = function(model) {
                 this.model = model.campaign;
-                this.customers = model.customers;
-
-                this.customerOptions = optionsByName(this.customers, 'customers');
+                this.advertisers = model.advertisers;
+                this.advertiserOptions = optionsByName(this.advertisers || [], 'advertisers');
             };
 
             this.save = queue.debounce(function() {
@@ -764,7 +755,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 var data = card.data;
                 var service = data.service || card.type;
                 var id = data.videoid || data.imageid || data.id;
-                return ThumbnailService.getThumbsFor(service, id).small;
+                return ThumbnailService.getThumbsFor(service, id, data).small;
             };
 
             this.remove = function(card) {

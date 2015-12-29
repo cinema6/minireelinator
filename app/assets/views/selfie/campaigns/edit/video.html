@@ -8,7 +8,7 @@
             </span>
             <span class="formSection__titleText tk--hdr">Add Your Video</span>
         </h1>
-        <p class="formSection__introText">Paste in a link or embed code from YouTube, Vimeo, JWPlayer, Wistia, Vzaar, Vidyard, Instagram or DailyMotion. You can also paste in a VAST tag.</p>
+        <p class="formSection__introText">Paste in a link or embed code from YouTube, Vimeo, JWPlayer, Wistia, Vzaar, Vidyard, Instagram, Brightcove, Kaltura, or DailyMotion. You can also paste in a VAST tag.</p>
 
         <div class="form__items">
 
@@ -59,6 +59,7 @@
                         <video-preview service="{{card.data.service}}"
                             disable-trimmer="SelfieCampaignVideoCtrl.disableTrimmer()"
                             videoid="{{card.data.videoid}}"
+                            videodata="card.data"
                             start="card.data.start"
                             end="card.data.end"
                             class="videoPreview__player">

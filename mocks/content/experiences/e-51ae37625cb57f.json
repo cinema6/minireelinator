@@ -19,15 +19,17 @@
                         "value": "lightbox",
                         "description": "Video player with editorial in the sidebar. No character limits, the content space will scroll as needed.",
                         "limits": {},
-                        "autoplayable": true
+                        "autoplayable": true,
+                        "fullscreen": true
                     },
                     {
                         "name": "Lightbox, with Playlist",
-                        "disabled": false,
+                        "disabled": true,
                         "value": "lightbox-playlist",
                         "description": "Video player with editorial under the video. A playlist will be displayed in the sidebar. No character limits, the content space will scroll as needed.",
                         "limits": {},
-                        "autoplayable": true
+                        "autoplayable": true,
+                        "deprecated": true
                     }
                 ]
             },

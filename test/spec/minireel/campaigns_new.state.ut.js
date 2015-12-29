@@ -40,32 +40,26 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('model()', function() {
-            var customers,
+            var advertisers,
                 success, failure;
 
             beforeEach(function() {
-                customers = [
+                advertisers: [
                     {
-                        id: 'cus-a057764cb53d45',
-                        name: 'vehicles',
-                        label: 'Autos & Vehicles'
+                        id: 'a-a057764cb53d45'
                     },
                     {
-                        id: 'cus-50480bdd7b3f55',
-                        name: 'education',
-                        label: 'Education'
+                        id: 'a-50480bdd7b3f55'
                     },
                     {
-                        id: 'cus-676edfc8aee43c',
-                        name: 'howto',
-                        label: 'Howto & DIY'
+                        id: 'a-676edfc8aee43c'
                     }
-                ];
+                ]
 
                 success = jasmine.createSpy('success()');
                 failure = jasmine.createSpy('failure()');
 
-                spyOn(cinema6.db, 'findAll').and.returnValue($q.when(customers));
+                spyOn(cinema6.db, 'findAll').and.returnValue($q.when(advertisers));
 
                 $rootScope.$apply(function() {
                     campaignsNew.model().then(success, failure);
@@ -80,7 +74,6 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
                     minViewTime: -1,
                     advertiser: null,
                     brand: null,
-                    customer: null,
                     logos: {
                         square: null
                     },
@@ -94,14 +87,10 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
                 });
             });
 
-            it('should find all the customers', function() {
-                expect(cinema6.db.findAll).toHaveBeenCalledWith('customer');
-            });
-
             it('should resolve to an object with the new campaign and categories', function() {
                 expect(success).toHaveBeenCalledWith({
                     campaign: dbModel,
-                    customers: customers
+                    advertisers: advertisers
                 });
             });
         });

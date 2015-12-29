@@ -12,7 +12,7 @@ define(['app'], function(appModule) {
             CampaignsCtrl,
             CampaignsNewCtrl;
 
-        var campaign, customers,
+        var campaign, advertisers,
             model, debouncedFns;
 
         beforeEach(function() {
@@ -48,7 +48,6 @@ define(['app'], function(appModule) {
                     minViewTime: -1,
                     advertiser: null,
                     brand: null,
-                    customer: null,
                     logos: {
                         square: null
                     },
@@ -57,27 +56,24 @@ define(['app'], function(appModule) {
                     cards: [],
                     targetMiniReels: []
                 });
-                customers = [
+                advertisers = [
                     {
                         id: 'a-a057764cb53d45',
-                        name: 'vehicles',
-                        label: 'Autos & Vehicles'
+                        name: 'Smirnoff'
                     },
                     {
                         id: 'a-50480bdd7b3f55',
-                        name: 'education',
-                        label: 'Education'
+                        name: 'Captain Morgan'
                     },
                     {
                         id: 'a-676edfc8aee43c',
-                        name: 'howto',
-                        label: 'Howto & DIY'
+                        name: 'Ketel One'
                     }
                 ];
 
                 model = {
                     campaign: campaign,
-                    customers: customers
+                    advertisers: advertisers
                 };
 
                 $scope = $rootScope.$new();
@@ -107,7 +103,6 @@ define(['app'], function(appModule) {
                     CampaignsNewCtrl = $scope.CampaignsNewCtrl = $controller('CampaignsNewController', {
                         $scope: $scope
                     });
-                    CampaignsNewCtrl.initWithModel(model, model);
                 });
             });
         });
@@ -116,107 +111,41 @@ define(['app'], function(appModule) {
             expect(CampaignsNewCtrl).toEqual(jasmine.any(Object));
         });
 
-        describe('properties', function() {
-            describe('model', function() {
-                it('should be the campaign', function() {
+        describe('methods', function() {
+            describe('initWithModel()', function() {
+                beforeEach(function() {
+                    CampaignsNewCtrl.initWithModel(model, model);
+                });
+
+                it('should put the campaign and advertisers on the Ctrl', function() {
                     expect(CampaignsNewCtrl.model).toBe(campaign);
                 });
-            });
 
-            describe('customers', function() {
-                it('should be the advertiser', function() {
-                    expect(CampaignsNewCtrl.customers).toBe(customers);
-                });
-            });
-
-            describe('customerOptions', function() {
-                it('should be an object of customers keyed by their name', function() {
-                    expect(CampaignsNewCtrl.customerOptions).toEqual({
-                        'None': null,
-                        vehicles: customers[0],
-                        education: customers[1],
-                        howto: customers[2]
-                    });
-                });
-
-                describe('when customers are blacklisted', function() {
-                    it('should not show them as options', function() {
-                        $scope.MiniReelCtrl.model.data.blacklists.customers = ['a-a057764cb53d45','a-676edfc8aee43c'];
-
-                        CampaignsNewCtrl.initWithModel(model, model);
-
-                        expect(CampaignsNewCtrl.customerOptions).toEqual({
-                            'None': null,
-                            education: customers[1]
-                        });
-                    });
-                });
-            });
-
-            describe('advertiserOptions', function() {
-                describe('before the campaign has a customer', function() {
-                    beforeEach(function() {
-                        $scope.$apply(function() {
-                            campaign.customer = null;
-                        });
-                    });
-
-                    it('should not list any options', function() {
-                        expect(CampaignsNewCtrl.advertiserOptions).toEqual({
-                            None: null
-                        });
-                    });
-                });
-
-                describe('when the campaign has a customer', function() {
-                    var customer;
-
-                    beforeEach(function() {
-                        $scope.$apply(function() {
-                            customer = campaign.customer = {
-                                id: 'cus-eacd637506f15c',
-                                advertisers: [
-                                    {
-                                        id: '1',
-                                        name: 'Diageo'
-                                    },
-                                    {
-                                        id: '2',
-                                        name: 'Activision'
-                                    },
-                                    {
-                                        id: '3',
-                                        name: 'Ubisoft'
-                                    }
-                                ]
-                            };
-                        });
-                    });
-
+                describe('the advertiserOptions', function() {
                     it('should be an object of advertisers keyed by their name', function() {
                         expect(CampaignsNewCtrl.advertiserOptions).toEqual({
-                            None: null,
-                            Diageo: customer.advertisers[0],
-                            Activision: customer.advertisers[1],
-                            Ubisoft: customer.advertisers[2]
+                            'None': null,
+                            'Smirnoff': advertisers[0],
+                            'Captain Morgan': advertisers[1],
+                            'Ketel One': advertisers[2]
                         });
                     });
 
                     describe('when advertisers are blacklisted', function() {
                         it('should not show them as options', function() {
-                            $scope.MiniReelCtrl.model.data.blacklists.advertisers = ['1','3'];
+                            $scope.MiniReelCtrl.model.data.blacklists.advertisers = ['a-a057764cb53d45','a-676edfc8aee43c'];
+
+                            CampaignsNewCtrl.initWithModel(model, model);
 
                             expect(CampaignsNewCtrl.advertiserOptions).toEqual({
                                 None: null,
-                                Activision: customer.advertisers[1]
+                                'Captain Morgan': advertisers[1]
                             });
                         });
                     });
                 });
             });
-        });
 
-        describe('methods', function() {
             describe('save()', function() {
                 var saveDeffered, advertiser,
                     success, failure;
@@ -240,6 +169,8 @@ define(['app'], function(appModule) {
 
                     campaign.advertiser = advertiser;
                     spyOn(campaign, 'save').and.returnValue(saveDeffered.promise);
+
+                    CampaignsNewCtrl.initWithModel(model, model);
 
                     $scope.$apply(function() {
                         CampaignsNewCtrl.save().then(success, failure);

@@ -421,9 +421,16 @@
                                 expect(failure).toHaveBeenCalled();
                             });
                         });
-
                     });
 
+                    describe('fetchKalturaThumbs(videoid, partnerid)', function() {
+                        it('should return the thumbs', function() {
+                            expect(ThumbnailService._private.fetchKalturaThumbs('abc123', 'def456')).toEqual({
+                                small: 'https://cdnapisec.kaltura.com/p/def456/thumbnail/entry_id/abc123/width/270',
+                                large: 'https://cdnapisec.kaltura.com/p/def456/thumbnail/entry_id/abc123/width/540'
+                            });
+                        });
+                    });
                 });
             });
 
@@ -432,10 +439,10 @@
                      describe('getThumbsFor(data)', function() {
                          var result;
 
-                         ['instagram', 'flickr', 'getty', 'web', 'vzaar', 'wistia', 'jwplayer'].forEach(function(service) {
+                         ['instagram', 'flickr', 'getty', 'web', 'vzaar', 'wistia', 'jwplayer', 'kaltura'].forEach(function(service) {
                              describe('when the service is ' + service, function() {
                                  beforeEach(function() {
-                                     result = ThumbnailService.getThumbsFor(service, '12345');
+                                     result = ThumbnailService.getThumbsFor(service, '12345', {});
                                  });
 
                                  it('should immediately return an object with null properties', function() {
@@ -701,6 +708,27 @@
 
                             it('should set the small and large properties when the promise resolves', function() {
                                 expect(_private.fetchJWPlayerThumbs).toHaveBeenCalledWith('12345-123');
+                                $rootScope.$digest();
+                                expect(result.small).toBe('small.jpg');
+                                expect(result.large).toBe('large.jpg');
+                            });
+                        });
+
+                        describe('kaltura', function() {
+                            beforeEach(function() {
+                                spyOn(_private, 'fetchKalturaThumbs').and.returnValue(
+                                    $q.when({
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    })
+                                );
+                                result = ThumbnailService.getThumbsFor('kaltura', '123', {
+                                    partnerid: '456'
+                                });
+                            });
+
+                            it('should set the small and large properties when the promise resolves', function() {
+                                expect(_private.fetchKalturaThumbs).toHaveBeenCalledWith('123', '456');
                                 $rootScope.$digest();
                                 expect(result.small).toBe('small.jpg');
                                 expect(result.large).toBe('large.jpg');

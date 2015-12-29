@@ -58,7 +58,7 @@
                 ngAnimate: libUrl('angular/v1.2.22-0-g93b0c2d/angular-animate'),
                 c6uilib: libUrl('c6ui/v3.7.4-0-g734d5f3/c6uilib'),
                 c6log: libUrl('c6ui/v3.7.4-0-g734d5f3/c6log'),
-                c6embed: libUrl('c6embed/v1/app'),
+                c6embed: libUrl('c6embed/v1/utils'),
                 metagetta: libUrl('metagetta/v0.2.0-0-g8b51280/metagetta'),
                 braintree: 'lib/braintree',
                 chartjs: [
@@ -133,4 +133,33 @@
             window.removeEventListener.apply(window, args);
         }
     });
+
+    // Thanks MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind#Polyfill
+    if (!Function.prototype.bind) {
+        Function.prototype.bind = function(oThis) {
+            if (typeof this !== 'function') {
+                // closest thing possible to the ECMAScript 5
+                // internal IsCallable function
+                throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+            }
+
+        var aArgs   = Array.prototype.slice.call(arguments, 1),
+            fToBind = this,
+            FNOP    = function() {},
+            fBound  = function() {
+              return fToBind.apply(
+                  this instanceof FNOP ? this : oThis,
+                  aArgs.concat(Array.prototype.slice.call(arguments))
+              );
+            };
+
+        if (this.prototype) {
+            // native functions don't have a prototype
+            FNOP.prototype = this.prototype;
+        }
+        fBound.prototype = new FNOP();
+
+        return fBound;
+      };
+    }
 }());

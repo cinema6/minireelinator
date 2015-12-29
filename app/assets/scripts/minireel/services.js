@@ -482,7 +482,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     var service = data.service || card.type;
                                     var id = data.videoid || data.imageid || data.id;
 
-                                    return ThumbnailService.getThumbsFor(service, id)
+                                    return ThumbnailService.getThumbsFor(service, id, data)
                                         .ensureFulfillment();
                                 }
                             })).then(function map(thumbs) {
@@ -950,7 +950,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             _private.fetchWistiaThumbs = function(id) {
-                var videoUrl = VideoService.urlFromData('wistia', id, 'wistia.com');
+                var videoUrl = VideoService.urlFromData('wistia', id, { hostname: 'wistia.com' });
                 var request = 'https://fast.wistia.com/oembed?url=' + encodeURIComponent(videoUrl);
                 return $http.get(request, {cache: true})
                     .then(function(json) {
@@ -1095,7 +1095,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     });
             };
 
-            this.getThumbsFor = function(service, id) {
+            _private.fetchKalturaThumbs = function(videoid, partnerid) {
+                function getThumb(width) {
+                    return 'https://cdnapisec.kaltura.com/p/' + partnerid +
+                        '/thumbnail/entry_id/' + videoid + '/width/' + width;
+                }
+                return {
+                    small: getThumb(270),
+                    large: getThumb(540)
+                };
+            };
+
+            this.getThumbsFor = function(service, id, data) {
                 var key = service + ':' + id;
                 return cache.get(key) ||
                     cache.put(key, (function() {
@@ -1122,6 +1133,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel($q.when(_private.fetchJWPlayerThumbs(id)));
                         case 'vine':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, id));
+                        case 'kaltura':
+                            return new ThumbModel($q.when(_private.fetchKalturaThumbs(id,
+                                data.partnerid)));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -1187,7 +1201,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
         .service('VideoService', ['c6UrlParser',
         function                 ( c6UrlParser ) {
-            this.urlFromData = function(service, id, hostname) {
+            this.urlFromData = function(service, id, data) {
                 switch (service) {
 
                 case 'youtube':
@@ -1201,13 +1215,20 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 case 'vzaar':
                     return 'http://vzaar.tv/' + id;
                 case 'wistia':
-                    return 'https://' + hostname + '/medias/' + id + '?preview=true';
+                    return 'https://' + data.hostname + '/medias/' + id + '?preview=true';
                 case 'jwplayer':
                     return 'https://content.jwplatform.com/previews/' + id;
                 case 'vidyard':
                     return 'http://embed.vidyard.com/share/' + id;
                 case 'instagram':
                     return 'https://instagram.com/p/' + id;
+                case 'brightcove':
+                    return 'https://players.brightcove.net/' + data.accountid + '/' +
+                        data.playerid + '_' + data.embedid + '/index.html?videoId=' + id;
+                case 'kaltura':
+                    return 'https://www.kaltura.com/index.php/extwidget/preview/partner_id/' +
+                        data.partnerid + '/uiconf_id/' + data.playerid + '/entry_id/' + id +
+                        '/embed/iframe';
                 }
             };
 
@@ -1215,98 +1236,197 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|' +
-                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard|instagram')
+                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard|instagram|brightcove|' +
+                            'kaltura')
                     ) || [])[0],
                     embedService = (text.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|jwplatform|' +
-                            'wistia|vzaar|vidyard|instagram')
+                            'wistia|vzaar|vidyard|instagram|brightcove|kaltura')
                     ) || [])[0],
                     embed = /<iframe|<script/.test(text) ? 'embed' : null,
                     type = !!urlService ? 'url' : embed,
                     parsed = type === 'url' ? parsedUrl : text,
-                    id, service,
-                    idFetchers = {
+                    data, service,
+                    dataFetchers = {
                         url: {
                             youtube: function(url) {
-                                return params(url.search).v;
+                                return {
+                                    id: params(url.search).v
+                                };
                             },
                             'youtu.be': function(url) {
-                                return url.pathname.replace(/^\//, '');
+                                return {
+                                    id: url.pathname.replace(/^\//, '')
+                                };
                             },
                             vimeo: function(url) {
-                                return url.pathname.replace(/^\//, '');
+                                return {
+                                    id: url.pathname.replace(/^\//, '')
+                                };
                             },
                             dailymotion: function(url) {
                                 var pathname = url.pathname;
 
                                 if (pathname.search(/^\/video\//) < 0) {
-                                    return null;
+                                    return { id: null };
                                 }
 
-                                return (pathname
+                                var id = (pathname
                                     .replace(/\/video\//, '')
                                     .match(/[a-zA-Z0-9]+/) || [])[0];
+                                return { id: id };
                             },
                             'dai.ly': function(url) {
-                                return url.pathname.replace(/^\//, '');
+                                return {
+                                    id: url.pathname.replace(/^\//, '')
+                                };
                             },
                             vine: function(url) {
-                                return (url.pathname
+                                var id = (url.pathname
                                     .replace(/\/v\//, '')
                                     .match(/[a-zA-Z\d]+/) || [null])[0];
+                                return { id: id };
                             },
                             'vzaar.tv': function(url) {
-                                return (url.pathname
+                                var id = (url.pathname
                                     .replace(/\//, '')
                                     .match(/\d+/) || [null])[0];
+                                return { id: id };
                             },
                             wistia: function(url) {
-                                return (url.pathname
+                                var id = (url.pathname
                                     .replace(/\/medias\//, '')
                                     .match(/[a-zA-Z\d]+/) || [null])[0];
+                                return {
+                                    id: id,
+                                    hostname: parsed.hostname
+                                };
                             },
                             jwplatform: function(url) {
-                                return (url.pathname
+                                var id = (url.pathname
                                     .replace(/\/previews\//, '')
                                     .match(/[a-zA-Z\d-]+/) || [null])[0];
+                                return { id: id };
                             },
                             vidyard: function(url) {
-                                return (url.pathname
-                                    .replace(/\/share\//, '')
-                                    .match(/[a-zA-Z\d_-]+/) || [null])[0];
+                                var id = (url.pathname.match(/\/share\/([a-zA-Z\d_-]+)/) ||
+                                    [null, null])[1];
+                                return { id: id };
                             },
                             instagram: function(url) {
-                                return (url.pathname.replace(/\/p\//, '')
+                                var id = (url.pathname.replace(/\/p\//, '')
                                     .match(/[\dA-z_-]+/) || [null])[0];
+                                return { id: id };
+                            },
+                            brightcove: function(url) {
+                                var dataMatch = url.pathname
+                                    .match(/\/(\d+)\/([\da-f-]+|default)_(.+)\/index\.html/);
+                                var idMatch = url.search.match(/videoId=(\d+)/);
+                                if(dataMatch && idMatch) {
+                                    return {
+                                        id: idMatch[1],
+                                        accountid: dataMatch[1],
+                                        playerid: dataMatch[2],
+                                        embedid: dataMatch[3]
+                                    };
+                                } else {
+                                    return null;
+                                }
+                            },
+                            kaltura: function(url) {
+                                var dataMatch = url.pathname.match(new RegExp('\\/index\\.php\\/' +
+                                    'extwidget\\/preview\\/partner_id\\/(\\d+)\\/uiconf_id\\/' +
+                                    '(\\d+)\\/entry_id\\/([^\\/]+)\\/embed'));
+                                return (dataMatch) ? {
+                                    partnerid: dataMatch[1],
+                                    playerid: dataMatch[2],
+                                    id: dataMatch[3]
+                                } : null;
                             }
                         },
                         embed: {
                             youtube: function(embed) {
-                                return (embed.match(/embed\/([\-_a-zA-Z0-9]+)/) || [])[1];
+                                return {
+                                    id: (embed.match(/embed\/([\-_a-zA-Z0-9]+)/) || [])[1]
+                                };
                             },
                             vimeo: function(embed) {
-                                return (embed.match(/video\/([0-9]+)/) || [])[1];
+                                return {
+                                    id: (embed.match(/video\/([0-9]+)/) || [])[1]
+                                };
                             },
                             dailymotion: function(embed) {
-                                return (embed.match(/video\/([a-zA-Z0-9]+)/) || [])[1];
+                                return {
+                                    id: (embed.match(/video\/([a-zA-Z0-9]+)/) || [])[1]
+                                };
                             },
                             jwplatform: function(embed) {
-                                return (embed.match(
+                                var id = (embed.match(
                                     /content.jwplatform.com\/players\/([a-zA-Z\d-]+)/) || [])[1];
+                                return { id: id };
                             },
                             wistia: function(embed) {
-                                return (embed.match(
+                                var id = (embed.match(
                                     /fast.wistia.net\/embed\/iframe\/([a-zA-Z\d]+)/) || [])[1];
+                                return { id: id };
                             },
                             vzaar: function(embed) {
-                                return (embed.match(/view.vzaar.com\/(\d+)/) || [])[1];
+                                return {
+                                    id: (embed.match(/view.vzaar.com\/(\d+)/) || [])[1]
+                                };
                             },
                             vidyard: function(embed) {
-                                return (embed.match(
+                                var id = (embed.match(
                                     /play\.vidyard\.com\/([a-zA-Z\d_-]+)/) || [])[1];
+                                return { id: id };
                             },
                             instagram: function(embed) {
-                                return (embed.match(/instagram.com\/p\/([\dA-z_-]+)/) || [])[1];
+                                var id = (embed.match(/instagram.com\/p\/([\dA-z_-]+)/) || [])[1];
+                                return { id: id };
+                            },
+                            brightcove: function(embed) {
+                                var iframeEmbedMatch = embed.match(new RegExp('\\/\\/players\\' +
+                                    '.brightcove\\.net\\/(\\d+)\\/([\\da-f-]+|default)_(.+)' +
+                                    '\\/index\\.html\\?videoId=(\\d+)'));
+                                if(iframeEmbedMatch) {
+                                    return {
+                                        id: iframeEmbedMatch[4],
+                                        accountid: iframeEmbedMatch[1],
+                                        playerid: iframeEmbedMatch[2],
+                                        embedid: iframeEmbedMatch[3]
+                                    };
+                                }
+                                var scriptEmbedMatch = embed.match(/<video(\s.+)+><\/video>/);
+                                if(scriptEmbedMatch) {
+                                    var result = {};
+                                    var attrKey = {
+                                        'data-video-id': 'id',
+                                        'data-account': 'accountid',
+                                        'data-player': 'playerid',
+                                        'data-embed': 'embedid'
+                                    };
+                                    Object.keys(attrKey).forEach(function(attribute) {
+                                        var match = scriptEmbedMatch[0]
+                                            .match(new RegExp(attribute + '="(\\S+)"'));
+                                        if(match) {
+                                            result[attrKey[attribute]] = match[1];
+                                        }
+                                    });
+                                    return result;
+                                }
+                                return null;
+                            },
+                            kaltura: function(embed) {
+                                var partnerMatch = embed.match(/partner_id\/(\d+)/);
+                                var playerMatch = embed.match(/uiconf_id\/(\d+)/);
+                                var idMatch = embed.match(/entry_id=([^&]+)&/) ||
+                                    embed.match(/entry_id":\s*"([^"]+)"/) ||
+                                    embed.match(/entry_id\/([^\/"]+)/);
+                                return (partnerMatch && playerMatch && idMatch) ? {
+                                    partnerid: partnerMatch[1],
+                                    playerid: playerMatch[1],
+                                    id: idMatch[1]
+                                } : null;
                             }
                         }
                     };
@@ -1328,7 +1448,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 if (!service || !type) { return null; }
 
-                id = idFetchers[type][service](parsed);
+                data = dataFetchers[type][service](parsed);
 
                 switch (service) {
                 case 'youtu.be':
@@ -1344,13 +1464,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     service = 'jwplayer';
                 }
 
-                if (!id) { return null; }
+                if (!data || !data.id) { return null; }
 
-                return {
+                var result = {
                     service: service,
-                    id: id,
-                    hostname: (type === 'url') ? parsed.hostname : null
+                    id: data.id
                 };
+                delete data.id;
+                result.data = data;
+                return result;
             };
 
             this.embedIdFromVideoId = function(service, videoid) {
@@ -2069,6 +2191,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'vidyard':
                         case 'videoBallot':
                         case 'htmlvideo':
+                        case 'brightcove':
+                        case 'kaltura':
                             return 'video';
                         default:
                             return card.type || null;
@@ -2252,6 +2376,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
                         return null;
                     },
+                    playerid: copy(null),
+                    embedid: copy(null),
+                    accountid: copy(null),
+                    partnerid: copy(null),
                     start: trimmer(),
                     end: trimmer(),
                     moat: copy(null)
@@ -2635,13 +2763,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function hrefValue() {
                     return function(data) {
-                        return VideoService.urlFromData(data.service, data.videoid, data.hostname);
+                        return VideoService.urlFromData(data.service, data.videoid, data);
                     };
                 }
 
                 function videoThumbsValue() {
                     return function(data) {
-                        return ThumbnailService.getThumbsFor(data.service, data.videoid)
+                        return ThumbnailService.getThumbsFor(data.service, data.videoid, data)
                             .ensureFulfillment()
                             .then(function(thumbs) {
                                 return {
@@ -2663,7 +2791,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     };
                                 });
                         } else {
-                            return ThumbnailService.getThumbsFor(data.service, data.imageid)
+                            return ThumbnailService.getThumbsFor(data.service, data.imageid, data)
                                 .ensureFulfillment()
                                 .then(function(thumbs) {
                                     return {
@@ -2677,7 +2805,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function instagramThumbsValue() {
                     return function(data) {
-                        return ThumbnailService.getThumbsFor('instagram', data.id)
+                        return ThumbnailService.getThumbsFor('instagram', data.id, data)
                             .ensureFulfillment()
                             .then(function(thumbs) {
                                 return {
@@ -2883,6 +3011,33 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return data.videoid;
                             }
                         },
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
+                    brightcove: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        accountid: copy(null),
+                        playerid: copy(null),
+                        embedid: copy(null),
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
+                    kaltura: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        partnerid: copy(null),
+                        playerid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
                         moat: copy(null)

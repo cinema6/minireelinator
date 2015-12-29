@@ -33,6 +33,9 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                 campaigns = c6State.get('Selfie:Campaigns');
                 campaigns.isAdmin = false;
+                campaigns.cParent = {
+                    hasAdvertisers: false
+                };
 
                 spyOn(cinema6.db, 'findAll').and.returnValue((function() {
                     var items = [];
@@ -253,6 +256,18 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     expect(SelfieCampaignsCtrl.model).toEqual(model);
                 });
 
+                it('should put the hasAdvertisers flag on the Ctrl', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.hasAdvertisers).toEqual(false);
+
+                    campaigns.cParent.hasAdvertisers = true;
+
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.hasAdvertisers).toEqual(true);
+                });
+
                 it('should add the filters to the Ctrl', function() {
                     SelfieCampaignsCtrl.filter = 'active,error';
                     SelfieCampaignsCtrl.initWithModel(model);
@@ -356,7 +371,10 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                     describe('when the card does not have a custom thumb', function() {
                         it('should get thumbs from Thumbnail Service', function() {
-                            expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123');
+                            expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123', {
+                                service: 'youtube',
+                                videoid: '123'
+                            });
                             expect(SelfieCampaignsCtrl.metaData['cam-3']).toEqual({
                                 sponsor: 'Diageo',
                                 logo: 'diageo.jpg',

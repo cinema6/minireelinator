@@ -7,10 +7,12 @@ define(['app'], function(appModule) {
             c6State,
             selfieState,
             newCampaignState,
-            CampaignService;
+            CampaignService,
+            cinema6;
 
         var campaign,
-            card;
+            card,
+            advertisers;
 
         beforeEach(function() {
             module(appModule.name);
@@ -20,16 +22,15 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
                 CampaignService = $injector.get('CampaignService');
+                cinema6 = $injector.get('cinema6');
 
                 selfieState = c6State.get('Selfie');
                 selfieState.cModel = {
                     advertiser: {
                         id: 'a-123'
                     },
-                    customer: {
-                        id: 'cus-123'
-                    },
                     org: {
+                        id: 'o-123',
                         name: 'My Org'
                     },
                     company: 'My Company, Inc.'
@@ -54,10 +55,67 @@ define(['app'], function(appModule) {
                 cards: [card],
                 advertiserDisplatName: selfieState.cModel.company
             };
+
+            advertisers = [
+                {
+                    id: 'a-123'
+                },
+                {
+                    id: 'a-999'
+                }
+            ];
         });
 
         it('should exist', function() {
             expect(newCampaignState).toEqual(jasmine.any(Object));
+        });
+
+        describe('beforeModel()', function() {
+            var success, failure, deferred;
+
+            beforeEach(function() {
+                success = jasmine.createSpy('success()');
+                failure = jasmine.createSpy('failure()');
+                deferred = $q.defer();
+
+                spyOn(cinema6.db, 'findAll').and.returnValue(deferred.promise);
+
+                $rootScope.$apply(function() {
+                    newCampaignState.beforeModel().then(success, failure);
+                });
+            });
+
+            it('should add the Selfie user to the state', function() {
+                expect(newCampaignState.user).toEqual(selfieState.cModel);
+            });
+
+            it('should find the advertisers by Org', function() {
+                expect(cinema6.db.findAll).toHaveBeenCalledWith('advertiser', { org: selfieState.cModel.org.id });
+            });
+
+            describe('when the advertisers are found', function() {
+                it('should put the first advertiser on the state', function() {
+                    expect(success).not.toHaveBeenCalled();
+
+                    $rootScope.$apply(function() {
+                        deferred.resolve(advertisers);
+                    });
+
+                    expect(success).toHaveBeenCalled();
+                    expect(newCampaignState.advertiser).toEqual(advertisers[0]);
+                });
+            });
+
+            describe('if the advertiser request fails', function() {
+                it('should put the first advertiser on the state', function() {
+                    $rootScope.$apply(function() {
+                        deferred.reject('Not Found');
+                    });
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
         });
 
         describe('model()', function() {
@@ -69,13 +127,16 @@ define(['app'], function(appModule) {
 
                 spyOn(CampaignService, 'create').and.returnValue($q.when(campaign));
 
+                newCampaignState.advertiser = advertisers[0];
+                newCampaignState.user = selfieState.cModel;
+
                 $rootScope.$apply(function() {
                     newCampaignState.model().then(success, failure);
                 });
             });
 
             it('should create a new campaign', function() {
-                expect(CampaignService.create).toHaveBeenCalled();
+                expect(CampaignService.create).toHaveBeenCalledWith(null, selfieState.cModel, advertisers[0]);
             });
 
             it('should be a new campaign object', function() {

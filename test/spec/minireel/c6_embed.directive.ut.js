@@ -1,5 +1,5 @@
-define( ['minireel/editor','c6embed','jquery'],
-function( editorModule    , c6embed , $      ) {
+define( ['app',     'c6embed','jquery'],
+function( appModule, c6embed , $      ) {
     'use strict';
 
     describe('<c6-embed>', function() {
@@ -7,18 +7,58 @@ function( editorModule    , c6embed , $      ) {
         var $compile;
         var $q;
         var $timeout;
+        var c6EventEmitter;
+        var MiniReelService;
 
         var $scope;
         var $c6Embed;
 
+        var player;
+
         beforeEach(function() {
-            module(editorModule.name);
+            module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $compile = $injector.get('$compile');
                 $q = $injector.get('$q');
                 $timeout = $injector.get('$timeout');
+                c6EventEmitter = $injector.get('c6EventEmitter');
+                MiniReelService = $injector.get('MiniReelService');
+            });
+
+            spyOn(MiniReelService, 'modeDataOf');
+
+            spyOn(c6embed, 'Player').and.callFake(function() {
+                player = c6EventEmitter({});
+                player.session = null;
+                player.frame = null;
+
+                player.shown = false;
+
+                player.show = jasmine.createSpy('Player.prototype.show()');
+                player.hide = jasmine.createSpy('Player.prototype.hide()');
+
+                player.bootstrap = jasmine.createSpy('Player.prototype.bootstrap()').and.callFake(function(container, styles) {
+                    var $frame = $('<iframe src="about:blank"></iframe>');
+                    var session = c6EventEmitter({});
+
+                    $frame.css(styles);
+
+                    session.ping = jasmine.createSpy('PlayerSession.prototype.ping()');
+
+                    session.on('open', function() { player.shown = true; });
+                    session.on('close', function() { player.shown = false; });
+
+                    $(container).append($frame);
+
+                    player.frame = $frame[0];
+                    player.session = session;
+
+                    return $q.defer().promise;
+                });
+
+                return player;
             });
 
             $scope = $rootScope.$new();
@@ -41,139 +81,226 @@ function( editorModule    , c6embed , $      ) {
         });
 
         describe('$watchers', function() {
-            var session;
-            var player;
-            var sessionReadyDeferred;
-
-            beforeEach(function() {
-                spyOn(c6embed, 'loadExperience').and.callFake(function(settings) {
-                    sessionReadyDeferred = $q.defer();
-                    session = {
-                        ping: jasmine.createSpy('session.ping()')
-                    };
-
-                    player = {
-                        getReadySession: function() {
-                            return sessionReadyDeferred.promise;
-                        }
-                    };
-
-                    settings.state = {
-                        set: jasmine.createSpy('state.set()'),
-                        observe: jasmine.createSpy('state.observe()').and.callFake(function() {
-                            return settings.state;
-                        })
-                    };
-                    settings.getPlayer = function() {
-                        return $q.when(player);
-                    };
-                    $(settings.embed).append('<iframe src="about:blank"></iframe>');
-                });
-            });
-
             describe('experience', function() {
                 describe('when set', function() {
                     var experience;
+                    var modeData;
 
                     beforeEach(function() {
                         experience = {
                             id: 'e-f3ee40317d2cac',
                             appUri: 'mini-reel-player',
                             data: {
+                                branding: 'c6studio',
+                                mode: 'light',
                                 title: 'My MiniReel',
                                 deck: []
                             }
                         };
 
+                        modeData = { fullscreen: false };
+
+                        MiniReelService.modeDataOf.and.callFake(function(minireel) {
+                            expect(minireel).toBe(experience);
+
+                            return modeData;
+                        });
+
                         $scope.$apply(function() {
-                            $scope.profile = {
-                                device: 'desktop',
-                                flash: true
-                            };
                             $scope.experience = experience;
                         });
                     });
 
-                    it('should load the experience', function() {
-                        expect(c6embed.loadExperience).toHaveBeenCalledWith(jasmine.objectContaining({
-                            experience: experience,
-                            embed: $c6Embed[0],
-                            splashDelegate: {},
-                            profile: $scope.profile,
-                            standalone: $scope.standalone,
-                            config: {
-                                container: 'studio',
-                                exp: experience.id,
-                                responsive: true,
-                                title: experience.data.title
-                            }
-                        }), jasmine.any(Boolean));
+                    it('should load the player', function() {
+                        expect(c6embed.Player).toHaveBeenCalledWith('/api/public/players/light', {
+                            container: 'studio',
+                            context: 'studio',
+                            preview: true,
+                            standalone: null,
+                            branding: experience.data.branding
+                        }, { experience: experience });
                     });
 
-                    it('should observe the active property', function() {
-                        var settings = c6embed.loadExperience.calls.mostRecent().args[0];
-
-                        expect(settings.state.observe).toHaveBeenCalledWith('active', jasmine.any(Function));
+                    it('should bootstrap the player', function() {
+                        expect(player.bootstrap).toHaveBeenCalledWith($c6Embed[0], {
+                            position: 'absolute',
+                            top: '0px',
+                            left: '0px',
+                            width: '100%',
+                            height: '100%',
+                            zIndex: 'auto'
+                        });
                     });
 
-                    describe('when active is', function() {
-                        var settings;
-                        var handler;
+                    describe('when responsiveStyles are sent', function() {
+                        var styles;
+
+                        beforeEach(function() {
+                            styles = { display: 'block' };
+                        });
+
+                        describe('before the player is opened', function() {
+                            beforeEach(function() {
+                                player.session.emit('responsiveStyles', styles);
+                            });
+
+                            it('should not set the styles', function() {
+                                expect($c6Embed.css('display')).not.toBe('block');
+                            });
+
+                            describe('but then it is opened', function() {
+                                beforeEach(function() {
+                                    player.session.emit('open');
+                                });
+
+                                it('should set the styles', function() {
+                                    expect($c6Embed.css('display')).toBe('block');
+                                });
+                            });
+                        });
+
+                        describe('after the player is opened', function() {
+                            beforeEach(function() {
+                                player.session.emit('open');
+
+                                player.session.emit('responsiveStyles', styles);
+                            });
+
+                            it('should set the styles', function() {
+                                expect($c6Embed.css('display')).toBe('block');
+                            });
+                        });
+                    });
+
+                    describe('when the player is', function() {
                         var digestSpy;
 
                         beforeEach(function() {
-                            settings = c6embed.loadExperience.calls.mostRecent().args[0];
                             digestSpy = jasmine.createSpy('digestSpy()');
-                            handler = settings.state.observe.calls.mostRecent().args[1];
                         });
 
-                        describe('changed', function() {
-                            describe('to false', function() {
-                                beforeEach(function() {
-                                    $scope.$apply(function() {
-                                        $scope.active = true;
-                                    });
-
-                                    $scope.$watch('active', digestSpy);
-
-                                    handler(false, true);
+                        describe('closed', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    $scope.active = true;
+                                });
+                                player.session.emit('open');
+                                player.session.emit('responsiveStyles', {
+                                    display: 'block'
                                 });
 
-                                it('should set scope.active to false', function() {
-                                    expect($scope.active).toBe(false);
-                                    expect(digestSpy).toHaveBeenCalled();
-                                });
+                                $scope.$watch('active', digestSpy);
+
+                                player.session.emit('close');
                             });
 
-                            describe('to true', function() {
+                            it('should set scope.active to false', function() {
+                                expect($scope.active).toBe(false);
+                                expect(digestSpy).toHaveBeenCalled();
+                            });
+
+                            it('should clear the element\'s style', function() {
+                                expect($c6Embed.attr('style')).toBe('');
+                            });
+
+                            describe('and reopened', function() {
                                 beforeEach(function() {
-                                    $scope.$apply(function() {
-                                        $scope.active = false;
-                                    });
+                                    player.session.emit('open');
+                                });
 
-                                    $scope.$watch('active', digestSpy);
+                                it('should set the styles again', function() {
+                                    expect($c6Embed.css('display')).toBe('block');
+                                });
+                            });
+                        });
 
-                                    handler(true, false);
+                        describe('opened', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    $scope.active = false;
+                                });
+
+                                $scope.$watch('active', digestSpy);
+                            });
+
+                            describe('and there is no mode data', function() {
+                                beforeEach(function() {
+                                    modeData = undefined;
+
+                                    player.session.emit('open');
                                 });
 
                                 it('should set scope.active to true', function() {
                                     expect($scope.active).toBe(true);
                                     expect(digestSpy).toHaveBeenCalled();
                                 });
-                            });
-                        });
 
-                        describe('initialized', function() {
-                            beforeEach(function() {
-                                $scope.$apply(function() {
-                                    $scope.active = true;
+                                it('should not fullscreen the player', function() {
+                                    expect($(player.frame).css('position')).not.toBe('fixed');
+                                    expect($(player.frame).css('z-index')).not.toBe('2147483647');
+                                });
+                            });
+
+                            describe('and the mode is not fullscreen', function() {
+                                beforeEach(function() {
+                                    modeData = { fullscreen: false };
+
+                                    player.session.emit('open');
                                 });
 
-                                handler(false, false);
+                                it('should set scope.active to true', function() {
+                                    expect($scope.active).toBe(true);
+                                    expect(digestSpy).toHaveBeenCalled();
+                                });
+
+                                it('should not fullscreen the player', function() {
+                                    expect($(player.frame).css('position')).not.toBe('fixed');
+                                    expect($(player.frame).css('z-index')).not.toBe('2147483647');
+                                });
                             });
 
-                            it('should do nothing', function() {
-                                expect($scope.active).toBe(true);
+                            describe('and the mode is fullscreen', function() {
+                                beforeEach(function() {
+                                    modeData = { fullscreen: true };
+
+                                    player.session.emit('open');
+                                });
+
+                                it('should set scope.active to true', function() {
+                                    expect($scope.active).toBe(true);
+                                    expect(digestSpy).toHaveBeenCalled();
+                                });
+
+                                it('should fullscreen the player', function() {
+                                    expect($(player.frame).css('position')).toBe('fixed');
+                                    expect($(player.frame).css('z-index')).toBe('2147483647');
+                                });
+
+                                describe('and then it is closed', function() {
+                                    beforeEach(function() {
+                                        player.session.emit('close');
+                                    });
+
+                                    it('should remove the fullscreen styles', function() {
+                                        expect($(player.frame).css('position')).toBe('absolute');
+                                        expect($(player.frame).css('z-index')).toBe('auto');
+                                    });
+                                });
+
+                                describe('but the device type is a phone', function() {
+                                    beforeEach(function() {
+                                        $scope.$apply(function() {
+                                            $scope.profile = { device: 'phone' };
+                                        });
+
+                                        player.session.emit('open');
+                                    });
+
+                                    it('should not fullscreen the player', function() {
+                                        expect($(player.frame).css('position')).not.toBe('fixed');
+                                        expect($(player.frame).css('z-index')).not.toBe('2147483647');
+                                    });
+                                });
                             });
                         });
                     });
@@ -222,102 +349,126 @@ function( editorModule    , c6embed , $      ) {
 
                     describe('if active is false', function() {
                         beforeEach(function() {
-                            c6embed.loadExperience.calls.reset();
-                            $scope.active = false;
+                            $scope.$apply(function() {
+                                $scope.active = true;
+                            });
+
+                            player.hide.calls.reset();
+                            player.show.calls.reset();
+                            player.bootstrap.calls.reset();
 
                             $scope.$apply(function() {
-                                $c6Embed = $compile('<c6-embed experience="experience" active="active"></c6-embed>')($scope);
+                                $scope.active = false;
                             });
                         });
 
-                        it('should call with the second parameter as true', function() {
-                            expect(c6embed.loadExperience).toHaveBeenCalledWith(jasmine.any(Object), true);
+                        it('should not bootstrap the player', function() {
+                            expect(player.bootstrap).not.toHaveBeenCalled();
+                        });
+
+                        it('should not remove the iframe', function() {
+                            expect($c6Embed.find('iframe').length).toBe(1);
+                        });
+
+                        it('should close the player', function() {
+                            expect(player.show).not.toHaveBeenCalled();
+                            expect(player.hide).toHaveBeenCalled();
                         });
                     });
 
                     describe('if active is true', function() {
                         beforeEach(function() {
-                            c6embed.loadExperience.calls.reset();
-                            $scope.active = true;
+                            $scope.$apply(function() {
+                                $scope.active = false;
+                            });
+
+                            player.hide.calls.reset();
+                            player.show.calls.reset();
+                            player.bootstrap.calls.reset();
 
                             $scope.$apply(function() {
-                                $c6Embed = $compile('<c6-embed experience="experience" active="active"></c6-embed>')($scope);
+                                $scope.active = true;
                             });
                         });
 
-                        it('should call with the second parameter as false', function() {
-                            expect(c6embed.loadExperience).toHaveBeenCalledWith(jasmine.any(Object), false);
+                        it('should not bootstrap the player', function() {
+                            expect(player.bootstrap).not.toHaveBeenCalled();
+                        });
+
+                        it('should not remove the iframe', function() {
+                            expect($c6Embed.find('iframe').length).toBe(1);
+                        });
+
+                        it('should show the player', function() {
+                            expect(player.show).toHaveBeenCalled();
+                            expect(player.hide).not.toHaveBeenCalled();
                         });
                     });
                 });
             });
 
             describe('profile', function() {
-                beforeEach(function() {
-                    $scope.$apply(function() {
-                        $scope.profile = {
-                            device: 'desktop',
-                            flash: true
-                        };
-                        $scope.experience = {
-                            id: 'e-f3ee40317d2cac',
-                            appUri: 'mini-reel-player',
-                            data: {
-                                title: 'My MiniReel',
-                                deck: []
-                            }
-                        };
-                    });
-                });
-
-                describe('when changed', function() {
+                describe('if there is no experience', function() {
                     beforeEach(function() {
-                        c6embed.loadExperience.calls.reset();
+                        $scope.experience = null;
+                        c6embed.Player.calls.reset();
+                        player.bootstrap.calls.reset();
 
                         $scope.$apply(function() {
                             $scope.profile = {
-                                device: 'desktop',
-                                flash: true
+                                device: 'desktop'
                             };
                         });
                     });
 
-                    it('should re-embed the minireel', function() {
-                        expect(c6embed.loadExperience).toHaveBeenCalledWith(jasmine.objectContaining({
-                            profile: $scope.profile
-                        }), !$scope.active);
+                    it('should do nothing', function() {
+                        expect(c6embed.Player).not.toHaveBeenCalled();
+                        expect(player.bootstrap).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('if there is an experience', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            $scope.experience = {
+                                id: 'e-f3ee40317d2cac',
+                                appUri: 'mini-reel-player',
+                                data: {
+                                    mode: 'light',
+                                    title: 'My MiniReel',
+                                    deck: []
+                                }
+                            };
+                        });
+
+                        c6embed.Player.calls.reset();
+                        player.bootstrap.calls.reset();
                     });
 
-                    describe('if the device is', function() {
-                        beforeEach(function() {
-                            c6embed.loadExperience.calls.reset();
-                        });
-
-                        describe('desktop', function() {
+                    ['desktop'].forEach(function(type) {
+                        describe('if the device is ' + type, function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
-                                    $scope.profile = { device: 'desktop' };
+                                    $scope.profile = { device: type };
                                 });
                             });
 
-                            it('should allow fullscreen', function() {
-                                expect(c6embed.loadExperience).toHaveBeenCalledWith(jasmine.objectContaining({
-                                    allowFullscreen: true
-                                }), jasmine.any(Boolean));
+                            it('should not change the mode', function() {
+                                expect(c6embed.Player).toHaveBeenCalledWith('/api/public/players/light', jasmine.any(Object), jasmine.any(Object));
                             });
                         });
+                    });
 
-                        describe('phone', function() {
+                    ['phone'].forEach(function(type) {
+                        describe('if the device is ' + type, function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
-                                    $scope.profile = { device: 'phone' };
+                                    $scope.profile = { device: type };
                                 });
                             });
 
-                            it('should not allow fullscreen', function() {
-                                expect(c6embed.loadExperience).toHaveBeenCalledWith(jasmine.objectContaining({
-                                    allowFullscreen: false
-                                }), jasmine.any(Boolean));
+                            it('should change the mode to mobile', function() {
+                                expect(c6embed.Player).toHaveBeenCalledWith('/api/public/players/mobile', jasmine.any(Object), jasmine.any(Object));
                             });
                         });
                     });
@@ -347,30 +498,8 @@ function( editorModule    , c6embed , $      ) {
                             });
                         });
 
-                        it('should not ping the session', function() {
-                            expect(session.ping).not.toHaveBeenCalled();
-                        });
-
-                        describe('when the session is ready', function() {
-                            beforeEach(function() {
-                                $scope.$apply(function() {
-                                    sessionReadyDeferred.resolve(session);
-                                });
-                            });
-
-                            it('should not ping the session', function() {
-                                expect(session.ping).not.toHaveBeenCalled();
-                            });
-
-                            describe('after a timeout of 0', function() {
-                                beforeEach(function() {
-                                    $timeout.flush();
-                                });
-
-                                it('should ping the session with the id of the card it should show', function() {
-                                    expect(session.ping).toHaveBeenCalledWith('showCard', $scope.card.id);
-                                });
-                            });
+                        it('should ping the session with the id of the card it should show', function() {
+                            expect(player.session.ping).toHaveBeenCalledWith('showCard', $scope.card.id);
                         });
                     });
 
@@ -380,14 +509,10 @@ function( editorModule    , c6embed , $      ) {
                                 $scope.card = { id: 'rc-d045f231ca8a46' };
                                 $scope.active = false;
                             });
-                            $scope.$apply(function() {
-                                sessionReadyDeferred.resolve(session);
-                            });
-                            try { $timeout.flush(); } catch(e) {}
                         });
 
                         it('should not ping the session', function() {
-                            expect(session.ping).not.toHaveBeenCalled();
+                            expect(player.session.ping).not.toHaveBeenCalled();
                         });
                     });
                 });
@@ -398,6 +523,8 @@ function( editorModule    , c6embed , $      ) {
                     describe('if there is no experience', function() {
                         beforeEach(function() {
                             $scope.experience = null;
+                            c6embed.Player.calls.reset();
+                            player.bootstrap.calls.reset();
 
                             $scope.$apply(function() {
                                 $scope.active = true;
@@ -405,14 +532,13 @@ function( editorModule    , c6embed , $      ) {
                         });
 
                         it('should do nothing', function() {
-                            expect(c6embed.loadExperience).not.toHaveBeenCalled();
+                            expect(c6embed.Player).not.toHaveBeenCalled();
+                            expect(player.bootstrap).not.toHaveBeenCalled();
                         });
                     });
 
                     describe('if there is an experience', function() {
                         var experience;
-                        var settings;
-                        var iframe;
 
                         beforeEach(function() {
                             experience = {
@@ -427,33 +553,23 @@ function( editorModule    , c6embed , $      ) {
                             $scope.$apply(function() {
                                 $scope.experience = experience;
                             });
-                            settings = c6embed.loadExperience.calls.mostRecent().args[0];
 
-                            c6embed.loadExperience.calls.reset();
-                            settings.state.observe.calls.reset();
-                            iframe = $c6Embed.find('iframe')[0];
-                            $c6Embed.css({ padding: '100px' });
+                            c6embed.Player.calls.reset();
+                            player.bootstrap.calls.reset();
+                            player.show.calls.reset();
 
                             $scope.$apply(function() {
                                 $scope.active = true;
                             });
                         });
 
-                        it('should call loadExperience() with the same settings as the inital call', function() {
-                            expect(c6embed.loadExperience).toHaveBeenCalledWith(settings, false);
-                            expect(c6embed.loadExperience.calls.mostRecent().args[0]).toBe(settings);
+                        it('should not create a new Player', function() {
+                            expect(c6embed.Player).not.toHaveBeenCalled();
+                            expect(player.bootstrap).not.toHaveBeenCalled();
                         });
 
-                        it('should not observe the active property again', function() {
-                            expect(settings.state.observe).not.toHaveBeenCalled();
-                        });
-
-                        it('should not wipe out the iframe', function() {
-                            expect(Array.prototype.slice.call($c6Embed.prop('childNodes')).indexOf(iframe)).not.toBe(-1);
-                        });
-
-                        it('should not clear the element\'s style', function() {
-                            expect($c6Embed.attr('style')).not.toBe('');
+                        it('should show the player', function() {
+                            expect(player.show).toHaveBeenCalled();
                         });
                     });
                 });
@@ -462,6 +578,8 @@ function( editorModule    , c6embed , $      ) {
                     describe('if there is no experience', function() {
                         beforeEach(function() {
                             $scope.experience = null;
+                            c6embed.Player.calls.reset();
+                            player.bootstrap.calls.reset();
 
                             $scope.$apply(function() {
                                 $scope.active = false;
@@ -469,13 +587,13 @@ function( editorModule    , c6embed , $      ) {
                         });
 
                         it('should do nothing', function() {
-                            expect(c6embed.loadExperience).not.toHaveBeenCalled();
+                            expect(c6embed.Player).not.toHaveBeenCalled();
+                            expect(player.bootstrap).not.toHaveBeenCalled();
                         });
                     });
 
                     describe('if there is an experience', function() {
                         var experience;
-                        var settings;
 
                         beforeEach(function() {
                             experience = {
@@ -490,32 +608,35 @@ function( editorModule    , c6embed , $      ) {
                             $scope.$apply(function() {
                                 $scope.experience = experience;
                             });
-                            settings = c6embed.loadExperience.calls.mostRecent().args[0];
 
-                            c6embed.loadExperience.calls.reset();
+                            c6embed.Player.calls.reset();
+                            player.bootstrap.calls.reset();
+                            player.hide.calls.reset();
 
                             $scope.$apply(function() {
                                 $scope.active = false;
                             });
                         });
 
-                        it('should not load any experiences', function() {
-                            expect(c6embed.loadExperience).not.toHaveBeenCalled();
+                        it('should not create a new Player', function() {
+                            expect(c6embed.Player).not.toHaveBeenCalled();
+                            expect(player.bootstrap).not.toHaveBeenCalled();
                         });
 
-                        it('should set state.active to false', function() {
-                            expect(settings.state.set).toHaveBeenCalledWith('active', false);
+                        it('should hide the player', function() {
+                            expect(player.hide).toHaveBeenCalled();
                         });
                     });
                 });
             });
 
             describe('experience and active', function() {
-                describe('if both set in the same $digest', function() {
-                    var experience;
-
+                describe('when both initially set', function() {
                     beforeEach(function() {
-                        experience = {
+                        $scope.$destroy();
+                        $scope = $rootScope.$new();
+
+                        $scope.experience = {
                             id: 'e-f3ee40317d2cac',
                             appUri: 'mini-reel-player',
                             data: {
@@ -523,15 +644,29 @@ function( editorModule    , c6embed , $      ) {
                                 deck: []
                             }
                         };
+                        $scope.active = true;
+
+                        $c6Embed.remove();
+
+                        c6embed.Player.calls.reset();
+                        player.bootstrap.calls.reset();
+                        player.show.calls.reset();
 
                         $scope.$apply(function() {
-                            $scope.experience = experience;
-                            $scope.active = true;
+                            $c6Embed = $compile('<c6-embed experience="experience" active="active" profile="profile" card="card" standalone="standalone"></c6-embed>')($scope);
                         });
                     });
 
-                    it('should only call loadExperience() once', function() {
-                        expect(c6embed.loadExperience.calls.count()).toBe(1);
+                    it('should create a player', function() {
+                        expect(c6embed.Player).toHaveBeenCalled();
+                    });
+
+                    it('should bootstrap the player', function() {
+                        expect(player.bootstrap).toHaveBeenCalled();
+                    });
+
+                    it('should show the player', function() {
+                        expect(player.show).toHaveBeenCalled();
                     });
                 });
             });
