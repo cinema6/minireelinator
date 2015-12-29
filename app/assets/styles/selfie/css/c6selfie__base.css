@@ -184,6 +184,45 @@ fa,
             content: '\f061';
         }
 
+/*  ================================================
+    Branding and retina display styles
+    ================================================ */
+    .rc__logo--square {
+        background: url('../img/rc-logo-square.png') no-repeat;
+        background-size: 64px;
+        display: block;
+        height: 70px;
+        width: 64px;
+    }
+    .rc__logo {
+        background: url('../img/reelcontent-logo.png');
+        background-size: 190px 46px;
+        display: block;
+        height: 46px;
+        width: 190px;
+    }
+    .logo--center {
+        margin: 0 auto 1em auto;
+    }
+    @media 
+    (-webkit-min-device-pixel-ratio: 2), 
+    (min-resolution: 192dpi) { 
+        .rc__logo--square {
+            background: url('../img/rc-logo-square-2x.png') no-repeat;
+            background-size: 64px;
+            display: block;
+            height: 70px;
+            width: 64px;
+        }
+        .rc__logo {
+            background: url('../img/reelcontent-logo-2x.png');
+            background-size: 190px 46px;
+            display: block;
+            height: 46px;
+            width: 190px;
+        }
+    }
+
 
 /*  ================================================
     UI Elements and Helper classes
@@ -854,8 +893,8 @@ fa,
         width: 80%;
         margin-left: 3em;
     }
-        .signup__gridHolder .logo>img {
-            padding-left: 0.5em;
+        .signup__gridHolder .rc__logo {
+            margin-left: 0.5em;
         }
     /*sign up features*/
     .productFeatures {
