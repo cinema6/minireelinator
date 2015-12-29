@@ -27,6 +27,34 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
     return angular.module('c6.app.selfie.directives', [])
         .value('Chart', Chart)
 
+        .directive('rcHighDensityImg', ['$window',
+        function                       ( $window ) {
+            var isHighDensity = (function() {
+                return (($window.matchMedia &&
+                    ($window.matchMedia('only screen and (min-resolution: 124dpi), '+
+                        'only screen and (min-resolution: 1.3dppx), '+
+                        'only screen and (min-resolution: 48.8dpcm)').matches ||
+                    $window.matchMedia('only screen and (-webkit-min-device-pixel-ratio: 1.3), '+
+                        'only screen and (-o-min-device-pixel-ratio: 2.6/2), '+
+                        'only screen and (min--moz-device-pixel-ratio: 1.3), '+
+                        'only screen and (min-device-pixel-ratio: 1.3)').matches)) ||
+                    ($window.devicePixelRatio && $window.devicePixelRatio > 1.3));
+            }());
+
+            return {
+                restrict: 'E',
+                scope: {
+                    src: '@'
+                },
+                link: function(scope, $element) {
+                    var pieces = scope.src.match(/(.+)\.(\w+)$/);
+                    $element.append('<img src=' +
+                        pieces[1] + (isHighDensity ? '@2x.' : '.') +
+                        pieces[2] + ' />');
+                }
+            };
+        }])
+
         .directive('c6FillCheck', ['$timeout',
         function                  ( $timeout ) {
             return {
