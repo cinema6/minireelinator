@@ -8,6 +8,7 @@
   * [DESIGN]: Added custom radio buttons
   * [DESIGN]: Updated the preview size on manage campaigns
   * [DESIGN]: Added styles for URL scraping
+  * [FIX]: Fixed the logo resolution issue for retina display
 
 
 ## v1.30.1 (December 18, 2015)
