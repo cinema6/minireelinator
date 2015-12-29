@@ -461,27 +461,14 @@ function( angular , c6uilib ,  c6Defines  ) {
                 }).length > 0;
             }
 
-            function getCards(resp) {
-                var campaigns = resp.data,
-                    ids = campaigns.reduce(function(result, campaign) {
-                        var id = campaign.cards[0].id;
-                        return result.indexOf(id) === -1 ?
-                            result.concat(id) : result;
-                    }, []),
-                    query = {
-                        ids: ids.join(',')
-                    };
-
-                return $http.get(c6UrlMaker('content/cards', 'api'), { params: query });
-            }
-
             function getLogoData(resp) {
-                var cards = resp.data,
+                var campaigns = resp.data,
                     names = {};
 
-                return cards.reduce(function(result, card) {
-                    var src = card.collateral && card.collateral.logo,
-                        name = card.params && card.params.sponsor;
+                return campaigns.reduce(function(result, campaign) {
+                    var card = (campaign.cards && campaign.cards[0]) || {},
+                        src = card.collateral && card.collateral.logo,
+                        name = campaign.advertiserDisplayName;
 
                     if (!src || exists(src, 'src', result)) {
                         return result;
@@ -505,13 +492,12 @@ function( angular , c6uilib ,  c6Defines  ) {
                         statuses: 'active,paused,error',
                         sort: 'lastUpdated,-1',
                         application: 'selfie',
-                        fields: 'cards',
+                        fields: 'cards,advertiserDisplayName',
                         limit: 50,
                         skip: 0
                     };
 
                 return $http.get(c6UrlMaker('campaigns','api'), { params: query })
-                    .then(getCards)
                     .then(getLogoData);
             };
         }])
