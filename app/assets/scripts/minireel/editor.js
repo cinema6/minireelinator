@@ -2246,8 +2246,7 @@ VideoCardController           , c6embed) {
                         script.attr('src', 'https://cdnapisec.kaltura.com/p/' + partnerid +
                             '/sp/' + partnerid + '00/embedIframeJs/uiconf_id/' + playerid +
                             '/partner_id/' + partnerid + '?autoembed=true&entry_id=' + videoid +
-                            '&playerId=kaltura_player_' + random + '&cache_st=' + random +
-                            '&flashvars[streamerType]=auto');
+                            '&playerId=kaltura_player_' + random + '&cache_st=' + random);
                         var div = angular.element('<div></div>');
                         div.attr('id', 'kaltura_player_' + random);
                         div.attr('style', 'width: 100%; height: 100%;');
