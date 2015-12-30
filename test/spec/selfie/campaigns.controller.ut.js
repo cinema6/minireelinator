@@ -82,7 +82,6 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     SelfieCampaignsCtrl.filters = [
                         { name: 'Draft', id: 'draft', checked: true },
                         { name: 'Pending', id: 'pending', checked: false },
-                        { name: 'Approved', id: 'approved', checked: true },
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: false },
                         { name: 'Error', id: 'error', checked: true }
@@ -93,7 +92,6 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     SelfieCampaignsCtrl.filters = [
                         { name: 'Draft', id: 'draft', checked: true },
                         { name: 'Pending', id: 'pending', checked: true },
-                        { name: 'Approved', id: 'approved', checked: true },
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: true },
                         { name: 'Error', id: 'error', checked: true }
@@ -275,7 +273,6 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     expect(SelfieCampaignsCtrl.filters).toEqual([
                         { name: 'Draft', id: 'draft', checked: false },
                         { name: 'Pending', id: 'pending', checked: false },
-                        { name: 'Approved', id: 'approved', checked: false },
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: false },
                         { name: 'Canceled', id: 'canceled', checked: false },

@@ -4032,6 +4032,7 @@ fa,
     }
     .orderItem__label, .campaignItem__label {
         font-weight: 400;
+        font-size: 0.875em;
     }
     .orderItem__cost {
         font-weight: 700;
@@ -4065,7 +4066,7 @@ fa,
         .orderItems ul li:last-child, .campaignItems ul li:last-child {
             background: #eee;
             padding: 0.25em;
-        }        
+        }
 
 
 
