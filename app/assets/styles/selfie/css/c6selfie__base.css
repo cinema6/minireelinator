@@ -4016,21 +4016,21 @@ fa,
 
 
 /*  ================================================
-    Review Order modal styles
+    Review Campaign and campaign summary modal styles
     ================================================ */
-    .reviewOrder__group .grid {
+    .reviewOrder__group .grid, .campaignSummary__group .grid{
         margin: 0;
     }
-    .reviewOrder__item h2 {
+    .reviewOrder__item h2, .campaignSummary__item h2 {
         margin-bottom: 0;
     }
-        .reviewOrder__item .orderItem__title {
+        .reviewOrder__item .orderItem__title, .campaignSummary__item .campaignItem__title{
             vertical-align: middle;
         }
-    .orderItem__title {
+    .orderItem__title, .campaignItem__title {
         font-weight: 700;
     }
-    .orderItem__label {
+    .orderItem__label, .campaignItem__label {
         font-weight: 400;
     }
     .orderItem__cost {
@@ -4045,20 +4045,24 @@ fa,
             .orderItem__cost--total {
                 font-weight: 700;
             }
-        .orderItem__title {
-            
-        }
-    .orderItems ul{
+    .campaignItem__list {
+        margin-top: 2em;
+    }
+    .orderItems ul, .campaignItems ul{
         padding-left: 0;
         margin: 0;
     }
-        .orderItems ul li {
+        .orderItems ul li, .campaignItems ul li {
             list-style-type: none;
-            border-bottom: 1px dotted #ccc;
+            border-top: 1px dotted #ccc;
             padding: 5px 0;
             margin-bottom: 0;
         }
-        .orderItems ul li:last-child {
+        .campaignSummary__item {
+            border-top: 1px dotted #ccc;
+            border-bottom: 1px dotted #ccc;
+        }
+        .orderItems ul li:last-child, .campaignItems ul li:last-child {
             background: #eee;
             padding: 0.25em;
         }        
