@@ -34,16 +34,19 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                 require: '?ngModel',
                 link: function(scope, $element, attrs, ngModel) {
 
-                    function handleModelChange() {
-                        if (ngModel.$viewValue) {
+                    function handleModelChange(value) {
+                        if (ngModel.$viewValue || ngModel.$modelValue) {
                             $element.addClass('form__fillCheck--filled');
                         } else {
                             $element.removeClass('form__fillCheck--filled');
                         }
+
+                        return value;
                     }
 
                     if (ngModel) {
                         ngModel.$viewChangeListeners.push(handleModelChange);
+                        ngModel.$formatters.push(handleModelChange);
                         $timeout(handleModelChange);
                     }
                 }
@@ -1240,6 +1243,44 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
             this.close = function() {
                 model.show = false;
+            };
+        }])
+
+        .directive('selfieWebsiteScrapingDialog', ['SelfieWebsiteScrapingService',
+        function                                  ( SelfieWebsiteScrapingService ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/website_scraping_dialog.html',
+                controller: 'SelfieWebsiteScrapingController',
+                controllerAs: 'SelfieWebsiteScrapingCtrl',
+                scope: {},
+                link: function(scope) {
+                    scope.model = SelfieWebsiteScrapingService.model;
+                }
+            };
+        }])
+
+        .controller('SelfieWebsiteScrapingController', ['$scope','SelfieWebsiteScrapingService',
+        function                                       ( $scope , SelfieWebsiteScrapingService ) {
+            this.save = function() {
+                var model = $scope.model || {},
+                    links = model.links || [],
+                    logo = model.logo,
+                    data = {
+                        links: links.reduce(function(result, link) {
+                            if (link.selected) { result[link.name] = link.href; }
+                            return result;
+                        }, {}),
+                        images: {
+                            profile: logo.selected && logo.href
+                        }
+                    };
+
+                SelfieWebsiteScrapingService.success(data);
+            };
+
+            this.cancel = function() {
+                SelfieWebsiteScrapingService.failure();
             };
         }])
 
