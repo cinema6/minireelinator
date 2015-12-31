@@ -940,7 +940,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
-        function                                       ( $scope , CollateralService ) {
+                                                        'SelfieWebsiteScrapingService',
+        function                                       ( $scope , CollateralService ,
+                                                         SelfieWebsiteScrapingService ) {
             var AppCtrl = $scope.AppCtrl,
                 SelfieCampaignSponsorCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
@@ -1012,22 +1014,104 @@ function( angular , c6State  , PaginatedListState                    ,
             this.previouslyUploadedLogo = undefined;
 
             this.links = [
-                    'Website','Sharing','Facebook','Twitter',
+                    'Sharing','Facebook','Twitter',
                     'Instagram','YouTube','Pinterest'
                 ].map(function(name) {
-                    var href = card.links[name] || null,
-                        cssClass = name.toLowerCase(),
-                        isWebsite = cssClass === 'website';
+                    var href = card.links[name] || '',
+                        cssClass = name.toLowerCase();
 
                     return {
-                        cssClass: isWebsite ? 'link' : cssClass,
+                        cssClass: cssClass,
                         name: name,
                         href: href,
-                        required: isWebsite
+                        required: false
                     };
                 });
 
+            this.website = card.links.Website;
             this.sharing = card.shareLinks.facebook;
+            this.loadingSiteData = false;
+            this.siteDataFailure = false;
+            this.siteDataSuccess = false;
+
+            this.checkExistingWebsite = function() {
+                // this is called on-focus of website input
+                this.hasExistingWebsite = !!this.website;
+            };
+
+            this.validateWebsite = function () {
+                var website = this.website;
+
+                if (!website) { return; }
+
+                if (!(/^http:\/\/|https:\/\//).test(website)) {
+                    website = 'http://' + website;
+                }
+
+                return website;
+            };
+
+            this.setWebsiteData = function(data) {
+                var links = data.links;
+
+                SelfieCampaignSponsorCtrl.links.forEach(function(link) {
+                    var name = link.name.toLowerCase();
+                    link.href = links[name];
+                });
+
+                if (SelfieCampaignSponsorCtrl.logoOptions[0].type === 'default') {
+                    SelfieCampaignSponsorCtrl.logoOptions[0].src = data.images.profile;
+                } else {
+                    SelfieCampaignSponsorCtrl.logoOptions.unshift({
+                        type: 'default',
+                        label: 'Website Default',
+                        src: data.images.profile
+                    });
+                }
+
+                SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[0];
+            };
+
+            this.importWebsite = function() {
+                var website = this.validateWebsite();
+                if (!website) { return; }
+
+                SelfieWebsiteScrapingService.display(CollateralService.websiteData(website))
+                    .then(function(data) {
+                        SelfieCampaignSponsorCtrl.setWebsiteData(data);
+                    })
+                    .finally(function() {
+                        SelfieCampaignSponsorCtrl.hasExistingWebsite = false;
+                    });
+            };
+
+            this.handleWebsite = function() {
+                var website = this.validateWebsite(),
+                    currentWebsite = card.links.Website;
+
+                SelfieCampaignSponsorCtrl.siteDataSuccess = false;
+                SelfieCampaignSponsorCtrl.siteDataFailure = false;
+
+                if (!website || this.hasExistingWebsite || website === currentWebsite) {
+                    card.links.Website = website;
+                    return;
+                }
+
+                this.loadingSiteData = true;
+
+                CollateralService.websiteData(website)
+                    .then(function(data) {
+                        SelfieCampaignSponsorCtrl.siteDataSuccess = true;
+                        SelfieCampaignSponsorCtrl.setWebsiteData(data);
+                    })
+                    .catch(function() {
+                        SelfieCampaignSponsorCtrl.siteDataFailure = true;
+                    })
+                    .finally(function() {
+                        card.links.Website = website;
+                        SelfieCampaignSponsorCtrl.loadingSiteData = false;
+                    });
+            };
 
             this.updateLinks = function() {
                 var sharing = SelfieCampaignSponsorCtrl.sharing,
@@ -1098,6 +1182,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     break;
                 case 'none':
                     Ctrl.logo = undefined;
+                    break;
+                case 'default':
+                    Ctrl.logo = Ctrl.logoType.src;
                     break;
                 }
             });
