@@ -558,15 +558,13 @@ function( angular , c6uilib ,  c6Defines  ) {
                         var options = [];
 
                         forEach(data.links, function(link, key) {
-                            if (link) {
-                                options.push({
-                                    cssClass: ((/instagram|google/).test(key) ?
-                                        key : key + '-square'),
-                                    name: key,
-                                    href: link,
-                                    selected: true
-                                });
-                            }
+                            options.push({
+                                cssClass: ((/instagram|google/).test(key) ?
+                                    key : key + '-square'),
+                                name: key,
+                                href: link,
+                                selected: true
+                            });
                         });
 
                         return options;

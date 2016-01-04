@@ -31,7 +31,7 @@
 
 
             <fieldset class="form__item" ng-class="{'ui--hasError': !SelfieCampaignCtrl.card.links.Website && SelfieCampaignCtrl.validation.show }">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-website" ng-model="SelfieCampaignSponsorCtrl.website" ng-focus="SelfieCampaignSponsorCtrl.checkExistingWebsite()" ng-blur="SelfieCampaignSponsorCtrl.handleWebsite()">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-website" ng-model="SelfieCampaignSponsorCtrl.website" ng-focus="SelfieCampaignSponsorCtrl.checkImportability()" ng-blur="SelfieCampaignSponsorCtrl.checkWebsite()">
                 <label class="form__label" for="c6-sponsor-website">
                     <i class="fa fa-times ui--error"></i>
                     <i class="fa fa-link tk--active tk--link"></i> Website <span class="text--small"> (required) </span>
@@ -48,7 +48,7 @@
                 </div>
             </fieldset>
 
-            <div class="text--center" ng-show="SelfieCampaignSponsorCtrl.hasExistingWebsite">
+            <div class="text--center" ng-show="SelfieCampaignSponsorCtrl.allowImport">
                 <p>Would you like to import logo and social links?</p>
                 <div class="ui__btnHolder ui__btnHolder--sub">
                     <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.importWebsite()">Import</button>
@@ -66,17 +66,20 @@
             </div>
 
             <!-- loading success -->
-            <div class="assetLoader ui__connector" ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess && !SelfieCampaignSponsorCtrl.hasExistingWebsite">
+            <div class="assetLoader ui__connector" ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess && !SelfieCampaignSponsorCtrl.allowImport">
                 <div class="assetLoader__status assetLoader__status-success">
                     <div class="assetLoader__status--icon">
                         <i class="fa fa-check-circle"></i>
                     </div>
-                    <div class="assetLoader__status--text text-small">Retrieved logo and 3 social links</div>
+                    <div class="assetLoader__status--text text-small">
+                        Retrieved <span ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess.logo">logo</span>
+                        <span ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess.logo && SelfieCampaignSponsorCtrl.siteDataSuccess.links"> and </span> <span ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess.links"> {{SelfieCampaignSponsorCtrl.siteDataSuccess.links}} social link</span><span ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess.links > 1">s</span>
+                    </div>
                 </div>
             </div>
 
             <!-- loading failure -->
-            <div class="assetLoader ui__connector" ng-if="SelfieCampaignSponsorCtrl.siteDataFailure && !SelfieCampaignSponsorCtrl.hasExistingWebsite">
+            <div class="assetLoader ui__connector" ng-if="SelfieCampaignSponsorCtrl.siteDataFailure && !SelfieCampaignSponsorCtrl.allowImport">
                 <div class="assetLoader__status assetLoader__status-error">
                     <div class="assetLoader__status--icon">
                         <i class="fa fa-warning"></i>

@@ -53,7 +53,13 @@
                             <ul>
                                 <li class="grid two-thirds item--center" ng-repeat="option in model.links">
                                     <div class="grid__item three-quarters linkItem__title text--left">
-                                        <i class="fa fa-{{option.cssClass}}"></i>{{option.href}}
+                                        <i class="fa fa-{{option.cssClass}}"></i>
+                                        <span ng-if="option.href">{{option.href}}</span>
+                                        <span ng-if="!option.href">
+                                            Not found,
+                                            <span ng-if="option.selected"> remove any existing link</span>
+                                            <span ng-if="!option.selected"> keep any existing link</span>
+                                        </span>
                                     </div>
                                     <div class="grid__item one-tenth text--left item--right">
                                         <span class="checkbox--wrap">
@@ -68,10 +74,12 @@
             </div>
             <div class="grid__item" ng-show="!model.loading && !model.error">
                 <div class="alertMessage alert__warning item--center two-thirds text--center">
-                    This will overwrite your existing 
-                    <span ng-if="!!model.logo.href && !model.links.length">logo</span>
-                    <span ng-if="!model.logo.href && !!model.links.length">social links</span>
-                    <span ng-if="!!model.logo.href && !!model.links.length">logo and social links</span>
+                    Selected options will overwrite existing data
+                    <span style="display:none">
+                        <span ng-if="!!model.logo.href && !model.links.length">logo</span>
+                        <span ng-if="!model.logo.href && !!model.links.length">social links</span>
+                        <span ng-if="!!model.logo.href && !!model.links.length">logo and social links</span>
+                    </span>
                 </div>
             </div>
         </div>

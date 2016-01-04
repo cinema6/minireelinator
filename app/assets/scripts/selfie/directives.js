@@ -35,7 +35,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                 link: function(scope, $element, attrs, ngModel) {
 
                     function handleModelChange(value) {
-                        if (ngModel.$viewValue || ngModel.$modelValue) {
+                        if (ngModel.$modelValue) {
                             $element.addClass('form__fillCheck--filled');
                         } else {
                             $element.removeClass('form__fillCheck--filled');
@@ -80,7 +80,8 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                     options: '=',
                     config: '='
                 },
-                link: function(scope, $element, attrs) {
+                require: '?ngModel',
+                link: function(scope, $element, attrs, ngModel) {
                     function findBy(prop, value, arr) {
                         return arr.filter(function(item) {
                             return item[prop] === value;
@@ -130,11 +131,33 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         $element.removeClass('ui--active');
                     });
 
-                    scope.$watch('options', function(newOptions, oldOptions) {
-                        if (!newOptions) { return; }
+                    if (ngModel) {
+                        ngModel.$formatters.push(function(value) {
+                            // this only gets called when the model changes
+                            // programmatically. When a selection is made via
+                            // the DOM / UI only the $parser and $viewChange
+                            // listeners get called. This does get called
+                            // when the directive is initialized, so we can
+                            // use it to set the default option and render
+                            // the initial dropdown. It will also get called
+                            // if we programmatically change the selected
+                            // option (ie. when we import website data)
 
-                        renderOptions(newOptions, scope.config);
-                    });
+                            // this sets the selection to the correct option
+                            $element.val(scope.options.indexOf(value));
+
+                            // this will render the dropdown and current selection.
+                            // It needs to go in a $timeout because when this
+                            // is first called on initialization of the directive
+                            // the $viewValue has not been set yet, so the select2
+                            // rendering cannot determine the default selection
+                            $timeout(function() {
+                                renderOptions(scope.options, scope.config);
+                            });
+
+                            return value;
+                        });
+                    }
                 }
             };
         }])

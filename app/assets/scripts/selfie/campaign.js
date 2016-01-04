@@ -948,7 +948,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 advertiser = SelfieCampaignCtrl.advertiser,
                 defaultLogo = advertiser.defaultLogos && advertiser.defaultLogos.square,
-                card = SelfieCampaignCtrl.card;
+                card = SelfieCampaignCtrl.card,
+                websiteLogo = card.collateral.logoType === 'website' && card.collateral.logo;
 
             function typeify(name) {
                 switch (name) {
@@ -984,11 +985,11 @@ function( angular , c6State  , PaginatedListState                    ,
                         label: option
                     });
                     return result;
-                }, defaultLogo ?
+                }, websiteLogo ?
                 [{
-                    type: 'account',
-                    label: 'Account Default',
-                    src: defaultLogo
+                    type: 'website',
+                    label: 'Website Default',
+                    src: websiteLogo
                 }] : [])
                 .concat(SelfieCampaignCtrl.logos
                     .map(function(logo) {
@@ -1034,9 +1035,9 @@ function( angular , c6State  , PaginatedListState                    ,
             this.siteDataFailure = false;
             this.siteDataSuccess = false;
 
-            this.checkExistingWebsite = function() {
+            this.checkImportability = function() {
                 // this is called on-focus of website input
-                this.hasExistingWebsite = !!this.website;
+                this.allowImport = !!this.website;
             };
 
             this.validateWebsite = function () {
@@ -1052,24 +1053,32 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.setWebsiteData = function(data) {
-                var links = data.links;
+                var links = data.links,
+                    logo = data.images && data.images.profile;
 
-                SelfieCampaignSponsorCtrl.links.forEach(function(link) {
-                    var name = link.name.toLowerCase();
-                    link.href = links[name];
-                });
+                if (links) {
+                    this.links.forEach(function(link) {
+                        var name = link.name.toLowerCase();
+                        link.href = (!!links[name] || links[name] === null) ?
+                            links[name] : link.href;
+                    });
 
-                if (SelfieCampaignSponsorCtrl.logoOptions[0].type === 'default') {
-                    SelfieCampaignSponsorCtrl.logoOptions[0].src = data.images.profile;
-                } else {
-                    SelfieCampaignSponsorCtrl.logoOptions = [{
-                        type: 'default',
-                        label: 'Website Default',
-                        src: data.images.profile
-                    }].concat(SelfieCampaignSponsorCtrl.logoOptions);
+                    this.updateLinks();
                 }
 
-                SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[0];
+                if (logo) {
+                    if (this.logoOptions[0].type === 'website') {
+                        this.logoOptions[0].src = logo;
+                    } else {
+                        this.logoOptions = [{
+                            type: 'website',
+                            label: 'Website Default',
+                            src: logo
+                        }].concat(this.logoOptions);
+                    }
+
+                    this.logoType = SelfieCampaignSponsorCtrl.logoOptions[0];
+                }
             };
 
             this.importWebsite = function() {
@@ -1081,18 +1090,18 @@ function( angular , c6State  , PaginatedListState                    ,
                         SelfieCampaignSponsorCtrl.setWebsiteData(data);
                     })
                     .finally(function() {
-                        SelfieCampaignSponsorCtrl.hasExistingWebsite = false;
+                        SelfieCampaignSponsorCtrl.allowImport = false;
                     });
             };
 
-            this.handleWebsite = function() {
+            this.checkWebsite = function() {
                 var website = this.validateWebsite(),
                     currentWebsite = card.links.Website;
 
-                SelfieCampaignSponsorCtrl.siteDataSuccess = false;
-                SelfieCampaignSponsorCtrl.siteDataFailure = false;
+                this.siteDataSuccess = false;
+                this.siteDataFailure = false;
 
-                if (!website || this.hasExistingWebsite || website === currentWebsite) {
+                if (!website || this.allowImport || website === currentWebsite) {
                     card.links.Website = website;
                     return;
                 }
@@ -1101,7 +1110,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 CollateralService.websiteData(website)
                     .then(function(data) {
-                        SelfieCampaignSponsorCtrl.siteDataSuccess = true;
+                        SelfieCampaignSponsorCtrl.siteDataSuccess = {
+                            logo: !!data.images.profile,
+                            links: Object.keys(data.links).filter(function(key) {
+                                return !!data.links[key];
+                            }).length
+                        };
                         SelfieCampaignSponsorCtrl.setWebsiteData(data);
                     })
                     .catch(function() {
@@ -1155,7 +1169,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 var selectedType = SelfieCampaignSponsorCtrl.logoType.type;
 
                 card.collateral.logo = newLogo;
-                card.collateral.logoType = /file|url/.test(selectedType) ? selectedType : undefined;
+                card.collateral.logoType = /file|url|website/.test(selectedType) ? selectedType : undefined;
             });
 
             // we do very different things depending on what the
@@ -1183,7 +1197,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 case 'none':
                     Ctrl.logo = undefined;
                     break;
-                case 'default':
+                case 'website':
                     Ctrl.logo = Ctrl.logoType.src;
                     break;
                 }
