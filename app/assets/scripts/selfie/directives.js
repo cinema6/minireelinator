@@ -76,17 +76,22 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
         function                  ( $timeout , $parse ) {
             return {
                 restrict: 'A',
+                scope: {
+                    options: '=',
+                    config: '='
+                },
                 link: function(scope, $element, attrs) {
-                    $timeout(function() {
-                        var config = $parse(attrs.config)(scope) || {},
-                            options = $parse(attrs.options)(scope);
+                    function findBy(prop, value, arr) {
+                        return arr.filter(function(item) {
+                            return item[prop] === value;
+                        })[0];
+                    }
 
-                        function findBy(prop, value, arr) {
-                            return arr.filter(function(item) {
-                                return item[prop] === value;
-                            })[0];
-                        }
+                    function shouldHideDefaultOption() {
+                        return attrs.unselectDefault && $element.val() === '0';
+                    }
 
+                    function renderOptions(options, config) {
                         function format(option) {
                             var found = findBy('label', option.text, options) || {};
 
@@ -98,9 +103,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                             return $option;
                         }
 
-                        function shouldHideDefaultOption() {
-                            return attrs.unselectDefault && $element.val() === '0';
-                        }
+                        config = config || {};
 
                         if (attrs.thumbnails) {
                             config.templateResult = format;
@@ -113,18 +116,24 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         if (attrs.preselected || ($element.val() && !shouldHideDefaultOption())) {
                             $element.addClass('form__fillCheck--filled');
                         }
+                    }
 
-                        $element.on('select2:open', function() {
-                            $element.addClass('form__fillCheck--filled');
-                            $element.addClass('ui--active');
-                        });
+                    $element.on('select2:open', function() {
+                        $element.addClass('form__fillCheck--filled');
+                        $element.addClass('ui--active');
+                    });
 
-                        $element.on('select2:close', function() {
-                            if (!$element.val() || shouldHideDefaultOption()) {
-                                $element.removeClass('form__fillCheck--filled');
-                            }
-                            $element.removeClass('ui--active');
-                        });
+                    $element.on('select2:close', function() {
+                        if (!$element.val() || shouldHideDefaultOption()) {
+                            $element.removeClass('form__fillCheck--filled');
+                        }
+                        $element.removeClass('ui--active');
+                    });
+
+                    scope.$watch('options', function(newOptions, oldOptions) {
+                        if (!newOptions) { return; }
+
+                        renderOptions(newOptions, scope.config);
                     });
                 }
             };

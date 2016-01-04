@@ -1062,11 +1062,11 @@ function( angular , c6State  , PaginatedListState                    ,
                 if (SelfieCampaignSponsorCtrl.logoOptions[0].type === 'default') {
                     SelfieCampaignSponsorCtrl.logoOptions[0].src = data.images.profile;
                 } else {
-                    SelfieCampaignSponsorCtrl.logoOptions.unshift({
+                    SelfieCampaignSponsorCtrl.logoOptions = [{
                         type: 'default',
                         label: 'Website Default',
                         src: data.images.profile
-                    });
+                    }].concat(SelfieCampaignSponsorCtrl.logoOptions);
                 }
 
                 SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[0];
