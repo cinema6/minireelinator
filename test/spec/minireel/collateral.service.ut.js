@@ -554,6 +554,108 @@
                         expect(success).toHaveBeenCalledWith('collateral/userFiles/ce114e4501d2f4e2dcea3e17b546f339.jpg');
                     });
                 });
+
+                describe('websiteData(uri)', function() {
+                    var success, failure, deferred, response;
+
+                    beforeEach(function() {
+                        success = jasmine.createSpy('success');
+                        failure = jasmine.createSpy('failure');
+                        deferred = $q.defer();
+                    });
+
+                    describe('when request succeeds', function() {
+                        it('should reject promise if no data is found', function() {
+                            response = {
+                                links: {
+                                    facebook: null,
+                                    twitter: null,
+                                    instagram: null,
+                                    pinterest: null
+                                },
+                                images: {
+                                    profile: null
+                                }
+                            };
+
+                            $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
+                                .respond(200, response);
+
+                            CollateralService.websiteData('http://mysite.com')
+                                .then(success, failure);
+
+                            $httpBackend.flush();
+
+                            expect(failure).toHaveBeenCalled();
+                            expect(success).not.toHaveBeenCalled();
+                        });
+
+                        it('should resolve with data if any links exist', function() {
+                            response = {
+                                links: {
+                                    facebook: null,
+                                    twitter: null,
+                                    instagram: 'http://instagram.com',
+                                    pinterest: null
+                                },
+                                images: {
+                                    profile: null
+                                }
+                            };
+
+                            $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
+                                .respond(200, response);
+
+                            CollateralService.websiteData('http://mysite.com')
+                                .then(success, failure);
+
+                            $httpBackend.flush();
+
+                            expect(success).toHaveBeenCalledWith(response);
+                            expect(failure).not.toHaveBeenCalled();
+                        });
+
+                        it('should resolve with data if logo exists', function() {
+                            response = {
+                                links: {
+                                    facebook: null,
+                                    twitter: null,
+                                    instagram: null,
+                                    pinterest: null
+                                },
+                                images: {
+                                    profile: 'http://mysite.com/logo.jpg'
+                                }
+                            };
+
+                            $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
+                                .respond(200, response);
+
+                            CollateralService.websiteData('http://mysite.com')
+                                .then(success, failure);
+
+                            $httpBackend.flush();
+
+                            expect(success).toHaveBeenCalledWith(response);
+                            expect(failure).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('when request fails', function() {
+                        it('should reject the promise', function() {
+                            $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
+                                .respond(404, 'NOT FOUND');
+
+                            CollateralService.websiteData('http://mysite.com')
+                                .then(success, failure);
+
+                            $httpBackend.flush();
+
+                            expect(failure).toHaveBeenCalled();
+                            expect(success).not.toHaveBeenCalled();
+                        });
+                    });
+                });
             });
         });
     });

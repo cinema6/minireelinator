@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('SelfieCampaignSponsorController', function() {
+    fdescribe('SelfieCampaignSponsorController', function() {
         var $rootScope,
             $controller,
             $scope,
@@ -58,7 +58,7 @@ define(['app'], function(appModule) {
 
         describe('properties', function() {
             describe('logoOptions', function() {
-                describe('when there is no advertiser default logo', function() {
+                describe('when there is no website default logo', function() {
                     it('should have three options', function() {
                         var options = [
                             {type: 'none', label: 'None'},
@@ -70,18 +70,17 @@ define(['app'], function(appModule) {
                     });
                 });
 
-                describe('when the advertiser account has a default logo', function() {
+                describe('when there is a website default logo', function() {
                     it('should include it in the first position', function() {
-                        advertiser.defaultLogos = {
-                            square: 'square.jpg'
-                        };
+                        card.collateral.logoType = 'website';
+                        card.collateral.logo = 'http://mysite.com/logo.jpg';
 
                         compileCtrl();
 
                         expect(SelfieCampaignSponsorCtrl.logoOptions[0]).toEqual({
-                            type: 'account',
-                            label: 'Account Default',
-                            src: 'square.jpg'
+                            type: 'website',
+                            label: 'Website Default',
+                            src: 'http://mysite.com/logo.jpg'
                         });
                     });
                 });
@@ -197,13 +196,6 @@ define(['app'], function(appModule) {
 
                     compileCtrl();
 
-                    expect(SelfieCampaignSponsorCtrl.links).toContain({
-                        cssClass: 'link',
-                        name: 'Website',
-                        href: 'http://mybrand.com',
-                        required: true
-                    });
-
                     ['YouTube','Facebook'].forEach(function(link) {
                         expect(SelfieCampaignSponsorCtrl.links).toContain({
                             cssClass: link.toLowerCase(),
@@ -217,10 +209,26 @@ define(['app'], function(appModule) {
                         expect(SelfieCampaignSponsorCtrl.links).toContain({
                             cssClass: link.toLowerCase(),
                             name: link,
-                            href: null,
+                            href: '',
                             required: false
                         });
                     });
+                });
+            });
+
+            describe('website', function() {
+                it('should be the website form the card', function() {
+                    card.links.Website = undefined;
+
+                    compileCtrl();
+
+                    expect(SelfieCampaignSponsorCtrl.website).toEqual(undefined);
+
+                    card.links.Website = 'http://website.com';
+
+                    compileCtrl();
+
+                    expect(SelfieCampaignSponsorCtrl.website).toEqual('http://website.com');
                 });
             });
 
@@ -240,27 +248,66 @@ define(['app'], function(appModule) {
         });
 
         describe('methods', function() {
+            describe('checkImportability()', function() {
+                it('should be true is website is set', function() {
+                    SelfieCampaignSponsorCtrl.checkImportability();
+
+                    expect(SelfieCampaignSponsorCtrl.allowImport).toBe(false);
+
+                    SelfieCampaignSponsorCtrl.website = 'http://website.com';
+
+                    SelfieCampaignSponsorCtrl.checkImportability();
+
+                    expect(SelfieCampaignSponsorCtrl.allowImport).toBe(true);
+                });
+            });
+
+            describe('validateWebsite()', function() {
+                describe('when SelfieCampaignSponsorCtrl.website is undefined', function() {
+                    it('should return undefined', function() {
+                        SelfieCampaignSponsorCtrl.website = undefined;
+                        expect(SelfieCampaignSponsorCtrl.validateWebsite()).toEqual(undefined);
+                        SelfieCampaignSponsorCtrl.website = null;
+                        expect(SelfieCampaignSponsorCtrl.validateWebsite()).toEqual(undefined);
+                    });
+                });
+
+                describe('when SelfieCampaignSponsorCtrl.website has no protocol', function() {
+                    it('should add it', function() {
+                        SelfieCampaignSponsorCtrl.website = 'website.com';
+                        expect(SelfieCampaignSponsorCtrl.validateWebsite()).toEqual('http://website.com');
+                    });
+                });
+
+                describe('when SelfieCampaignSponsorCtrl.website has a protocol', function() {
+                    it('should leave it', function() {
+                        SelfieCampaignSponsorCtrl.website = 'https://website.com';
+                        expect(SelfieCampaignSponsorCtrl.validateWebsite()).toEqual('https://website.com');
+                    });
+                });
+            });
+
             describe('updateLinks()', function() {
                 it('should add http:// to links that have no protocol', function() {
-                    SelfieCampaignSponsorCtrl.links[0].href = 'cinema6.com';
+                    SelfieCampaignSponsorCtrl.links[1].href = 'cinema6.com';
 
                     SelfieCampaignSponsorCtrl.updateLinks();
 
-                    expect(card.links.Website).toEqual('http://cinema6.com');
+                    expect(card.links.Facebook).toEqual('http://cinema6.com');
                 });
 
                 it('should add and remove links on the actual card', function() {
-                    SelfieCampaignSponsorCtrl.links[0].href = 'http://mywebsite.com';
+                    SelfieCampaignSponsorCtrl.links[1].href = 'http://mywebsite.com';
 
                     SelfieCampaignSponsorCtrl.updateLinks();
 
-                    expect(card.links.Website).toEqual('http://mywebsite.com');
+                    expect(card.links.Facebook).toEqual('http://mywebsite.com');
 
-                    SelfieCampaignSponsorCtrl.links[0].href = '';
+                    SelfieCampaignSponsorCtrl.links[1].href = '';
 
                     SelfieCampaignSponsorCtrl.updateLinks();
 
-                    expect(card.links.Website).toBeUndefined();
+                    expect(card.links.Facebook).toBeUndefined();
                 });
 
                 describe('shareLinks', function() {
@@ -365,6 +412,17 @@ define(['app'], function(appModule) {
 
                     expect(card.collateral.logo).toBe('/differentlogo.jpg');
                     expect(card.collateral.logoType).toBe(undefined);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignSponsorCtrl.logoType.type = 'website';
+                    });
+
+                    $scope.$apply(function() {
+                        SelfieCampaignSponsorCtrl.logo = '/website.jpg';
+                    });
+
+                    expect(card.collateral.logo).toBe('/website.jpg');
+                    expect(card.collateral.logoType).toBe('website');
                 });
             });
 
@@ -414,11 +472,10 @@ define(['app'], function(appModule) {
                     });
                 });
 
-                describe('when default account logo is chosen', function() {
+                describe('when website default logo is chosen', function() {
                     it('should show the account default logo', function() {
-                        advertiser.defaultLogos = {
-                            square: 'square.jpg'
-                        };
+                        card.collateral.logoType = 'website';
+                        card.collateral.logo = 'square.jpg';
 
                         compileCtrl();
 
@@ -432,9 +489,8 @@ define(['app'], function(appModule) {
 
                 describe('when "none" is selected', function() {
                     it('should remove any logo', function() {
-                        advertiser.defaultLogos = {
-                            square: 'square.jpg'
-                        };
+                        card.collateral.logoType = 'website';
+                        card.collateral.logo = 'square.jpg';
 
                         compileCtrl();
 
