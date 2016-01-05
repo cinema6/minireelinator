@@ -47,7 +47,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controllerAs = 'SelfieCampaignsCtrl';
 
                 this.filter = $location.search().filter ||
-                    'draft,pending,approved,active,paused,canceled,expired,error';
+                    'draft,pending,active,paused,canceled,expired,error';
                 this.filterBy = $location.search().filterBy || 'statuses';
                 this.sort = $location.search().sort || 'lastUpdated,-1';
 
@@ -190,7 +190,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.filters = [
                     'draft',
                     'pending',
-                    'approved',
                     'active',
                     'paused',
                     'canceled',
