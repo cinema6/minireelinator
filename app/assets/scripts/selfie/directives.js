@@ -72,8 +72,8 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
-        .directive('c6SelectBox', ['$timeout','$parse',
-        function                  ( $timeout , $parse ) {
+        .directive('c6SelectBox', ['$timeout',
+        function                  ( $timeout ) {
             return {
                 restrict: 'A',
                 scope: {
@@ -1292,8 +1292,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
-        .controller('SelfieWebsiteScrapingDialogController', ['$scope','SelfieWebsiteScrapingDialogService',
-        function                                             ( $scope , SelfieWebsiteScrapingDialogService ) {
+        .controller('SelfieWebsiteScrapingDialogController', ['$scope',
+                                                           'SelfieWebsiteScrapingDialogService',
+        function                                             ( $scope ,
+                                                            SelfieWebsiteScrapingDialogService ) {
             this.save = function() {
                 var model = $scope.model || {},
                     links = model.links || [],
