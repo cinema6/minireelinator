@@ -940,9 +940,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
-                                                        'SelfieWebsiteScrapingService',
+                                                        'SelfieWebsiteScrapingDialogService',
         function                                       ( $scope , CollateralService ,
-                                                         SelfieWebsiteScrapingService ) {
+                                                         SelfieWebsiteScrapingDialogService ) {
             var AppCtrl = $scope.AppCtrl,
                 SelfieCampaignSponsorCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
@@ -1085,7 +1085,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 var website = this.validateWebsite();
                 if (!website) { return; }
 
-                SelfieWebsiteScrapingService.display(CollateralService.websiteData(website))
+                SelfieWebsiteScrapingDialogService.display(CollateralService.websiteData(website))
                     .then(function(data) {
                         SelfieCampaignSponsorCtrl.setWebsiteData(data);
                     })

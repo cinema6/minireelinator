@@ -44,9 +44,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     id: 'cam-1',
                     status: 'active',
                     name: 'Summer Campaign',
+                    advertiserDisplayName: 'Volvo',
                     cards: [
                         {
-                            id: 'rc-1'
+                            id: 'rc-1',
+                            collateral: {
+                                logo: 'mylogo.jpg'
+                            }
                         }
                     ]
                 },
@@ -54,9 +58,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     id: 'cam-2',
                     status: 'paused',
                     name: 'Summer Campaign',
+                    advertiserDisplayName: 'Volvo',
                     cards: [
                         {
-                            id: 'rc-2'
+                            id: 'rc-2',
+                            collateral: {
+                                logo: 'volvo.jpg'
+                            }
                         }
                     ]
                 },
@@ -64,9 +72,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     id: 'cam-3',
                     status: 'error',
                     name: 'Fall Campaign',
+                    advertiserDisplayName: 'Diageo',
                     cards: [
                         {
-                            id: 'rc-3'
+                            id: 'rc-3',
+                            collateral: {
+                                logo: 'pending-campaign.jpg'
+                            }
                         }
                     ]
                 },
@@ -74,9 +86,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     id: 'cam-4',
                     status: 'expired',
                     name: 'Ketel One Q4 Campaign',
+                    advertiserDisplayName: 'Ketel One',
                     cards: [
                         {
-                            id: 'rc-4'
+                            id: 'rc-4',
+                            collateral: {
+                                logo: 'ketel-one.jpg'
+                            }
                         }
                     ]
                 },
@@ -84,59 +100,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     id: 'cam-4',
                     status: 'expired',
                     name: 'Ketel One Q4 Campaign',
+                    advertiserDisplayName: 'Ketel One',
                     cards: [
                         {
-                            id: 'rc-4'
+                            id: 'rc-4',
+                            collateral: {
+                                logo: 'ketel-one.jpg'
+                            }
                         }
                     ]
-                }
-            ];
-
-            cards = [
-                {
-                    id: 'rc-1',
-                    collateral: {
-                        logo: 'mylogo.jpg'
-                    },
-                    params: {
-                        sponsor: 'Volvo'
-                    }
-                },
-                {
-                    id: 'rc-2',
-                    collateral: {
-                        logo: 'volvo.jpg'
-                    },
-                    params: {
-                        sponsor: 'Volvo'
-                    }
-                },
-                {
-                    id: 'rc-3',
-                    collateral: {
-                        logo: 'pending-campaign.jpg'
-                    },
-                    params: {
-                        sponsor: 'Diageo'
-                    }
-                },
-                {
-                    id: 'rc-4',
-                    collateral: {
-                        logo: 'ketel-one.jpg'
-                    },
-                    params: {
-                        sponsor: 'Ketel One'
-                    }
-                },
-                {
-                    id: 'rc-4',
-                    collateral: {
-                        logo: 'mylogo.jpg'
-                    },
-                    params: {
-                        sponsor: 'Ketel One'
-                    }
                 }
             ];
 
@@ -155,11 +127,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
 
-                    $httpBackend.expectGET('/api/campaigns?application=selfie&fields=cards&limit=50&org=o-123&skip=0&sort=lastUpdated,-1&statuses=active,paused,error')
+                    $httpBackend.expectGET('/api/campaigns?application=selfie&fields=cards,advertiserDisplayName&limit=50&org=o-123&skip=0&sort=lastUpdated,-1&statuses=active,paused,error')
                         .respond(200, campaigns);
-
-                    $httpBackend.expectGET('/api/content/cards?ids=rc-1,rc-2,rc-3,rc-4')
-                        .respond(200, cards);
 
                     SelfieLogoService.getLogos().then(success, failure);
 
@@ -170,7 +139,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     it('should query by that org', function() {
                         var org = 'o-99999';
 
-                        $httpBackend.expectGET('/api/campaigns?application=selfie&fields=cards&limit=50&org='+org+'&skip=0&sort=lastUpdated,-1&statuses=active,paused,error')
+                        $httpBackend.expectGET('/api/campaigns?application=selfie&fields=cards,advertiserDisplayName&limit=50&org='+org+'&skip=0&sort=lastUpdated,-1&statuses=active,paused,error')
                             .respond(200, campaigns);
 
                         SelfieLogoService.getLogos(org);
@@ -206,7 +175,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
                 });
 
-                describe('if any $http request fails', function() {
+                describe('if the campaign request fails', function() {
                     var success, failure;
 
                     beforeEach(function() {
@@ -215,21 +184,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
 
                     it('should reject the promise if campaigns request fails', function() {
-                        $httpBackend.expectGET('/api/campaigns?application=selfie&fields=cards&limit=50&org=o-123&skip=0&sort=lastUpdated,-1&statuses=active,paused,error')
-                            .respond(404, 'NOT FOUND');
-
-                        SelfieLogoService.getLogos().then(success, failure);
-
-                        $httpBackend.flush();
-
-                        expect(failure).toHaveBeenCalled();
-                    });
-
-                    it('should reject the promise if cards request fails', function() {
-                        $httpBackend.expectGET('/api/campaigns?application=selfie&fields=cards&limit=50&org=o-123&skip=0&sort=lastUpdated,-1&statuses=active,paused,error')
-                            .respond(200, campaigns);
-
-                        $httpBackend.expectGET('/api/content/cards?ids=rc-1,rc-2,rc-3,rc-4')
+                        $httpBackend.expectGET('/api/campaigns?application=selfie&fields=cards,advertiserDisplayName&limit=50&org=o-123&skip=0&sort=lastUpdated,-1&statuses=active,paused,error')
                             .respond(404, 'NOT FOUND');
 
                         SelfieLogoService.getLogos().then(success, failure);

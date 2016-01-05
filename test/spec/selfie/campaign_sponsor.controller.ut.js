@@ -1,13 +1,14 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    fdescribe('SelfieCampaignSponsorController', function() {
+    describe('SelfieCampaignSponsorController', function() {
         var $rootScope,
             $controller,
             $scope,
             $q,
             CollateralService,
-            SelfieCampaignSponsorCtrl;
+            SelfieCampaignSponsorCtrl,
+            SelfieWebsiteScrapingDialogService;
 
         var advertiser,
             card,
@@ -27,6 +28,7 @@ define(['app'], function(appModule) {
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 CollateralService = $injector.get('CollateralService');
+                SelfieWebsiteScrapingDialogService = $injector.get('SelfieWebsiteScrapingDialogService');
 
                 advertiser = {};
                 logos = [];
@@ -287,6 +289,349 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('setWebsiteData(data)', function() {
+                beforeEach(function() {
+                    card.links = {
+                        Facebook: 'http://facebook.com',
+                        Twitter: 'http://twitter.com',
+                        Instagram: 'http://Instagram.com',
+                        Website: 'http://website.com',
+                        Action: 'http://action.com'
+                    };
+
+                    compileCtrl();
+
+                    spyOn(SelfieCampaignSponsorCtrl, 'updateLinks');
+                });
+
+                describe('when data has links', function() {
+                    it('should set or nullify links on the controller if defined and call Ctrl.updateLinks', function() {
+                        var data = {
+                            links: {
+                                facebook: undefined,
+                                twitter: null,
+                                instagram: 'http://instagram.com/myfeed',
+                                google: 'http://google.com'
+                            }
+                        };
+
+                        SelfieCampaignSponsorCtrl.setWebsiteData(data);
+
+                        expect(SelfieCampaignSponsorCtrl.links[1].href).toEqual(card.links.Facebook);
+                        expect(SelfieCampaignSponsorCtrl.links[2].href).toEqual(data.links.twitter);
+                        expect(SelfieCampaignSponsorCtrl.links[3].href).toEqual(data.links.instagram);
+                        expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
+                    });
+                });
+
+                describe('when data has no links', function() {
+                    it('should not set or nullify any links and should not call Ctrl.updateLinks', function() {
+                        var data = {};
+
+                        SelfieCampaignSponsorCtrl.setWebsiteData(data);
+
+                        expect(SelfieCampaignSponsorCtrl.links[1].href).toEqual(card.links.Facebook);
+                        expect(SelfieCampaignSponsorCtrl.links[2].href).toEqual(card.links.Twitter);
+                        expect(SelfieCampaignSponsorCtrl.links[3].href).toEqual(card.links.Instagram);
+                        expect(SelfieCampaignSponsorCtrl.updateLinks).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when data has a logo', function() {
+                    describe('when a website default logo already exists', function() {
+                        beforeEach(function() {
+                            SelfieCampaignSponsorCtrl.setWebsiteData({
+                                images: {
+                                    profile: 'http://mylogo.com'
+                                }
+                            });
+
+                            SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[2];
+                        });
+
+                        it('should update the src and set logoType to website', function() {
+                            expect(SelfieCampaignSponsorCtrl.logoOptions[0].type).toBe('website');
+
+                            SelfieCampaignSponsorCtrl.setWebsiteData({
+                                images: {
+                                    profile: 'http://mynewlogo.com'
+                                }
+                            });
+
+                            expect(SelfieCampaignSponsorCtrl.logoOptions[0].src).toBe('http://mynewlogo.com');
+                            expect(SelfieCampaignSponsorCtrl.logoType).toBe(SelfieCampaignSponsorCtrl.logoOptions[0]);
+                        });
+                    });
+
+                    describe('when a website logo does not exist', function() {
+                        it('should add the website default option', function() {
+                            expect(SelfieCampaignSponsorCtrl.logoOptions[0].type).toBe('none');
+                            expect(SelfieCampaignSponsorCtrl.logoOptions.length).toBe(3);
+
+                            SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[2];
+                            SelfieCampaignSponsorCtrl.setWebsiteData({
+                                images: {
+                                    profile: 'http://mylogo.com'
+                                }
+                            });
+
+                            expect(SelfieCampaignSponsorCtrl.logoOptions[0].type).toBe('website');
+                            expect(SelfieCampaignSponsorCtrl.logoOptions[0].src).toBe('http://mylogo.com');
+                            expect(SelfieCampaignSponsorCtrl.logoOptions.length).toBe(4);
+                            expect(SelfieCampaignSponsorCtrl.logoType).toBe(SelfieCampaignSponsorCtrl.logoOptions[0]);
+                        });
+                    });
+                });
+
+                describe('when data has no logo', function() {
+                    it('should not add the website default option or change the logoType', function() {
+                        SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[2];
+
+                        SelfieCampaignSponsorCtrl.setWebsiteData({});
+
+                        expect(SelfieCampaignSponsorCtrl.logoOptions[0].type).not.toBe('website');
+                        expect(SelfieCampaignSponsorCtrl.logoType).toBe(SelfieCampaignSponsorCtrl.logoOptions[2]);
+                    });
+                });
+            });
+
+            describe('checkWebsite()', function() {
+                var displayDeferred, dataDeferred;
+
+                beforeEach(function() {
+                    displayDeferred = $q.defer();
+                    dataDeferred = $q.defer();
+
+                    spyOn(SelfieWebsiteScrapingDialogService, 'display').and.returnValue(displayDeferred.promise);
+                    spyOn(SelfieCampaignSponsorCtrl, 'setWebsiteData');
+                    spyOn(CollateralService, 'websiteData').and.returnValue(dataDeferred);
+                });
+
+                describe('when there is no website', function() {
+                    it('should do nothing', function() {
+                        spyOn(SelfieCampaignSponsorCtrl, 'validateWebsite').and.returnValue(false);
+
+                        SelfieCampaignSponsorCtrl.importWebsite();
+
+                        expect(SelfieWebsiteScrapingDialogService.display).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when there is a website', function() {
+                    beforeEach(function() {
+                        spyOn(SelfieCampaignSponsorCtrl, 'validateWebsite').and.returnValue('http://website.com');
+
+                        SelfieCampaignSponsorCtrl.importWebsite();
+                    });
+
+                    it('should pass the request for website data to the website scraping dialog', function() {
+                        expect(SelfieWebsiteScrapingDialogService.display).toHaveBeenCalledWith(dataDeferred);
+                    });
+
+                    describe('when display promise resolves with website data', function() {
+                        var data;
+
+                        beforeEach(function() {
+                            data = { links: {}, images: {} };
+
+                            SelfieCampaignSponsorCtrl.allowImport = true;
+
+                            $rootScope.$apply(function() {
+                                displayDeferred.resolve(data);
+                            });
+                        });
+
+                        it('should pass it to setWebsiteData()', function() {
+                            expect(SelfieCampaignSponsorCtrl.setWebsiteData).toHaveBeenCalledWith(data);
+                        });
+
+                        it('should set allowImport flag to false', function() {
+                            expect(SelfieCampaignSponsorCtrl.allowImport).toBe(false);
+                        });
+                    });
+
+                    describe('when display promise rejects', function() {
+                        beforeEach(function() {
+                            SelfieCampaignSponsorCtrl.allowImport = true;
+
+                            $rootScope.$apply(function() {
+                                displayDeferred.reject('canceled dialog');
+                            });
+                        });
+
+                        it('should not call setWebsiteData()', function() {
+                            expect(SelfieCampaignSponsorCtrl.setWebsiteData).not.toHaveBeenCalled();
+                        });
+
+                        it('should set allowImport flag to false', function() {
+                            expect(SelfieCampaignSponsorCtrl.allowImport).toBe(false);
+                        });
+                    });
+                });
+            });
+
+            describe('checkWebsite()', function() {
+                var deferred;
+
+                beforeEach(function() {
+                    deferred = $q.defer();
+
+                    spyOn(CollateralService, 'websiteData').and.returnValue(deferred.promise);
+                    spyOn(SelfieCampaignSponsorCtrl, 'setWebsiteData');
+                });
+
+                it('should set success and failure flags to false', function() {
+                    SelfieCampaignSponsorCtrl.siteDataSuccess = true;
+                    SelfieCampaignSponsorCtrl.siteDataFailure = true;
+
+                    SelfieCampaignSponsorCtrl.checkWebsite();
+
+                    expect(SelfieCampaignSponsorCtrl.siteDataSuccess).toBe(false);
+                    expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(false);
+                });
+
+                describe('when there is no website', function() {
+                    it('should do nothing', function() {
+                        SelfieCampaignSponsorCtrl.allowImport = false;
+                        SelfieCampaignSponsorCtrl.website = undefined;
+                        card.links.Website = 'http://link.com';
+
+                        SelfieCampaignSponsorCtrl.checkWebsite();
+
+                        expect(CollateralService.websiteData).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when allowImport is true', function() {
+                    it('should do nothing', function() {
+                        SelfieCampaignSponsorCtrl.allowImport = true;
+                        SelfieCampaignSponsorCtrl.website = 'http://website.com';
+                        card.links.Website = 'http://link.com';
+
+                        SelfieCampaignSponsorCtrl.checkWebsite();
+
+                        expect(CollateralService.websiteData).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when Ctrl.website === card.links.website', function() {
+                    it('should do nothing', function() {
+                        SelfieCampaignSponsorCtrl.allowImport = false;
+                        SelfieCampaignSponsorCtrl.website = 'http://website.com';
+                        card.links.Website = 'http://website.com';
+
+                        SelfieCampaignSponsorCtrl.checkWebsite();
+
+                        expect(CollateralService.websiteData).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when website data should be fetched', function() {
+                    beforeEach(function() {
+                        SelfieCampaignSponsorCtrl.allowImport = false;
+                        SelfieCampaignSponsorCtrl.website = 'http://website.com';
+                        card.links.Website = 'http://link.com';
+
+                        SelfieCampaignSponsorCtrl.checkWebsite();
+                    });
+
+                    it('should request websiteData', function() {
+                        expect(CollateralService.websiteData).toHaveBeenCalledWith('http://website.com');
+                    });
+
+                    describe('when the promise resolves with data', function() {
+                        describe('when the data has a logo', function() {
+                            it('should set flag for success message', function() {
+                                var data = { links: {}, images: { profile: 'http://logo.com' } };
+
+                                $rootScope.$apply(function() {
+                                    deferred.resolve(data);
+                                });
+
+                                expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(false);
+                                expect(SelfieCampaignSponsorCtrl.siteDataSuccess.logo).toBe(true);
+                            });
+                        });
+
+                        describe('when the data has no logo', function() {
+                            it('should set flag for success message', function() {
+                                var data = { links: {}, images: {} };
+
+                                $rootScope.$apply(function() {
+                                    deferred.resolve(data);
+                                });
+
+                                expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(false);
+                                expect(SelfieCampaignSponsorCtrl.siteDataSuccess.logo).toBe(false);
+                            });
+                        });
+
+                        describe('when the data has links', function() {
+                            it('should set flag for success message', function() {
+                                var data = {
+                                    links: {
+                                        facebook: 'http://facebook.com',
+                                        twitter: 'http://twitter.com'
+                                    },
+                                    images: {}
+                                };
+
+                                $rootScope.$apply(function() {
+                                    deferred.resolve(data);
+                                });
+
+                                expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(false);
+                                expect(SelfieCampaignSponsorCtrl.siteDataSuccess.links).toBe(2);
+                            });
+                        });
+
+                        describe('when the data has no links', function() {
+                            it('should set flag for success message', function() {
+                                var data = { links: {}, images: {} };
+
+                                $rootScope.$apply(function() {
+                                    deferred.resolve(data);
+                                });
+
+                                expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(false);
+                                expect(SelfieCampaignSponsorCtrl.siteDataSuccess.links).toBe(0);
+                            });
+                        });
+
+                        it('should set the website on the card and unset the loading flag', function() {
+                            var data = { links: {}, images: {} };
+
+                            expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(true);
+                            expect(card.links.Website).toBe('http://link.com');
+
+                            $rootScope.$apply(function() {
+                                deferred.resolve(data);
+                            });
+
+                            expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(false);
+                            expect(card.links.Website).toBe('http://website.com');
+                            expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(false);
+                        });
+                    });
+
+                    describe('when the promise rejects', function() {
+                        it('should set failure flag, set the website on the card and unset the loading flag', function() {
+                            expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(true);
+                            expect(card.links.Website).toBe('http://link.com');
+
+                            $rootScope.$apply(function() {
+                                deferred.reject('no data');
+                            });
+
+                            expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(true);
+                            expect(SelfieCampaignSponsorCtrl.siteDataSuccess).toBe(false);
+                            expect(card.links.Website).toBe('http://website.com');
+                            expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(false);
+                        });
+                    });
+                });
+            });
+
             describe('updateLinks()', function() {
                 it('should add http:// to links that have no protocol', function() {
                     SelfieCampaignSponsorCtrl.links[1].href = 'cinema6.com';
@@ -473,7 +818,7 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when website default logo is chosen', function() {
-                    it('should show the account default logo', function() {
+                    it('should show the website default logo', function() {
                         card.collateral.logoType = 'website';
                         card.collateral.logo = 'square.jpg';
 

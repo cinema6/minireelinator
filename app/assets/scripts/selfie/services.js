@@ -524,8 +524,8 @@ function( angular , c6uilib ,  c6Defines  ) {
             };
         }])
 
-        .service('SelfieWebsiteScrapingService', ['$q',
-        function                                 ( $q ) {
+        .service('SelfieWebsiteScrapingDialogService', ['$q',
+        function                                       ( $q ) {
             var model = {},
                 deferred;
 

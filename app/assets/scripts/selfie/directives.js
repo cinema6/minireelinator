@@ -80,7 +80,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                     options: '=',
                     config: '='
                 },
-                require: '?ngModel',
+                require: 'ngModel',
                 link: function(scope, $element, attrs, ngModel) {
                     function findBy(prop, value, arr) {
                         return arr.filter(function(item) {
@@ -1278,26 +1278,26 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
-        .directive('selfieWebsiteScrapingDialog', ['SelfieWebsiteScrapingService',
-        function                                  ( SelfieWebsiteScrapingService ) {
+        .directive('selfieWebsiteScrapingDialog', ['SelfieWebsiteScrapingDialogService',
+        function                                  ( SelfieWebsiteScrapingDialogService ) {
             return {
                 restrict: 'E',
                 templateUrl: 'views/selfie/directives/website_scraping_dialog.html',
-                controller: 'SelfieWebsiteScrapingController',
+                controller: 'SelfieWebsiteScrapingDialogController',
                 controllerAs: 'SelfieWebsiteScrapingCtrl',
                 scope: {},
                 link: function(scope) {
-                    scope.model = SelfieWebsiteScrapingService.model;
+                    scope.model = SelfieWebsiteScrapingDialogService.model;
                 }
             };
         }])
 
-        .controller('SelfieWebsiteScrapingController', ['$scope','SelfieWebsiteScrapingService',
-        function                                       ( $scope , SelfieWebsiteScrapingService ) {
+        .controller('SelfieWebsiteScrapingDialogController', ['$scope','SelfieWebsiteScrapingDialogService',
+        function                                             ( $scope , SelfieWebsiteScrapingDialogService ) {
             this.save = function() {
                 var model = $scope.model || {},
                     links = model.links || [],
-                    logo = model.logo,
+                    logo = model.logo || {},
                     data = {
                         links: links.reduce(function(result, link) {
                             if (link.selected) { result[link.name] = link.href; }
@@ -1308,11 +1308,11 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         }
                     };
 
-                SelfieWebsiteScrapingService.success(data);
+                SelfieWebsiteScrapingDialogService.success(data);
             };
 
             this.cancel = function() {
-                SelfieWebsiteScrapingService.failure();
+                SelfieWebsiteScrapingDialogService.failure();
             };
         }])
 
