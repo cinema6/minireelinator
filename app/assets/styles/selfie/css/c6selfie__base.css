@@ -263,6 +263,10 @@ fa,
     .text--small {
         font-size: 0.875rem;
     }
+    .not--found {
+        color: #888;
+        font-style: italic;
+    }
 
     .huge--icon {
         font-size: 200px;
