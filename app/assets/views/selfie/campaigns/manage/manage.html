@@ -1,19 +1,27 @@
 <div class="tabContent targeting__content container">
     <header class="tabContent__header">
-        <h2 class="tabContent__title tk--hdr">Campaign: {{campaign.name}}</h2>
-        <span class="tabContent__subtitle">Your campaign is currently {{campaign.status}}</span>
+        <div class="grid__item three-quarters">
+            <h2 class="tabContent__title tk--hdr">Campaign: {{campaign.name}}</h2>
+            <span class="tabContent__subtitle">Your campaign is currently <strong>{{campaign.status}}</strong></span>
+            <p class="lockedMsg__info" ng-if="campaign.updateRequest && campaign.status !== 'pending'">Your requested changes are pending approval.</p>
+        </div><!--
+        --><div class="grid__item one-quarter text--right" ng-if="(campaign.status === 'active' || campaign.status === 'paused') && SelfieManageCampaignCtrl.updateRequest.data.status !== 'canceled'">
+            <div class="action__btnGroup">
+              <button ng-show="(campaign.status === 'active' && SelfieManageCampaignCtrl.updateRequest.data.status !== 'paused') || (campaign.status === 'paused' && SelfieManageCampaignCtrl.updateRequest.data.status === 'active')" ng-click="SelfieManageCampaignCtrl.update('pause')" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pause"></i>  Pause</button>
+              <button ng-show="(campaign.status === 'paused' && SelfieManageCampaignCtrl.updateRequest.data.status !== 'active') || (campaign.status === 'active' && SelfieManageCampaignCtrl.updateRequest.data.status === 'paused')" ng-click="SelfieManageCampaignCtrl.update('resume')" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-play"></i>  Resume</button>
+              <!-- <button ng-click="SelfieManageCampaignCtrl.edit(campaign)" ng-class="{'btn--disabled' : !!campaign.updateRequest }" ng-disabled="!!campaign.updateRequest" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pencil-square-o"></i>  Edit</button> -->
+            </div>
+        </div>
     </header>
 
     <div class="tabContent__gridHolder">
-        <div class="grid grid--center grid--middle">
+        <div class="grid grid--center">
             <!--left column-->
-            <div class="grid__item one-half palm--one-whole">
-                <section class="campaignPreview__group">
-                    <selfie-preview card="SelfieManageCampaignCtrl.card"></selfie-preview>
-                </section>
-            </div><!--left column ends--><!--
-            --><div class="grid__item adManage one-half palm--one-whole">
+            <!--
+            <!--<div class="grid__item adManage one-half palm--one-whole"> -- end comment here --><!--
+            --><div class="grid__item one-half palm--one-whole">
                 <div class="grid">
+                <!--
                     <div class="grid__item grid--center lockedMsg">
                         <h3 class="lockedMsg__info tk--hdr">Your campaign is <strong>{{campaign.status}}</strong></h3>
                         <p class="lockedMsg__info" ng-if="campaign.updateRequest && campaign.status === 'pending'">Your campaign is pending approval.</p>
@@ -24,10 +32,56 @@
                           <button ng-show="(campaign.status === 'active' && SelfieManageCampaignCtrl.updateRequest.data.status !== 'paused') || (campaign.status === 'paused' && SelfieManageCampaignCtrl.updateRequest.data.status === 'active')" ng-click="SelfieManageCampaignCtrl.update('pause')" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pause"></i>  Pause</button>
                           <button ng-show="(campaign.status === 'paused' && SelfieManageCampaignCtrl.updateRequest.data.status !== 'active') || (campaign.status === 'active' && SelfieManageCampaignCtrl.updateRequest.data.status === 'paused')" ng-click="SelfieManageCampaignCtrl.update('resume')" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-play"></i>  Resume</button>
                           <!-- <button ng-click="SelfieManageCampaignCtrl.edit(campaign)" ng-class="{'btn--disabled' : !!campaign.updateRequest }" ng-disabled="!!campaign.updateRequest" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pencil-square-o"></i>  Edit</button> -->
+                    <!--</div>
+                    </div>-->
+                    <!-- campaign summary -->
+                    <div class="grid__item one-whole campaignSummary__group">
+                        <div class="grid">
+                            <div class="grid__item">
+                                <h3 class="tk--hdr">Campaign Summary</h3>
+                                <div class="campaignSummary__item">
+                                    <div class="grid">
+                                        <div class="grid__item grid--center one-quarter"><span class="campaignItem__label">Total Budget </span><span class="campaignItem__title tk--hdr">$5,000</span></div><!-- --><div class="grid__item one-quarter grid--center"><span class="campaignItem__label">Daily Limit </span><span class="campaignItem__title tk--hdr">$250</span></div><!-- --><div class="grid__item one-quarter grid--center grid--right"><span class="campaignItem__label">Est. Views </span><span class="campaignItem__title tk--hdr">50,000</span></div><!-- --><div class="grid__item grid--center one-quarter"><span class="campaignItem__label ">CPV </span><span class="campaignItem__title tk--hdr">$0.8</span></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="grid">
+                            <div class="grid__item campaignItem__list">                        
+                                <div class="campaignItems">
+                                    <ul>
+                                        <li>                                        
+                                        <div class="campaignItem__title">Interests</div><!--
+                                        --><div class="campaignItem__label text--small">Interests: Arts and Entertainment, Business, Cars, Sports, Education, News, Finance, Hobbies, DIY, Crafts, Photography</div>
+                                        </li>
+                                        <li>
+                                        <div class="campaignItem__title">Demographics</div><!--
+                                        --><div class="campaignItem__label text--small">Age: 18-24, 25-34, 35-44</div>
+                                        <div class="campaignItem__label text--small">Gender: Female</div>
+                                        <div class="campaignItem__label text--small">Income: $50,000-$75,000, $75,000-$99,000</div>
+                                        </li>
+                                        <li>
+                                        <div class="campaignItem__title">Location</div><!--
+                                        --><div class="campaignItem__label text--small">State: New Jersey, New York, Florida</div>
+                                        <div class="campaignItem__label text--small">DMA: Atlanta, Philadelhpia, Greater NYC</div>
+                                        </li>
+                                        <li>
+                                        <div class="campaignItem__title">Timeline</div><!--
+                                        --><div class="campaignItem__label text--small">11/30/2015 until 12/30/2015</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                 </div>
-            </div><!--.grid__item-->
+                <!-- campaign summary ends-->
+                </div>
+            </div><!--.grid__item--><!--
+            --><div class="grid__item one-half palm--one-whole">
+                <section class="campaignPreview__group">
+                    <selfie-preview card="SelfieManageCampaignCtrl.card"></selfie-preview>
+                </section>
+            </div><!--left column ends-->
         </div>
     </div>
 </div>
