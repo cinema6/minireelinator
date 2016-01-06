@@ -1035,11 +1035,14 @@ function( angular , c6State  , PaginatedListState                    ,
             this.siteDataFailure = false;
             this.siteDataSuccess = false;
 
+            // this is called on-focus of website input,
+            // the allowImport flag will show the import
+            // button when appropriate
             this.checkImportability = function() {
-                // this is called on-focus of website input
                 this.allowImport = !!this.website;
             };
 
+            // return a url with a protocol or undefined
             this.validateWebsite = function () {
                 var website = this.website;
 
@@ -1052,6 +1055,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 return website;
             };
 
+            // this is called when website data is successfully fetched,
+            // it updates props on the Ctrl not the actual card
             this.setWebsiteData = function(data) {
                 var links = data.links,
                     logo = data.images && data.images.profile;
@@ -1079,6 +1084,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             };
 
+            // there's a UI button for this, it's only available once
+            // a website is set and the user clicks into the input
             this.importWebsite = function() {
                 var website = this.validateWebsite();
                 if (!website) { return; }
@@ -1093,6 +1100,10 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
             };
 
+            // this is called on-blur of website input,
+            // we only automatically call CollateralService
+            // the first time a user enters a website,
+            // after that they need to use the "import" button
             this.checkWebsite = function() {
                 var website = this.validateWebsite(),
                     currentWebsite = card.links.Website;
@@ -1126,6 +1137,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
             };
 
+            // this is called on-blur of all links inputs (except website)
+            // it's also called during importing/updating of website
             this.updateLinks = function() {
                 var website = SelfieCampaignSponsorCtrl.validateWebsite(),
                     sharing, shareLink;
@@ -1143,7 +1156,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 card.links.Website = website;
 
-                // ensure that sharing link is updated in UI
+                // ensure that sharing link is updated if appropriate
                 if (SelfieCampaignSponsorCtrl.bindShareToWebsite) {
                     SelfieCampaignSponsorCtrl.sharing = website;
                 }
@@ -1199,6 +1212,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                     break;
                 case 'custom':
+                case 'website':
                     Ctrl.logo = Ctrl.logoType.src;
                     break;
                 case 'account':
@@ -1206,9 +1220,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     break;
                 case 'none':
                     Ctrl.logo = undefined;
-                    break;
-                case 'website':
-                    Ctrl.logo = Ctrl.logoType.src;
                     break;
                 }
             });
