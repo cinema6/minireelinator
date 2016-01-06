@@ -300,12 +300,10 @@ define(['app'], function(appModule) {
                     };
 
                     compileCtrl();
-
-                    spyOn(SelfieCampaignSponsorCtrl, 'updateLinks');
                 });
 
                 describe('when data has links', function() {
-                    it('should set or nullify links on the controller if defined and call Ctrl.updateLinks', function() {
+                    it('should set or nullify links on the controller if defined', function() {
                         var data = {
                             links: {
                                 facebook: undefined,
@@ -320,12 +318,11 @@ define(['app'], function(appModule) {
                         expect(SelfieCampaignSponsorCtrl.links[1].href).toEqual(card.links.Facebook);
                         expect(SelfieCampaignSponsorCtrl.links[2].href).toEqual(data.links.twitter);
                         expect(SelfieCampaignSponsorCtrl.links[3].href).toEqual(data.links.instagram);
-                        expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
                     });
                 });
 
                 describe('when data has no links', function() {
-                    it('should not set or nullify any links and should not call Ctrl.updateLinks', function() {
+                    it('should not set or nullify any links', function() {
                         var data = {};
 
                         SelfieCampaignSponsorCtrl.setWebsiteData(data);
@@ -333,7 +330,6 @@ define(['app'], function(appModule) {
                         expect(SelfieCampaignSponsorCtrl.links[1].href).toEqual(card.links.Facebook);
                         expect(SelfieCampaignSponsorCtrl.links[2].href).toEqual(card.links.Twitter);
                         expect(SelfieCampaignSponsorCtrl.links[3].href).toEqual(card.links.Instagram);
-                        expect(SelfieCampaignSponsorCtrl.updateLinks).not.toHaveBeenCalled();
                     });
                 });
 
@@ -395,7 +391,7 @@ define(['app'], function(appModule) {
                 });
             });
 
-            describe('checkWebsite()', function() {
+            describe('importWebsite()', function() {
                 var displayDeferred, dataDeferred;
 
                 beforeEach(function() {
@@ -404,6 +400,7 @@ define(['app'], function(appModule) {
 
                     spyOn(SelfieWebsiteScrapingDialogService, 'display').and.returnValue(displayDeferred.promise);
                     spyOn(SelfieCampaignSponsorCtrl, 'setWebsiteData');
+                    spyOn(SelfieCampaignSponsorCtrl, 'updateLinks');
                     spyOn(CollateralService, 'websiteData').and.returnValue(dataDeferred);
                 });
 
@@ -448,6 +445,10 @@ define(['app'], function(appModule) {
                         it('should set allowImport flag to false', function() {
                             expect(SelfieCampaignSponsorCtrl.allowImport).toBe(false);
                         });
+
+                        it('should updateLinks', function() {
+                            expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
+                        });
                     });
 
                     describe('when display promise rejects', function() {
@@ -478,6 +479,7 @@ define(['app'], function(appModule) {
 
                     spyOn(CollateralService, 'websiteData').and.returnValue(deferred.promise);
                     spyOn(SelfieCampaignSponsorCtrl, 'setWebsiteData');
+                    spyOn(SelfieCampaignSponsorCtrl, 'updateLinks');
                 });
 
                 it('should set success and failure flags to false', function() {
@@ -491,7 +493,7 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when there is no website', function() {
-                    it('should do nothing', function() {
+                    it('should do nothing except updateLinks', function() {
                         SelfieCampaignSponsorCtrl.allowImport = false;
                         SelfieCampaignSponsorCtrl.website = undefined;
                         card.links.Website = 'http://link.com';
@@ -499,11 +501,12 @@ define(['app'], function(appModule) {
                         SelfieCampaignSponsorCtrl.checkWebsite();
 
                         expect(CollateralService.websiteData).not.toHaveBeenCalled();
+                        expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
                     });
                 });
 
                 describe('when allowImport is true', function() {
-                    it('should do nothing', function() {
+                    it('should do nothing except updateLinks', function() {
                         SelfieCampaignSponsorCtrl.allowImport = true;
                         SelfieCampaignSponsorCtrl.website = 'http://website.com';
                         card.links.Website = 'http://link.com';
@@ -511,11 +514,12 @@ define(['app'], function(appModule) {
                         SelfieCampaignSponsorCtrl.checkWebsite();
 
                         expect(CollateralService.websiteData).not.toHaveBeenCalled();
+                        expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
                     });
                 });
 
                 describe('when Ctrl.website === card.links.website', function() {
-                    it('should do nothing', function() {
+                    it('should do nothing escept updateLinks', function() {
                         SelfieCampaignSponsorCtrl.allowImport = false;
                         SelfieCampaignSponsorCtrl.website = 'http://website.com';
                         card.links.Website = 'http://website.com';
@@ -523,6 +527,7 @@ define(['app'], function(appModule) {
                         SelfieCampaignSponsorCtrl.checkWebsite();
 
                         expect(CollateralService.websiteData).not.toHaveBeenCalled();
+                        expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
                     });
                 });
 
@@ -598,24 +603,23 @@ define(['app'], function(appModule) {
                             });
                         });
 
-                        it('should set the website on the card and unset the loading flag', function() {
+                        it('should updateLinks and unset the loading flag', function() {
                             var data = { links: {}, images: {} };
 
                             expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(true);
-                            expect(card.links.Website).toBe('http://link.com');
 
                             $rootScope.$apply(function() {
                                 deferred.resolve(data);
                             });
 
                             expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(false);
-                            expect(card.links.Website).toBe('http://website.com');
                             expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(false);
+                            expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
                         });
                     });
 
                     describe('when the promise rejects', function() {
-                        it('should set failure flag, set the website on the card and unset the loading flag', function() {
+                        it('should set failure flag, updateLinks, and unset the loading flag', function() {
                             expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(true);
                             expect(card.links.Website).toBe('http://link.com');
 
@@ -625,8 +629,8 @@ define(['app'], function(appModule) {
 
                             expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(true);
                             expect(SelfieCampaignSponsorCtrl.siteDataSuccess).toBe(false);
-                            expect(card.links.Website).toBe('http://website.com');
                             expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(false);
+                            expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
                         });
                     });
                 });
@@ -656,37 +660,83 @@ define(['app'], function(appModule) {
                 });
 
                 describe('shareLinks', function() {
-                    it('should add the same url for Facebook, Twitter and Pinterest if defined', function() {
-                        SelfieCampaignSponsorCtrl.sharing = 'mywebsite.com';
+                    describe('when share link is bound to the website link', function() {
+                        it('should use the website url for Facebook, Twitter and Pinterest if defined', function() {
+                            SelfieCampaignSponsorCtrl.bindShareToWebsite = true;
+                            SelfieCampaignSponsorCtrl.sharing = 'sharing.com';
+                            SelfieCampaignSponsorCtrl.website = 'mywebsite.com';
 
-                        SelfieCampaignSponsorCtrl.updateLinks();
+                            SelfieCampaignSponsorCtrl.updateLinks();
 
-                        expect(card.shareLinks).toEqual({
-                            facebook: 'http://mywebsite.com',
-                            twitter: 'http://mywebsite.com',
-                            pinterest: 'http://mywebsite.com'
+                            expect(card.shareLinks).toEqual({
+                                facebook: 'http://mywebsite.com',
+                                twitter: 'http://mywebsite.com',
+                                pinterest: 'http://mywebsite.com'
+                            });
+                        });
+
+                        it('should not remove all shareLinks if unset', function() {
+                            SelfieCampaignSponsorCtrl.bindShareToWebsite = true;
+                            SelfieCampaignSponsorCtrl.sharing = 'sharing.com';
+                            SelfieCampaignSponsorCtrl.website = 'mywebsite.com';
+
+                            SelfieCampaignSponsorCtrl.updateLinks();
+
+                            expect(card.shareLinks).toEqual({
+                                facebook: 'http://mywebsite.com',
+                                twitter: 'http://mywebsite.com',
+                                pinterest: 'http://mywebsite.com'
+                            });
+
+                            SelfieCampaignSponsorCtrl.sharing = '';
+
+                            SelfieCampaignSponsorCtrl.updateLinks();
+
+                            expect(card.shareLinks).toEqual({
+                                facebook: 'http://mywebsite.com',
+                                twitter: 'http://mywebsite.com',
+                                pinterest: 'http://mywebsite.com'
+                            });
                         });
                     });
 
-                    it('should remove all shareLinks if unset', function() {
-                        SelfieCampaignSponsorCtrl.sharing = 'mywebsite.com';
+                    describe('when share link is not bound to the website link', function() {
+                        it('should use the share url for Facebook, Twitter and Pinterest if defined', function() {
+                            SelfieCampaignSponsorCtrl.bindShareToWebsite = false;
+                            SelfieCampaignSponsorCtrl.sharing = 'sharing.com';
+                            SelfieCampaignSponsorCtrl.website = 'mywebsite.com';
 
-                        SelfieCampaignSponsorCtrl.updateLinks();
+                            SelfieCampaignSponsorCtrl.updateLinks();
 
-                        expect(card.shareLinks).toEqual({
-                            facebook: 'http://mywebsite.com',
-                            twitter: 'http://mywebsite.com',
-                            pinterest: 'http://mywebsite.com'
+                            expect(card.shareLinks).toEqual({
+                                facebook: 'http://sharing.com',
+                                twitter: 'http://sharing.com',
+                                pinterest: 'http://sharing.com'
+                            });
                         });
 
-                        SelfieCampaignSponsorCtrl.sharing = '';
+                        it('should remove all shareLinks if unset', function() {
+                            SelfieCampaignSponsorCtrl.bindShareToWebsite = false;
+                            SelfieCampaignSponsorCtrl.sharing = 'sharing.com';
+                            SelfieCampaignSponsorCtrl.website = 'mywebsite.com';
 
-                        SelfieCampaignSponsorCtrl.updateLinks();
+                            SelfieCampaignSponsorCtrl.updateLinks();
 
-                        expect(card.shareLinks).toEqual({
-                            facebook: undefined,
-                            twitter: undefined,
-                            pinterest: undefined
+                            expect(card.shareLinks).toEqual({
+                                facebook: 'http://sharing.com',
+                                twitter: 'http://sharing.com',
+                                pinterest: 'http://sharing.com'
+                            });
+
+                            SelfieCampaignSponsorCtrl.sharing = '';
+
+                            SelfieCampaignSponsorCtrl.updateLinks();
+
+                            expect(card.shareLinks).toEqual({
+                                facebook: undefined,
+                                twitter: undefined,
+                                pinterest: undefined
+                            });
                         });
                     });
                 });

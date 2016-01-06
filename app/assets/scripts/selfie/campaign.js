@@ -1030,6 +1030,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.website = card.links.Website;
             this.sharing = card.shareLinks.facebook;
+            this.bindShareToWebsite = !this.sharing;
             this.loadingSiteData = false;
             this.siteDataFailure = false;
             this.siteDataSuccess = false;
@@ -1061,8 +1062,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         link.href = (!!links[name] || links[name] === null) ?
                             links[name] : link.href;
                     });
-
-                    this.updateLinks();
                 }
 
                 if (logo) {
@@ -1087,6 +1086,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieWebsiteScrapingDialogService.display(CollateralService.websiteData(website))
                     .then(function(data) {
                         SelfieCampaignSponsorCtrl.setWebsiteData(data);
+                        SelfieCampaignSponsorCtrl.updateLinks();
                     })
                     .finally(function() {
                         SelfieCampaignSponsorCtrl.allowImport = false;
@@ -1101,7 +1101,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.siteDataFailure = false;
 
                 if (!website || this.allowImport || website === currentWebsite) {
-                    card.links.Website = website;
+                    this.updateLinks();
                     return;
                 }
 
@@ -1121,14 +1121,14 @@ function( angular , c6State  , PaginatedListState                    ,
                         SelfieCampaignSponsorCtrl.siteDataFailure = true;
                     })
                     .finally(function() {
-                        card.links.Website = website;
+                        SelfieCampaignSponsorCtrl.updateLinks();
                         SelfieCampaignSponsorCtrl.loadingSiteData = false;
                     });
             };
 
             this.updateLinks = function() {
-                var sharing = SelfieCampaignSponsorCtrl.sharing,
-                    shareLink = AppCtrl.validUrl.test(sharing) ? sharing : 'http://' + sharing;
+                var website = SelfieCampaignSponsorCtrl.validateWebsite(),
+                    sharing, shareLink;
 
                 SelfieCampaignSponsorCtrl.links.forEach(function(link) {
                     if (link.href && link.href === card.links[link.name]) { return; }
@@ -1140,6 +1140,16 @@ function( angular , c6State  , PaginatedListState                    ,
                         card.links[link.name] = undefined;
                     }
                 });
+
+                card.links.Website = website;
+
+                // ensure that sharing link is updated in UI
+                if (SelfieCampaignSponsorCtrl.bindShareToWebsite) {
+                    SelfieCampaignSponsorCtrl.sharing = website;
+                }
+
+                sharing = SelfieCampaignSponsorCtrl.sharing;
+                shareLink = AppCtrl.validUrl.test(sharing) ? sharing : 'http://' + sharing;
 
                 if (sharing === card.shareLinks.facebook) { return; }
 

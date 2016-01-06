@@ -158,7 +158,7 @@
                 <div ng-repeat="link in SelfieCampaignSponsorCtrl.links">
                     <fieldset class="form__item" ng-class="{'ui--hasError': !link.href && link.required && SelfieCampaignCtrl.validation.show }">
                         <div ng-if="link.name === 'Sharing'">
-                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-sharing" ng-model="SelfieCampaignSponsorCtrl.sharing" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-sharing" ng-model="SelfieCampaignSponsorCtrl.sharing" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()" ng-focus="SelfieCampaignSponsorCtrl.bindShareToWebsite = false">
                             <label class="form__label" for="c6-sponsor-sharing">
                                 <i class="fa fa-times ui--error"></i>
                                 <i class="fa fa-share-alt-square tk--active tk--share"></i> Share Link
