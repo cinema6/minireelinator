@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.31.0 (January 7, 2016)
+* *[v1.31.0.rc2]*
+  * [FIX]: Only show Selfie-supported social links when scraping website
+* *[/v1.31.0.rc2]*
+
 * *[v1.31.0.rc1]*
   * [FIX]: Remove 'Approved' filter from the campaigns list view dropdown
   * [DESIGN]: Added html/css for multi date stats dropdown
