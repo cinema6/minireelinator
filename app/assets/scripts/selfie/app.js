@@ -17,6 +17,7 @@ function( angular , c6State  , services   , directives   , campaign   ) {
 
                     this.route('/new', 'Selfie:NewCampaign', function() {
                         this.state('Selfie:Campaign', 'Selfie:New:Campaign', function() {
+                            this.state('Selfie:Campaign:Website','Selfie:New:Campaign:Website');
                             this.state(
                                 'Selfie:Campaign:Payment:New',
                                 'Selfie:New:Campaign:Payment:New'
@@ -25,6 +26,7 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                     });
                     this.route('/edit/:campaignId', 'Selfie:EditCampaign', function() {
                         this.state('Selfie:Campaign', 'Selfie:Edit:Campaign', function() {
+                            this.state('Selfie:Campaign:Website','Selfie:Edit:Campaign:Website');
                             this.state(
                                 'Selfie:Campaign:Payment:New',
                                 'Selfie:Edit:Campaign:Payment:New'

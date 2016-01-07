@@ -6,9 +6,9 @@ define(['app'], function(appModule) {
             $controller,
             $scope,
             $q,
+            c6State,
             CollateralService,
-            SelfieCampaignSponsorCtrl,
-            SelfieWebsiteScrapingDialogService;
+            SelfieCampaignSponsorCtrl;
 
         var advertiser,
             card,
@@ -27,8 +27,8 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
+                c6State = $injector.get('c6State');
                 CollateralService = $injector.get('CollateralService');
-                SelfieWebsiteScrapingDialogService = $injector.get('SelfieWebsiteScrapingDialogService');
 
                 advertiser = {};
                 logos = [];
@@ -247,16 +247,49 @@ define(['app'], function(appModule) {
                     expect(SelfieCampaignSponsorCtrl.sharing).toBe('http://facebook.com');
                 });
             });
+
+            describe('hasImported', function() {
+                describe('when there is a website', function() {
+                    it('should be true', function() {
+                        card.links.Website = 'website.com';
+
+                        compileCtrl();
+
+                        expect(SelfieCampaignSponsorCtrl.hasImported).toBe(true);
+                    });
+                });
+
+                describe('when there are any social links', function() {
+                    it('should be true', function() {
+                        card.links.Facebook = 'facebook.com';
+
+                        compileCtrl();
+
+                        expect(SelfieCampaignSponsorCtrl.hasImported).toBe(true);
+                    });
+                });
+
+                describe('when there are no social links or website', function() {
+                    it('should be true', function() {
+                        card.links.Facebook = undefined;
+                        card.links.Website = undefined;
+
+                        compileCtrl();
+
+                        expect(SelfieCampaignSponsorCtrl.hasImported).toBe(false);
+                    });
+                });
+            });
         });
 
         describe('methods', function() {
             describe('checkImportability()', function() {
-                it('should be true is website is set', function() {
+                it('should be set the allowImport flag based on hasImported flag', function() {
                     SelfieCampaignSponsorCtrl.checkImportability();
 
                     expect(SelfieCampaignSponsorCtrl.allowImport).toBe(false);
 
-                    SelfieCampaignSponsorCtrl.website = 'http://website.com';
+                    SelfieCampaignSponsorCtrl.hasImported = true;
 
                     SelfieCampaignSponsorCtrl.checkImportability();
 
@@ -391,82 +424,55 @@ define(['app'], function(appModule) {
                 });
             });
 
-            describe('importWebsite()', function() {
-                var displayDeferred, dataDeferred;
+            describe('saveWebsiteData(data)', function() {
+                it('should pass data to setWebsite() and call updateLinks', function() {
+                    var data = {
+                        links: [],
+                        images: {}
+                    };
 
-                beforeEach(function() {
-                    displayDeferred = $q.defer();
-                    dataDeferred = $q.defer();
-
-                    spyOn(SelfieWebsiteScrapingDialogService, 'display').and.returnValue(displayDeferred.promise);
                     spyOn(SelfieCampaignSponsorCtrl, 'setWebsiteData');
                     spyOn(SelfieCampaignSponsorCtrl, 'updateLinks');
-                    spyOn(CollateralService, 'websiteData').and.returnValue(dataDeferred);
+
+                    SelfieCampaignSponsorCtrl.saveWebsiteData(data);
+
+                    expect(SelfieCampaignSponsorCtrl.setWebsiteData).toHaveBeenCalledWith(data);
+                    expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
+                });
+            });
+
+            describe('importWebsite()', function() {
+                beforeEach(function() {
+                    spyOn(SelfieCampaignSponsorCtrl, 'setWebsiteData');
+                    spyOn(SelfieCampaignSponsorCtrl, 'updateLinks');
+                    spyOn(c6State, 'goTo');
                 });
 
                 describe('when there is no website', function() {
                     it('should do nothing', function() {
-                        spyOn(SelfieCampaignSponsorCtrl, 'validateWebsite').and.returnValue(false);
+                        SelfieCampaignSponsorCtrl.website = undefined;
 
                         SelfieCampaignSponsorCtrl.importWebsite();
 
-                        expect(SelfieWebsiteScrapingDialogService.display).not.toHaveBeenCalled();
+                        expect(c6State.goTo).not.toHaveBeenCalled();
                     });
                 });
 
                 describe('when there is a website', function() {
                     beforeEach(function() {
-                        spyOn(SelfieCampaignSponsorCtrl, 'validateWebsite').and.returnValue('http://website.com');
+                        SelfieCampaignSponsorCtrl.website = 'http://website.com';
+
+                        SelfieCampaignSponsorCtrl.allowImport = true;
 
                         SelfieCampaignSponsorCtrl.importWebsite();
                     });
 
-                    it('should pass the request for website data to the website scraping dialog', function() {
-                        expect(SelfieWebsiteScrapingDialogService.display).toHaveBeenCalledWith(dataDeferred);
+                    it('should set allowImport flag to false', function() {
+                        expect(SelfieCampaignSponsorCtrl.allowImport).toBe(false);
                     });
 
-                    describe('when display promise resolves with website data', function() {
-                        var data;
-
-                        beforeEach(function() {
-                            data = { links: {}, images: {} };
-
-                            SelfieCampaignSponsorCtrl.allowImport = true;
-
-                            $rootScope.$apply(function() {
-                                displayDeferred.resolve(data);
-                            });
-                        });
-
-                        it('should pass it to setWebsiteData()', function() {
-                            expect(SelfieCampaignSponsorCtrl.setWebsiteData).toHaveBeenCalledWith(data);
-                        });
-
-                        it('should set allowImport flag to false', function() {
-                            expect(SelfieCampaignSponsorCtrl.allowImport).toBe(false);
-                        });
-
-                        it('should updateLinks', function() {
-                            expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
-                        });
-                    });
-
-                    describe('when display promise rejects', function() {
-                        beforeEach(function() {
-                            SelfieCampaignSponsorCtrl.allowImport = true;
-
-                            $rootScope.$apply(function() {
-                                displayDeferred.reject('canceled dialog');
-                            });
-                        });
-
-                        it('should not call setWebsiteData()', function() {
-                            expect(SelfieCampaignSponsorCtrl.setWebsiteData).not.toHaveBeenCalled();
-                        });
-
-                        it('should set allowImport flag to false', function() {
-                            expect(SelfieCampaignSponsorCtrl.allowImport).toBe(false);
-                        });
+                    it('should go to website state with website', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Campaign:Website', [{website: 'http://website.com'}])
                     });
                 });
             });
@@ -614,6 +620,7 @@ define(['app'], function(appModule) {
 
                             expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(false);
                             expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(false);
+                            expect(SelfieCampaignSponsorCtrl.hasImported).toBe(true);
                             expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
                         });
                     });
@@ -630,6 +637,7 @@ define(['app'], function(appModule) {
                             expect(SelfieCampaignSponsorCtrl.siteDataFailure).toBe(true);
                             expect(SelfieCampaignSponsorCtrl.siteDataSuccess).toBe(false);
                             expect(SelfieCampaignSponsorCtrl.loadingSiteData).toBe(false);
+                            expect(SelfieCampaignSponsorCtrl.hasImported).toBe(true);
                             expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
                         });
                     });

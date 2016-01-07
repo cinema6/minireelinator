@@ -938,10 +938,8 @@ function( angular , c6State  , PaginatedListState                    ,
             };
         }])
 
-        .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
-                                                        'SelfieWebsiteScrapingDialogService',
-        function                                       ( $scope , CollateralService ,
-                                                         SelfieWebsiteScrapingDialogService ) {
+        .controller('SelfieCampaignSponsorController', ['$scope','CollateralService','c6State',
+        function                                       ( $scope , CollateralService , c6State ) {
             var AppCtrl = $scope.AppCtrl,
                 SelfieCampaignSponsorCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
@@ -1034,12 +1032,15 @@ function( angular , c6State  , PaginatedListState                    ,
             this.loadingSiteData = false;
             this.siteDataFailure = false;
             this.siteDataSuccess = false;
+            this.hasImported = !!this.website || !!this.links.filter(function(link) {
+                return !!link.href;
+            }).length;
 
             // this is called on-focus of website input,
             // the allowImport flag will show the import
             // button when appropriate
             this.checkImportability = function() {
-                this.allowImport = !!this.website;
+                this.allowImport = this.hasImported;
             };
 
             // return a url with a protocol or undefined
@@ -1080,7 +1081,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         }].concat(this.logoOptions);
                     }
 
-                    this.logoType = SelfieCampaignSponsorCtrl.logoOptions[0];
+                    this.logoType = this.logoOptions[0];
                 }
             };
 
@@ -1090,14 +1091,15 @@ function( angular , c6State  , PaginatedListState                    ,
                 var website = this.validateWebsite();
                 if (!website) { return; }
 
-                SelfieWebsiteScrapingDialogService.display(CollateralService.websiteData(website))
-                    .then(function(data) {
-                        SelfieCampaignSponsorCtrl.setWebsiteData(data);
-                        SelfieCampaignSponsorCtrl.updateLinks();
-                    })
-                    .finally(function() {
-                        SelfieCampaignSponsorCtrl.allowImport = false;
-                    });
+                this.allowImport = false;
+
+                c6State.goTo('Selfie:Campaign:Website', [{website: website}]);
+            };
+
+            // this is the method that is called from modal
+            this.saveWebsiteData = function(data) {
+                this.setWebsiteData(data);
+                this.updateLinks();
             };
 
             // this is called on-blur of website input,
@@ -1133,6 +1135,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     })
                     .finally(function() {
                         SelfieCampaignSponsorCtrl.updateLinks();
+                        SelfieCampaignSponsorCtrl.hasImported = true;
                         SelfieCampaignSponsorCtrl.loadingSiteData = false;
                     });
             };
@@ -1236,6 +1239,76 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             $scope.$on('SelfieCampaignWillSave', this.updateLinks);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Campaign:Website', [function() {
+                this.templateUrl = 'views/selfie/campaigns/edit/website_scraping_dialog.html';
+                this.controller = 'SelfieCampaignWebsiteController';
+                this.controllerAs = 'SelfieCampaignWebsiteCtrl';
+            }]);
+        }])
+
+        .controller('SelfieCampaignWebsiteController', ['c6State','cState','CollateralService',
+        function                                       ( c6State , cState , CollateralService ) {
+            var SelfieCampaignWebsiteCtrl = this;
+
+            Object.defineProperties(this, {
+                data: {
+                    get: function() {
+                        var logo = this.logo || {},
+                            links = this.links || [];
+
+                        return {
+                            links: links.reduce(function(result, link) {
+                                if (link.selected) { result[link.name] = link.href; }
+                                return result;
+                            }, {}),
+                            images: {
+                                profile: logo.selected && logo.href
+                            }
+                        };
+                    }
+                }
+            });
+
+            this.close = function() {
+                c6State.goTo(cState.cParent.cName);
+            };
+
+            this.initWithModel = function(model) {
+                this.loading = true;
+
+                CollateralService.websiteData(model.website).then(function(data) {
+                    SelfieCampaignWebsiteCtrl.logo = {
+                        href: data.images.profile,
+                        selected: true
+                    };
+
+                    SelfieCampaignWebsiteCtrl.links = (function() {
+                        var options = [];
+
+                        forEach(data.links, function(link, key) {
+                            options.push({
+                                cssClass: ((/instagram|google/).test(key) ?
+                                    key : key + '-square'),
+                                name: key,
+                                href: link,
+                                selected: true
+                            });
+                        });
+
+                        return options;
+                    }());
+
+                    SelfieCampaignWebsiteCtrl.loading = false;
+
+                }, function() {
+                    SelfieCampaignWebsiteCtrl.loading = false;
+                    SelfieCampaignWebsiteCtrl.error = true;
+                });
+            };
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',

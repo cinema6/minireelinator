@@ -48,7 +48,7 @@
                 </div>
             </fieldset>
 
-            <div class="text--center" ng-show="SelfieCampaignSponsorCtrl.allowImport">
+            <div class="text--center" ng-show="SelfieCampaignSponsorCtrl.allowImport && SelfieCampaignSponsorCtrl.website">
                 <p>Would you like to import logo and social links?</p>
                 <div class="ui__btnHolder ui__btnHolder--sub">
                     <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.importWebsite()">Import</button>
@@ -90,7 +90,7 @@
 
 
 
-            <div ng-show="SelfieCampaignCtrl.card.links.Website">
+            <div ng-show="SelfieCampaignSponsorCtrl.hasImported">
                 <h1 class="formSection__title">
                     <span class="formSection__titleText tk--hdr">Logo and Social Links</span>
                 </h1>
@@ -197,6 +197,8 @@
             </div>
 
         </div>
+
+        <c6-view></c6-view>
 
     </section><!--.formSection__group, #section_2, ng-controller, c6-alias -->
 
