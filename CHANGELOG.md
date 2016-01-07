@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## v1.31.0 (January 7, 2016)
+* *[v1.31.0.rc3]*
+  * [FIX]: Ensure that user is prompted to login if file upload returns 401
+
 * *[v1.31.0.rc2]*
   * [FIX]: Only show Selfie-supported social links when scraping website
 * *[/v1.31.0.rc2]*
