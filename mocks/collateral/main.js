@@ -47,4 +47,8 @@ module.exports = function(http) {
             }
         }).delay(2500));
     });
+
+    http.whenPOST('/api/collateral/files', function(request) {
+        this.respond(401, 'Unauthorized');
+    });
 };

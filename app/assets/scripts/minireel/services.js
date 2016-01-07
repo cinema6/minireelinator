@@ -584,8 +584,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .service('FileService', ['$window','$q','$rootScope',
-        function                ( $window , $q , $rootScope ) {
+        .service('FileService', ['$window','$q','$rootScope','SelfieLoginDialogService',
+        function                ( $window , $q , $rootScope , SelfieLoginDialogService ) {
             var URL = $window.URL,
                 FormData = $window.FormData,
                 XMLHttpRequest = $window.XMLHttpRequest;
@@ -637,6 +637,14 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             data = fromJson(xhr.response);
                         } catch(e) {
                             data = xhr.response;
+                        }
+
+                        if (xhr.status === 401) {
+                            return SelfieLoginDialogService.display()
+                                .then(function() {
+                                    xhr.open('POST', url);
+                                    xhr.send(data);
+                                });
                         }
 
                         deferred[ xhr.status < 400 ?
