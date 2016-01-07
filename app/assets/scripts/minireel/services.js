@@ -631,12 +631,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     if (xhr.readyState < 4) { return; }
 
                     $rootScope.$apply(function() {
-                        var data;
+                        var _data;
 
                         try {
-                            data = fromJson(xhr.response);
+                            _data = fromJson(xhr.response);
                         } catch(e) {
-                            data = xhr.response;
+                            _data = xhr.response;
                         }
 
                         if (xhr.status === 401) {
@@ -649,7 +649,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                         deferred[ xhr.status < 400 ?
                             'resolve' : 'reject']({
-                                data: data,
+                                data: _data,
                                 status: xhr.status,
                                 statusText: xhr.statusText
                             });

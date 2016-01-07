@@ -1,13 +1,15 @@
 (function() {
     'use strict';
 
-    define(['minireel/services'], function(servicesModule) {
+    define(['minireel/services','selfie/services'], function(servicesModule, selfieServicesModule) {
         /* global angular:true */
         var noop = angular.noop;
 
         describe('FileService', function() {
             var $rootScope,
-                FileService;
+                $q,
+                FileService,
+                SelfieLoginDialogService;
 
             var $window,
                 formData,
@@ -62,14 +64,17 @@
                     });
                 });
 
+                module(selfieServicesModule.name);
                 module(servicesModule.name);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
 
                     $window = $injector.get('$window');
+                    $q = $injector.get('$q');
 
                     FileService = $injector.get('FileService');
+                    SelfieLoginDialogService = $injector.get('SelfieLoginDialogService');
                 });
             });
 
@@ -185,6 +190,39 @@
                                     data: xhr.response,
                                     status: xhr.status,
                                     statusText: xhr.statusText
+                                });
+                            });
+                        });
+
+                        describe('if status is 401', function() {
+                            var deferred;
+
+                            beforeEach(function() {
+                                deferred = $q.defer();
+                                spyOn(SelfieLoginDialogService, 'display').and.returnValue(deferred.promise);
+
+                                xhr.status = 401;
+                                xhr.statusText = '401 UNAUTHORIZED';
+                                xhr.response = 'Unauthorized';
+
+                                simulateComplete();
+                            });
+
+                            it('should display login modal', function() {
+                                expect(SelfieLoginDialogService.display).toHaveBeenCalled();
+                            });
+
+                            describe('when login succeeds', function() {
+                                it('should re-open and re-send the request', function() {
+                                    xhr.open.calls.reset();
+                                    xhr.send.calls.reset();
+
+                                    $rootScope.$apply(function() {
+                                        deferred.resolve();
+                                    });
+
+                                    expect(xhr.open).toHaveBeenCalledWith('POST', '/api/collateral');
+                                    expect(xhr.send).toHaveBeenCalledWith(formData);
                                 });
                             });
                         });

@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/services'], function(servicesModule) {
+    define(['minireel/services','selfie/services'], function(servicesModule, selfieServicesModule) {
         describe('CollateralService', function() {
             var $rootScope,
                 $q,
@@ -12,6 +12,7 @@
                 FileService;
 
             beforeEach(function() {
+                module(selfieServicesModule.name);
                 module(servicesModule.name, function($injector) {
                     CollateralServiceProvider = $injector.get('CollateralServiceProvider');
                 });
