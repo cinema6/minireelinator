@@ -556,7 +556,7 @@
                 });
 
                 describe('websiteData(uri)', function() {
-                    var success, failure, deferred, response;
+                    var success, failure, deferred, response, data;
 
                     beforeEach(function() {
                         success = jasmine.createSpy('success');
@@ -590,18 +590,32 @@
                             expect(success).not.toHaveBeenCalled();
                         });
 
-                        it('should resolve with data if any links exist', function() {
+                        it('should resolve with whitelisted data if any links exist', function() {
                             response = {
                                 links: {
                                     facebook: null,
                                     twitter: null,
                                     instagram: 'http://instagram.com',
-                                    pinterest: null
+                                    pinterest: null,
+                                    google: 'http://google.com',
+                                    tumblr: 'http://tumblr.com'
                                 },
                                 images: {
                                     profile: null
                                 }
                             };
+
+                            data = {
+                                links: {
+                                    facebook: null,
+                                    twitter: null,
+                                    instagram: 'http://instagram.com',
+                                    pinterest: null,
+                                },
+                                images: {
+                                    profile: null
+                                }
+                            }
 
                             $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
                                 .respond(200, response);
@@ -611,7 +625,7 @@
 
                             $httpBackend.flush();
 
-                            expect(success).toHaveBeenCalledWith(response);
+                            expect(success).toHaveBeenCalledWith(data);
                             expect(failure).not.toHaveBeenCalled();
                         });
 

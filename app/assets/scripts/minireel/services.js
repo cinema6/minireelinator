@@ -526,20 +526,27 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
 
                     this.websiteData = function(uri) {
-                        var encoded = encodeURIComponent(uri);
+                        var encoded = encodeURIComponent(uri),
+                            whitelist = ['facebook','twitter','instagram','youtube','pinterest'];
 
                         return $http.get('/api/collateral/website-data?uri=' + encoded)
                             .then(function(resp) {
                                 var data = resp.data,
                                     links = data.links,
                                     logo = data.images.profile,
-                                    valid = !!logo;
+                                    valid = !!logo,
+                                    _links = {};
 
-                                forEach(links, function(link) {
-                                    if (link) { valid = true; }
+                                forEach(links, function(link, key) {
+                                    if (whitelist.indexOf(key) > -1) {
+                                        _links[key] = link;
+
+                                        if (link) { valid = true; }
+                                    }
                                 });
 
                                 if (valid) {
+                                    resp.data.links = _links;
                                     return resp.data;
                                 } else {
                                     // if no links or logos are found
