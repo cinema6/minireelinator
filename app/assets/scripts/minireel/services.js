@@ -524,6 +524,30 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return fetchThumbs(minireel)
                             .then(generateCollage);
                     };
+
+                    this.websiteData = function(uri) {
+                        var encoded = encodeURIComponent(uri);
+
+                        return $http.get('/api/collateral/website-data?uri=' + encoded)
+                            .then(function(resp) {
+                                var data = resp.data,
+                                    links = data.links,
+                                    logo = data.images.profile,
+                                    valid = !!logo;
+
+                                forEach(links, function(link) {
+                                    if (link) { valid = true; }
+                                });
+
+                                if (valid) {
+                                    return resp.data;
+                                } else {
+                                    // if no links or logos are found
+                                    // we're considering that a failure
+                                    return $q.reject('No logo or social links found');
+                                }
+                            });
+                    };
                 }
 
                 return new CollateralService();

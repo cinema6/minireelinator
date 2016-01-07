@@ -11,6 +11,7 @@
   * [FIX]: Fixed the logo resolution issue for retina display
   * [DESIGN]: Updated player splash screen images to use Reelcontent branding
   * [FEATURE]: Add support for Kaltura videos
+  * [FEATURE]: Add ability to scrape links and logo from website url
 
 ## v1.30.1 (December 18, 2015)
 * *[v1.30.1.rc3]*

@@ -263,6 +263,10 @@ fa,
     .text--small {
         font-size: 0.875rem;
     }
+    .not--found {
+        color: #888;
+        font-style: italic;
+    }
 
     .huge--icon {
         font-size: 200px;
@@ -948,7 +952,7 @@ fa,
     .mainNav__group {
         position: fixed;
         top:0; bottom:0; left:0;
-        z-index:20;
+        z-index:1;
         background:#2e3134;
         width:4em;
     }
@@ -966,7 +970,7 @@ fa,
         max-width:64em;
         margin: 0 auto;
         padding:4em 0 0 0;
-        z-index: -1;
+        /*z-index: -1;*/
         position: relative;
     }
         .gridHolder .formSection__title {
@@ -2157,6 +2161,7 @@ fa,
     .tocNav__group {
         position: fixed;
         top:50%; left:4.75em;
+        z-index: 2;
     }
         .tocNav__item {
             position: relative;

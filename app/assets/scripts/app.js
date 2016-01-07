@@ -1289,6 +1289,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
             CSSLoadingService.load(appStyles[cState.name]);
 
+            this.year = (new Date()).getFullYear();
             this.version = version;
             this.validImgSrc = /^(http:\/\/|https:\/\/|\/\/)/;
             this.validUrl = /^(http:\/\/|https:\/\/|\/\/)/;
