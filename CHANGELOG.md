@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.31.0 (January 7, 2016)
 * *[v1.31.0.rc1]*
   * [FIX]: Remove 'Approved' filter from the campaigns list view dropdown
   * [DESIGN]: Added html/css for multi date stats dropdown
@@ -12,6 +13,7 @@
   * [DESIGN]: Updated player splash screen images to use Reelcontent branding
   * [FEATURE]: Add support for Kaltura videos
   * [FEATURE]: Add ability to scrape links and logo from website url
+* *[v1.31.0.rc1]*
 
 ## v1.30.1 (December 18, 2015)
 * *[v1.30.1.rc3]*
