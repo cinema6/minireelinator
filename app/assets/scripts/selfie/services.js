@@ -373,7 +373,8 @@ function( angular , c6uilib ,  c6Defines  ) {
 
                 if (!data) {
                     if (/^http|https|\/\//.test(text)) {
-                        return validateVast(text);
+                        var secureUrl = text.replace(/^(http:|https:|)\/\//, 'https://');
+                        return validateVast(secureUrl);
                     } else {
                         return $q.reject('Unable to determine service');
                     }

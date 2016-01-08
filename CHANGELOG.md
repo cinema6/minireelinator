@@ -2,6 +2,7 @@
 
 ## v1.31.0 (January 7, 2016)
 * *[v1.31.0.rc3]*
+  * [FIX]: Fix for an issue where an error would not appear for some invalid video links
   * [FIX]: Fix for an issue where some Kaltura videos would autoplay in the video preview
   * [FIX]: Ensure that user is prompted to login if file upload returns 401
 
