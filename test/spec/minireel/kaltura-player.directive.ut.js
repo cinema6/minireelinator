@@ -36,7 +36,7 @@ define(['app', 'angular'], function(appModule, angular) {
             expect(appendedDiv.attr('style')).toContain('width: 100%;');
             expect(appendedDiv.attr('style')).toContain('height: 100%;');
             var appendedScript = appendedElements[1][0];
-            expect(appendedScript.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/partner-1337\/sp\/partner-133700\/embedIframeJs\/uiconf_id\/123-456-def\/partner_id\/partner-1337\?autoembed=true&entry_id=abc123&playerId=kaltura_player_\d{10}&cache_st=\d{10}/);
+            expect(appendedScript.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/partner-1337\/sp\/partner-133700\/embedIframeJs\/uiconf_id\/123-456-def\/partner_id\/partner-1337\?autoembed=true&entry_id=abc123&playerId=kaltura_player_\d{10}&cache_st=\d{10}&flashvars\[autoPlay\]=false/);
             expect(player.hasClass('kalturaPreview')).toBe(true);
         });
 
@@ -47,7 +47,7 @@ define(['app', 'angular'], function(appModule, angular) {
             });
             expect(angular.element.prototype.append.calls.count()).toBe(2);
             var script = angular.element.prototype.append.calls.mostRecent().args[0];
-            expect(script.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/partner-1337\/sp\/partner-133700\/embedIframeJs\/uiconf_id\/123-456-def\/partner_id\/partner-1337\?autoembed=true&entry_id=different&playerId=kaltura_player_\d{10}&cache_st=\d{10}/);
+            expect(script.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/partner-1337\/sp\/partner-133700\/embedIframeJs\/uiconf_id\/123-456-def\/partner_id\/partner-1337\?autoembed=true&entry_id=different&playerId=kaltura_player_\d{10}&cache_st=\d{10}&flashvars\[autoPlay\]=false/);
         });
         
         it('should watch the partnerid and reload the video', function() {
@@ -57,7 +57,7 @@ define(['app', 'angular'], function(appModule, angular) {
             });
             expect(angular.element.prototype.append.calls.count()).toBe(2);
             var script = angular.element.prototype.append.calls.mostRecent().args[0];
-            expect(script.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/different\/sp\/different00\/embedIframeJs\/uiconf_id\/123-456-def\/partner_id\/different\?autoembed=true&entry_id=abc123&playerId=kaltura_player_\d{10}&cache_st=\d{10}/);
+            expect(script.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/different\/sp\/different00\/embedIframeJs\/uiconf_id\/123-456-def\/partner_id\/different\?autoembed=true&entry_id=abc123&playerId=kaltura_player_\d{10}&cache_st=\d{10}&flashvars\[autoPlay\]=false/);
         });
         
         it('should watch the playerid and reload the video', function() {
@@ -67,7 +67,7 @@ define(['app', 'angular'], function(appModule, angular) {
             });
             expect(angular.element.prototype.append.calls.count()).toBe(2);
             var script = angular.element.prototype.append.calls.mostRecent().args[0];
-            expect(script.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/partner-1337\/sp\/partner-133700\/embedIframeJs\/uiconf_id\/different\/partner_id\/partner-1337\?autoembed=true&entry_id=abc123&playerId=kaltura_player_\d{10}&cache_st=\d{10}/);
+            expect(script.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/partner-1337\/sp\/partner-133700\/embedIframeJs\/uiconf_id\/different\/partner_id\/partner-1337\?autoembed=true&entry_id=abc123&playerId=kaltura_player_\d{10}&cache_st=\d{10}&flashvars\[autoPlay]=false/);
         });
     });
 });
