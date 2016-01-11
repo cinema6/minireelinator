@@ -2549,7 +2549,7 @@ fa,
         .form__item--bigInput .form__label {
             text-align: center;
             width:100%;
-            top:1.375em; left:0;
+            top:1.275em; left:0;
             padding:0;
         }
             .form__item--bigInput .form__textBox:focus ~ .form__label,
@@ -4345,9 +4345,9 @@ div.tree-multiselect span.section-name {
             width: 94%;
         }
     div.tree-multiselect > div.selected {
-        padding: 0;
+        padding: 0.5em;
         border: 0;
-        background-color: transparent;
+        background-color: #fff;
         height: auto;
         overflow: hidden;
         max-height: 400px;

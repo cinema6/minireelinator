@@ -30,7 +30,7 @@
                 <div ng-show="tier.show" ng-repeat="item in tier.children" class="item" data-value="{{item.id}}"><input ng-model="item.selected" type="checkbox" ng-change="SelfieInterestsCtrl.toggleInterest(item, tier)" id="{{item.id}}"><label for="{{item.id}}">{{item.label}}</label></div>
             </div>
         </div>
-        <div class="selected">
+        <div class="selected" ng-if="campaign.targeting.interests.length">
         <span ng-if="campaign.targeting.interests.length">Selected Interests</span>
         <div class="selected" ng-repeat="tier in SelfieInterestsCtrl.tiers">
             <div class="item" ng-if="tier.selected && tier.selected !== 'indeterminate'" data-value="{{tier.id}}"><span ng-click="SelfieInterestsCtrl.toggleTier(tier)" class="remove-selected">×</span>{{tier.label}}<span class="section-name">{{tier.label}}</span></div>
