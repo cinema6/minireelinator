@@ -35,43 +35,55 @@
                     <!--</div>
                     </div>-->
                     <!-- campaign summary -->
-                    <div class="grid__item one-whole campaignSummary__group">
+                    <div class="grid__item one-whole campaignSummary__group" c6-alias="SelfieManageCampaignCtrl.summary as summary">
                         <div class="grid">
                             <div class="grid__item">
                                 <h3 class="tk--hdr">Campaign Summary</h3>
                                 <div class="campaignSummary__item">
                                     <div class="grid">
-                                        <div class="grid__item grid--center one-quarter"><span class="campaignItem__label">Total Budget </span><span class="campaignItem__title tk--hdr">$5,000</span></div><!-- --><div class="grid__item one-quarter grid--center"><span class="campaignItem__label">Daily Limit </span><span class="campaignItem__title tk--hdr">$250</span></div><!-- --><div class="grid__item one-quarter grid--center grid--right"><span class="campaignItem__label">Est. Views </span><span class="campaignItem__title tk--hdr">50,000</span></div><!-- --><div class="grid__item grid--center one-quarter"><span class="campaignItem__label ">CPV </span><span class="campaignItem__title tk--hdr">$0.8</span></div>
+                                        <div class="grid__item grid--center one-quarter">
+                                            <span class="campaignItem__label">Total Budget </span>
+                                            <span class="campaignItem__title tk--hdr">${{summary.pricing.budget | number:2}}</span>
+                                        </div><!--
+                                        --><div class="grid__item one-quarter grid--center">
+                                            <span class="campaignItem__label">Daily Limit </span>
+                                            <span class="campaignItem__title tk--hdr">${{summary.pricing.dailyLimit | number:2}}</span>
+                                        </div><!--
+                                        --><div class="grid__item one-quarter grid--center grid--right">
+                                            <span class="campaignItem__label">Est. Views </span>
+                                            <span class="campaignItem__title tk--hdr">50,000</span>
+                                        </div><!--
+                                        --><div class="grid__item grid--center one-quarter">
+                                            <span class="campaignItem__label ">CPV </span>
+                                            <span class="campaignItem__title tk--hdr">${{summary.pricing.cost | number:2}}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="grid">
-                            <div class="grid__item campaignItem__list">                        
+                            <div class="grid__item campaignItem__list">
                                 <div class="campaignItems">
                                     <ul>
-                                        <li>                                        
+                                        <li>
                                             <div class="campaignItem__title">Advertiser</div>
-                                            <div class="campaignItem__label text--small">Cotton USA</div>
+                                            <div class="campaignItem__label text--small">{{summary.advertiser}}</div>
                                         </li>
                                         <li>
                                             <div class="campaignItem__title">Timeline</div>
-                                            <div class="campaignItem__label text--small">11/30/2015 until 12/30/2015</div>
+                                            <div class="campaignItem__label text--small">{{summary.duration}}</div>
                                         </li>
-                                        <li>                                        
+                                        <li>
                                             <div class="campaignItem__title">Interests</div>
-                                            <div class="campaignItem__label text--small">Interests: Arts and Entertainment, Business, Cars, Sports, Education, News, Finance, Hobbies, DIY, Crafts, Photography</div>
+                                            <div class="campaignItem__label text--small">Interests: {{summary.interests || 'All'}}</div>
                                         </li>
                                         <li>
                                             <div class="campaignItem__title">Demographics</div>
-                                            <div class="campaignItem__label text--small">Age: 18-24, 25-34, 35-44</div>
-                                            <div class="campaignItem__label text--small">Gender: Female</div>
-                                            <div class="campaignItem__label text--small">Income: $50,000-$75,000, $75,000-$99,000</div>
+                                            <div class="campaignItem__label text--small" ng-repeat="demo in summary.demographics">{{demo.name}}: {{demo.list || 'All'}}</div>
                                         </li>
                                         <li>
                                             <div class="campaignItem__title">Location</div>
-                                            <div class="campaignItem__label text--small">State: New Jersey, New York, Florida</div>
-                                            <div class="campaignItem__label text--small">DMA: Atlanta, Philadelhpia, Greater NYC</div>
+                                            <div class="campaignItem__label text--small" ng-repeat="geo in summary.geo">{{geo.name}}: {{geo.list || 'All'}}</div>
                                         </li>
                                     </ul>
                                 </div>
