@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.32.0.rc1]*
+  * [DESIGN]: Added styles for campaign summary on manage campaign screen
+
 ## v1.31.0 (January 8, 2016)
 * *[v1.31.0.rc3]*
   * [FIX]: Fix for an issue where an error would not appear for some invalid video links

@@ -4052,7 +4052,8 @@ fa,
     }
     .campaignItem__title, .campaignSummary__group h3.tk--hdr {
         font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
-        font-weight: 700;
+        font-weight: 400;
+        font-size: 1.25em;
     }
     .campaignSummary__group h3 {
         margin-bottom: 0.5em;
@@ -4089,9 +4090,6 @@ fa,
             border-bottom: 1px dotted #ccc;
             padding: 10px 0;
             margin-bottom: 0;
-        }
-        .campaignItems ul li:last-child {
-            border-bottom: none;
         }
         .campaignSummary__item {
             border-top: 1px dotted #ccc;
