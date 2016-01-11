@@ -524,6 +524,37 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return fetchThumbs(minireel)
                             .then(generateCollage);
                     };
+
+                    this.websiteData = function(uri) {
+                        var encoded = encodeURIComponent(uri),
+                            whitelist = ['facebook','twitter','instagram','youtube','pinterest'];
+
+                        return $http.get('/api/collateral/website-data?uri=' + encoded)
+                            .then(function(resp) {
+                                var data = resp.data,
+                                    links = data.links,
+                                    logo = data.images.profile,
+                                    valid = !!logo,
+                                    _links = {};
+
+                                forEach(links, function(link, key) {
+                                    if (whitelist.indexOf(key) > -1) {
+                                        _links[key] = link;
+
+                                        if (link) { valid = true; }
+                                    }
+                                });
+
+                                if (valid) {
+                                    resp.data.links = _links;
+                                    return resp.data;
+                                } else {
+                                    // if no links or logos are found
+                                    // we're considering that a failure
+                                    return $q.reject('No logo or social links found');
+                                }
+                            });
+                    };
                 }
 
                 return new CollateralService();
@@ -553,8 +584,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .service('FileService', ['$window','$q','$rootScope',
-        function                ( $window , $q , $rootScope ) {
+        .service('FileService', ['$window','$q','$rootScope','SelfieLoginDialogService',
+        function                ( $window , $q , $rootScope , SelfieLoginDialogService ) {
             var URL = $window.URL,
                 FormData = $window.FormData,
                 XMLHttpRequest = $window.XMLHttpRequest;
@@ -600,17 +631,25 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     if (xhr.readyState < 4) { return; }
 
                     $rootScope.$apply(function() {
-                        var data;
+                        var _data;
 
                         try {
-                            data = fromJson(xhr.response);
+                            _data = fromJson(xhr.response);
                         } catch(e) {
-                            data = xhr.response;
+                            _data = xhr.response;
+                        }
+
+                        if (xhr.status === 401) {
+                            return SelfieLoginDialogService.display()
+                                .then(function() {
+                                    xhr.open('POST', url);
+                                    xhr.send(data);
+                                });
                         }
 
                         deferred[ xhr.status < 400 ?
                             'resolve' : 'reject']({
-                                data: data,
+                                data: _data,
                                 status: xhr.status,
                                 statusText: xhr.statusText
                             });

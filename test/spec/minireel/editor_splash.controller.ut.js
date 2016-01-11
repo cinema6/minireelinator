@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor'], function(editorModule) {
+    define(['minireel/editor','selfie/services'], function(editorModule, servicesModule) {
         describe('EditorSplashController', function() {
             var $rootScope,
                 $scope,
@@ -34,6 +34,7 @@
                     }
                 };
 
+                module(servicesModule.name);
                 module(editorModule.name);
 
                 inject(function($injector) {

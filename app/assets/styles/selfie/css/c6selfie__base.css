@@ -263,6 +263,10 @@ fa,
     .text--small {
         font-size: 0.875rem;
     }
+    .not--found {
+        color: #888;
+        font-style: italic;
+    }
 
     .huge--icon {
         font-size: 200px;
@@ -948,7 +952,7 @@ fa,
     .mainNav__group {
         position: fixed;
         top:0; bottom:0; left:0;
-        z-index:20;
+        z-index:1;
         background:#2e3134;
         width:4em;
     }
@@ -966,7 +970,7 @@ fa,
         max-width:64em;
         margin: 0 auto;
         padding:4em 0 0 0;
-        z-index: -1;
+        /*z-index: -1;*/
         position: relative;
     }
         .gridHolder .formSection__title {
@@ -981,7 +985,7 @@ fa,
             max-width:64em;
             margin: 0 auto;
             padding:4em 0 0 0;
-            z-index: -1;
+            /*z-index: -1;*/
             position: relative;
         }
     }
@@ -2049,12 +2053,27 @@ fa,
                 line-height: 1.2;
                 margin:0.2em 0 0.15em 0;
                 transition:color 0.3s;
+                display: inline-block;
             }
 
-                .campaign__item:hover .campaign__name {
-                    color:#de0073;
+                .campaign__item:hover .campaign__name, .campaign__item:hover .campaign__previewLink {
+                    color:#119DA4;
+                }                
+                .campaign__item:hover .campaign__name:hover {
+                    color:#0E7D81;
+                }
+                .campaign__item:hover .campaign__previewLink:hover {
+                    color:#0E7D81;
                 }
 
+            .campaign__previewLink {
+                color: #1c1c1c;
+                display: inline-block;
+                padding-left: 0.5em;
+            }
+            .campaign__previewLink .fa {
+                vertical-align: baseline;
+            }
 
             .campaign__viewTotal,
             .campaign__spendTotal {
@@ -2142,6 +2161,7 @@ fa,
     .tocNav__group {
         position: fixed;
         top:50%; left:4.75em;
+        z-index: 2;
     }
         .tocNav__item {
             position: relative;

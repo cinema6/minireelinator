@@ -29,77 +29,114 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form__item" ng-class="{ 'ui--hasError': SelfieCampaignSponsorCtrl.uploadError }">
-                <!-- <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="card.collateral.logo"> -->
 
-                <select c6-select-box data-options="SelfieCampaignSponsorCtrl.logoOptions" thumbnails="true" preselected="true" class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignSponsorCtrl.logoType" ng-options="option.label for option in SelfieCampaignSponsorCtrl.logoOptions">
-                </select><!-- TO DO: big time selector customization -->
-
-                <label class="form__label" for="c6-sponsor-logo">
+            <fieldset class="form__item" ng-class="{'ui--hasError': !SelfieCampaignCtrl.card.links.Website && SelfieCampaignCtrl.validation.show }">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-website" ng-model="SelfieCampaignSponsorCtrl.website" ng-focus="SelfieCampaignSponsorCtrl.checkImportability()" ng-blur="SelfieCampaignSponsorCtrl.checkWebsite()">
+                <label class="form__label" for="c6-sponsor-website">
                     <i class="fa fa-times ui--error"></i>
-                    Advertiser Logo
+                    <i class="fa fa-link tk--active tk--link"></i> Website <span class="text--small"> (required) </span>
                 </label>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
-                        Add a recogognizable logo to reinforce association with the advertiser.  This is a proven strategy to increase brand awareness and recall.  This field is optional.
+                        This link will be added to your video card.
                     </div>
                 </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error uploading logo
+                        <i class="fa fa-exclamation-triangle"></i> Website is required
                     </p>
                 </div>
             </fieldset>
 
-            <div class="sponsorLogo__wizard ui__connector" ng-if="SelfieCampaignSponsorCtrl.logoType.type !== 'none'">
-                <div class="logoPreview__group" ng-if="SelfieCampaignSponsorCtrl.logo">
-                    <div class="logoPreview__thumbnail">
-                        <span class="thumbnail__box thumbnail__box--square">
-                            <span class="thumbnail">
-                                <img class="thumbnail__img" ng-src="{{SelfieCampaignSponsorCtrl.logo}}">
-                            </span>
-                        </span>
-                    </div>
-                    <span class="thumbnail__label">Thumbnail Preview</span>
+            <div class="text--center" ng-show="SelfieCampaignSponsorCtrl.allowImport && SelfieCampaignSponsorCtrl.website">
+                <p>Would you like to import logo and social links?</p>
+                <div class="ui__btnHolder ui__btnHolder--sub">
+                    <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.importWebsite()">Import</button>
                 </div>
-                <fieldset class="form__item form__item--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'url'">
-                    <input class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignSponsorCtrl.url">
-                    <label class="form__label" for="c6-video-ctaText">
-                        <i class="fa fa-times ui--error"></i>
-                        URL to image
-                    </label>
-                    <div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                            Enter or paste the link to your existing logo on the web.
-                        </div>
+            </div>
+
+            <!-- loading animation -->
+            <div class="assetLoader ui__connector" ng-if="SelfieCampaignSponsorCtrl.loadingSiteData">
+                <div class="assetLoader__status">
+                    <div class="assetLoader__status--icon">
+                        <div class="spinner"></div>
                     </div>
+                    <div class="assetLoader__status--text text-small">Looking for logo and social links</div>
+                </div>
+            </div>
+
+            <!-- loading success -->
+            <div class="assetLoader ui__connector" ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess && !SelfieCampaignSponsorCtrl.allowImport">
+                <div class="assetLoader__status assetLoader__status-success">
+                    <div class="assetLoader__status--icon">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <div class="assetLoader__status--text text-small">
+                        Retrieved <span ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess.logo">logo</span>
+                        <span ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess.logo && SelfieCampaignSponsorCtrl.siteDataSuccess.links"> and </span> <span ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess.links"> {{SelfieCampaignSponsorCtrl.siteDataSuccess.links}} social link</span><span ng-if="SelfieCampaignSponsorCtrl.siteDataSuccess.links > 1">s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- loading failure -->
+            <div class="assetLoader ui__connector" ng-if="SelfieCampaignSponsorCtrl.siteDataFailure && !SelfieCampaignSponsorCtrl.allowImport">
+                <div class="assetLoader__status assetLoader__status-error">
+                    <div class="assetLoader__status--icon">
+                        <i class="fa fa-warning"></i>
+                    </div>
+                    <div class="assetLoader__status--text text-small">Failed to find logo or social links</div>
+                </div>
+            </div>
+
+
+
+            <div ng-show="SelfieCampaignSponsorCtrl.hasImported">
+                <h1 class="formSection__title">
+                    <span class="formSection__titleText tk--hdr">Logo and Social Links</span>
+                </h1>
+                <br>
+                <fieldset class="form__item" ng-class="{ 'ui--hasError': SelfieCampaignSponsorCtrl.uploadError }">
+                    <!-- <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="card.collateral.logo"> -->
+
+                    <select c6-select-box data-options="SelfieCampaignSponsorCtrl.logoOptions" thumbnails="true" preselected="true" class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignSponsorCtrl.logoType" ng-options="option.label for option in SelfieCampaignSponsorCtrl.logoOptions">
+                    </select><!-- TO DO: big time selector customization -->
+
+                    <label class="form__label" for="c6-sponsor-logo">
+                        <i class="fa fa-times ui--error"></i>
+                        Advertiser Logo
+                    </label>
+                    <!--<div class="form__helpBox form__helpBox--right">
+                        <div class="form__helpText">
+                            Add a recogognizable logo to reinforce association with the advertiser.  This is a proven strategy to increase brand awareness and recall.  This field is optional.
+                        </div>
+                    </div>-->
                     <div class="form__errorBox">
                         <p class="form__errorMsg">
-                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                            <i class="fa fa-exclamation-triangle"></i> Error uploading logo
                         </p>
                     </div>
                 </fieldset>
-                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'url'">
-                    <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.uploadFromUri(SelfieCampaignSponsorCtrl.url)">Upload From URL</button>
-                </div>
-                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'file'">
-                    <button class="action__btn action__btn--small" hidden-input-click="logoUpload">Choose File</button>
-                </div>
 
-                <input id="logoUpload" type="file" style="display:none;" ng-model="SelfieCampaignSponsorCtrl.logoFile"><!-- hidden file input-->
-            </div><!--.sponsorLogo__wizard-->
-
-            <div ng-repeat="link in SelfieCampaignSponsorCtrl.links">
-                <fieldset class="form__item" ng-class="{'ui--hasError': !link.href && link.required && SelfieCampaignCtrl.validation.show }">
-                    <div ng-if="link.name === 'Sharing'">
-                        <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-sharing" ng-model="SelfieCampaignSponsorCtrl.sharing" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
-                        <label class="form__label" for="c6-sponsor-sharing">
+                <div class="sponsorLogo__wizard ui__connector" ng-if="SelfieCampaignSponsorCtrl.logoType.type !== 'none'">
+                    <div class="logoPreview__group" ng-if="SelfieCampaignSponsorCtrl.logo">
+                        <div class="logoPreview__thumbnail">
+                            <span class="thumbnail__box thumbnail__box--square">
+                                <span class="thumbnail">
+                                    <img class="thumbnail__img" ng-src="{{SelfieCampaignSponsorCtrl.logo}}">
+                                </span>
+                            </span>
+                        </div>
+                        <span class="thumbnail__label">Thumbnail Preview</span>
+                    </div>
+                    <fieldset class="form__item form__item--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'url'">
+                        <input class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignSponsorCtrl.url">
+                        <label class="form__label" for="c6-video-ctaText">
                             <i class="fa fa-times ui--error"></i>
-                            <i class="fa fa-share-alt-square tk--active tk--share"></i> Share Link
+                            URL to image
                         </label>
                         <div class="form__helpBox form__helpBox--right">
                             <div class="form__helpText">
-                                Add a link for users to share
+                                Enter or paste the link to your existing logo on the web.
                             </div>
                         </div>
                         <div class="form__errorBox">
@@ -107,29 +144,61 @@
                                 <i class="fa fa-exclamation-triangle"></i> Error message goes here
                             </p>
                         </div>
+                    </fieldset>
+                    <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'url'">
+                        <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.uploadFromUri(SelfieCampaignSponsorCtrl.url)">Upload From URL</button>
+                    </div>
+                    <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'file'">
+                        <button class="action__btn action__btn--small" hidden-input-click="logoUpload">Choose File</button>
                     </div>
 
-                    <div ng-if="link.name !== 'Sharing'">
-                        <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
-                        <label class="form__label" for="c6-sponsor-{{link.name}}">
-                            <i class="fa fa-times ui--error"></i>
-                            <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}} <span ng-if="link.required" class="text--small"> (required) </span>
-                        </label>
-                        <!--<div class="form__helpBox form__helpBox--right">
-                            <div class="form__helpText">
-                                This link will be added to your video card.
+                    <input id="logoUpload" type="file" style="display:none;" ng-model="SelfieCampaignSponsorCtrl.logoFile"><!-- hidden file input-->
+                </div><!--.sponsorLogo__wizard-->
+
+                <div ng-repeat="link in SelfieCampaignSponsorCtrl.links">
+                    <fieldset class="form__item" ng-class="{'ui--hasError': !link.href && link.required && SelfieCampaignCtrl.validation.show }">
+                        <div ng-if="link.name === 'Sharing'">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-sharing" ng-model="SelfieCampaignSponsorCtrl.sharing" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()" ng-focus="SelfieCampaignSponsorCtrl.bindShareToWebsite = false">
+                            <label class="form__label" for="c6-sponsor-sharing">
+                                <i class="fa fa-times ui--error"></i>
+                                <i class="fa fa-share-alt-square tk--active tk--share"></i> Share Link
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Add a link for users to share
+                                </div>
                             </div>
-                        </div>-->
-                        <div class="form__errorBox">
-                            <p class="form__errorMsg">
-                                <i class="fa fa-exclamation-triangle"></i> {{link.name}} is required
-                            </p>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                </fieldset>
+
+                        <div ng-if="link.name !== 'Sharing'">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
+                            <label class="form__label" for="c6-sponsor-{{link.name}}">
+                                <i class="fa fa-times ui--error"></i>
+                                <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}} <span ng-if="link.required" class="text--small"> (required) </span>
+                            </label>
+                            <!--<div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    This link will be added to your video card.
+                                </div>
+                            </div>-->
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> {{link.name}} is required
+                                </p>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
             </div>
 
         </div>
+
+        <c6-view></c6-view>
 
     </section><!--.formSection__group, #section_2, ng-controller, c6-alias -->
 

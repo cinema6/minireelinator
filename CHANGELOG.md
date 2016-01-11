@@ -1,5 +1,16 @@
 # MiniReelinator
 
+## v1.31.0 (January 8, 2016)
+* *[v1.31.0.rc3]*
+  * [FIX]: Fix for an issue where an error would not appear for some invalid video links
+  * [FIX]: Fix for an issue where some Kaltura videos would autoplay in the video preview
+  * [FIX]: Ensure that user is prompted to login if file upload returns 401
+* *[/v1.31.0.rc3]*
+
+* *[v1.31.0.rc2]*
+  * [FIX]: Only show Selfie-supported social links when scraping website
+* *[/v1.31.0.rc2]*
+
 * *[v1.31.0.rc1]*
   * [FIX]: Remove 'Approved' filter from the campaigns list view dropdown
   * [DESIGN]: Added html/css for multi date stats dropdown
@@ -11,6 +22,8 @@
   * [FIX]: Fixed the logo resolution issue for retina display
   * [DESIGN]: Updated player splash screen images to use Reelcontent branding
   * [FEATURE]: Add support for Kaltura videos
+  * [FEATURE]: Add ability to scrape links and logo from website url
+* *[v1.31.0.rc1]*
 
 ## v1.30.1 (December 18, 2015)
 * *[v1.30.1.rc3]*

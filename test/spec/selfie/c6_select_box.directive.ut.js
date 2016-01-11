@@ -9,6 +9,8 @@ define(['app','angular','select2'], function(appModule, angular) {
             $select,
             $;
 
+        var options;
+
         beforeEach(function() {
             module(appModule.name);
 
@@ -21,13 +23,27 @@ define(['app','angular','select2'], function(appModule, angular) {
                 $timeout = $injector.get('$timeout');
 
                 $scope = $rootScope.$new();
+
+                options = [
+                    {
+                        label: 'Option Name',
+                        src: '/image.jpg'
+                    },
+                    {
+                        label: 'Another',
+                        src: '/another.jpg'
+                    }
+                ];
+
+                $scope.options = options;
+                $scope.chosen = null;
             });
         });
 
         describe('initiating select2 jquery plugin', function() {
             it('should call the select2 method', function() {
                 $scope.$apply(function() {
-                    $select = $compile('<select c6-select-box>')($scope);
+                    $select = $compile('<select c6-select-box data-options="options" ng-model="chosen">')($scope);
                 });
 
                 $timeout.flush();
@@ -37,7 +53,7 @@ define(['app','angular','select2'], function(appModule, angular) {
 
             it('should pass a configuration object if defined', function() {
                 $scope.$apply(function() {
-                    $select = $compile('<select c6-select-box config="{property1:\'value1\'}">')($scope);
+                    $select = $compile('<select c6-select-box data-options="options" config="{property1:\'value1\'}" ng-model="chosen">')($scope);
                 });
 
                 $timeout.flush();
@@ -52,18 +68,8 @@ define(['app','angular','select2'], function(appModule, angular) {
                 it('should add a method to the config for creating custom options with images', function() {
                     var formatFn, $option1, $option2;
 
-                    $scope.options = [
-                        {
-                            label: 'Option Name',
-                            src: '/image.jpg'
-                        },
-                        {
-                            label: 'Another',
-                            src: '/another.jpg'
-                        }
-                    ];
                     $scope.$apply(function() {
-                        $select = $compile('<select c6-select-box data-options="options" thumbnails="true">')($scope);
+                        $select = $compile('<select c6-select-box data-options="options" thumbnails="true" ng-model="chosen">')($scope);
                     });
 
                     $timeout.flush();
@@ -80,7 +86,7 @@ define(['app','angular','select2'], function(appModule, angular) {
             describe('when "preselected" attribute is present', function() {
                 it('should add the "filled" class', function() {
                     $scope.$apply(function() {
-                        $select = $compile('<select c6-select-box preselected="true">')($scope);
+                        $select = $compile('<select c6-select-box data-options="options" preselected="true" ng-model="chosen">')($scope);
                     });
 
                     $timeout.flush();
@@ -91,22 +97,12 @@ define(['app','angular','select2'], function(appModule, angular) {
 
             describe('when an item is pre-selected', function() {
                 beforeEach(function() {
-                    $scope.options = [
-                        {
-                            label: 'Option Name',
-                            src: '/image.jpg'
-                        },
-                        {
-                            label: 'Another',
-                            src: '/another.jpg'
-                        }
-                    ];
                     $scope.chosen = $scope.options[0];
                 });
 
                 it('should add the "filled" class', function() {
                     $scope.$apply(function() {
-                        $select = $compile('<select c6-select-box ng-options="option.label for option in options" ng-model="chosen">')($scope);
+                        $select = $compile('<select c6-select-box data-options="options" ng-options="option.label for option in options" ng-model="chosen">')($scope);
                     });
 
                     $timeout.flush();
@@ -117,7 +113,7 @@ define(['app','angular','select2'], function(appModule, angular) {
                 describe('when the "unselect-default" attribute is present', function() {
                     it('should not add the "filled" class', function() {
                         $scope.$apply(function() {
-                            $select = $compile('<select c6-select-box unselect-default="true" ng-options="option.label for option in options" ng-model="chosen">')($scope);
+                            $select = $compile('<select c6-select-box data-options="options" unselect-default="true" ng-options="option.label for option in options" ng-model="chosen">')($scope);
                         });
 
                         $timeout.flush();
@@ -130,7 +126,7 @@ define(['app','angular','select2'], function(appModule, angular) {
             describe('opening the select dropdown', function() {
                 it('should add the "filled" and "active" class', function() {
                     $scope.$apply(function() {
-                        $select = $compile('<select c6-select-box>')($scope);
+                        $select = $compile('<select c6-select-box unselect-default="true" data-options="options" ng-model="chosen" ng-options="option.label for option in options">')($scope);
                     });
 
                     $timeout.flush();
@@ -148,7 +144,7 @@ define(['app','angular','select2'], function(appModule, angular) {
             describe('closing the dropdown', function() {
                 it('should remove the "active" class', function() {
                     $scope.$apply(function() {
-                        $select = $compile('<select c6-select-box>')($scope);
+                        $select = $compile('<select c6-select-box data-options="options" ng-model="chosen">')($scope);
                     });
 
                     $timeout.flush();
@@ -163,7 +159,7 @@ define(['app','angular','select2'], function(appModule, angular) {
                 describe('when there is no value', function() {
                     it('should remove the "filled" class', function() {
                         $scope.$apply(function() {
-                            $select = $compile('<select c6-select-box>')($scope);
+                            $select = $compile('<select c6-select-box data-options="options" ng-model="chosen" ng-options="option.label for option in options">')($scope);
                         });
 
                         $timeout.flush();
@@ -180,20 +176,10 @@ define(['app','angular','select2'], function(appModule, angular) {
 
                 describe('when it should hide the default option and the default option is chosen', function() {
                     it('should remove the "filled" class', function() {
-                        $scope.options = [
-                            {
-                                label: 'Option Name',
-                                src: '/image.jpg'
-                            },
-                            {
-                                label: 'Another',
-                                src: '/another.jpg'
-                            }
-                        ];
                         $scope.chosen = $scope.options[0];
 
                         $scope.$apply(function() {
-                            $select = $compile('<select c6-select-box unselect-default="true" ng-options="option.label for option in options" ng-model="chosen">')($scope);
+                            $select = $compile('<select c6-select-box data-options="options" unselect-default="true" ng-options="option.label for option in options" ng-model="chosen">')($scope);
                         });
 
                         $timeout.flush();
@@ -210,20 +196,10 @@ define(['app','angular','select2'], function(appModule, angular) {
 
                 describe('when a selection has been made', function() {
                     it('should not remove the "filled" class', function() {
-                        $scope.options = [
-                            {
-                                label: 'Option Name',
-                                src: '/image.jpg'
-                            },
-                            {
-                                label: 'Another',
-                                src: '/another.jpg'
-                            }
-                        ];
                         $scope.chosen = null;
 
                         $scope.$apply(function() {
-                            $select = $compile('<select c6-select-box ng-options="option.label for option in options" ng-model="chosen">')($scope);
+                            $select = $compile('<select c6-select-box data-options="options" ng-options="option.label for option in options" ng-model="chosen">')($scope);
                         });
 
                         $timeout.flush();
@@ -243,6 +219,31 @@ define(['app','angular','select2'], function(appModule, angular) {
                         expect($select.hasClass('form__fillCheck--filled')).toBe(true);
                     });
                 });
+            });
+
+            describe('when the selection (ie. model) changes programmatically', function() {
+                it('should re-render the dropdown', function() {
+                    $scope.$apply(function() {
+                        $select = $compile('<select c6-select-box data-options="options" ng-model="chosen" ng-options="option.label for option in options">')($scope);
+                    });
+
+
+                    $timeout.flush();
+
+                    $select.select2.calls.reset();
+
+                    $scope.$apply(function() {
+                        $scope.chosen = options[1];
+                    });
+
+                    $timeout.flush();
+
+                    expect($select.select2).toHaveBeenCalledWith(jasmine.objectContaining({minimumResultsForSearch: Infinity}));
+                });
+            });
+
+            describe('when the selection (ie. model) changes programmatically', function() {
+
             });
         });
     });

@@ -72,10 +72,10 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                         describe('when it is a valid vast tag', function() {
                             describe('when response contains "VAST" and is "text/xml"', function() {
                                 it('should return an adUnit object', function() {
-                                    $httpBackend.expect('GET', 'http://vasttag.com/vast.xml').respond(200, '<VAST></VAST>', {'content-type': 'text/xml'});
+                                    $httpBackend.expect('GET', 'https://vasttag.com/vast.xml').respond(200, '<VAST></VAST>', {'content-type': 'text/xml'});
 
                                     $rootScope.$apply(function() {
-                                        fromUrl('http://vasttag.com/vast.xml');
+                                        fromUrl('https://vasttag.com/vast.xml');
                                     });
 
                                     $httpBackend.flush();
@@ -83,7 +83,7 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                                     expect(failure).not.toHaveBeenCalled();
                                     expect(success).toHaveBeenCalledWith({
                                         service: 'adUnit',
-                                        id: '{"vast":"http://vasttag.com/vast.xml"}'
+                                        id: '{"vast":"https://vasttag.com/vast.xml"}'
                                     });
                                 });
                             });
@@ -92,10 +92,10 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                         describe('when it is not a valid vast tag', function() {
                             describe('when response does not contain "VAST"', function() {
                                 it('should return an adUnit object', function() {
-                                    $httpBackend.expect('GET', 'http://vasttag.com/vast.xml').respond(200, 'Some text', {'content-type': 'text/xml'});
+                                    $httpBackend.expect('GET', 'https://vasttag.com/vast.xml').respond(200, 'Some text', {'content-type': 'text/xml'});
 
                                     $rootScope.$apply(function() {
-                                        fromUrl('http://vasttag.com/vast.xml');
+                                        fromUrl('https://vasttag.com/vast.xml');
                                     });
 
                                     $httpBackend.flush();
@@ -107,16 +107,52 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
 
                             describe('when response header does not set "text/xml" type', function() {
                                 it('should return an adUnit object', function() {
-                                    $httpBackend.expect('GET', 'http://vasttag.com/vast.xml').respond(200, '<VAST></VAST>');
+                                    $httpBackend.expect('GET', 'https://vasttag.com/vast.xml').respond(200, '<VAST></VAST>');
 
                                     $rootScope.$apply(function() {
-                                        fromUrl('http://vasttag.com/vast.xml');
+                                        fromUrl('https://vasttag.com/vast.xml');
                                     });
 
                                     $httpBackend.flush();
 
                                     expect(failure).toHaveBeenCalled();
                                     expect(success).not.toHaveBeenCalled();
+                                });
+                            });
+                        });
+                        
+                        describe('when the url is http', function() {
+                            it('should validate and save the url with a protocol of https', function() {
+                                $httpBackend.expect('GET', 'https://vasttag.com/vast.xml').respond(200, '<VAST></VAST>', {'content-type': 'text/xml'});
+
+                                $rootScope.$apply(function() {
+                                    fromUrl('http://vasttag.com/vast.xml');
+                                });
+
+                                $httpBackend.flush();
+
+                                expect(failure).not.toHaveBeenCalled();
+                                expect(success).toHaveBeenCalledWith({
+                                    service: 'adUnit',
+                                    id: '{"vast":"https://vasttag.com/vast.xml"}'
+                                });
+                            });
+                        });
+                        
+                        describe('when the url is protocol relative', function() {
+                            it('should validate and save the url with a protocol of https', function() {
+                                $httpBackend.expect('GET', 'https://vasttag.com/vast.xml').respond(200, '<VAST></VAST>', {'content-type': 'text/xml'});
+
+                                $rootScope.$apply(function() {
+                                    fromUrl('//vasttag.com/vast.xml');
+                                });
+
+                                $httpBackend.flush();
+
+                                expect(failure).not.toHaveBeenCalled();
+                                expect(success).toHaveBeenCalledWith({
+                                    service: 'adUnit',
+                                    id: '{"vast":"https://vasttag.com/vast.xml"}'
                                 });
                             });
                         });

@@ -69,6 +69,28 @@ define(['app'], function(appModule) {
                     });
                 });
             });
+
+            describe('when the model is updated programmatically', function() {
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        $scope.value = 'Model Changed';
+                    });
+                });
+
+                it('should add the class', function() {
+                    expect($input.hasClass('form__fillCheck--filled')).toBe(true);
+                });
+
+                describe('when a value is removed', function() {
+                    it('should remove the class', function() {
+                        $scope.$apply(function() {
+                            $scope.value = '';
+                        });
+
+                        expect($input.hasClass('form__fillCheck--filled')).toBe(false);
+                    });
+                });
+            });
         });
     });
 });

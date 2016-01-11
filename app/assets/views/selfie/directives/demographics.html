@@ -8,7 +8,7 @@
 <div class="form__items">
 
     <fieldset class="form__item" >
-        <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.demographics.age" ng-options="option for option in SelfieDemographicsCtrl.ageOptions" id="c6-ages"></select>
+        <select c6-select-box multiple="multiple" data-options="SelfieDemographicsCtrl.ageOptions" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.demographics.age" ng-options="option for option in SelfieDemographicsCtrl.ageOptions" id="c6-ages"></select>
         <label select-label class="form__label" for="c6-ages">
             <i class="fa fa-times ui--error"></i>
             Age
@@ -26,7 +26,7 @@
     </fieldset>
 
     <fieldset class="form__item">
-        <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.demographics.income" ng-options="option for option in SelfieDemographicsCtrl.incomeOptions" id="c6-income"></select>
+        <select c6-select-box multiple="multiple" data-options="SelfieDemographicsCtrl.incomeOptions" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.demographics.income" ng-options="option for option in SelfieDemographicsCtrl.incomeOptions" id="c6-income"></select>
         <label select-label class="form__label" for="c6-income">
             <i class="fa fa-times ui--error"></i>
             Income
@@ -44,7 +44,7 @@
     </fieldset>
 
     <fieldset class="form__item">
-        <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="SelfieDemographicsCtrl.gender" ng-options="option for option in SelfieDemographicsCtrl.genderOptions" id="c6-gender"></select>
+        <select c6-select-box multiple="multiple" data-options="SelfieDemographicsCtrl.genderOptions" class="form__selectBox form__selectBox--multiple" ng-model="SelfieDemographicsCtrl.gender" ng-options="option for option in SelfieDemographicsCtrl.genderOptions" id="c6-gender"></select>
         <label select-label class="form__label" for="c6-gender">
             <i class="fa fa-times ui--error"></i>
             Gender
