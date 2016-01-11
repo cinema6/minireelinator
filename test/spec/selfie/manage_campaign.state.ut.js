@@ -48,7 +48,10 @@ define(['app'], function(appModule) {
                     id: 'cam-123',
                     advertiserId: 'a-123',
                     cards: [],
-                    links: {}
+                    links: {},
+                    targeting: {
+                        interests: []
+                    }
                 };
                 paymentMethods = [
                     {
@@ -69,7 +72,10 @@ define(['app'], function(appModule) {
                     data: {
                         id: 'cam-123',
                         status: 'pending',
-                        name: 'My Campaign'
+                        name: 'My Campaign',
+                        targeting: {
+                            interests: []
+                        }
                     }
                 };
                 stats = [];
@@ -253,13 +259,30 @@ define(['app'], function(appModule) {
         });
 
         describe('afterModel()', function() {
-            it('should set the isAdmin flag on the state', function() {
-                var model = {
+            var interestsDeferred, model, interests;
+
+            beforeEach(function() {
+                interestsDeferred = $q.defer();
+
+                spyOn(cinema6.db, 'findAll').and.returnValue(interestsDeferred.promise);
+
+                model = {
                     paymentMethods: paymentMethods,
                     updateRequest: updateRequest,
                     stats: stats
                 };
 
+                interests = [
+                    {
+                        id: 'cat-1'
+                    },
+                    {
+                        id: 'cat-2'
+                    }
+                ];
+            });
+
+            it('should set the isAdmin flag on the state', function() {
                 campaignState.afterModel(model);
 
                 expect(campaignState.isAdmin).toBe(true);
@@ -267,12 +290,6 @@ define(['app'], function(appModule) {
             });
 
             it('should set the hasStats flag on the state', function() {
-                var model = {
-                    paymentMethods: paymentMethods,
-                    updateRequest: updateRequest,
-                    stats: stats
-                };
-
                 campaignState.afterModel(model);
 
                 expect(campaignState.hasStats).toBe(false);
@@ -282,6 +299,66 @@ define(['app'], function(appModule) {
                 campaignState.afterModel(model);
 
                 expect(campaignState.hasStats).toBe(true);
+            });
+
+            describe('when there is an update request', function() {
+                it('should fetch the categories and put them on the state', function() {
+                    updateRequest.data.targeting.interests = ['cat-1','cat-3'];
+
+                    campaign.targeting.interests = ['cat-2'];
+                    campaignState.campaign = campaign;
+
+                    campaignState.afterModel(model);
+
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('category', { ids: 'cat-1,cat-3'});
+
+                    $rootScope.$apply(function() {
+                        interestsDeferred.resolve(interests);
+                    });
+
+                    expect(campaignState.interests).toBe(interests);
+                });
+
+                it('should not fetch any interests if there are none', function() {
+                    updateRequest.data.targeting.interests = [];
+
+                    campaign.targeting.interests = ['cat-2'];
+                    campaignState.campaign = campaign;
+
+                    campaignState.afterModel(model);
+
+                    expect(cinema6.db.findAll).not.toHaveBeenCalledWith('category', jasmine.any(Object));
+                });
+            });
+
+            describe('when there is no an update request', function() {
+                it('should fetch the categories of the campaign and put them on the state', function() {
+                    model.updateRequest = null;
+
+                    campaign.targeting.interests = ['cat-1','cat-3'];
+                    campaignState.campaign = campaign;
+
+                    campaignState.afterModel(model);
+
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('category', { ids: 'cat-1,cat-3'});
+
+                    $rootScope.$apply(function() {
+                        interestsDeferred.resolve(interests);
+                    });
+
+                    expect(campaignState.interests).toBe(interests);
+                });
+
+                it('should not fetch any interests if there are none', function() {
+                    model.updateRequest = null;
+
+                    campaign.targeting.interests = [];
+                    campaignState.campaign = campaign;
+
+                    campaignState.afterModel(model);
+
+                    expect(cinema6.db.findAll).not.toHaveBeenCalledWith('category', jasmine.any(Object));
+                });
             });
         });
 

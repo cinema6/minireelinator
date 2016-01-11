@@ -230,6 +230,8 @@ function( angular , c6uilib ,  c6Defines  ) {
                 var campaign = config.campaign,
                     interests = config.interests;
 
+                if (!campaign) { return; }
+
                 function pad(num) {
                     var norm = Math.abs(Math.floor(num));
                     return (norm < 10 ? '0' : '') + norm;

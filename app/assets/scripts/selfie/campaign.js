@@ -1790,7 +1790,6 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             this.initWithModel = function(model) {
-                this.card = cState.card;
                 this.campaign = cState.campaign;
                 this.showAdminTab = cState.isAdmin;
                 this.hasStats = cState.hasStats;
@@ -1801,6 +1800,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.updateRequest = model.updateRequest;
                 this.stats = model.stats;
                 this.advertiser = model.advertiser;
+
+                this.card = (this.updateRequest && this.updateRequest.data &&
+                    this.updateRequest.data.cards[0]) || cState.card;
 
                 this.summary = CampaignService.getSummary({
                     campaign: (this.updateRequest && this.updateRequest.data) || this.campaign,
