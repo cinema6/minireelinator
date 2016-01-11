@@ -54,9 +54,9 @@
 
             <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignCtrl.validation.show }">
                 <!--<input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">-->
-                <select c6-select-box class="form__selectBox form__selectBox--single" id="c6-video-ctaText"  ng-trim="false" ng-model="card.params.action.label">
-                    <option>Buy Now</option>
+                <select c6-select-box class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaText"  ng-trim="false" ng-model="card.params.action.label">
                     <option>Learn More</option>
+                    <option>Buy Now</option>                    
                     <option>Shop Now</option>
                     <option>Sign Up</option>
                     <option>Apply Now</option>
@@ -81,7 +81,23 @@
                     </p>
                 </div>
             </fieldset>
-
+            <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignCtrl.validation.show }">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">
+                <label class="form__label" for="c6-video-ctaText">
+                    <i class="fa fa-times ui--error"></i>
+                    Custom Button Text <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxCallToActionLength - card.params.action.label.length}}</span>
+                </label>
+                <!--<div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        The text is what the link will be attached to for the button or the link.
+                    </div>
+                </div>-->
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Call to action text is required
+                    </p>
+                </div>
+            </fieldset>
             <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && SelfieCampaignCtrl.validation.show }">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignTextCtrl.actionLink" ng-focus="SelfieCampaignTextCtrl.bindLinkToWebsite = false" ng-blur="SelfieCampaignTextCtrl.updateActionLink(SelfieCampaignTextCtrl.actionLink)">
                 <label class="form__label" for="c6-video-ctaText">
