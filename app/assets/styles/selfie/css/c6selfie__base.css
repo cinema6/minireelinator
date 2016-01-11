@@ -263,6 +263,10 @@ fa,
     .text--small {
         font-size: 0.875rem;
     }
+    .not--found {
+        color: #888;
+        font-style: italic;
+    }
 
     .huge--icon {
         font-size: 200px;
@@ -698,12 +702,12 @@ fa,
         }
             .alertMessage.alert__success {
                 background-color: #DBFFEF;
-                color: #00BC65;
+                color: #007440;
                 border: 1px solid #A1F1CD;
             }
             .alertMessage.alert__failure {
                 background-color: #FFC0C0;
-                color: #ED0000;
+                color: #A90000;
                 border: 1px solid #E49999;
             }
     /*  Alert labels    */
@@ -948,7 +952,7 @@ fa,
     .mainNav__group {
         position: fixed;
         top:0; bottom:0; left:0;
-        z-index:20;
+        z-index:1;
         background:#2e3134;
         width:4em;
     }
@@ -966,7 +970,7 @@ fa,
         max-width:64em;
         margin: 0 auto;
         padding:4em 0 0 0;
-        z-index: -1;
+        /*z-index: -1;*/
         position: relative;
     }
         .gridHolder .formSection__title {
@@ -981,7 +985,7 @@ fa,
             max-width:64em;
             margin: 0 auto;
             padding:4em 0 0 0;
-            z-index: -1;
+            /*z-index: -1;*/
             position: relative;
         }
     }
@@ -2049,12 +2053,27 @@ fa,
                 line-height: 1.2;
                 margin:0.2em 0 0.15em 0;
                 transition:color 0.3s;
+                display: inline-block;
             }
 
-                .campaign__item:hover .campaign__name {
-                    color:#de0073;
+                .campaign__item:hover .campaign__name, .campaign__item:hover .campaign__previewLink {
+                    color:#119DA4;
+                }                
+                .campaign__item:hover .campaign__name:hover {
+                    color:#0E7D81;
+                }
+                .campaign__item:hover .campaign__previewLink:hover {
+                    color:#0E7D81;
                 }
 
+            .campaign__previewLink {
+                color: #1c1c1c;
+                display: inline-block;
+                padding-left: 0.5em;
+            }
+            .campaign__previewLink .fa {
+                vertical-align: baseline;
+            }
 
             .campaign__viewTotal,
             .campaign__spendTotal {
@@ -2142,6 +2161,7 @@ fa,
     .tocNav__group {
         position: fixed;
         top:50%; left:4.75em;
+        z-index: 2;
     }
         .tocNav__item {
             position: relative;
@@ -4016,22 +4036,32 @@ fa,
 
 
 /*  ================================================
-    Review Order modal styles
+    Review Campaign and campaign summary modal styles
     ================================================ */
-    .reviewOrder__group .grid {
+    .reviewOrder__group .grid, .campaignSummary__group .grid{
         margin: 0;
     }
-    .reviewOrder__item h2 {
+    .reviewOrder__item h2, .campaignSummary__item h2 {
         margin-bottom: 0;
     }
-        .reviewOrder__item .orderItem__title {
+        .reviewOrder__item .orderItem__title, .campaignSummary__item .campaignItem__title{
             vertical-align: middle;
         }
     .orderItem__title {
         font-weight: 700;
     }
-    .orderItem__label {
+    .campaignItem__title, .campaignSummary__group h3.tk--hdr {
+        font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
         font-weight: 400;
+        font-size: 1.25em;
+    }
+    .campaignSummary__group h3 {
+        margin-bottom: 0.5em;
+        margin-top: 0.75em;
+    }
+    .orderItem__label, .campaignItem__label {
+        font-weight: 400;
+        font-size: 0.875em;
     }
     .orderItem__cost {
         font-weight: 700;
@@ -4045,23 +4075,31 @@ fa,
             .orderItem__cost--total {
                 font-weight: 700;
             }
-        .orderItem__title {
-            
-        }
-    .orderItems ul{
+    .campaignItem__title {
+        display: block;
+    }
+    .campaignItem__list {
+        margin-top: 0;
+    }
+    .orderItems ul, .campaignItems ul{
         padding-left: 0;
         margin: 0;
     }
-        .orderItems ul li {
+        .orderItems ul li, .campaignItems ul li {
             list-style-type: none;
             border-bottom: 1px dotted #ccc;
-            padding: 5px 0;
+            padding: 10px 0;
             margin-bottom: 0;
+        }
+        .campaignSummary__item {
+            border-top: 1px dotted #ccc;
+            border-bottom: 1px dotted #ccc;
+            padding: 20px 0;
         }
         .orderItems ul li:last-child {
             background: #eee;
             padding: 0.25em;
-        }        
+        }
 
 
 

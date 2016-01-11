@@ -34,16 +34,19 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                 require: '?ngModel',
                 link: function(scope, $element, attrs, ngModel) {
 
-                    function handleModelChange() {
-                        if (ngModel.$viewValue) {
+                    function handleModelChange(value) {
+                        if (ngModel.$modelValue) {
                             $element.addClass('form__fillCheck--filled');
                         } else {
                             $element.removeClass('form__fillCheck--filled');
                         }
+
+                        return value;
                     }
 
                     if (ngModel) {
                         ngModel.$viewChangeListeners.push(handleModelChange);
+                        ngModel.$formatters.push(handleModelChange);
                         $timeout(handleModelChange);
                     }
                 }
@@ -69,21 +72,27 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
-        .directive('c6SelectBox', ['$timeout','$parse',
-        function                  ( $timeout , $parse ) {
+        .directive('c6SelectBox', ['$timeout',
+        function                  ( $timeout ) {
             return {
                 restrict: 'A',
-                link: function(scope, $element, attrs) {
-                    $timeout(function() {
-                        var config = $parse(attrs.config)(scope) || {},
-                            options = $parse(attrs.options)(scope);
+                scope: {
+                    options: '=',
+                    config: '='
+                },
+                require: 'ngModel',
+                link: function(scope, $element, attrs, ngModel) {
+                    function findBy(prop, value, arr) {
+                        return arr.filter(function(item) {
+                            return item[prop] === value;
+                        })[0];
+                    }
 
-                        function findBy(prop, value, arr) {
-                            return arr.filter(function(item) {
-                                return item[prop] === value;
-                            })[0];
-                        }
+                    function shouldHideDefaultOption() {
+                        return attrs.unselectDefault && $element.val() === '0';
+                    }
 
+                    function renderOptions(options, config) {
                         function format(option) {
                             var found = findBy('label', option.text, options) || {};
 
@@ -95,9 +104,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                             return $option;
                         }
 
-                        function shouldHideDefaultOption() {
-                            return attrs.unselectDefault && $element.val() === '0';
-                        }
+                        config = config || {};
 
                         if (attrs.thumbnails) {
                             config.templateResult = format;
@@ -110,19 +117,47 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         if (attrs.preselected || ($element.val() && !shouldHideDefaultOption())) {
                             $element.addClass('form__fillCheck--filled');
                         }
+                    }
 
-                        $element.on('select2:open', function() {
-                            $element.addClass('form__fillCheck--filled');
-                            $element.addClass('ui--active');
-                        });
-
-                        $element.on('select2:close', function() {
-                            if (!$element.val() || shouldHideDefaultOption()) {
-                                $element.removeClass('form__fillCheck--filled');
-                            }
-                            $element.removeClass('ui--active');
-                        });
+                    $element.on('select2:open', function() {
+                        $element.addClass('form__fillCheck--filled');
+                        $element.addClass('ui--active');
                     });
+
+                    $element.on('select2:close', function() {
+                        if (!$element.val() || shouldHideDefaultOption()) {
+                            $element.removeClass('form__fillCheck--filled');
+                        }
+                        $element.removeClass('ui--active');
+                    });
+
+                    if (ngModel) {
+                        ngModel.$formatters.push(function(value) {
+                            // this only gets called when the model changes
+                            // programmatically. When a selection is made via
+                            // the DOM / UI only the $parser and $viewChange
+                            // listeners get called. This does get called
+                            // when the directive is initialized, so we can
+                            // use it to set the default option and render
+                            // the initial dropdown. It will also get called
+                            // if we programmatically change the selected
+                            // option (ie. when we import website data)
+
+                            // this sets the selection to the correct option
+                            $element.val(scope.options.indexOf(value));
+
+                            // this will render the dropdown and current selection.
+                            // It needs to go in a $timeout because when this
+                            // is first called on initialization of the directive
+                            // the $viewValue has not been set yet, so the select2
+                            // rendering cannot determine the default selection
+                            $timeout(function() {
+                                renderOptions(scope.options, scope.config);
+                            });
+
+                            return value;
+                        });
+                    }
                 }
             };
         }])
