@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="selected" ng-if="campaign.targeting.interests.length">
-        <span ng-if="campaign.targeting.interests.length" class="selected--label">Selected Interests</span>
+        <span class="selected--label">Selected Interests</span>
         <div class="selected" ng-repeat="tier in SelfieInterestsCtrl.tiers">
             <div class="item" ng-if="tier.selected && tier.selected !== 'indeterminate'" data-value="{{tier.id}}"><span ng-click="SelfieInterestsCtrl.toggleTier(tier)" class="remove-selected">×</span>{{tier.label}}<span class="section-name">{{tier.label}}</span></div>
 

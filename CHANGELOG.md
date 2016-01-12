@@ -4,6 +4,8 @@
   * [DESIGN]: Added styles for campaign summary on manage campaign screen
   * [FEATURE]: Add campaign summary to Manage Campaign screen (REEL-67)
   * [FEATURE]: Add preset Call To Action options (REEL-31)
+  * [FIX]: Fix for an issue where updating user information prevented them
+    from returning to the dashboard
   * [DESIGN]: Changed website background, text and form input color
 
 ## v1.31.0 (January 8, 2016)

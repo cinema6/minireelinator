@@ -4675,6 +4675,13 @@ div.tree-multiselect span.section-name {
             box-shadow: none;
             background: #f5f5f5;
         }
+        .campaignWrap .selected--label {
+            color: #5c5c5c;
+            font-size: 1em;
+            font-weight: 300;
+            margin-top: 0.5em;
+            display: block;
+        }
         .ui--active ~ .select2-container--default.select2-container--open.select2-container--below .select2-selection--multiple,
         .select2-container--default.select2-container--focus .select2-selection--multiple {
             background:#f5f5f5;

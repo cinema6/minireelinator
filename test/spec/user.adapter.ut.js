@@ -396,7 +396,7 @@
 
                     spyOn(adapter, 'decorateWithOrg').and.returnValue($q.when(response));
 
-                    $httpBackend.expectPUT('/api/account/user/e2e-put1', {
+                    $httpBackend.expectPUT('/api/account/user/e2e-put1?decorated=true', {
                         title: 'origTitle',
                         status: 'active',
                         access: 'public',
