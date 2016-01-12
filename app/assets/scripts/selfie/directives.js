@@ -1178,77 +1178,6 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
         function                                 ( CampaignService ) {
             var model = {};
 
-            function pad(num) {
-                var norm = Math.abs(Math.floor(num));
-                return (norm < 10 ? '0' : '') + norm;
-            }
-
-            function formatDate(iso) {
-                var date = new Date(iso);
-
-                return pad(date.getMonth() + 1) +
-                    '/' + pad(date.getDate()) +
-                    '/' + date.getFullYear();
-            }
-
-            function generateInterests(campaign, interests) {
-                return interests.filter(function(interest) {
-                    return campaign.targeting.interests.indexOf(interest.id) > -1;
-                }).map(function(interest) {
-                    return interest.label;
-                }).join(', ');
-            }
-
-            function generateDemo(campaign) {
-                var demographics = campaign.targeting.demographics,
-                    demoModel = [];
-
-                forEach(demographics, function(demo, type) {
-                    if (demo.length) {
-                        demoModel.push({
-                            name: type.slice(0, 1).toUpperCase() + type.slice(1),
-                            list: demo.join(', ')
-                        });
-                    }
-                });
-
-                return demoModel;
-            }
-
-            function generateGeo(campaign) {
-                var geo = campaign.targeting.geo,
-                    geoModel = [];
-
-                forEach(geo, function(geo, type) {
-                    if (geo.length) {
-                        geoModel.push({
-                            name: type === 'dmas' ? 'DMA' :
-                                type.slice(0, 1).toUpperCase() + type.slice(1),
-                            list: geo.join(', ')
-                        });
-                    }
-                });
-
-                return geoModel;
-            }
-
-            function generateDuration(campaign) {
-                var startDate = campaign.cards[0].campaign.startDate,
-                    endDate = campaign.cards[0].campaign.endDate;
-
-                if (!startDate && !endDate) {
-                    return 'Once approved, run until stopped.';
-                }
-                if (!endDate) {
-                    return formatDate(startDate) + ' until stopped.';
-                }
-                if (!startDate) {
-                    return 'Once approved until ' + formatDate(endDate);
-                }
-
-                return formatDate(startDate) + ' to ' + formatDate(endDate);
-            }
-
             Object.defineProperty(this, 'model', {
                 get: function() {
                     return model;
@@ -1264,10 +1193,11 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
                 extend(model, dialogModel);
 
-                model.interests = generateInterests(campaign, interests);
-                model.demographics = generateDemo(campaign);
-                model.duration = generateDuration(campaign);
-                model.geo = generateGeo(campaign);
+                extend(model, CampaignService.getSummary({
+                    campaign: campaign,
+                    interests: interests
+                }));
+
                 model.cpv = CampaignService.getCpv(campaign, schema);
 
                 model.show = true;

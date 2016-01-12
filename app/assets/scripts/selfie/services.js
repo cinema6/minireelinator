@@ -226,6 +226,94 @@ function( angular , c6uilib ,  c6Defines  ) {
                 return basePrice + geoPrice + demoPrice + interestsPrice;
             };
 
+            this.getSummary = function(config) {
+                var campaign = config.campaign,
+                    interests = config.interests;
+
+                if (!campaign) { return; }
+
+                function pad(num) {
+                    var norm = Math.abs(Math.floor(num));
+                    return (norm < 10 ? '0' : '') + norm;
+                }
+
+                function formatDate(iso) {
+                    var date = new Date(iso);
+
+                    return pad(date.getMonth() + 1) +
+                        '/' + pad(date.getDate()) +
+                        '/' + date.getFullYear();
+                }
+
+                function generateInterests(campaign, interests) {
+                    if (!interests) {
+                        return campaign.targeting.interests.join(', ');
+                    }
+
+                    return interests.filter(function(interest) {
+                        return campaign.targeting.interests.indexOf(interest.id) > -1;
+                    }).map(function(interest) {
+                        return interest.label;
+                    }).join(', ');
+                }
+
+                function generateDemo(campaign) {
+                    var demographics = campaign.targeting.demographics,
+                        demoResults = {};
+
+                    forEach(demographics, function(demo, type) {
+                        demoResults[type] = {
+                            name: type.slice(0, 1).toUpperCase() + type.slice(1),
+                            list: demo.join(', ')
+                        };
+                    });
+
+                    return demoResults;
+                }
+
+                function generateGeo(campaign) {
+                    var geo = campaign.targeting.geo,
+                        geoResults = {};
+
+                    forEach(geo, function(geo, type) {
+                        geoResults[type] = {
+                            name: type === 'dmas' ? 'DMA' :
+                                type.slice(0, 1).toUpperCase() + type.slice(1),
+                            list: geo.join(', ')
+                        };
+                    });
+
+                    return geoResults;
+                }
+
+                function generateDuration(campaign) {
+                    var startDate = campaign.cards[0].campaign.startDate,
+                        endDate = campaign.cards[0].campaign.endDate;
+
+                    if (!startDate && !endDate) {
+                        return 'Once approved, run until stopped.';
+                    }
+                    if (!endDate) {
+                        return formatDate(startDate) + ' until stopped.';
+                    }
+                    if (!startDate) {
+                        return 'Once approved until ' + formatDate(endDate);
+                    }
+
+                    return formatDate(startDate) + ' to ' + formatDate(endDate);
+                }
+
+
+                return {
+                    duration: generateDuration(campaign),
+                    geo: generateGeo(campaign),
+                    demographics: generateDemo(campaign),
+                    interests: generateInterests(campaign, interests),
+                    advertiser: campaign.advertiserDisplayName,
+                    pricing: campaign.pricing
+                };
+            };
+
             /* Creates a diff summary of two campaigns with special handling for the first entry in
                 the cards array. Does not compare individual elements of arrays. */
             this.campaignDiffSummary = function(originalCampaign, updatedCampaign,
