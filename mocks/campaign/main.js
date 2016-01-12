@@ -19,6 +19,16 @@ module.exports = function(http) {
         return path.resolve(__dirname, './' + type + '/' + id + '.json');
     }
 
+    function getCpv(campaign) {
+        return [
+            campaign.targeting.interests.length,
+            campaign.targeting.geo.states.length || campaign.targeting.geo.dmas.length,
+            campaign.targeting.demographics.age.length || campaign.targeting.demographics.income.length || campaign.targeting.demographics.gender.length
+        ].filter(function(bool) {
+            return !!bool;
+        }).length * 0.1 + 0.5;
+    }
+
     http.whenGET('/api/campaigns/schema', function(request) {
         var filePath = path.resolve(__dirname, './schema/schema.json');
         var json = grunt.file.readJSON(filePath);
@@ -58,6 +68,7 @@ module.exports = function(http) {
             delete campaign.updateRequest;
         }
 
+        campaign.pricing.cost = getCpv(updateRequest.data);
         campaign.lastUpdated = currentTime;
         grunt.file.write(objectPath('campaigns', campaign.id), JSON.stringify(campaign, null, '    '));
 
@@ -221,6 +232,8 @@ module.exports = function(http) {
                 status: 'draft'
             });
 
+        var cpv = getCpv(campaign);
+
         if (campaign.cards[0]) {
             campaign.cards[0].id = cardId;
             campaign.cards[0].data.moat = {
@@ -228,6 +241,11 @@ module.exports = function(http) {
                 advertiser: campaign.advertiserId,
                 creative: cardId
             };
+        }
+
+        if (campaign.pricing.budget) {
+            campaign.pricing.dailyLimit = campaign.pricing.dailyLimit || campaign.pricing.budget;
+            campaign.pricing.cost = cpv;
         }
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));
@@ -284,6 +302,13 @@ module.exports = function(http) {
             }
         } else {
             delete campaign.rejectFlag;
+        }
+
+        var cpv = getCpv(campaign);
+
+        if (campaign.pricing.budget) {
+            campaign.pricing.dailyLimit = campaign.pricing.dailyLimit || campaign.pricing.budget;
+            campaign.pricing.cost = cpv;
         }
 
         grunt.file.write(filePath, JSON.stringify(campaign, null, '    '));

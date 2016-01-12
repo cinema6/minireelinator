@@ -39,7 +39,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             updateRequest,
             stats,
             user,
-            advertiser;
+            advertiser,
+            interests;
 
         var debouncedFns;
 
@@ -142,11 +143,20 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             advertiser = {
                 id: 'a-123'
             };
+            interests = [
+                {
+                    id: 'cat-1'
+                },
+                {
+                    id: 'cat-2'
+                }
+            ];
 
             cState = {
                 campaign: campaign,
                 card: card,
-                hasStats: true
+                hasStats: true,
+                interests: interests
             };
 
             compileCtrl(cState, {
@@ -323,6 +333,70 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
                     expect(SelfieManageCampaignCtrl.hasStats).toEqual(cState.hasStats);
                     expect(SelfieManageCampaignCtrl.stats).toEqual(stats);
+                });
+
+                describe('when there is an updateRequest', function() {
+                    var summary, updateCard;
+
+                    beforeEach(function() {
+                        summary = {};
+
+                        updateCard = {
+                            id: 'some-card'
+                        };
+
+                        updateRequest = {
+                            data: {
+                                cards: [updateCard]
+                            }
+                        };
+
+                        spyOn(CampaignService, 'getSummary').and.returnValue(summary);
+
+                        SelfieManageCampaignCtrl.initWithModel({updateRequest: updateRequest});
+                    });
+
+                    it('should use the card on it', function() {
+                        expect(SelfieManageCampaignCtrl.card).toBe(updateCard);
+                    });
+
+                    it('should use it to fetch a summary', function() {
+                        expect(CampaignService.getSummary).toHaveBeenCalledWith({
+                            campaign: updateRequest.data,
+                            interests: interests
+                        });
+
+                        expect(SelfieManageCampaignCtrl.summary).toBe(summary);
+                    });
+                });
+
+                describe('when there is no updateRequest', function() {
+                    var summary;
+
+                    beforeEach(function() {
+                        summary = {};
+
+                        spyOn(CampaignService, 'getSummary').and.returnValue(summary);
+
+                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null});
+                    });
+
+                    it('should use the card on the campaign', function() {
+                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null});
+
+                        expect(SelfieManageCampaignCtrl.card).toBe(card);
+                    });
+
+                    it('should use the campaign to fetch a summary', function() {
+                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null});
+
+                        expect(CampaignService.getSummary).toHaveBeenCalledWith({
+                            campaign: campaign,
+                            interests: interests
+                        });
+
+                        expect(SelfieManageCampaignCtrl.summary).toBe(summary);
+                    });
                 });
             });
 
