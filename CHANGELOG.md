@@ -3,6 +3,7 @@
 * *[v1.32.0.rc1]*
   * [DESIGN]: Added styles for campaign summary on manage campaign screen
   * [FEATURE]: Add campaign summary to Manage Campaign screen
+  * [DESIGN]: Changed website background, text and form input color
 
 ## v1.31.0 (January 8, 2016)
 * *[v1.31.0.rc3]*
