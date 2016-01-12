@@ -1,6 +1,21 @@
 {
   "appUri": "selfie",
-  "data": {},
+  "data": {
+    "title": "Selfie",
+    "callToActionOptions": [
+      "Apply Now",
+      "Book Now",
+      "Buy Now",
+      "Contact Us",
+      "Donate Now",
+      "Learn More",
+      "Shop Now",
+      "Sign Up",
+      "Watch More",
+      "Custom"
+    ]
+  },
+  "title": "Selfie",
   "created": "2015-06-10T22:04:20.789Z",
   "lastUpdated": "2015-06-10T22:04:20.789Z",
   "user": "u-3062e5261a176a",

@@ -1386,11 +1386,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
         }])
 
-        .controller('SelfieCampaignTextController', ['$scope',
-        function                                    ( $scope ) {
+        .controller('SelfieCampaignTextController', ['$scope','c6State',
+        function                                    ( $scope , c6State ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignTextCtrl = this,
-                card = SelfieCampaignCtrl.card;
+                card = SelfieCampaignCtrl.card,
+                selfieApp = c6State.get('Selfie:App');
 
             function generateLink(link) {
                 var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
@@ -1413,6 +1414,15 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.bindLinkToWebsite = !card.links.Action;
             this.actionLink = card.links.Action;
+            this.actionLabelOptions = selfieApp.cModel.data.callToActionOptions;
+            this.actionLabel = this.actionLabelOptions.indexOf(card.params.action.label) > -1 ?
+                card.params.action.label : 'Custom';
+
+            this.updateActionLabel = function() {
+                if (this.actionLabel !== 'Custom') {
+                    card.params.action.label = this.actionLabel;
+                }
+            };
 
             this.updateActionLink = function(link) {
                 link = generateLink(link);
