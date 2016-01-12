@@ -28,19 +28,26 @@ module.exports = function(http) {
                 lastUpdated: (new Date()).toISOString()
             }),
             isLoggedInUser = userCache.user.id === id,
-            response;
+            decorated = request.query.decorated,
+            user = extend(
+                newUser,
+                { id: id },
+                isLoggedInUser ? { email: userCache.user.email } : {}
+            ),
+            response = JSON.parse(JSON.stringify(user));;
 
         grunt.file.write(filePath, JSON.stringify(newUser, null, '    '));
 
-        this.respond(200, (response = extend(
-            newUser,
-            { id: id },
-            isLoggedInUser ? { email: userCache.user.email } : {}
-        )));
-
         if (isLoggedInUser) {
-            userCache.user = response;
+            userCache.user = user;
         }
+
+        if (!decorated) {
+            delete response.permissions;
+            delete response.entitlements;
+        }
+
+        this.respond(200, response);
     });
 
     http.whenGET('/api/account/user/**', function(request) {
