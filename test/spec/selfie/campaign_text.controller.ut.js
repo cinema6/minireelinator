@@ -6,9 +6,11 @@ define(['app'], function(appModule) {
             $scope,
             $controller,
             SelfieCampaignCtrl,
-            SelfieCampaignTextCtrl;
+            SelfieCampaignTextCtrl,
+            c6State;
 
-        var card;
+        var card,
+            selfieApp;
 
         function compileCtrl() {
             $scope.$apply(function() {
@@ -22,6 +24,18 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                c6State = $injector.get('c6State');
+
+                selfieApp = c6State.get('Selfie:App');
+                selfieApp.cModel = {
+                    data: {
+                        callToActionOptions: [
+                            'Learn More',
+                            'Contact Us',
+                            'Custom'
+                        ]
+                    }
+                };
 
                 card = {
                     links: {},
@@ -85,6 +99,34 @@ define(['app'], function(appModule) {
                     expect(SelfieCampaignTextCtrl.bindLinkToWebsite).toBe(false);
                 });
             });
+
+            describe('actionLabelOptions', function() {
+                it('should come form the selfieApp experience', function() {
+                    expect(SelfieCampaignTextCtrl.actionLabelOptions).toEqual(selfieApp.cModel.data.callToActionOptions);
+                });
+            });
+
+            describe('actionLabel', function() {
+                describe('when label matches one of the presets', function() {
+                    it('should be that preset', function() {
+                        card.params.action.label = 'Learn More';
+
+                        compileCtrl();
+
+                        expect(SelfieCampaignTextCtrl.actionLabel).toEqual(card.params.action.label);
+                    });
+                });
+
+                describe('when label does not match one of the presets', function() {
+                    it('should be that preset', function() {
+                        card.params.action.label = 'Something Else';
+
+                        compileCtrl();
+
+                        expect(SelfieCampaignTextCtrl.actionLabel).toEqual('Custom');
+                    });
+                });
+            });
         });
 
         describe('methods', function() {
@@ -107,6 +149,32 @@ define(['app'], function(appModule) {
                     SelfieCampaignTextCtrl.updateActionLink('');
                     expect(card.links.Action).toEqual('');
                     expect(SelfieCampaignTextCtrl.actionLink).toEqual('');
+                });
+            });
+
+            describe('updateActionLabel()', function() {
+                describe('when actionLabel is not Custom', function() {
+                    it('should add the actionLabel to the card', function() {
+                        SelfieCampaignTextCtrl.actionLabel = 'Contact Us';
+
+                        expect(card.params.action.label).toEqual('Learn More');
+
+                        SelfieCampaignTextCtrl.updateActionLabel();
+
+                        expect(card.params.action.label).toEqual('Contact Us');
+                    });
+                });
+
+                describe('when actionLabel is Custom', function() {
+                    it('should not add the actionLabel to the card', function() {
+                        SelfieCampaignTextCtrl.actionLabel = 'Custom';
+
+                        expect(card.params.action.label).toEqual('Learn More');
+
+                        SelfieCampaignTextCtrl.updateActionLabel();
+
+                        expect(card.params.action.label).toEqual('Learn More');
+                    });
                 });
             });
         });
