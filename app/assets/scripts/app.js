@@ -331,7 +331,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };*/
 
                 this.update = function(type, model) {
-                    return $http.put(url(model.id), clean(model))
+                    return $http.put(url(model.id) + '?decorated=true', clean(model))
                         .then(pick('data'))
                         .then(this.decorateWithOrg)
                         .then(putInArray);
