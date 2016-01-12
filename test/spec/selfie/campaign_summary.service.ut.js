@@ -33,7 +33,7 @@ define(['app'], function(appModule) {
         });
 
         describe('display(dialogModel)', function() {
-            var model;
+            var model, summary;
 
             beforeEach(function() {
                 model = {
@@ -83,6 +83,9 @@ define(['app'], function(appModule) {
                     onAffirm: function() {}
                 };
 
+                summary = {};
+
+                spyOn(CampaignService, 'getSummary').and.returnValue(summary);
                 spyOn(CampaignService, 'getCpv').and.returnValue(0.08);
 
                 SelfieCampaignSummaryService.display(model);
@@ -99,56 +102,12 @@ define(['app'], function(appModule) {
                 }));
             });
 
-            it('should generate interest list', function() {
-                expect(SelfieCampaignSummaryService.model.interests).toEqual('Comedy, Technology');
-            });
-
-            it('should generate demographics data', function() {
-                expect(SelfieCampaignSummaryService.model.demographics).toEqual([
-                    {
-                        name: 'Age',
-                        list: '18-24, 25-36'
-                    },
-                    {
-                        name: 'Gender',
-                        list: 'Male'
-                    }
-                ]);
-            });
-
-            it('should generate geo data', function() {
-                expect(SelfieCampaignSummaryService.model.geo).toEqual([
-                    {
-                        name: 'States',
-                        list: 'Alabama, Alaska'
-                    },
-                    {
-                        name: 'DMA',
-                        list: 'NYC'
-                    }
-                ]);
-            });
-
-            it('should set duration based on start and end date', function() {
-                expect(SelfieCampaignSummaryService.model.duration).toEqual('Once approved, run until stopped.');
-
-                model.campaign.cards[0].campaign.startDate = '2015-06-26T05:01:00.000Z';
-
-                SelfieCampaignSummaryService.display(model);
-
-                expect(SelfieCampaignSummaryService.model.duration).toEqual('06/26/2015 until stopped.');
-
-                model.campaign.cards[0].campaign.endDate = '2015-07-26T05:01:00.000Z';
-
-                SelfieCampaignSummaryService.display(model);
-
-                expect(SelfieCampaignSummaryService.model.duration).toEqual('06/26/2015 to 07/26/2015');
-
-                model.campaign.cards[0].campaign.startDate = undefined;
-
-                SelfieCampaignSummaryService.display(model);
-
-                expect(SelfieCampaignSummaryService.model.duration).toEqual('Once approved until 07/26/2015');
+            it('should getSummary() with campaign and interests', function() {
+                expect(CampaignService.getSummary).toHaveBeenCalledWith({
+                    campaign: model.campaign,
+                    interests: model.interests
+                });
+                expect(SelfieCampaignSummaryService.model).toEqual(jasmine.objectContaining(summary));
             });
 
             it('should get the cpv', function() {

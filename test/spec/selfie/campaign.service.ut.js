@@ -841,6 +841,164 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 });
             });
 
+            describe('getSummary(config)', function() {
+                var campaign, interests;
+
+                beforeEach(function() {
+                    campaign = {
+                        cards: [
+                            {
+                                campaign: {
+                                    startDate: undefined,
+                                    endDate: undefined
+                                }
+                            }
+                        ],
+                        targeting: {
+                            demographics: {
+                                age: ['18-24','25-36'],
+                                income: [],
+                                gender: ['Male']
+                            },
+                            geo: {
+                                states: ['Alabama','Alaska'],
+                                dmas: ['NYC']
+                            },
+                            interests: ['cat-1','cat-3']
+                        },
+                        pricing: {},
+                        advertiserDisplayName: 'Ny Company'
+                    };
+
+                    interests = [
+                        {
+                            id: 'cat-1',
+                            label: 'Comedy'
+                        },
+                        {
+                            id: 'cat-2',
+                            label: 'Cars'
+                        },
+                        {
+                            id: 'cat-3',
+                            label: 'Technology'
+                        },
+                        {
+                            id: 'cat-4',
+                            label: 'Cooking'
+                        }
+                    ];
+                });
+
+                describe('when campaign is not defined', function() {
+                    it('should do nothing', function() {
+                        var result = CampaignService.getSummary({
+                            campaign: undefined,
+                            interests: interests
+                        });
+
+                        expect(result).toEqual(undefined);
+                    });
+                });
+
+                describe('when campaign is defined', function() {
+                    var result;
+
+                    beforeEach(function() {
+                        result = CampaignService.getSummary({
+                            campaign: campaign,
+                            interests: interests
+                        });
+                    });
+
+                    it('should generate pricing object', function() {
+                        expect(result.pricing).toEqual(campaign.pricing);
+                    });
+
+                    it('should generate advertiser name', function() {
+                        expect(result.advertiser).toEqual(campaign.advertiserDisplayName);
+                    });
+
+                    it('should generate demographics data', function() {
+                        expect(result.demographics).toEqual({
+                            age: {
+                                name: 'Age',
+                                list: '18-24, 25-36'
+                            },
+                            gender: {
+                                name: 'Gender',
+                                list: 'Male'
+                            },
+                            income: {
+                                name: 'Income',
+                                list: ''
+                            }
+                        });
+                    });
+
+                    it('should generate geo data', function() {
+                        expect(result.geo).toEqual({
+                            states: {
+                                name: 'States',
+                                list: 'Alabama, Alaska'
+                            },
+                            dmas: {
+                                name: 'DMA',
+                                list: 'NYC'
+                            }
+                        });
+                    });
+
+                    it('should set duration based on start and end date', function() {
+                        expect(result.duration).toEqual('Once approved, run until stopped.');
+
+                        campaign.cards[0].campaign.startDate = '2015-06-26T05:01:00.000Z';
+
+                        result = CampaignService.getSummary({
+                            campaign: campaign,
+                            interests: interests
+                        });
+
+                        expect(result.duration).toEqual('06/26/2015 until stopped.');
+
+                        campaign.cards[0].campaign.endDate = '2015-07-26T05:01:00.000Z';
+
+                        result = CampaignService.getSummary({
+                            campaign: campaign,
+                            interests: interests
+                        });
+
+                        expect(result.duration).toEqual('06/26/2015 to 07/26/2015');
+
+                        campaign.cards[0].campaign.startDate = undefined;
+
+                        result = CampaignService.getSummary({
+                            campaign: campaign,
+                            interests: interests
+                        });
+
+                        expect(result.duration).toEqual('Once approved until 07/26/2015');
+                    });
+
+                    describe('when passing interests', function() {
+                        it('should generate interest list', function() {
+                            expect(result.interests).toEqual('Comedy, Technology');
+                        });
+                    });
+
+                    describe('when not passing interests', function() {
+                        it('should simply return the campaign interest ids', function() {
+                            result = CampaignService.getSummary({
+                                campaign: campaign,
+                                interests: null
+                            });
+
+                            expect(result.interests).toEqual('cat-1, cat-3');
+                        });
+                    });
+                });
+            });
+
             describe('campaignDiffSummary', function() {
                 var originalCampaign, updatedCampaign, result;
 

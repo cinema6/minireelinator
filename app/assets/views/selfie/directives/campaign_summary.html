@@ -44,15 +44,15 @@
                                 --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__priceForInterests | number}}</div></div>
                                 <div class="grid__item one-whole orderItem__label text--small">Interests: {{model.interests}}</div>
                             </li>
-                            <li ng-show="model.demographics.length">
+                            <li ng-show="model.demographics.age.list || model.demographics.gender.list || model.demographics.income.list">
                                 <div class="grid__item two-thirds orderItem__title">Demographics</div><!--
                                 --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__priceForDemoTargeting | number}}</div></div>
-                                <div class="grid__item one-whole orderItem__label text--small" ng-repeat="demo in model.demographics">{{demo.name}}: {{demo.list}}</div>
+                                <div class="grid__item one-whole orderItem__label text--small" ng-if="demo.list" ng-repeat="demo in model.demographics">{{demo.name}}: {{demo.list}}</div>
                             </li>
-                            <li ng-show="model.geo.length">
+                            <li ng-show="model.geo.states.list || model.geo.dmas.list">
                                 <div class="grid__item two-thirds orderItem__title">Location</div><!--
                                 --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__priceForGeoTargeting | number}}</div></div>
-                                <div class="grid__item one-whole orderItem__label text--small" ng-repeat="geo in model.geo">{{geo.name}}: {{geo.list}}</div>
+                                <div class="grid__item one-whole orderItem__label text--small" ng-if="geo.list" ng-repeat="geo in model.geo">{{geo.name}}: {{geo.list}}</div>
                             </li>
                             <li>
                                 <div class="grid__item two-thirds orderItem__title">Total CPV</div><!--
