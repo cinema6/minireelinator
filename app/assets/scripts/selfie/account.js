@@ -65,15 +65,15 @@ function( angular , c6State  ) {
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:SignUp', ['$location','SettingsService',
             function                               ( $location , SettingsService ) {
-                var referral = $location.search().ref;
-
                 this.templateUrl = 'views/selfie/sign_up.html';
                 this.controller = 'SelfieSignUpController';
                 this.controllerAs = 'SelfieSignUpCtrl';
 
                 this.beforeModel = function() {
+                    var referral = $location.search().ref;
+
                     SettingsService.register('Selfie::referral', { referral: referral }, {
-                        localSync: $location.search().ref || true,
+                        localSync: referral || true,
                         validateLocal: function(local) {
                             return local === true;
                         }
@@ -89,7 +89,7 @@ function( angular , c6State  ) {
                         company: '',
                         firstName: '',
                         lastName: '',
-                        referringPartner: ref
+                        referringCode: ref
                     };
                 };
             }]);

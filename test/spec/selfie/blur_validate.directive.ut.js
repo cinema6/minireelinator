@@ -39,7 +39,7 @@ define(['app'], function(appModule) {
             });
         });
 
-        describe('when the input loses focus and has not value in it', function() {
+        describe('when the input loses focus and has no value in it', function() {
             it('should add the "ui--hasError" class', function() {
                 var $input = $fieldset.find('#my-input');
 
@@ -55,20 +55,61 @@ define(['app'], function(appModule) {
             });
         });
 
-        describe('when the input loses focus and has not value in it', function() {
-            it('should add the "ui--hasError" class', function() {
-                var $input = $fieldset.find('#my-input');
+        describe('when the input loses focus and has a value in it', function() {
+            describe('when the input is valid', function() {
+                it('should not remove the "ui--hasError" class if ng-valid', function() {
+                    var $input = $fieldset.find('#my-input');
 
-                $scope.$apply(function() {
-                    $input.focus();
-                    $input.val('something');
+                    $scope.$apply(function() {
+                        $input.focus();
+                    });
+
+                    $scope.$apply(function() {
+                        $input.blur();
+                    });
+
+                    expect($fieldset.hasClass('ui--hasError')).toBe(true);
+
+                    $scope.$apply(function() {
+                        $input.focus();
+                        $input.addClass('ng-valid');
+                        $input.val('something');
+                    });
+
+                    $scope.$apply(function() {
+                        $input.blur();
+                    });
+
+                    expect($fieldset.hasClass('ui--hasError')).toBe(false);
                 });
+            });
 
-                $scope.$apply(function() {
-                    $input.blur();
+            describe('when the input is not valid', function() {
+                it('should not remove the "ui--hasError" class if ng-valid', function() {
+                    var $input = $fieldset.find('#my-input');
+
+                    $scope.$apply(function() {
+                        $input.focus();
+                    });
+
+                    $scope.$apply(function() {
+                        $input.blur();
+                    });
+
+                    expect($fieldset.hasClass('ui--hasError')).toBe(true);
+
+                    $scope.$apply(function() {
+                        $input.focus();
+                        $input.removeClass('ng-valid');
+                        $input.val('something');
+                    });
+
+                    $scope.$apply(function() {
+                        $input.blur();
+                    });
+
+                    expect($fieldset.hasClass('ui--hasError')).toBe(true);
                 });
-
-                expect($fieldset.hasClass('ui--hasError')).toBe(false);
             });
         });
     });
