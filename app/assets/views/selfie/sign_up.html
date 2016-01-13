@@ -80,7 +80,7 @@
                             </div>
                         </fieldset>-->
                         <fieldset blur-validate="c6-username" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.email }" class="form__item">
-                            <input c6-fill-check class="form__textBox form__fillCheck" type="email" id="c6-username" ng-model="user.email">
+                            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="email" id="c6-username" ng-model="user.email">
                             <label class="form__label" for="c6-username">
                                 <i class="fa fa-times ui--error"></i>
                                 Email*
@@ -97,7 +97,7 @@
                             </div>
                         </fieldset>
                         <fieldset blur-validate="c6-password" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.password || signup['c6-password'].$error.pattern || signup['c6-password'].$error.minlength }" class="form__item">
-                            <input c6-fill-check class="form__textBox form__fillCheck" type="password" id="c6-password" name="c6-password" ng-minlength="8" ng-pattern="/\d/" ng-model="user.password">
+                            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="password" id="c6-password" name="c6-password" ng-minlength="8" ng-pattern="/\d/" ng-model="user.password">
                             <label class="form__label" for="c6-password">
                                 <i class="fa fa-times ui--error"></i>
                                 Password*
