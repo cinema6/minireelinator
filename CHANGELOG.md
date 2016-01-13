@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.32.0 (January 13, 2016)
+* *[v1.32.0.rc2]*
+  * [FIX]: Fix estimated views calculation in campaign summary
+* *[/v1.32.0.rc2]*
+
 * *[v1.32.0.rc1]*
   * [DESIGN]: Added styles for campaign summary on manage campaign screen
   * [FEATURE]: Add campaign summary to Manage Campaign screen (REEL-67)
