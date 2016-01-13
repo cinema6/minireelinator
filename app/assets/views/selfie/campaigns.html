@@ -133,7 +133,7 @@
                 </h1><!-- preview link (need to make sure it opens the actual preview link-->
                 <!--<a href="#" class="campaign__previewLink" target="_blank"><i class="fa fa-external-link"></i></a>--></div>
                 <div ng-if="SelfieCampaignsCtrl.data[$this.id].user" class="campaign__owner text--small">by <em>{{SelfieCampaignsCtrl.data[$this.id].user.firstName}} {{SelfieCampaignsCtrl.data[$this.id].user.lastName}}</em> for <em>{{SelfieCampaignsCtrl.data[$this.id].user.company}}</em></div>
-                <span ng-if="$this.rejectionReason"><span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, this campaign has been rejected. {{$this.rejectionReason}}</span>
+                <span ng-if="$this.rejectionReason"><span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, <span ng-if="$this.status === 'draft'">this campaign has</span><span ng-if="$this.status !== 'draft'">your changes have</span> been rejected. {{$this.rejectionReason}}</span>
                 <span ng-if="$this.updateRequest"><span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...</span>
             </div><!--.column__campaignName-->
 

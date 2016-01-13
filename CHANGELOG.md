@@ -9,6 +9,7 @@
     from returning to the dashboard
   * [DESIGN]: Changed website background, text and form input color
   * [FIX]: Show data from pending update requests in Dashboard
+  * [FIX]: Update rejection text for non-draft campaigns
 * *[/v1.32.0.rc1]*
 
 ## v1.31.0 (January 8, 2016)
