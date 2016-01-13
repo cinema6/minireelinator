@@ -112,35 +112,35 @@
             </div><!--.column__status-->
 
             <div class="campaign__column column__sponsor">
-                <div class="thumbnail__box campaign__thumbnail" title="{{$this.name}}">
+                <div class="thumbnail__box campaign__thumbnail" title="{{SelfieCampaignsCtrl.data[$this.id].campaign.name}}">
                     <span class="thumbnail">
-                        <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.metaData[$this.id].thumb}}" alt="">
+                        <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.data[$this.id].thumb}}" alt="">
                     </span>
                 </div>
                 <div class="campaign__sponsorInfo">
                     <div class="thumbnail__box campaign__sponsorLogo">
                         <span class="thumbnail">
-                            <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.metaData[$this.id].logo}}" alt="">
+                            <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.data[$this.id].logo}}" alt="">
                         </span>
                     </div>
-                    <div class="campaign__sponsorName">{{$this.advertiserDisplayName}}</div>
+                    <div class="campaign__sponsorName">{{SelfieCampaignsCtrl.data[$this.id].campaign.advertiserDisplayName}}</div>
                 </div>
             </div><!--.column__sponsor-->
 
             <div class="campaign__column column__campaignName">
                 <div><h1 class="campaign__name tk--hdr">
-                    {{$this.name}}
+                    {{SelfieCampaignsCtrl.data[$this.id].campaign.name}}
                 </h1><!-- preview link (need to make sure it opens the actual preview link-->
                 <!--<a href="#" class="campaign__previewLink" target="_blank"><i class="fa fa-external-link"></i></a>--></div>
-                <div ng-if="SelfieCampaignsCtrl.metaData[$this.id].user" class="campaign__owner text--small">by <em>{{SelfieCampaignsCtrl.metaData[$this.id].user.firstName}} {{SelfieCampaignsCtrl.metaData[$this.id].user.lastName}}</em> for <em>{{SelfieCampaignsCtrl.metaData[$this.id].user.company}}</em></div>
+                <div ng-if="SelfieCampaignsCtrl.data[$this.id].user" class="campaign__owner text--small">by <em>{{SelfieCampaignsCtrl.data[$this.id].user.firstName}} {{SelfieCampaignsCtrl.data[$this.id].user.lastName}}</em> for <em>{{SelfieCampaignsCtrl.data[$this.id].user.company}}</em></div>
                 <span ng-if="$this.rejectionReason"><span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, this campaign has been rejected. {{$this.rejectionReason}}</span>
                 <span ng-if="$this.updateRequest"><span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...</span>
             </div><!--.column__campaignName-->
 
             <div class="campaign__column column__totalViews">
                 <span class="campaign__viewTotal">
-                    <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.metaData[$this.id].stats.views | number}}</span>
-                    <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.views">--</span>
+                    <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.data[$this.id].stats.views | number}}</span>
+                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.views">--</span>
                 </span>
                 <!--<span class="campaign__viewDelta">
                     <i class="fa fa-arrow-circle-up"></i> 4,587
@@ -150,8 +150,8 @@
 
             <div class="campaign__column column__totalSpending">
                 <span class="campaign__spendTotal">
-                    <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.spend"><strong>$</strong> {{SelfieCampaignsCtrl.metaData[$this.id].stats.spend | number:2}}</span>
-                    <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.spend">--</span>
+                    <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.spend"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.spend | number:2}}</span>
+                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.spend">--</span>
                 </span>
                 <!--<span class="campaign__spendDelta">
                     <i class="fa fa-arrow-circle-up"></i> $1,239.25
@@ -163,13 +163,13 @@
                 <div class="campaign__budgetInfo">
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">T<span class="fullText">otal</span>:</span>
-                        <span ng-if="$this.pricing.budget" class="campaign__budgetEdit"><strong>$</strong> {{$this.pricing.budget | number:2}}</span>
-                        <span ng-if="!$this.pricing.budget">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget" class="campaign__budgetEdit"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">D<span class="fullText">aily</span>:</span>
-                        <span ng-if="$this.pricing.dailyLimit" class="campaign__budgetEdit"><strong>$</strong> {{$this.pricing.dailyLimit | number:2}}</span>
-                        <span ng-if="!$this.pricing.dailyLimit">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].campaign.pricing.dailyLimit" class="campaign__budgetEdit"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].campaign.pricing.dailyLimit | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].campaign.pricing.dailyLimit">--</span>
                     </span>
                 </div>
             </div><!--.column__budget-->
@@ -178,18 +178,18 @@
                 <div class="campaign__budgetInfo">
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Views:</span>
-                        <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.metaData[$this.id].stats.views | number}}</span>
-                        <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.views">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.data[$this.id].stats.views | number}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.views">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Spend:</span>
-                        <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.spend"><strong>$</strong> {{SelfieCampaignsCtrl.metaData[$this.id].stats.spend | number:2}}</span>
-                        <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.spend">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.spend"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.spend | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.spend">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Budget:</span>
-                        <span ng-if="$this.pricing.budget"><strong>$</strong> {{$this.pricing.budget | number:2}}</span>
-                        <span ng-if="!$this.pricing.budget">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget">--</span>
                     </span>
                 </div>
             </div><!--.column__summaryTotals-->

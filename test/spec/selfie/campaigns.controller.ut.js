@@ -281,10 +281,11 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     ]);
                 });
 
-                describe('adding the metaData', function() {
-                    var statsDeferred, thumbDeferred, usersDeferred;
+                describe('adding the data', function() {
+                    var statsDeferred, thumbDeferred, usersDeferred, updateRequestsDeferred, updateRequests;
 
                     beforeEach(function() {
+                        updateRequestsDeferred = $q.defer();
                         statsDeferred = $q.defer();
                         thumbDeferred = {
                             ensureFulfillment: jasmine.createSpy('ensureFulfillment')
@@ -295,11 +296,13 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         spyOn(CampaignService, 'getAnalytics').and.returnValue(statsDeferred.promise);
                         spyOn(ThumbnailService, 'getThumbsFor').and.returnValue(thumbDeferred);
                         spyOn(CampaignService, 'getUserData').and.returnValue(usersDeferred.promise);
+                        cinema6.db.findAll.and.returnValue(updateRequestsDeferred.promise);
 
                         model.items.value = [
                             {
                                 id: 'cam-1',
                                 user: 'u-1',
+                                updateRequest: 'ur-111',
                                 cards: [
                                     {
                                         params: {},
@@ -347,35 +350,80 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             }
                         ];
 
+                        updateRequests = [
+                            {
+                                id: 'ur-111',
+                                campaign: 'cam-1',
+                                data: {
+                                    id: 'cam-1',
+                                    user: 'u-1',
+                                    cards: [
+                                        {
+                                            id: 'rc-1',
+                                            params: {},
+                                            collateral: {
+                                                logo: 'newlogo.jpg'
+                                            },
+                                            data: {}
+                                        }
+                                    ]
+                                }
+                            }
+                        ];
+
                         $scope.$apply(function() {
                             SelfieCampaignsCtrl.initWithModel(model);
                         });
                     });
 
-                    it('should contain metaData for each campaign', function() {
-                        expect(SelfieCampaignsCtrl.metaData['cam-1']).toEqual({
-                            sponsor: undefined,
-                            logo: undefined,
-                            thumb: null
+                    it('should contain data for each campaign', function() {
+                        expect(SelfieCampaignsCtrl.data['cam-1']).toEqual({
+                            campaign: null
                         });
 
-                        expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
-                            sponsor: 'Diageo',
-                            logo: 'diageo.jpg',
-                            thumb: 'thumb.jpg'
+                        expect(SelfieCampaignsCtrl.data['cam-2']).toEqual({
+                            campaign: model.items.value[1]
+                        });
+
+                        expect(SelfieCampaignsCtrl.data['cam-3']).toEqual({
+                            campaign: model.items.value[2]
                         });
                     });
 
-                    describe('when the card does not have a custom thumb', function() {
-                        it('should get thumbs from Thumbnail Service', function() {
-                            expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123', {
-                                service: 'youtube',
-                                videoid: '123'
+                    it('should request any updateRequests found on the campaigns', function() {
+                        expect(cinema6.db.findAll).toHaveBeenCalledWith('updateRequest', {ids: 'ur-111'});
+                    });
+
+                    describe('when updateRequests resolve', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                updateRequestsDeferred.resolve(updateRequests);
                             });
-                            expect(SelfieCampaignsCtrl.metaData['cam-3']).toEqual({
-                                sponsor: 'Diageo',
-                                logo: 'diageo.jpg',
-                                thumb: 'large-thumb.jpg'
+                        });
+
+                        it('should use the updateRequest as the campaign', function() {
+                            expect(SelfieCampaignsCtrl.data['cam-1'].campaign).toEqual(updateRequests[0].data);
+                        });
+
+                        it('should add logo if defined', function() {
+                            expect(SelfieCampaignsCtrl.data['cam-1'].logo).toEqual(updateRequests[0].data.cards[0].collateral.logo);
+                            expect(SelfieCampaignsCtrl.data['cam-2'].logo).toEqual(model.items.value[1].cards[0].collateral.logo);
+                            expect(SelfieCampaignsCtrl.data['cam-3'].logo).toEqual(model.items.value[2].cards[0].collateral.logo);
+                        });
+
+                        describe('when card has custom thumb', function() {
+                            it('should add it to the data', function() {
+                                expect(SelfieCampaignsCtrl.data['cam-2'].thumb).toEqual(model.items.value[1].cards[0].thumb);
+                            });
+                        });
+
+                        describe('when the card does not have a custom thumb', function() {
+                            it('should get thumbs from Thumbnail Service', function() {
+                                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123', {
+                                    service: 'youtube',
+                                    videoid: '123'
+                                });
+                                expect(SelfieCampaignsCtrl.data['cam-3'].thumb).toEqual('large-thumb.jpg');
                             });
                         });
                     });
@@ -408,28 +456,14 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                     statsDeferred.resolve(stats)
                                 });
 
-                                expect(SelfieCampaignsCtrl.metaData['cam-1']).toEqual({
-                                    sponsor: undefined,
-                                    logo: undefined,
-                                    thumb: null,
-                                    stats: {
-                                        views: 100,
-                                        spend: '10.00'
-                                    }
+                                expect(SelfieCampaignsCtrl.data['cam-1'].stats).toEqual({
+                                    views: 100,
+                                    spend: '10.00'
                                 });
-                                expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
-                                    sponsor: 'Diageo',
-                                    logo: 'diageo.jpg',
-                                    thumb: 'thumb.jpg'
-                                });
-                                expect(SelfieCampaignsCtrl.metaData['cam-3']).toEqual({
-                                    sponsor: 'Diageo',
-                                    logo: 'diageo.jpg',
-                                    thumb: 'large-thumb.jpg',
-                                    stats: {
-                                        views: 2000,
-                                        spend: '500.50'
-                                    }
+                                expect(SelfieCampaignsCtrl.data['cam-2'].stats).toEqual(undefined);
+                                expect(SelfieCampaignsCtrl.data['cam-3'].stats).toEqual({
+                                    views: 2000,
+                                    spend: '500.50'
                                 });
                             });
                         });
@@ -477,17 +511,17 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         usersDeferred.resolve(userHash);
                                     });
 
-                                    expect(SelfieCampaignsCtrl.metaData['cam-1'].user).toEqual({
+                                    expect(SelfieCampaignsCtrl.data['cam-1'].user).toEqual({
                                         firstName: 'Johnny',
                                         lastName: 'Testmonkey',
                                         company: 'Tester, LLC'
                                     });
-                                    expect(SelfieCampaignsCtrl.metaData['cam-2'].user).toEqual({
+                                    expect(SelfieCampaignsCtrl.data['cam-2'].user).toEqual({
                                         firstName: 'Brent',
                                         lastName: 'Rambo',
                                         company: 'Rambo, Inc.'
                                     });
-                                    expect(SelfieCampaignsCtrl.metaData['cam-3'].user).toEqual({
+                                    expect(SelfieCampaignsCtrl.data['cam-3'].user).toEqual({
                                         firstName: 'Turtle',
                                         lastName: 'Monster',
                                         company: 'Monster, Inc.'
@@ -567,7 +601,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
         describe('$scope events', function() {
             describe('$on PaginatedListHasUpdated', function() {
-                describe('adding the metaData', function() {
+                describe('adding the data', function() {
                     var statsDeferred, thumbDeferred;
 
                     beforeEach(function() {
@@ -618,15 +652,15 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         $scope.$digest();
                     });
 
-                    it('should contain metaData for each campaign', function() {
-                        expect(SelfieCampaignsCtrl.metaData['cam-1']).toEqual({
-                            sponsor: undefined,
+                    it('should contain data for each campaign', function() {
+                        expect(SelfieCampaignsCtrl.data['cam-1']).toEqual({
+                            campaign: model.items.value[0],
                             logo: undefined,
                             thumb: null
                         });
 
-                        expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
-                            sponsor: 'Diageo',
+                        expect(SelfieCampaignsCtrl.data['cam-2']).toEqual({
+                            campaign: model.items.value[1],
                             logo: 'diageo.jpg',
                             thumb: 'thumb.jpg'
                         });

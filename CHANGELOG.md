@@ -7,6 +7,7 @@
   * [FIX]: Fix for an issue where updating user information prevented them
     from returning to the dashboard
   * [DESIGN]: Changed website background, text and form input color
+  * [FIX]: Show data from pending update requests in Dashboard
 
 ## v1.31.0 (January 8, 2016)
 * *[v1.31.0.rc3]*

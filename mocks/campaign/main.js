@@ -44,6 +44,23 @@ module.exports = function(http) {
         }));
     });
 
+    http.whenGET('/api/campaigns/updates', function(request) {
+        var allUpdates = grunt.file.expand(path.resolve(__dirname, './updates/*.json'))
+            .map(function(path) {
+                var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                return extend(grunt.file.readJSON(path), { id: id });
+            })
+            .filter(function(update) {
+                var ids = request.query.ids,
+                    idsArray = (ids || '').split(',');
+
+                return !ids || idsArray.indexOf(update.id) > -1;
+            });
+
+        this.respond(200, allUpdates);
+    });
+
     http.whenPUT('/api/campaigns/**/updates/**', function(request) {
         var id = idFromPath(request.pathname),
             campaignId = request.pathname.match(/campaigns\/([\w+-]+)/)[1],

@@ -122,74 +122,153 @@
             });
 
             describe('findQuery(type, id, query)', function() {
-                var updateRequests, data;
+                describe('when passing a campaign id', function() {
+                    var updateRequests, data;
 
-                beforeEach(function() {
-                    updateRequests = [
-                        {
-                            id: 'ur-12345',
-                            status: 'pending',
-                            campaign: 'c-111'
-                        },
-                        {
-                            id: 'ur-54321',
-                            status: 'pending',
-                            campaign: 'c-222',
-                            data: {
-                                cards: [ card ]
+                    beforeEach(function() {
+                        updateRequests = [
+                            {
+                                id: 'ur-12345',
+                                status: 'pending',
+                                campaign: 'c-111'
+                            },
+                            {
+                                id: 'ur-54321',
+                                status: 'pending',
+                                campaign: 'c-222',
+                                data: {
+                                    cards: [ card ]
+                                }
+                            },
+                            {
+                                id: 'ur-31524',
+                                status: 'rejected',
+                                campaign: 'c-333'
                             }
-                        },
-                        {
-                            id: 'ur-31524',
-                            status: 'rejected',
-                            campaign: 'c-333'
-                        }
-                    ];
-                    data = {
-                        campaign: 'c-123',
-                        ids: 'ur-12345,ur-54321',
-                        statuses: 'pending'
-                    };
-
-                    $httpBackend.expectGET('/api/campaigns/c-123/updates?ids=ur-12345,ur-54321&statuses=pending')
-                        .respond(200, updateRequests);
-                });
-
-                it('should decorate any cards and handle updates with no cards', function() {
-                    var updatedCard = {
-                            data: {
-                                videoid: '1234',
-                                source: 'YouTube'
-                            }
-                        },
-                        expectedRequests = copy(updateRequests);
-
-                    expectedRequests[1].data.cards[0] = updatedCard;
-
-                    expectedRequests.forEach(function(request) {
-                        request.id = request.campaign + ':' + request.id;
+                        ];
+                        data = {
+                            campaign: 'c-123',
+                            ids: 'ur-12345,ur-54321',
+                            statuses: 'pending'
+                        };
                     });
 
-                    adapter.findQuery('updateRequest', data).then(success, failure);
-                    $httpBackend.flush();
+                    it('should decorate any cards and handle updates with no cards', function() {
+                        var updatedCard = {
+                                data: {
+                                    videoid: '1234',
+                                    source: 'YouTube'
+                                }
+                            },
+                            expectedRequests = copy(updateRequests);
 
-                    expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(card);
-                    expect(MiniReelService.convertCardForEditor.calls.count()).toBe(1);
+                        expectedRequests[1].data.cards[0] = updatedCard;
 
-                    $rootScope.$apply(function() {
-                        convertCardForEditorDeferred.resolve(updatedCard);
+                        expectedRequests.forEach(function(request) {
+                            request.id = request.campaign + ':' + request.id;
+                        });
+
+                        $httpBackend.expectGET('/api/campaigns/c-123/updates?ids=ur-12345,ur-54321&statuses=pending')
+                            .respond(200, updateRequests);
+
+                        adapter.findQuery('updateRequest', data).then(success, failure);
+                        $httpBackend.flush();
+
+                        expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(card);
+                        expect(MiniReelService.convertCardForEditor.calls.count()).toBe(1);
+
+                        $rootScope.$apply(function() {
+                            convertCardForEditorDeferred.resolve(updatedCard);
+                        });
+
+                        expect(success).toHaveBeenCalledWith(expectedRequests);
+                        expect(failure).not.toHaveBeenCalled();
                     });
 
-                    expect(success).toHaveBeenCalledWith(expectedRequests);
-                    expect(failure).not.toHaveBeenCalled();
+                    it('should reject if call fails', function() {
+                        $httpBackend.expectGET('/api/campaigns/c-123/updates?ids=ur-12345,ur-54321&statuses=pending')
+                            .respond(404, 'Not Found');
+
+                        adapter.findQuery('updateRequest', data).then(success, failure);
+                        $httpBackend.flush();
+
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalled();
+                    });
                 });
 
-                it('should reject if not provided a campaign id', function() {
-                    delete data.campaign;
-                    adapter.findQuery('updateRequest', data).then(success, failure);
-                    $rootScope.$apply();
-                    expect(success).not.toHaveBeenCalled();
-                    expect(failure).toHaveBeenCalledWith('Must provide a campaign id');
+                describe('when not passing a campaign id', function() {
+                    var updateRequests, data;
+
+                    beforeEach(function() {
+                        updateRequests = [
+                            {
+                                id: 'ur-12345',
+                                status: 'pending',
+                                campaign: 'c-111'
+                            },
+                            {
+                                id: 'ur-54321',
+                                status: 'pending',
+                                campaign: 'c-222',
+                                data: {
+                                    cards: [ card ]
+                                }
+                            },
+                            {
+                                id: 'ur-31524',
+                                status: 'rejected',
+                                campaign: 'c-333'
+                            }
+                        ];
+                        data = {
+                            ids: 'c-111,c-222,c-333',
+                            statuses: 'pending'
+                        };
+                    });
+
+                    it('should decorate any cards and handle updates with no cards', function() {
+                        var updatedCard = {
+                                data: {
+                                    videoid: '1234',
+                                    source: 'YouTube'
+                                }
+                            },
+                            expectedRequests = copy(updateRequests);
+
+                        expectedRequests[1].data.cards[0] = updatedCard;
+
+                        expectedRequests.forEach(function(request) {
+                            request.id = request.campaign + ':' + request.id;
+                        });
+
+                        $httpBackend.expectGET('/api/campaigns/updates?ids=c-111,c-222,c-333&statuses=pending')
+                            .respond(200, updateRequests);
+
+                        adapter.findQuery('updateRequest', data).then(success, failure);
+                        $httpBackend.flush();
+
+                        expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(card);
+                        expect(MiniReelService.convertCardForEditor.calls.count()).toBe(1);
+
+                        $rootScope.$apply(function() {
+                            convertCardForEditorDeferred.resolve(updatedCard);
+                        });
+
+                        expect(success).toHaveBeenCalledWith(expectedRequests);
+                        expect(failure).not.toHaveBeenCalled();
+                    });
+
+                    it('should reject if call fails', function() {
+                        $httpBackend.expectGET('/api/campaigns/updates?ids=c-111,c-222,c-333&statuses=pending')
+                            .respond(404, 'Not Found');
+
+                        adapter.findQuery('updateRequest', data).then(success, failure);
+                        $httpBackend.flush();
+
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalled();
+                    });
                 });
             });
 

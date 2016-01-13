@@ -75,10 +75,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
                                                   'ConfirmDialogService','ThumbnailService',
-                                                  'CampaignService',
+                                                  'CampaignService','cinema6',
         function                                 ( $injector , $scope , $q , cState ,
                                                    ConfirmDialogService , ThumbnailService ,
-                                                   CampaignService ) {
+                                                   CampaignService , cinema6 ) {
             var SelfieCampaignsCtrl = this;
 
             $injector.invoke(PaginatedListController, this, {
@@ -105,35 +105,54 @@ function( angular , c6State  , PaginatedListState                    ,
                 return $q.when(null);
             }
 
-            function addMetaData() {
+            function updateModelData() {
                 var Ctrl = SelfieCampaignsCtrl,
                     model = Ctrl.model.items.value,
-                    ids = model.reduce(function(idsHash, campaign) {
-                        if (idsHash.campaigns.indexOf(campaign.id) < 0) {
-                            idsHash.campaigns.push(campaign.id);
-                        }
-                        if (idsHash.users.indexOf(campaign.user) < 0) {
-                            idsHash.users.push(campaign.user);
-                        }
-                        return idsHash;
-                    }, {campaigns: [], users: []});
-
-                Ctrl.metaData = model.reduce(function(result, campaign) {
-                    var card = campaign.cards && campaign.cards[0];
-
-                    if (!card) { return result; }
-
-                    result[campaign.id] = {
-                        sponsor: card.params.sponsor,
-                        logo: card.collateral.logo
+                    ids = {
+                        campaigns: [],
+                        users: [],
+                        updateRequests: []
                     };
 
-                    thumbFor(card).then(function(thumb) {
-                        result[campaign.id].thumb = thumb;
-                    });
+                Ctrl.data = model.reduce(function(result, campaign) {
+                    if (ids.campaigns.indexOf(campaign.id) < 0) {
+                        ids.campaigns.push(campaign.id);
+                    }
+                    if (ids.users.indexOf(campaign.user) < 0) {
+                        ids.users.push(campaign.user);
+                    }
+                    if (campaign.updateRequest &&
+                        ids.updateRequests.indexOf(campaign.updateRequest) < 0) {
+                        ids.updateRequests.push(campaign.updateRequest);
+                    }
+
+                    result[campaign.id] = {
+                        campaign: !campaign.updateRequest ? campaign : null
+                    };
 
                     return result;
-                },{});
+                }, {});
+
+                $q.when(ids.updateRequests.length ?
+                    cinema6.db.findAll('updateRequest', {ids: ids.updateRequests.join(',')}) :
+                    []).then(function(updateRequests) {
+                        updateRequests.forEach(function(updateRequest) {
+                            Ctrl.data[updateRequest.campaign].campaign = updateRequest.data;
+                        });
+
+                        model.forEach(function(campaign) {
+                            var _campaign = Ctrl.data[campaign.id].campaign,
+                                card = _campaign.cards && _campaign.cards[0];
+
+                            if (!card) { return; }
+
+                            Ctrl.data[campaign.id].logo = card.collateral.logo;
+
+                            thumbFor(card).then(function(thumb) {
+                                Ctrl.data[campaign.id].thumb = thumb;
+                            });
+                        });
+                    });
 
                 if (ids.campaigns.length) {
                     CampaignService.getAnalytics(ids.campaigns.join(','))
@@ -141,11 +160,11 @@ function( angular , c6State  , PaginatedListState                    ,
                             stats.forEach(function(stat) {
                                 var campaignId = stat.campaignId;
 
-                                if (!campaignId || !Ctrl.metaData[campaignId]) {
+                                if (!campaignId || !Ctrl.data[campaignId]) {
                                     return;
                                 }
 
-                                Ctrl.metaData[campaignId].stats = {
+                                Ctrl.data[campaignId].stats = {
                                     views: stat.summary.views,
                                     spend: stat.summary.totalSpend
                                 };
@@ -157,7 +176,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     CampaignService.getUserData(ids.users.join(','))
                         .then(function(userHash) {
                             model.forEach(function(campaign) {
-                                Ctrl.metaData[campaign.id].user = userHash[campaign.user];
+                                Ctrl.data[campaign.id].user = userHash[campaign.user];
                             });
                         });
                 }
@@ -184,8 +203,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = model;
                 this.hasAdvertisers = cState.cParent.hasAdvertisers;
 
-                addMetaData();
-                model.on('PaginatedListHasUpdated', addMetaData);
+                updateModelData();
+                model.on('PaginatedListHasUpdated', updateModelData);
 
                 this.filters = [
                     'draft',
