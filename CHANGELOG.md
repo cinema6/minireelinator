@@ -1,5 +1,10 @@
 # MiniReelinator
 
+## v1.32.0 (January 13, 2016)
+* *[v1.32.0.rc2]*
+  * [FIX]: Fix estimated views calculation in campaign summary
+* *[/v1.32.0.rc2]*
+
 * *[v1.32.0.rc1]*
   * [DESIGN]: Added styles for campaign summary on manage campaign screen
   * [FEATURE]: Add campaign summary to Manage Campaign screen (REEL-67)
@@ -8,6 +13,8 @@
     from returning to the dashboard
   * [DESIGN]: Changed website background, text and form input color
   * [FIX]: Show data from pending update requests in Dashboard
+  * [FIX]: Update rejection text for non-draft campaigns
+* *[/v1.32.0.rc1]*
 
 ## v1.31.0 (January 8, 2016)
 * *[v1.31.0.rc3]*
