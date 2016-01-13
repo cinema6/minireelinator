@@ -36,9 +36,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaigns', ['$injector','$location','cinema6',
+            c6StateProvider.state('Selfie:Campaigns', ['$injector','$location',
                                                        'paginatedDbList','c6State',
-            function                                  ( $injector , $location , cinema6 ,
+            function                                  ( $injector , $location ,
                                                         paginatedDbList , c6State ) {
                 $injector.invoke(PaginatedListState, this);
 
@@ -65,7 +65,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         statuses: this.filter,
                     }, this.limit, this.page).ensureResolution();
                 };
-                this.afterModel = function(model) {
+                this.afterModel = function() {
                     var user = c6State.get('Selfie').cModel;
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
@@ -146,7 +146,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
                             if (!card) { return result; }
 
-                            Ctrl.data[campaign.id].sponsor = card.params.sponsor;
                             Ctrl.data[campaign.id].logo = card.collateral.logo;
 
                             thumbFor(card).then(function(thumb) {
