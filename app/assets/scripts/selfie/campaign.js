@@ -123,7 +123,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                     if (campaign.updateRequest &&
                         ids.updateRequests.indexOf(campaign.updateRequest) < 0) {
-                            ids.updateRequests.push(campaign.updateRequest);
+                        ids.updateRequests.push(campaign.updateRequest);
                     }
 
                     result[campaign.id] = {
@@ -144,7 +144,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             var _campaign = Ctrl.data[campaign.id].campaign,
                                 card = _campaign.cards && _campaign.cards[0];
 
-                            if (!card) { return result; }
+                            if (!card) { return; }
 
                             Ctrl.data[campaign.id].logo = card.collateral.logo;
 
