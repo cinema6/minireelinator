@@ -1,12 +1,13 @@
 # MiniReelinator
 
-## v1.32.0 (January 13, 2016)
+## v1.32.0 (January 14, 2016)
 * *[v1.32.0.rc3]*
   * [FEATURE]: Add support for referrals
   * [FIX]: Fix for an issue where imported website logos weren't being saved
   * [FIX]: Fix for an issue where password restrictions weren't being enforced
   * [FIX]: Fix for an issue where sliding input labels didn't work properly
     when email or password inputs were invalid
+* *[/v1.32.0.rc3]*
 
 * *[v1.32.0.rc2]*
   * [FIX]: Fix estimated views calculation in campaign summary
