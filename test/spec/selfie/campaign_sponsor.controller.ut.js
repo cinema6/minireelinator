@@ -378,7 +378,7 @@ define(['app'], function(appModule) {
                             SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[2];
                         });
 
-                        it('should update the src and set logoType to website', function() {
+                        it('should update the src, set logoType to website and put logo on Ctrl', function() {
                             expect(SelfieCampaignSponsorCtrl.logoOptions[0].type).toBe('website');
 
                             SelfieCampaignSponsorCtrl.setWebsiteData({
@@ -389,6 +389,7 @@ define(['app'], function(appModule) {
 
                             expect(SelfieCampaignSponsorCtrl.logoOptions[0].src).toBe('http://mynewlogo.com');
                             expect(SelfieCampaignSponsorCtrl.logoType).toBe(SelfieCampaignSponsorCtrl.logoOptions[0]);
+                            expect(SelfieCampaignSponsorCtrl.logo).toBe('http://mynewlogo.com');
                         });
                     });
 
@@ -408,6 +409,7 @@ define(['app'], function(appModule) {
                             expect(SelfieCampaignSponsorCtrl.logoOptions[0].src).toBe('http://mylogo.com');
                             expect(SelfieCampaignSponsorCtrl.logoOptions.length).toBe(4);
                             expect(SelfieCampaignSponsorCtrl.logoType).toBe(SelfieCampaignSponsorCtrl.logoOptions[0]);
+                            expect(SelfieCampaignSponsorCtrl.logo).toBe('http://mylogo.com');
                         });
                     });
                 });
@@ -420,6 +422,7 @@ define(['app'], function(appModule) {
 
                         expect(SelfieCampaignSponsorCtrl.logoOptions[0].type).not.toBe('website');
                         expect(SelfieCampaignSponsorCtrl.logoType).toBe(SelfieCampaignSponsorCtrl.logoOptions[2]);
+                        expect(SelfieCampaignSponsorCtrl.logo).toBe(undefined);
                     });
                 });
             });
