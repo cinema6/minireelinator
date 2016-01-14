@@ -1101,6 +1101,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
 
                     this.logoType = this.logoOptions[0];
+                    this.logo = logo;
                 }
             };
 

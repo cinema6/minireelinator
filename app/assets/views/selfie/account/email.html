@@ -56,7 +56,7 @@
                         </fieldset>
 
                         <fieldset class="form__item" blur-validate="c6-email-new" ng-class="{'ui--hasError': !theForm.newEmail.$valid }">
-                            <input c6-fill-check ng-model="EmailCtrl.email" class="form__textBox form__fillCheck" type="email" id="c6-email-new" autocomplete="off" ng-trim="false" ng-minlength="4" ng-maxlength="128" name="newEmail" ng-pattern="EmailCtrl.pattern">
+                            <input c6-fill-check check-view="true" ng-model="EmailCtrl.email" class="form__textBox form__fillCheck" type="email" id="c6-email-new" autocomplete="off" ng-trim="false" ng-minlength="4" ng-maxlength="128" name="newEmail" ng-pattern="EmailCtrl.pattern">
                             <label class="form__label" for="c6-email-new">
                                 <i class="fa fa-times ui--error"></i>
                                 New Email

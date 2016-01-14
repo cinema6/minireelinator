@@ -33,6 +33,24 @@ define(['app'], function(appModule) {
             });
         });
 
+        describe('when check-view is defined', function() {
+            it('should add the class if model is falsy but view is truthy', function() {
+                // This occurs when input is invalid. Angular sets ng-model to undefined until it's valid
+                // so adding the "filled" class based on checking ng-model will fail.
+
+                $scope.$apply(function() {
+                    $input = $compile('<input c6-fill-check check-view="true" ng-model="value" type="email">')($scope);
+                });
+
+                $input.val('F');
+                $input.trigger('change');
+
+                $timeout.flush();
+
+                expect($input.hasClass('form__fillCheck--filled')).toBe(true);
+            });
+        });
+
         describe('when an input is empty', function() {
             beforeEach(function() {
                 $scope.$apply(function() {

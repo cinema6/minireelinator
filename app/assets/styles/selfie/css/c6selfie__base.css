@@ -4984,7 +4984,7 @@ div.tree-multiselect span.section-name {
 }
 .form__item--stackedInput .form__label {
     font-size: 0.875em;
-    top: -1.6375rem;
+    top: -1.6375rem !important;
     left: 0;
     z-index: 10;
     display: block;

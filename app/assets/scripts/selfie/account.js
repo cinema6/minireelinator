@@ -63,18 +63,33 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:SignUp', [function() {
+            c6StateProvider.state('Selfie:SignUp', ['$location','SettingsService',
+            function                               ( $location , SettingsService ) {
                 this.templateUrl = 'views/selfie/sign_up.html';
                 this.controller = 'SelfieSignUpController';
                 this.controllerAs = 'SelfieSignUpCtrl';
 
+                this.beforeModel = function() {
+                    var referral = $location.search().ref;
+
+                    SettingsService.register('Selfie::referral', { referral: referral }, {
+                        localSync: referral || true,
+                        validateLocal: function(local) {
+                            return local === true;
+                        }
+                    });
+                };
+
                 this.model = function() {
+                    var ref = SettingsService.getReadOnly('Selfie::referral').referral;
+
                     return {
                         email: '',
                         password: '',
                         company: '',
                         firstName: '',
-                        lastName: ''
+                        lastName: '',
+                        referringCode: ref
                     };
                 };
             }]);

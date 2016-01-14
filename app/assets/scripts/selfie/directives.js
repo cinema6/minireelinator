@@ -33,9 +33,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                 restrict: 'A',
                 require: '?ngModel',
                 link: function(scope, $element, attrs, ngModel) {
+                    var checkView = attrs.checkView;
 
                     function handleModelChange(value) {
-                        if (ngModel.$modelValue) {
+                        if (ngModel.$modelValue || (checkView && ngModel.$viewValue)) {
                             $element.addClass('form__fillCheck--filled');
                         } else {
                             $element.removeClass('form__fillCheck--filled');
@@ -223,7 +224,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
                         if (!value) {
                             $element.addClass('ui--hasError');
-                        } else {
+                        } else if (input.hasClass('ng-valid')) {
                             $element.removeClass('ui--hasError');
                         }
                     });

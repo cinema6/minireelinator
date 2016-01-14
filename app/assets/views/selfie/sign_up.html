@@ -9,108 +9,112 @@
             <h2 class="tk--hdr signup__pagetitle">Sign up</h2>
             <div class="grid grid--center">
                 <div class="form__items form--narrow">
-                    <fieldset blur-validate="c6-firstName" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.firstName }" class="form__item">
-                        <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-firstName" ng-model="user.firstName">
-                        <label class="form__label" for="c6-firstName">
-                            <i class="fa fa-times ui--error"></i>
-                            First Name*
-                        </label>
-                        <!--<div class="form__helpBox form__helpBox--right">
-                            <div class="form__helpText">
-                                Please enter your first name
+                    <form name="signup">
+
+                        <fieldset blur-validate="c6-firstName" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.firstName }" class="form__item">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-firstName" ng-model="user.firstName">
+                            <label class="form__label" for="c6-firstName">
+                                <i class="fa fa-times ui--error"></i>
+                                First Name*
+                            </label>
+                            <!--<div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Please enter your first name
+                                </div>
+                            </div>-->
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> First name is required
+                                </p>
                             </div>
-                        </div>-->
-                        <div class="form__errorBox">
-                            <p class="form__errorMsg">
-                                <i class="fa fa-exclamation-triangle"></i> First name is required
-                            </p>
-                        </div>
-                    </fieldset>
-                    <fieldset blur-validate="c6-lastName" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.lastName }" class="form__item">
-                        <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-lastName" ng-model="user.lastName">
-                        <label class="form__label" for="c6-lastName">
-                            <i class="fa fa-times ui--error"></i>
-                            Last Name*
-                        </label>
-                        <!--<div class="form__helpBox form__helpBox--right">
-                            <div class="form__helpText">
-                                Please enter your last name
+                        </fieldset>
+                        <fieldset blur-validate="c6-lastName" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.lastName }" class="form__item">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-lastName" ng-model="user.lastName">
+                            <label class="form__label" for="c6-lastName">
+                                <i class="fa fa-times ui--error"></i>
+                                Last Name*
+                            </label>
+                            <!--<div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Please enter your last name
+                                </div>
+                            </div>-->
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Last name is required
+                                </p>
                             </div>
-                        </div>-->
-                        <div class="form__errorBox">
-                            <p class="form__errorMsg">
-                                <i class="fa fa-exclamation-triangle"></i> Last name is required
-                            </p>
-                        </div>
-                    </fieldset>
-                    <fieldset blur-validate="c6-company" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.company }" class="form__item">
-                        <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-company" ng-model="user.company">
-                        <label class="form__label" for="c6-company">
-                            <i class="fa fa-times ui--error"></i>
-                            Company*
-                        </label>
-                        <!--<div class="form__helpBox form__helpBox--right">
-                            <div class="form__helpText">
-                                Please enter the name of your Business
+                        </fieldset>
+                        <fieldset blur-validate="c6-company" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.company }" class="form__item">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-company" ng-model="user.company">
+                            <label class="form__label" for="c6-company">
+                                <i class="fa fa-times ui--error"></i>
+                                Company*
+                            </label>
+                            <!--<div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Please enter the name of your Business
+                                </div>
+                            </div>-->
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Company is required
+                                </p>
                             </div>
-                        </div>-->
-                        <div class="form__errorBox">
-                            <p class="form__errorMsg">
-                                <i class="fa fa-exclamation-triangle"></i> Company is required
-                            </p>
-                        </div>
-                    </fieldset>
-                    <!--<fieldset class="form__item">
-                        <input class="form__textBox form__fillCheck" type="tel" id="c6-phone" ng-model="user.phone">
-                        <label class="form__label" for="c6-phone">
-                            <i class="fa fa-times ui--error"></i>
-                            Phone
-                        </label>
-                        <div class="form__helpBox form__helpBox--right">
-                            <div class="form__helpText">
-                                Please enter your contact number
+                        </fieldset>
+                        <!--<fieldset class="form__item">
+                            <input class="form__textBox form__fillCheck" type="tel" id="c6-phone" ng-model="user.phone">
+                            <label class="form__label" for="c6-phone">
+                                <i class="fa fa-times ui--error"></i>
+                                Phone
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Please enter your contact number
+                                </div>
                             </div>
-                        </div>
-                        <div class="form__errorBox">
-                            <p class="form__errorMsg">
-                                <i class="fa fa-exclamation-triangle"></i> Error message goes here
-                            </p>
-                        </div>
-                    </fieldset>-->
-                    <fieldset blur-validate="c6-username" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.email }" class="form__item">
-                        <input c6-fill-check class="form__textBox form__fillCheck" type="email" id="c6-username" ng-model="user.email">
-                        <label class="form__label" for="c6-username">
-                            <i class="fa fa-times ui--error"></i>
-                            Email*
-                        </label>
-                        <div class="form__helpBox form__helpBox--right">
-                            <div class="form__helpText">
-                                This will also be your username
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                </p>
                             </div>
-                        </div>
-                        <div class="form__errorBox">
-                            <p class="form__errorMsg">
-                                <i class="fa fa-exclamation-triangle"></i> Valid email is required
-                            </p>
-                        </div>
-                    </fieldset>
-                    <fieldset blur-validate="c6-password" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.password }" class="form__item">
-                        <input c6-fill-check class="form__textBox form__fillCheck" type="password" id="c6-password" ng-model="user.password">
-                        <label class="form__label" for="c6-password">
-                            <i class="fa fa-times ui--error"></i>
-                            Password*
-                        </label>
-                        <div class="form__helpBox form__helpBox--right">
-                            <div class="form__helpText">
-                                Your password must be at leat 8 characters and include 1 number
+                        </fieldset>-->
+                        <fieldset blur-validate="c6-username" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.email }" class="form__item">
+                            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="email" id="c6-username" ng-model="user.email">
+                            <label class="form__label" for="c6-username">
+                                <i class="fa fa-times ui--error"></i>
+                                Email*
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    This will also be your username
+                                </div>
                             </div>
-                        </div>
-                        <div class="form__errorBox">
-                            <p class="form__errorMsg">
-                                <i class="fa fa-exclamation-triangle"></i> Please enter a valid password
-                            </p>
-                        </div>
-                    </fieldset>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Valid email is required
+                                </p>
+                            </div>
+                        </fieldset>
+                        <fieldset blur-validate="c6-password" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.password || signup['c6-password'].$error.pattern || signup['c6-password'].$error.minlength }" class="form__item">
+                            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="password" id="c6-password" name="c6-password" ng-minlength="8" ng-pattern="/\d/" ng-model="user.password">
+                            <label class="form__label" for="c6-password">
+                                <i class="fa fa-times ui--error"></i>
+                                Password*
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Your password must be at least 8 characters and include 1 number
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Please enter a valid password
+                                </p>
+                            </div>
+
+                        </fieldset>
+                    </form>
                     <div class="ui__btnHolder">
                         <button class="action__btn action__btn--full" ng-click="SelfieSignUpCtrl.submit()">Sign up</button>
                         <div ng-if="SelfieSignUpCtrl.message" class="alertMessage alert__failure">

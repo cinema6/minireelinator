@@ -1,5 +1,18 @@
 # MiniReelinator
 
+## v1.32.0 (January 14, 2016)
+* *[v1.32.0.rc3]*
+  * [FEATURE]: Add support for referrals
+  * [FIX]: Fix for an issue where imported website logos weren't being saved
+  * [FIX]: Fix for an issue where password restrictions weren't being enforced
+  * [FIX]: Fix for an issue where sliding input labels didn't work properly
+    when email or password inputs were invalid
+* *[/v1.32.0.rc3]*
+
+* *[v1.32.0.rc2]*
+  * [FIX]: Fix estimated views calculation in campaign summary
+* *[/v1.32.0.rc2]*
+
 * *[v1.32.0.rc1]*
   * [DESIGN]: Added styles for campaign summary on manage campaign screen
   * [FEATURE]: Add campaign summary to Manage Campaign screen (REEL-67)
@@ -9,6 +22,7 @@
   * [DESIGN]: Changed website background, text and form input color
   * [FIX]: Show data from pending update requests in Dashboard
   * [FIX]: Update rejection text for non-draft campaigns
+* *[/v1.32.0.rc1]*
 
 ## v1.31.0 (January 8, 2016)
 * *[v1.31.0.rc3]*
