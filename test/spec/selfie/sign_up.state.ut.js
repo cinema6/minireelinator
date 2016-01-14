@@ -72,13 +72,13 @@ define(['app'], function(appModule) {
                         company: '',
                         firstName: '',
                         lastName: '',
-                        referringCode: 'testcode'
+                        referralCode: 'testcode'
                     });
                 });
             });
 
             describe('there is not a referral code', function() {
-                it('should leave the referringCode undefined', function() {
+                it('should leave the referralCode undefined', function() {
                     SettingsService.getReadOnly.and.returnValue({});
 
                     var result = signUp.model();
@@ -89,7 +89,7 @@ define(['app'], function(appModule) {
                         company: '',
                         firstName: '',
                         lastName: '',
-                        referringCode: undefined
+                        referralCode: undefined
                     });
                 });
             });
