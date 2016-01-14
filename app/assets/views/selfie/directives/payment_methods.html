@@ -1,4 +1,4 @@
-<fieldset class="form__item" c6-alias="SelfiePaymentMethodsCtrl.currentMethod as current" c6-click-outside="SelfiePaymentMethodsCtrl.showDropdown = false">
+<fieldset class="form__item" ng-show="methods.length > 0" c6-alias="SelfiePaymentMethodsCtrl.currentMethod as current" c6-click-outside="SelfiePaymentMethodsCtrl.showDropdown = false">
     <div class="pmtDropdown">
     <!-- current payment method-->
         <button ng-click="SelfiePaymentMethodsCtrl.toggleDropdown()" class="btn pmtDropdown__btn default" ng-class="{ 'pmtDropdown__single': methods.length < 2 }">
