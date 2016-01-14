@@ -15,7 +15,7 @@
         font-weight:normal;
         color:#1c1c1c;
         line-height: 1.5;
-        background:#fff;
+        background:#f5f5f5;
         margin:0;
         min-width: 1024px;
     }
@@ -1484,7 +1484,8 @@ fa,
             color:#5c5c5c;
             display:block;
             background:#fff;
-            margin:1rem 0 0.25rem;
+            margin:1rem 0 -1px;
+            border: 1px solid #ddd;
             padding:0.125em 0 0.125em 1.5rem;
             position:relative;
             cursor: default;
@@ -4894,8 +4895,8 @@ div.tree-multiselect span.section-name {
     }
 
 .tabBar__list .c6-active {
-    background-color: #fff;
-    border-bottom: 3px solid #fff;
+    background-color: #f5f5f5;
+    border-bottom: 3px solid #f5f5f5;
 }
 .payment__group {
     background: #fff;
@@ -4933,7 +4934,7 @@ div.tree-multiselect span.section-name {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    background: #f5f5f5;
+    background: #ffffff;
     box-sizing: border-box;
 }
 .ui__tab {
@@ -5059,7 +5060,7 @@ div.tree-multiselect span.section-name {
     font-size: 1.125em;
     line-height: 1.5rem;
     color: #1c1c1c;
-    background: #f5f5f5;
+    background: #fff;
     transition: border 0.3s, background 0.3s;
     width: 100%;
     font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
@@ -5075,10 +5076,20 @@ div.tree-multiselect span.section-name {
 .select2 + .form__label {
     top: 0.375em;
 }
-.modalPayment__group {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding-top: 2em;
+.modalPayment__group .select2-container--default .select2-selection--single, 
+.modalPayment__group .select2-container--default .select2-selection--multiple {
+    border: 0;
+    border: 1px solid #ddd;
+    /* border-bottom: 2px solid #eee; */
+    border-radius: 0;
+    background: #f5f5f5;
+    transition: border 0.3s, background 0.3s;
+    padding: 0.4375rem 0 0.375rem;
+    font-size: 1.125em;
+    color: #1c1c1c;
+    text-align: start;
+    height: auto;
+    border-radius: 4px;
 }
 .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--multiple {
     border: 0;
@@ -5209,9 +5220,6 @@ div.tree-multiselect span.remove-selected {
 .stats__row {
     border: 1px solid #ddd;
     margin: 0 0 -1px 0;
-}
-.stats__hdr {
-    padding: 0.125em 0 0.125em 0;
 }
 .modalBody__group .assetLoader__status {
     -webkit-box-shadow: none;
