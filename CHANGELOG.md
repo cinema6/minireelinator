@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.32.1.rc1]*
+  * [FIX]: Reverted white background change, updated campaign summary
+
 ## v1.32.0 (January 14, 2016)
 * *[v1.32.0.rc3]*
   * [FEATURE]: Add support for referrals

@@ -37,8 +37,25 @@
                     <!-- campaign summary -->
                     <div class="grid__item one-whole campaignSummary__group" c6-alias="SelfieManageCampaignCtrl.summary as summary">
                         <div class="grid">
-                            <div class="grid__item">
+                            <div class="grid__item campaignItem__list">
                                 <h3 class="tk--hdr">Campaign Summary</h3>
+                                <div class="campaignItems">
+                                    <ul>
+                                        <li>
+                                            <div class="campaignItem__title">Advertiser</div>
+                                            <div class="campaignItem__label text--small">{{summary.advertiser}}</div>
+                                        </li>
+                                        <li>
+                                            <div class="campaignItem__title">Timeline</div>
+                                            <div class="campaignItem__label text--small">{{summary.duration}}</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid">
+                            <div class="grid__item">
+                                <h3 class="tk--hdr">Budget</h3>
                                 <div class="campaignSummary__item">
                                     <div class="grid">
                                         <div class="grid__item grid--center one-quarter">
@@ -62,30 +79,25 @@
                             </div>
                         </div>
                         <div class="grid">
-                            <div class="grid__item campaignItem__list">
-                                <div class="campaignItems">
-                                    <ul>
-                                        <li>
-                                            <div class="campaignItem__title">Advertiser</div>
-                                            <div class="campaignItem__label text--small">{{summary.advertiser}}</div>
-                                        </li>
-                                        <li>
-                                            <div class="campaignItem__title">Timeline</div>
-                                            <div class="campaignItem__label text--small">{{summary.duration}}</div>
-                                        </li>
-                                        <li>
-                                            <div class="campaignItem__title">Interests</div>
-                                            <div class="campaignItem__label text--small">Interests: {{summary.interests || 'All'}}</div>
-                                        </li>
-                                        <li>
-                                            <div class="campaignItem__title">Demographics</div>
-                                            <div class="campaignItem__label text--small" ng-repeat="demo in summary.demographics">{{demo.name}}: {{demo.list || 'All'}}</div>
-                                        </li>
-                                        <li>
-                                            <div class="campaignItem__title">Location</div>
-                                            <div class="campaignItem__label text--small" ng-repeat="geo in summary.geo">{{geo.name}}: {{geo.list || 'All'}}</div>
-                                        </li>
-                                    </ul>
+                            <div class="grid__item">
+                                <h3 class="tk--hdr">Targeting</h3>
+                                <div class="campaignItem__list">
+                                    <div class="campaignItems">
+                                        <ul>
+                                            <li>
+                                                <div class="campaignItem__title">Interests</div>
+                                                <div class="campaignItem__label text--small">Interests: {{summary.interests || 'All'}}</div>
+                                            </li>
+                                            <li>
+                                                <div class="campaignItem__title">Demographics</div>
+                                                <div class="campaignItem__label text--small" ng-repeat="demo in summary.demographics">{{demo.name}}: {{demo.list || 'All'}}</div>
+                                            </li>
+                                            <li>
+                                                <div class="campaignItem__title">Location</div>
+                                                <div class="campaignItem__label text--small" ng-repeat="geo in summary.geo">{{geo.name}}: {{geo.list || 'All'}}</div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
