@@ -89,7 +89,7 @@ function( angular , c6State  ) {
                         company: '',
                         firstName: '',
                         lastName: '',
-                        referringCode: ref
+                        referralCode: ref
                     };
                 };
             }]);
