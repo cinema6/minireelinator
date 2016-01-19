@@ -3637,7 +3637,7 @@ fa,
             }
 
         .action__dropdown ul ul {
-            display:none;
+            /*display:none;*/
             position:absolute;
             top:100%;
             right:0;
@@ -3667,7 +3667,7 @@ fa,
         }
 
         .action__dropdown ul li:hover > ul {
-            display:block
+            /*display:block*/
         }
 
         .action__dropdownItem--selected {
@@ -3692,17 +3692,17 @@ fa,
             font-weight: normal;
         }
         .dateRange.action__dropdown ul ul li {
-            width: 200px;
+            width: 240px;
         }
             .dateRange.action__dropdown ul ul li a {
                 display: block;
             }
         .dateRange__wrap {
             padding: 0.5em 1em 0.125em 1em;
-            display: none;
+            /*display: none;*/
         }
         .dateRange__custom:hover .dateRange__wrap {
-            display: block;
+            /*display: block;*/
         }
         .dateRange__wrap .form__textBox {
             margin-bottom: 0.5em;

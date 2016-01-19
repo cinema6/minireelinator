@@ -12,6 +12,11 @@ function( angular , c6State  , PaginatedListState                    ,
         isObject = angular.isObject,
         isArray = angular.isArray;
 
+    function pad(num) {
+        var norm = Math.abs(Math.floor(num));
+        return (norm < 10 ? '0' : '') + norm;
+    }
+
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -829,11 +834,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
             var now = new Date();
             now.setHours(0,0,1);
-
-            function pad(num) {
-                var norm = Math.abs(Math.floor(num));
-                return (norm < 10 ? '0' : '') + norm;
-            }
 
             function fromISO(string) {
                 if (!string) { return; }
@@ -1922,37 +1922,153 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignStatsController', ['$scope',
-        function                                           ( $scope ) {
+        .controller('SelfieManageCampaignStatsController', ['$scope','CampaignService',
+        function                                           ( $scope , CampaignService ) {
             var SelfieManageCampaignCtrl = $scope.SelfieManageCampaignCtrl,
-                SelfieManageCampaignStatsCtrl = this,
-                stats = SelfieManageCampaignCtrl.stats[0] || {},
-                linkClicks = (stats.summary && stats.summary.linkClicks) || {},
-                shareClicks = (stats.summary && stats.summary.shareClicks) || {};
+                SelfieManageCampaignStatsCtrl = this;
 
-            this.totalInteractions = 0;
+            function formatDate(date, joiner, replace) {
+                var dateArray;
 
-            this.totalSocialClicks = (function() {
-                var total = 0;
+                if (!date) { return date; }
 
-                forEach(linkClicks, function(item, key) {
-                    SelfieManageCampaignStatsCtrl.totalInteractions += item;
+                if (replace) {
+                    dateArray = date.split(replace);
 
-                    if (!(/action|website/).test(key)) {
-                        total += item;
+                    return dateArray[2] + joiner +
+                        dateArray[0] + joiner +
+                        dateArray[1];
+                }
+
+                return pad(date.getMonth()+1) + joiner +
+                    pad(date.getDate()) + joiner +
+                    pad(date.getFullYear());
+            }
+
+            function offsetDateObject(offset) {
+                var end = new Date(),
+                    start = new Date();
+
+                start.setDate(end.getDate() - offset);
+
+                return {
+                    start: formatDate(start, '/'),
+                    end: formatDate(end, '/')
+                };
+            }
+
+            Object.defineProperties(this, {
+                selectedRange: {
+                    get: function() {
+                        return this.rangeOptions.filter(function(option) {
+                            return option.selected;
+                        })[0] || this.customRange;
                     }
-                });
-                return total;
-            }());
+                },
+                max: {
+                    get: function() {
+                        return this.customRange.dates.end || 0;
+                    }
+                },
+                totalWebsiteInteractions: {
+                    get: function() {
+                        var total = 0,
+                            stats = SelfieManageCampaignCtrl.stats[0] || {},
+                            linkClicks = (stats.summary && stats.summary.linkClicks) || {};
 
-            this.totalShares = (function() {
-                var total = 0;
-                forEach(shareClicks, function(item) {
-                    SelfieManageCampaignStatsCtrl.totalInteractions += item;
-                    total += item;
+                        forEach(linkClicks, function(item, key) {
+                            if ((/action|website/).test(key)) {
+                                total += item;
+                            }
+                        });
+                        return total;
+                    }
+                },
+                totalSocialClicks: {
+                    get: function() {
+                        var total = 0,
+                            stats = SelfieManageCampaignCtrl.stats[0] || {},
+                            linkClicks = (stats.summary && stats.summary.linkClicks) || {};
+
+                        forEach(linkClicks, function(item, key) {
+                            if (!(/action|website/).test(key)) {
+                                total += item;
+                            }
+                        });
+                        return total;
+                    }
+                },
+                totalShares: {
+                    get: function() {
+                        var total = 0,
+                            stats = SelfieManageCampaignCtrl.stats[0] || {},
+                            shareClicks = (stats.summary && stats.summary.shareClicks) || {};
+
+                        forEach(shareClicks, function(item) {
+                            total += item;
+                        });
+
+                        return total;
+                    }
+                },
+                totalInteractions: {
+                    get: function() {
+                        return this.totalSocialClicks + this.totalShares + this.totalWebsiteInteractions;
+                    }
+                }
+            });
+
+            this.showDropdown = false;
+            this.pickerActive = false;
+
+            this.rangeOptions = [
+                {
+                    label: 'Lifetime',
+                    selected: true,
+                    dates: {
+                        start: null,
+                        end: null
+                    }
+                },
+                {
+                    label: 'Yesterday',
+                    selected: false,
+                    dates: offsetDateObject(1)
+                },
+                {
+                    label: 'Last 7 Days',
+                    selected: false,
+                    dates: offsetDateObject(7)
+                },
+                {
+                    label: 'Last 30 Days',
+                    selected: false,
+                    dates: offsetDateObject(30)
+                }
+            ];
+
+            this.customRange = {
+                label: 'Custom',
+                selected: false,
+                dates: {
+                    start: null,
+                    end: null
+                }
+            };
+
+            this.getStats = function(option) {
+                this.rangeOptions.forEach(function(opt) {
+                    opt.selected = opt.label === option.label;
                 });
-                return total;
-            }());
+
+                this.customRange.selected = option.label === 'Custom';
+
+                this.showDropdown = false;
+
+                // CampaignService.getAnalytics()
+
+                console.log(option, formatDate(option.dates.start, '-', '/'), formatDate(option.dates.end, '-', '/'));
+            };
         }])
 
         .config(['c6StateProvider',
