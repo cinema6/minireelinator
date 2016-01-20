@@ -1958,20 +1958,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
             }
 
-            function findLifetimeDates() {
-                var activeStatuses = campaign.statusHistory.filter(function(entry) {
-                        return entry.status === 'active';
-                    }),
-                    startDate = activeStatuses[activeStatuses.length - 1].date,
-                    start = new Date(startDate),
-                    end = new Date();
-
-                return {
-                    start: formatDate(start, '/'),
-                    end: formatDate(end, '/')
-                };
-            }
-
             Object.defineProperties(this, {
                 stats: {
                     get: function() {
@@ -2044,7 +2030,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 {
                     label: 'Lifetime',
                     selected: true,
-                    dates: findLifetimeDates()
+                    dates: {
+                        start: null,
+                        end: null
+                    }
                 },
                 {
                     label: 'Yesterday',

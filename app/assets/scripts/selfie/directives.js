@@ -302,6 +302,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                             });
                         }
                     });
+
+                    $('#ui-datepicker-div').click(function(e) {
+                        e.stopPropagation();
+                    });
                 }
             };
         }])
