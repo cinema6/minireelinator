@@ -1660,7 +1660,7 @@ fa,
             padding:0 0.5em 0 0;
         }
         .column__sponsor {
-            width:10.5em;
+            width:6em;
         }
         .column__campaignName {
             padding:0 2em 0 0;
@@ -1668,38 +1668,71 @@ fa,
         .column__totalViews {
             width:7.5em;
             padding:0 2em 0 0;
+            text-align: right;
         }
-        .column__totalSpending {
+        .column__totalSpending,
+        .column__totalInteractions {
             width:6.5em;
             padding:0 2em 0 0;
+            text-align: right;
+        }
+        .column__totalInteractionRate {
+            width:4.5em;
+            padding:0 2em 0 0;
+            text-align: center;
         }
         .column__budget,
-        .column__summaryTotals {
+        .column__summaryToday,
+        .column__summaryLifetime {
             width:8.5em;
             padding:0;
             text-align: right;
         }
-        .column__summaryTotals {
+        .column__budget {
+            display: none;
+        }
+        .column__summaryToday {
             width:10em;
         }
-
-        @media screen and (min-width:69em) {
+        .column__activityTotals {
+            display: none;
+        }
+        @media screen and (min-width:95em) {
             /*
-                wider than 1104px
+                wider than 1520px
             */
             .column__campaignName {
-                width:calc(100% - 45.5rem);
-            }
-            .column__summaryTotals {
-                display: none;
+                width:calc(100% - 60.5rem);
             }
         }
-        @media screen and (max-width:69em) {
+        @media screen and (min-width:85em) and (max-width:95em) {
             /*
-                up to 1104px wide
+                wider than 1360px and narrower than 1520px
             */
             .column__campaignName {
-                width:calc(100% - 29rem);
+                width:calc(100% - 58.5rem);
+            }
+            /*.column__summaryTotals {
+                display: none;
+            }*/
+        }
+        @media screen and (min-width:78em) and (max-width:85em) {
+            /*
+                wider than 1248px and narrower than 1360px
+            */
+            .column__campaignName {
+                width:calc(100% - 57.5rem);
+            }
+            /*.column__summaryTotals {
+                display: none;
+            }*/
+        }
+        @media screen and (max-width:78em) {
+            /*
+                up to 1248px wide
+            */
+            .column__campaignName {
+                width:calc(100% - 48rem);
             }
             .column__totalViews {
                 display: none;
@@ -1710,13 +1743,27 @@ fa,
             .column__budget {
                 display: none;
             }
-        }
+            .column__totalViews,
+            .column__totalInteractions,
+            .column__totalInteractionRate {
+                display: none;
+            }
+            .column__activityTotals {
+                width:12.5em;
+                padding:0 2em 0 0;
+                text-align: right;
+                display: inline-block;
+            }
+                .column__activityTotals .hint, [data-hint] {
+                    position: absolute !important;
+                }
+        }/*
         @media screen and (max-width:48em) {
             /*
                 up to 768px wide
-            */
+            * /
             .column__sponsor {
-                width:8em;
+                width:6em;
             }
             .column__campaignName {
                 width:calc(100% - 26.5rem);
@@ -1725,14 +1772,14 @@ fa,
         @media screen and (max-width:42em) {
             /*
                 up to 672px wide
-            */
+            * /
             .column__sponsor {
                 display: none;
             }
             .column__campaignName {
                 width:calc(100% - 17.5rem);
             }
-        }
+        }*/
 
 
 /*  ================================================
@@ -2023,7 +2070,7 @@ fa,
             }
 
             .campaign__thumbnail {
-                height:6em;
+                min-height:4em;
                 padding:0;
             }
                 @media screen and (max-width:48em) {
@@ -2055,7 +2102,7 @@ fa,
                     font-size:0.875em;
                     line-height:1rem;
                     display: block;
-                    padding:0.1875rem 0 0.3125rem 3rem;
+                    padding:0.1875rem 0 0.3125rem 0.25rem;
                 }
 
 
@@ -2128,7 +2175,8 @@ fa,
                     color:#9c9c9c;
                 }
 
-                .campaign__budgetNumbers {
+                .campaign__budgetNumbers,
+                .campaign__lifetimeNumbers {
                     display: block;
                     line-height:1.5em;
                     padding-left:2.5em;
@@ -4927,7 +4975,8 @@ div.tree-multiselect span.section-name {
     border: 1px solid #ddd;
 }
 .sortBar__group {
-    border: 1px solid #ddd;    
+    border: 1px solid #ddd;
+    border-right: 0;
 }
 .paymentHistory__list {
     margin: -1px 0 0 0;
