@@ -1006,6 +1006,19 @@ fa,
         font-size:0.875em;
         color:#b1b1b1;
     }
+        .footer__group .hint--item {
+            border-bottom: 1px dotted #ccc;
+            cursor: pointer;
+        }
+        .footer__group .hint--top:before {
+            border-top-color: #ccc;
+        }
+        .footer__group .hint:after, .footer__group [data-hint]:after {
+            background: #ccc;
+            color: #777;
+            text-shadow: none;
+            box-shadow: 4px 4px 8px rgba(0,0,0,.1);
+        }
 
 /*  ================================================
     mainNav classes
