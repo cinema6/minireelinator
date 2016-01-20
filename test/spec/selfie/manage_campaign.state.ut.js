@@ -176,7 +176,7 @@ define(['app'], function(appModule) {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
                     expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-123:ur-123');
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
-                    expect(CampaignService.getAnalytics).toHaveBeenCalledWith(campaign.id);
+                    expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: campaign.id});
                 });
 
                 describe('when the requests are successful', function() {
@@ -223,7 +223,7 @@ define(['app'], function(appModule) {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
                     expect(cinema6.db.find).not.toHaveBeenCalledWith('updateRequest', jasmine.any(String));
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
-                    expect(CampaignService.getAnalytics).toHaveBeenCalledWith(campaign.id);
+                    expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: campaign.id});
                 });
 
                 describe('when the requests are successful', function() {

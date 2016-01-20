@@ -430,7 +430,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                     describe('adding campaign stats', function() {
                         it('should call the campaign service', function() {
-                            expect(CampaignService.getAnalytics).toHaveBeenCalledWith('cam-1,cam-2,cam-3');
+                            expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: 'cam-1,cam-2,cam-3'});
                         });
 
                         describe('when stats are returned', function() {
@@ -667,7 +667,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     });
 
                     it('should call for stats', function() {
-                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith('cam-1,cam-2');
+                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: 'cam-1,cam-2'});
                     });
                 });
             });

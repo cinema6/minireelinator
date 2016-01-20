@@ -1975,7 +1975,7 @@ function( angular , c6State  , PaginatedListState                    ,
             Object.defineProperties(this, {
                 stats: {
                     get: function() {
-                        var stats = SelfieManageCampaignCtrl.stats[0];
+                        var stats = SelfieManageCampaignCtrl.stats[0] || {};
 
                         return  stats.range || stats.summary || {};
                     }
