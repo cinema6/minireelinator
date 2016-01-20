@@ -160,7 +160,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
 
                 if (ids.campaigns.length) {
-                    CampaignService.getAnalytics(ids.campaigns.join(','))
+                    CampaignService.getAnalytics({ids: ids.campaigns.join(',')})
                         .then(function(stats) {
                             stats.forEach(function(stat) {
                                 var campaignId = stat.campaignId;
@@ -1644,7 +1644,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         updateRequest:  updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
                             null,
-                        stats: CampaignService.getAnalytics(this.campaign.id),
+                        stats: CampaignService.getAnalytics({ids: this.campaign.id}),
                         advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId)
                     });
                 };
@@ -1922,10 +1922,11 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignStatsController', ['$scope','CampaignService',
-        function                                           ( $scope , CampaignService ) {
+        .controller('SelfieManageCampaignStatsController', ['$scope','CampaignService','cState',
+        function                                           ( $scope , CampaignService , cState ) {
             var SelfieManageCampaignCtrl = $scope.SelfieManageCampaignCtrl,
-                SelfieManageCampaignStatsCtrl = this;
+                SelfieManageCampaignStatsCtrl = this,
+                campaign = cState.cParent.campaign;
 
             function formatDate(date, joiner, replace) {
                 var dateArray;
@@ -1957,12 +1958,26 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
             }
 
+            function findLifetimeDates() {
+                var activeStatuses = campaign.statusHistory.filter(function(entry) {
+                        return entry.status === 'active';
+                    }),
+                    startDate = activeStatuses[activeStatuses.length - 1].date,
+                    start = new Date(startDate),
+                    end = new Date();
+
+                return {
+                    start: formatDate(start, '/'),
+                    end: formatDate(end, '/')
+                };
+            }
+
             Object.defineProperties(this, {
-                selectedRange: {
+                stats: {
                     get: function() {
-                        return this.rangeOptions.filter(function(option) {
-                            return option.selected;
-                        })[0] || this.customRange;
+                        var stats = SelfieManageCampaignCtrl.stats[0];
+
+                        return  stats.range || stats.summary || {};
                     }
                 },
                 max: {
@@ -1970,11 +1985,17 @@ function( angular , c6State  , PaginatedListState                    ,
                         return this.customRange.dates.end || 0;
                     }
                 },
+                selectedRange: {
+                    get: function() {
+                        return this.rangeOptions.filter(function(option) {
+                            return option.selected;
+                        })[0] || this.customRange;
+                    }
+                },
                 totalWebsiteInteractions: {
                     get: function() {
                         var total = 0,
-                            stats = SelfieManageCampaignCtrl.stats[0] || {},
-                            linkClicks = (stats.summary && stats.summary.linkClicks) || {};
+                            linkClicks = this.stats.linkClicks || {};
 
                         forEach(linkClicks, function(item, key) {
                             if ((/action|website/).test(key)) {
@@ -1987,8 +2008,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 totalSocialClicks: {
                     get: function() {
                         var total = 0,
-                            stats = SelfieManageCampaignCtrl.stats[0] || {},
-                            linkClicks = (stats.summary && stats.summary.linkClicks) || {};
+                            linkClicks = this.stats.linkClicks || {};
 
                         forEach(linkClicks, function(item, key) {
                             if (!(/action|website/).test(key)) {
@@ -2001,8 +2021,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 totalShares: {
                     get: function() {
                         var total = 0,
-                            stats = SelfieManageCampaignCtrl.stats[0] || {},
-                            shareClicks = (stats.summary && stats.summary.shareClicks) || {};
+                            shareClicks = this.stats.shareClicks || {};
 
                         forEach(shareClicks, function(item) {
                             total += item;
@@ -2025,10 +2044,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 {
                     label: 'Lifetime',
                     selected: true,
-                    dates: {
-                        start: null,
-                        end: null
-                    }
+                    dates: findLifetimeDates()
                 },
                 {
                     label: 'Yesterday',
@@ -2057,17 +2073,24 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.getStats = function(option) {
+                var isLifetime = option.label === 'Lifetime',
+                    isCustom = option.label === 'Custom';
+
+                this.customRange.selected = isCustom;
+
                 this.rangeOptions.forEach(function(opt) {
                     opt.selected = opt.label === option.label;
                 });
 
-                this.customRange.selected = option.label === 'Custom';
-
                 this.showDropdown = false;
 
-                // CampaignService.getAnalytics()
-
-                console.log(option, formatDate(option.dates.start, '-', '/'), formatDate(option.dates.end, '-', '/'));
+                CampaignService.getAnalytics({
+                    ids: campaign.id,
+                    startDate: isLifetime ? undefined : formatDate(option.dates.start, '-', '/'),
+                    endDate: isLifetime ? undefined : formatDate(option.dates.end, '-', '/')
+                }).then(function(stats) {
+                    SelfieManageCampaignCtrl.stats = stats;
+                });
             };
         }])
 

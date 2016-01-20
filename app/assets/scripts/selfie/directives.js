@@ -252,8 +252,6 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         var now = new Date(),
                             minDate = scope.minDate && new Date(scope.minDate);
 
-                        console.log('getMin', scope.minDate, minDate);
-
                         if (scope.minDate === undefined) { return 0; }
 
                         if (!scope.allowPast && minDate && minDate < now) {
@@ -261,12 +259,8 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                                 '/' + pad(now.getDate()) +
                                 '/' + now.getFullYear();
 
-                            console.log('minDate < now', scope.minDate, minDate);
-
                             return minDate;
                         }
-
-                        console.log('scope.minDate', scope.minDate, minDate);
 
                         return scope.minDate;
                     }
