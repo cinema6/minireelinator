@@ -1665,6 +1665,18 @@ fa,
         .column__campaignName {
             padding:0 2em 0 0;
         }
+            .column__campaignName .state__msg {
+                width: 20px;
+                text-align: center;
+                position: relative !important;
+                display: inline-block;
+                vertical-align: text-bottom;
+            }
+                .state__msg.hint--top:after,
+                .state__msg.hint--top:before {
+                    bottom: 100%;
+                    left: 20%;
+                }
         .column__totalViews {
             width:7.5em;
             padding:0 2em 0 0;
@@ -1732,7 +1744,7 @@ fa,
                 up to 1248px wide
             */
             .column__campaignName {
-                width:calc(100% - 48rem);
+                width:calc(100% - 47rem);
             }
             .column__totalViews {
                 display: none;
@@ -1749,11 +1761,14 @@ fa,
                 display: none;
             }
             .column__activityTotals {
-                width:12.5em;
+                width:11.5em;
                 padding:0 2em 0 0;
                 text-align: right;
                 display: inline-block;
             }
+                .column__activityTotals .campaign__budgetNumbers {
+                    padding-left: 4.5em;
+                }
                 .column__activityTotals .hint, [data-hint] {
                     position: absolute !important;
                 }
@@ -2085,7 +2100,7 @@ fa,
 
             .campaign__sponsorInfo {
                 display: block;
-                min-height:2.5em;
+                min-height:1.25em;
                 margin:0.5em 0 0 0;
                 color:#5c5c5c;
             }
@@ -2103,6 +2118,7 @@ fa,
                     line-height:1rem;
                     display: block;
                     padding:0.1875rem 0 0.3125rem 0.25rem;
+                    word-break: break-all;
                 }
 
 
@@ -2113,7 +2129,7 @@ fa,
                 line-height: 1.2;
                 margin:0.2em 0 0.15em 0;
                 transition:color 0.3s;
-                display: inline-block;
+                display: inline;
             }
 
                 .campaign__item:hover .campaign__name, .campaign__item:hover .campaign__previewLink {

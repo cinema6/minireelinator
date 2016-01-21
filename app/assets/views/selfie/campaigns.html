@@ -137,9 +137,10 @@
 
             <div class="campaign__column column__campaignName">
                 <div>
-                <span ng-if="$this.rejectionReason" class="state--msg"><i class="fa fa-exclamation-circle"></i></span>
+<!-- show rejection reason in data-hint -->
+                <span ng-if="$this.rejectionReason" class="state__msg msg--rejecetd hint--top" data-hint="We're sorry, <span ng-if='$this.status === 'draft''>this campaign has</span><span ng-if='$this.status !== 'draft''>your changes have</span> been rejected. {{$this.rejectionReason}}"><i class="fa fa-exclamation-circle" style="color: red;"></i></span>
                 <!--<span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, <span ng-if="$this.status === 'draft'">this campaign has</span><span ng-if="$this.status !== 'draft'">your changes have</span> been rejected. {{$this.rejectionReason}}-->
-                <span ng-if="$this.updateRequest" class="state--msg"><i class="fa fa-exclamation-circle"></i></span>
+                <span ng-if="$this.updateRequest" class="state__msg msg--pending hint--top" data-hint="Your update request is being processed..."><i class="fa fa-exclamation-circle"  style="color: orange;"></i></span>
                 <!--<span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...-->
                 <h1 class="campaign__name tk--hdr">
                     {{SelfieCampaignsCtrl.data[$this.id].campaign.name}}
@@ -147,8 +148,8 @@
                 <!--<a href="#" class="campaign__previewLink" target="_blank"><i class="fa fa-external-link"></i></a>--></div>
                 <div ng-if="SelfieCampaignsCtrl.data[$this.id].user" class="campaign__owner text--small">by <em>{{SelfieCampaignsCtrl.data[$this.id].user.firstName}} {{SelfieCampaignsCtrl.data[$this.id].user.lastName}}</em> for <em>{{SelfieCampaignsCtrl.data[$this.id].user.company}}</em></div>
                 <div ng-if="SelfieCampaignsCtrl.data[$this.id].user" class="campaign__owner text--small">Duration: <em>11/13/15 - 01/12/16</em></div>
-                <span ng-if="$this.rejectionReason" class="state--msg"><span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, <span ng-if="$this.status === 'draft'">this campaign has</span><span ng-if="$this.status !== 'draft'">your changes have</span> been rejected. {{$this.rejectionReason}}</span>
-                <span ng-if="$this.updateRequest" class="state--msg"><span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...</span>
+             <!--   <span ng-if="$this.rejectionReason" class="state--msg"><span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, <span ng-if="$this.status === 'draft'">this campaign has</span><span ng-if="$this.status !== 'draft'">your changes have</span> been rejected. {{$this.rejectionReason}}</span>
+                <span ng-if="$this.updateRequest" class="state--msg"><span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...</span>-->
             </div><!--.column__campaignName-->
 
             <div class="campaign__column column__totalViews">
