@@ -1,8 +1,12 @@
 # MiniReelinator
 
 * *[v1.33.0.rc1]*
-  * [DESIGN]: Added Support document link to nav, security seals to credit card 
+  * [DESIGN]: Added Support document link to nav, security seals to credit card
     popup and updated footer to show build on hover
+  * [FEATURE]: Add date ranges to Stats tab in Manager view
+  * [FIX]: Always show Stats tab in Manager view
+  * [FIX]: Do not show any interaction stats when there are no recorded views
+  * [FIX]: Properly display empty stats when views are 0
 
 ## v1.32.1 (January 15, 2016)
 * *[v1.32.1.rc1]*
