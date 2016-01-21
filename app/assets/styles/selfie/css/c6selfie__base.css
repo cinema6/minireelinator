@@ -3696,6 +3696,7 @@ fa,
         }
             .dateRange.action__dropdown ul li button.action__btn {
                 text-align: center;
+                color: #fff;
             }
             .dateRange.action__dropdown ul li button.action__btn:hover {
                 background-color: #0E7D81;
@@ -3722,6 +3723,12 @@ fa,
             .dateRange.action__dropdown ul ul li button i.fa {
                 line-height: 2em;
                 vertical-align: middle;
+            }
+            .action__dropdown ul li.dateRange__custom--selected,
+            .action__dropdown ul li.dateRange__custom--selected button,
+            .action__dropdown ul li.dateRange__custom--selected button i.fa {
+                background: #49B8B9;
+                color: #fff;
             }
         .dateRange__wrap {
             padding: 0.5em 1em 0.125em 1em;
