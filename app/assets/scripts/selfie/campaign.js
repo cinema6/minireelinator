@@ -2023,6 +2023,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
+            this._stats = [];
             this.showDropdown = false;
             this.pickerActive = false;
 

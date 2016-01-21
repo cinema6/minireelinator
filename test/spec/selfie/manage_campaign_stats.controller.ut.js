@@ -27,9 +27,8 @@ define(['app'], function(appModule) {
                 pad(date.getDate());
         }
 
-        function compileCtrl(SelfieManageCampaignCtrl) {
+        function compileCtrl() {
             $scope = $rootScope.$new();
-            $scope.SelfieManageCampaignCtrl = SelfieManageCampaignCtrl;
             $scope.$apply(function() {
                 SelfieManageCampaignStatsCtrl = $controller('SelfieManageCampaignStatsController', {
                     $scope: $scope,
@@ -88,9 +87,7 @@ define(['app'], function(appModule) {
                 }
             };
 
-            compileCtrl({
-                stats: []
-            });
+            compileCtrl();
         });
 
         it('should exist', function() {
@@ -106,11 +103,11 @@ define(['app'], function(appModule) {
                     expect(SelfieManageCampaignStatsCtrl.stats).not.toBe(range);
                     expect(SelfieManageCampaignStatsCtrl.stats).not.toBe(summary);
 
-                    $scope.SelfieManageCampaignCtrl.stats[0] = { summary: summary };
+                    SelfieManageCampaignStatsCtrl._stats[0] = { summary: summary };
 
                     expect(SelfieManageCampaignStatsCtrl.stats).toBe(summary);
 
-                    $scope.SelfieManageCampaignCtrl.stats[0] = { summary: summary, range: range };
+                    SelfieManageCampaignStatsCtrl._stats[0] = { summary: summary, range: range };
 
                     expect(SelfieManageCampaignStatsCtrl.stats).toBe(range);
                 });
@@ -154,7 +151,7 @@ define(['app'], function(appModule) {
                 describe('when campaign has link stats', function() {
                     describe('when there is a range', function() {
                         it('should add them up based on the range', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     linkClicks: {
                                         action: 1,
@@ -179,7 +176,7 @@ define(['app'], function(appModule) {
 
                     describe('when there is no range', function() {
                         it('should add them up based on the summary', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     linkClicks: {
                                         action: 1,
@@ -198,7 +195,7 @@ define(['app'], function(appModule) {
                 describe('when campaign has share stats', function() {
                     describe('when there is a date range', function() {
                         it('should add them up based on range', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     shareClicks: {
                                         facebook: 1,
@@ -221,7 +218,7 @@ define(['app'], function(appModule) {
 
                     describe('when there is no date range', function() {
                         it('should add them up based on summary', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     shareClicks: {
                                         facebook: 1,
@@ -239,7 +236,7 @@ define(['app'], function(appModule) {
                 describe('when campaignn has share and link stats', function() {
                     describe('when there is a date range', function() {
                         it('should add them up based on range', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     linkClicks: {
                                         action: 1,
@@ -274,7 +271,7 @@ define(['app'], function(appModule) {
 
                     describe('when there is no date range', function() {
                         it('should add them up based on summary', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     linkClicks: {
                                         action: 1,
@@ -306,7 +303,7 @@ define(['app'], function(appModule) {
                 describe('when campaign has link stats', function() {
                     describe('when there is a date range', function() {
                         it('should be the sum of everything except Call to Action and Website', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     linkClicks: {
                                         action: 1,
@@ -333,7 +330,7 @@ define(['app'], function(appModule) {
 
                     describe('when there is no date range', function() {
                         it('should be the sum of everything except Call to Action and Website', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     linkClicks: {
                                         action: 1,
@@ -361,7 +358,7 @@ define(['app'], function(appModule) {
                 describe('when campaign has link stats', function() {
                     describe('when there is a date range', function() {
                         it('should be the sum of only Call to Action and Website clicks', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     linkClicks: {
                                         action: 1,
@@ -388,7 +385,7 @@ define(['app'], function(appModule) {
 
                     describe('when there is no date range', function() {
                         it('should be the sum of only Call to Action and Website clicks', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     linkClicks: {
                                         action: 1,
@@ -416,7 +413,7 @@ define(['app'], function(appModule) {
                 describe('when campaign has share stats', function() {
                     describe('when there is a date range', function() {
                         it('should add them up based on range', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     shareClicks: {
                                         facebook: 1,
@@ -439,7 +436,7 @@ define(['app'], function(appModule) {
 
                     describe('when there is no date range', function() {
                         it('should add them up based on summary', function() {
-                            $scope.SelfieManageCampaignCtrl.stats[0] = {
+                            SelfieManageCampaignStatsCtrl._stats[0] = {
                                 summary: {
                                     shareClicks: {
                                         facebook: 1,
@@ -607,7 +604,7 @@ define(['app'], function(appModule) {
                                 statsDeferred.resolve(stats);
                             });
 
-                            expect($scope.SelfieManageCampaignCtrl.stats).toEqual([]);
+                            expect(SelfieManageCampaignStatsCtrl._stats).toEqual([]);
                         });
                     });
                 });
@@ -655,7 +652,7 @@ define(['app'], function(appModule) {
                                 statsDeferred.resolve(stats);
                             });
 
-                            expect($scope.SelfieManageCampaignCtrl.stats).toEqual([]);
+                            expect(SelfieManageCampaignStatsCtrl._stats).toEqual([]);
                         });
                     });
                 });
@@ -704,7 +701,7 @@ define(['app'], function(appModule) {
                                 statsDeferred.resolve(stats);
                             });
 
-                            expect($scope.SelfieManageCampaignCtrl.stats).toEqual([]);
+                            expect(SelfieManageCampaignStatsCtrl._stats).toEqual([]);
                         });
                     });
                 });
@@ -748,12 +745,12 @@ define(['app'], function(appModule) {
                     });
 
                     describe('when stats are found', function() {
-                        it('should put them on the parent Ctrl', function() {
+                        it('should put them on the Ctrl', function() {
                             $scope.$apply(function() {
                                 statsDeferred.resolve(stats);
                             });
 
-                            expect($scope.SelfieManageCampaignCtrl.stats).toEqual([]);
+                            expect(SelfieManageCampaignStatsCtrl._stats).toEqual([]);
                         });
                     });
                 });
@@ -795,12 +792,12 @@ define(['app'], function(appModule) {
                     });
 
                     describe('when stats are found', function() {
-                        it('should put them on the parent Ctrl', function() {
+                        it('should put them on the Ctrl', function() {
                             $scope.$apply(function() {
                                 statsDeferred.resolve(stats);
                             });
 
-                            expect($scope.SelfieManageCampaignCtrl.stats).toEqual([]);
+                            expect(SelfieManageCampaignStatsCtrl._stats).toEqual([]);
                         });
                     });
                 });
