@@ -1006,6 +1006,19 @@ fa,
         font-size:0.875em;
         color:#b1b1b1;
     }
+        .footer__group .hint--item {
+            border-bottom: 1px dotted #ccc;
+            cursor: pointer;
+        }
+        .footer__group .hint--top:before {
+            border-top-color: #ccc;
+        }
+        .footer__group .hint:after, .footer__group [data-hint]:after {
+            background: #ccc;
+            color: #777;
+            text-shadow: none;
+            box-shadow: 4px 4px 8px rgba(0,0,0,.1);
+        }
 
 /*  ================================================
     mainNav classes
@@ -3949,6 +3962,29 @@ fa,
     .addPayment__method .form__textBox {
         height: 42px;
     }
+    .payment__seals {
+        padding-left: 1em;
+    }
+        .payment__sealItem {
+            display: inline-block;
+            padding-left: 2em;
+            margin-bottom: -1em;
+        }
+        .payment__sealItem.braintree--seal img{
+            border: 1px solid #c7c7c7;
+        }
+        .payment__sealItem.paypal--seal {
+            padding-left: 0;
+        }
+        .payment__sealItem.paypal--seal img{
+            max-height: 44px;
+        }
+            .payment__itemText {
+                display: block;
+                font-size: 0.875em;
+                font-style: italic;
+                color: #666;
+            }
     /*alert modal*/
     .selfieModal.modalDialog__group {
         background: #fff;

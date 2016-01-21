@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.33.0.rc1]*
+  * [DESIGN]: Added Support document link to nav, security seals to credit card 
+    popup and updated footer to show build on hover
+
 ## v1.32.1 (January 15, 2016)
 * *[v1.32.1.rc1]*
   * [FIX]: Reverted white background change, updated campaign summary
