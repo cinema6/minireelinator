@@ -154,8 +154,8 @@ function( angular , c6uilib ,  c6Defines  ) {
                 return NormalizationService.normalize(template, campaign, campaign);
             };
 
-            this.getAnalytics = function(ids) {
-                return $http.get(c6UrlMaker('analytics/campaigns/?ids='+ids, 'api'))
+            this.getAnalytics = function(query) {
+                return $http.get(c6UrlMaker('analytics/campaigns', 'api'), {params: query})
                     .then(function(response) {
                         return response.data;
                     });

@@ -12,6 +12,11 @@ function( angular , c6State  , PaginatedListState                    ,
         isObject = angular.isObject,
         isArray = angular.isArray;
 
+    function pad(num) {
+        var norm = Math.abs(Math.floor(num));
+        return (norm < 10 ? '0' : '') + norm;
+    }
+
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -155,7 +160,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
 
                 if (ids.campaigns.length) {
-                    CampaignService.getAnalytics(ids.campaigns.join(','))
+                    CampaignService.getAnalytics({ids: ids.campaigns.join(',')})
                         .then(function(stats) {
                             stats.forEach(function(stat) {
                                 var campaignId = stat.campaignId;
@@ -829,11 +834,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
             var now = new Date();
             now.setHours(0,0,1);
-
-            function pad(num) {
-                var norm = Math.abs(Math.floor(num));
-                return (norm < 10 ? '0' : '') + norm;
-            }
 
             function fromISO(string) {
                 if (!string) { return; }
@@ -1616,9 +1616,7 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
-                                                             'CampaignService',
-            function                                        ( cinema6 , $q , c6State ,
-                                                              CampaignService ) {
+            function                                        ( cinema6 , $q , c6State ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -1644,7 +1642,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         updateRequest:  updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
                             null,
-                        stats: CampaignService.getAnalytics(this.campaign.id),
                         advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId)
                     });
                 };
@@ -1658,7 +1655,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.updateRequest = model.updateRequest;
-                    this.hasStats = !!model.stats.length;
 
                     if (interests.length) {
                         return cinema6.db.findAll('category', {ids: interests.join(',')})
@@ -1822,13 +1818,11 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.campaign = cState.campaign;
                 this.showAdminTab = cState.isAdmin;
-                this.hasStats = cState.hasStats;
                 this.user = cState.user;
 
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
                 this.updateRequest = model.updateRequest;
-                this.stats = model.stats;
                 this.advertiser = model.advertiser;
 
                 this.card = (this.updateRequest && this.updateRequest.data &&
@@ -1908,51 +1902,189 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign:Stats', ['c6State',
-            function                                              ( c6State ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Stats', ['c6State','CampaignService',
+            function                                              ( c6State , CampaignService ) {
                 this.templateUrl = 'views/selfie/campaigns/manage/stats.html';
                 this.controller = 'SelfieManageCampaignStatsController';
                 this.controllerAs = 'SelfieManageCampaignStatsCtrl';
 
-                this.enter = function() {
-                    if (!this.cParent.hasStats) {
-                        return c6State.goTo('Selfie:Manage:Campaign:Manage', null, null, true);
-                    }
+                this.model = function() {
+                    return CampaignService.getAnalytics({ids: this.cParent.campaign.id});
                 };
             }]);
         }])
 
-        .controller('SelfieManageCampaignStatsController', ['$scope',
-        function                                           ( $scope ) {
-            var SelfieManageCampaignCtrl = $scope.SelfieManageCampaignCtrl,
-                SelfieManageCampaignStatsCtrl = this,
-                stats = SelfieManageCampaignCtrl.stats[0] || {},
-                linkClicks = (stats.summary && stats.summary.linkClicks) || {},
-                shareClicks = (stats.summary && stats.summary.shareClicks) || {};
+        .controller('SelfieManageCampaignStatsController', ['$scope','CampaignService','cState',
+        function                                           ( $scope , CampaignService , cState ) {
+            var SelfieManageCampaignStatsCtrl = this,
+                campaign = cState.cParent.campaign,
+                defaultStats = {};
 
-            this.totalInteractions = 0;
+            function formatDate(date, joiner, replace) {
+                var dateArray;
 
-            this.totalSocialClicks = (function() {
-                var total = 0;
+                if (!date) { return date; }
 
-                forEach(linkClicks, function(item, key) {
-                    SelfieManageCampaignStatsCtrl.totalInteractions += item;
+                if (replace) {
+                    dateArray = date.split(replace);
 
-                    if (!(/action|website/).test(key)) {
-                        total += item;
+                    return dateArray[2] + joiner +
+                        dateArray[0] + joiner +
+                        dateArray[1];
+                }
+
+                return pad(date.getMonth()+1) + joiner +
+                    pad(date.getDate()) + joiner +
+                    pad(date.getFullYear());
+            }
+
+            function offsetDateObject(startOffset, endOffset) {
+                var end = new Date(),
+                    start = new Date();
+
+                start.setDate(start.getDate() - startOffset);
+                end.setDate(end.getDate() - endOffset);
+
+                return {
+                    start: formatDate(start, '/'),
+                    end: formatDate(end, '/')
+                };
+            }
+
+            Object.defineProperties(this, {
+                stats: {
+                    get: function() {
+                        var stats = SelfieManageCampaignStatsCtrl._stats[0] || {};
+
+                        return  stats.range || stats.summary || defaultStats;
                     }
-                });
-                return total;
-            }());
+                },
+                max: {
+                    get: function() {
+                        return this.customRange.dates.end || 0;
+                    }
+                },
+                hasViews: {
+                    get: function() {
+                        return !!this.stats.views;
+                    }
+                },
+                selectedRange: {
+                    get: function() {
+                        return this.rangeOptions.filter(function(option) {
+                            return option.selected;
+                        })[0] || this.customRange;
+                    }
+                },
+                totalWebsiteInteractions: {
+                    get: function() {
+                        var total = 0,
+                            linkClicks = this.stats.linkClicks || {};
 
-            this.totalShares = (function() {
-                var total = 0;
-                forEach(shareClicks, function(item) {
-                    SelfieManageCampaignStatsCtrl.totalInteractions += item;
-                    total += item;
+                        forEach(linkClicks, function(item, key) {
+                            if ((/action|website/).test(key)) {
+                                total += item;
+                            }
+                        });
+                        return total;
+                    }
+                },
+                totalSocialClicks: {
+                    get: function() {
+                        var total = 0,
+                            linkClicks = this.stats.linkClicks || {};
+
+                        forEach(linkClicks, function(item, key) {
+                            if (!(/action|website/).test(key)) {
+                                total += item;
+                            }
+                        });
+                        return total;
+                    }
+                },
+                totalShares: {
+                    get: function() {
+                        var total = 0,
+                            shareClicks = this.stats.shareClicks || {};
+
+                        forEach(shareClicks, function(item) {
+                            total += item;
+                        });
+
+                        return total;
+                    }
+                },
+                totalInteractions: {
+                    get: function() {
+                        return this.totalWebsiteInteractions +
+                            this.totalSocialClicks +
+                            this.totalShares;
+                    }
+                }
+            });
+
+            this._stats = [];
+            this.showDropdown = false;
+            this.showCustom = false;
+            this.rangeOptions = [
+                {
+                    label: 'Lifetime',
+                    selected: true,
+                    dates: {
+                        start: null,
+                        end: null
+                    }
+                },
+                {
+                    label: 'Yesterday',
+                    selected: false,
+                    dates: offsetDateObject(1, 1)
+                },
+                {
+                    label: 'Last 7 Days',
+                    selected: false,
+                    dates: offsetDateObject(7, 0)
+                },
+                {
+                    label: 'Last 30 Days',
+                    selected: false,
+                    dates: offsetDateObject(30, 0)
+                }
+            ];
+            this.customRange = {
+                label: 'Custom',
+                selected: false,
+                dates: {
+                    start: null,
+                    end: null
+                }
+            };
+
+            this.initWithModel = function(model) {
+                this._stats = model;
+            };
+
+            this.getStats = function(option) {
+                var isLifetime = option.label === 'Lifetime',
+                    isCustom = option.label === 'Custom';
+
+                this.customRange.selected = isCustom;
+
+                this.rangeOptions.forEach(function(opt) {
+                    opt.selected = opt.label === option.label;
                 });
-                return total;
-            }());
+
+                this.showDropdown = false;
+                this.showCustom = isCustom;
+
+                CampaignService.getAnalytics({
+                    ids: campaign.id,
+                    startDate: isLifetime ? undefined : formatDate(option.dates.start, '-', '/'),
+                    endDate: isLifetime ? undefined : formatDate(option.dates.end, '-', '/')
+                }).then(function(stats) {
+                    SelfieManageCampaignStatsCtrl._stats = stats;
+                });
+            };
         }])
 
         .config(['c6StateProvider',

@@ -239,6 +239,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                 scope: {
                     minDate: '=',
                     maxDate: '=',
+                    allowPast: '=',
                     defaultDate: '='
                 },
                 link: function(scope, $element) {
@@ -251,7 +252,9 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         var now = new Date(),
                             minDate = scope.minDate && new Date(scope.minDate);
 
-                        if (minDate && minDate < now) {
+                        if (scope.minDate === undefined) { return 0; }
+
+                        if (!scope.allowPast && minDate && minDate < now) {
                             minDate = pad(now.getMonth() + 1) +
                                 '/' + pad(now.getDate()) +
                                 '/' + now.getFullYear();
@@ -262,10 +265,14 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         return scope.minDate;
                     }
 
+                    function getMax() {
+                        return scope.maxDate !== undefined ? scope.maxDate : null;
+                    }
+
                     $element.datepicker({
                         defaultDate: scope.defaultDate || null,
-                        minDate: scope.minDate || 0,
-                        maxDate: scope.maxDate || null,
+                        minDate: getMin(),
+                        maxDate: getMax(),
                         changeMonth: false,
                         numberOfMonths: 1,
                         prevText: '',
@@ -282,8 +289,8 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                                 inputWidth = $element.outerWidth();
 
                             // update the options based on current selections
-                            $element.datepicker('option', 'minDate', getMin() || 0);
-                            $element.datepicker('option', 'maxDate', scope.maxDate || null);
+                            $element.datepicker('option', 'minDate', getMin());
+                            $element.datepicker('option', 'maxDate', getMax());
 
                             $timeout(function() {
                                 var $picker = $('#ui-datepicker-div'),
@@ -294,6 +301,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                                 $picker.css('left', offset);
                             });
                         }
+                    });
+
+                    $('#ui-datepicker-div').click(function(e) {
+                        e.stopPropagation();
                     });
                 }
             };

@@ -19,6 +19,10 @@ module.exports = function(http) {
         return path.resolve(__dirname, './' + type + '/' + id + '.json');
     }
 
+    function randomNum(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
     http.whenGET('/api/analytics/campaigns', function(request) {
         var allStats = grunt.file.expand(path.resolve(__dirname, './analytics/*.json'))
             .map(function(path) {
@@ -31,6 +35,28 @@ module.exports = function(http) {
 
                 return idArray.indexOf(id) > -1;
             });
+
+        if (request.query.startDate || request.query.endDate) {
+            allStats.forEach(function(stat) {
+                stat.range = {
+                    startDate: request.query.startDate || null,
+                    endDate: request.query.endDate || null,
+                    impressions: randomNum(400, 500),
+                    views: randomNum(300, 400),
+                    totalSpend: randomNum(60, 100) + 0.4200,
+                    linkClicks: {
+                        facebook: randomNum(2, 30),
+                        instagram: randomNum(2, 50),
+                        website: randomNum(2, 20),
+                        action: randomNum(2, 20)
+                    },
+                    shareClicks: {
+                        facebook: randomNum(2, 30),
+                        pinterest: randomNum(2, 30)
+                    }
+                }
+            });
+        }
 
         this.respond(200, allStats);
     });

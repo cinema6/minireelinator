@@ -80,5 +80,49 @@
     "lastUpdated": "2015-10-28T16:53:36.733Z",
     "status": "active",
     "updateRequest": "ur-54321",
-    "id": "c-b76ecf45af71cd"
+    "id": "c-b76ecf45af71cd",
+    "statusHistory": [
+        {
+            "status": "active",
+            "userId": "u-a78b667f18fdac",
+            "user": "evan@reelcontent.com",
+            "date": "2016-01-19T15:40:51.888Z"
+        },
+        {
+            "status": "paused",
+            "userId": "u-53321fcb4e0af6",
+            "user": "nkarp@cinema6.com",
+            "date": "2015-12-12T17:31:29.794Z"
+        },
+        {
+            "status": "active",
+            "userId": "u-53321fcb4e0af6",
+            "user": "nkarp@cinema6.com",
+            "date": "2015-12-08T17:30:39.528Z"
+        },
+        {
+            "status": "paused",
+            "userId": "u-53321fcb4e0af6",
+            "user": "nkarp@cinema6.com",
+            "date": "2015-11-21T17:26:23.969Z"
+        },
+        {
+            "status": "active",
+            "userId": "u-c8b79e3821e693",
+            "user": "howard@cinema6.com",
+            "date": "2015-11-05T20:52:13.205Z"
+        },
+        {
+            "status": "pending",
+            "userId": "u-a44f206f353c24",
+            "user": "howard@reelcontent.com",
+            "date": "2015-11-05T20:51:13.458Z"
+        },
+        {
+            "status": "draft",
+            "userId": "u-a44f206f353c24",
+            "user": "howard@reelcontent.com",
+            "date": "2015-11-05T20:46:14.641Z"
+        }
+    ]
 }
