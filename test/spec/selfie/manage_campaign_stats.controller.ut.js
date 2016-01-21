@@ -477,28 +477,28 @@ define(['app'], function(appModule) {
                 });
 
                 describe('Lifetime', function() {
-                    it('should have a start date reflecting the first date the campaign became active', function() {
+                    it('should not have a start or end date', function() {
                         var start = new Date(cState.cParent.campaign.statusHistory[2].date);
 
                         expect(SelfieManageCampaignStatsCtrl.rangeOptions[0]).toEqual({
                             label: 'Lifetime',
                             selected: true,
                             dates: {
-                                start: formatDateForView(start),
-                                end: formatDateForView(today)
+                                start: null,
+                                end: null
                             }
                         });
                     });
                 });
 
                 describe('Yesterday', function() {
-                    it('should have a start date of yesterday and end date of today', function() {
+                    it('should have a start date of yesterday and end date of yesterday', function() {
                         expect(SelfieManageCampaignStatsCtrl.rangeOptions[1]).toEqual({
                             label: 'Yesterday',
                             selected: false,
                             dates: {
                                 start: formatDateForView(yesterday),
-                                end: formatDateForView(today)
+                                end: formatDateForView(yesterday)
                             }
                         });
                     });
@@ -597,7 +597,7 @@ define(['app'], function(appModule) {
                         expect(CampaignService.getAnalytics).toHaveBeenCalledWith({
                             ids: 'cam-123',
                             startDate: formatDateForQuery(yesterday),
-                            endDate: formatDateForQuery(today)
+                            endDate: formatDateForQuery(yesterday)
                         });
                     });
 
