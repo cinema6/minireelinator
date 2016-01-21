@@ -1616,9 +1616,7 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
-                                                             'CampaignService',
-            function                                        ( cinema6 , $q , c6State ,
-                                                              CampaignService ) {
+            function                                        ( cinema6 , $q , c6State ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -2018,15 +2016,15 @@ function( angular , c6State  , PaginatedListState                    ,
                 },
                 totalInteractions: {
                     get: function() {
-                        return this.totalSocialClicks + this.totalShares + this.totalWebsiteInteractions;
+                        return this.totalWebsiteInteractions +
+                            this.totalSocialClicks +
+                            this.totalShares;
                     }
                 }
             });
 
             this._stats = [];
             this.showDropdown = false;
-            this.pickerActive = false;
-
             this.rangeOptions = [
                 {
                     label: 'Lifetime',
@@ -2052,7 +2050,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     dates: offsetDateObject(30, 0)
                 }
             ];
-
             this.customRange = {
                 label: 'Custom',
                 selected: false,
