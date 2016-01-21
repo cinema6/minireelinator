@@ -2025,6 +2025,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this._stats = [];
             this.showDropdown = false;
+            this.showCustom = false;
             this.rangeOptions = [
                 {
                     label: 'Lifetime',
@@ -2074,6 +2075,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
 
                 this.showDropdown = false;
+                this.showCustom = isCustom;
 
                 CampaignService.getAnalytics({
                     ids: campaign.id,

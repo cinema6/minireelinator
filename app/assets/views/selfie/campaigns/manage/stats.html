@@ -1,3 +1,10 @@
+<style>
+.action__dropdown ul li.dateRange__custom--selected,
+.action__dropdown ul li.dateRange__custom--selected button {
+    background: #49B8B9;
+    color: #fff;
+}
+</style>
 <div class="tabContent targeting__content container">
     <header class="tabContent__header">
         <h2 class="tabContent__title tk--hdr">Campaign Statistics</h2>
@@ -17,15 +24,15 @@
                         <li ng-repeat="option in Ctrl.rangeOptions" ng-click="Ctrl.getStats(option)">
                             <button>{{option.label}} <i ng-show="option.selected" class="action__dropdownItem--selected fa fa-check"></i></button>
                         </li>
-                        <li class="dateRange__custom">
-                            <button ng-click="showCustom = !showCustom">Custom <i ng-show="Ctrl.customRange.selected" class="action__dropdownItem--selected fa fa-check"></i></button>
-                            <div class="dateRange__wrap" ng-show="showCustom">
-                                <input datepicker c6-fill-check allow-past="true" min-date="null" max-date="Ctrl.max" default-date="null" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="Ctrl.customRange.dates.start" placeholder="Start date">
+                        <li ng-class="{'dateRange__custom--selected' : pickerActive}" class="dateRange__custom">
+                            <button ng-click="Ctrl.showCustom = !Ctrl.showCustom">Custom <i ng-show="Ctrl.customRange.selected" class="action__dropdownItem--selected fa fa-check"></i></button>
+                            <div class="dateRange__wrap" ng-show="Ctrl.showCustom">
+                                <input datepicker c6-fill-check allow-past="true" min-date="null" max-date="Ctrl.max" default-date="null" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="Ctrl.customRange.dates.start" placeholder="Start date" ng-focus="pickerActive = true" ng-blur="pickerActive = false">
 
-                                <input datepicker c6-fill-check allow-past="true" min-date="Ctrl.customRange.dates.start" max-date="0" default-date="null" class="form__textBox form__textBox--units form__fillCheck" type="text" id="enddate" ng-model="Ctrl.customRange.dates.end" placeholder="End date">
+                                <input datepicker c6-fill-check allow-past="true" min-date="Ctrl.customRange.dates.start" max-date="0" default-date="null" class="form__textBox form__textBox--units form__fillCheck" type="text" id="enddate" ng-model="Ctrl.customRange.dates.end" placeholder="End date" ng-focus="pickerActive = true" ng-blur="pickerActive = false">
 
                                 <div class="ui__btnHolder text--center">
-                                    <button ng-class="{ 'btn--disabled': !Ctrl.customRange.dates.start || !Ctrl.customRange.dates.end }" class="action__btn action__btn--wide text--center" ng-disabled="!Ctrl.customRange.dates.start || !Ctrl.customRange.dates.end" ng-click="Ctrl.getStats(Ctrl.customRange)">Apply</button>
+                                    <button style="color:white" ng-class="{ 'btn--disabled': !Ctrl.customRange.dates.start || !Ctrl.customRange.dates.end }" class="action__btn action__btn--wide text--center" ng-disabled="!Ctrl.customRange.dates.start || !Ctrl.customRange.dates.end" ng-click="Ctrl.getStats(Ctrl.customRange)">Apply</button>
                                 </div>
                             </div>
                         </li>

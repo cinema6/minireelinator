@@ -568,6 +568,7 @@ define(['app'], function(appModule) {
                         SelfieManageCampaignStatsCtrl.rangeOptions[1].selected = false;
                         SelfieManageCampaignStatsCtrl.rangeOptions[2].selected = true;
                         SelfieManageCampaignStatsCtrl.showDropdown = true;
+                        SelfieManageCampaignStatsCtrl.showCustom = true;
 
                         SelfieManageCampaignStatsCtrl.getStats(SelfieManageCampaignStatsCtrl.rangeOptions[1]);
                     });
@@ -586,8 +587,9 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should hide dropdown', function() {
+                    it('should hide dropdown and custom date area', function() {
                         expect(SelfieManageCampaignStatsCtrl.showDropdown).toBe(false);
+                        expect(SelfieManageCampaignStatsCtrl.showCustom).toBe(false);
                     });
 
                     it('should query for analytics with start and end date', function() {
@@ -616,6 +618,7 @@ define(['app'], function(appModule) {
                         SelfieManageCampaignStatsCtrl.rangeOptions[1].selected = true;
                         SelfieManageCampaignStatsCtrl.rangeOptions[2].selected = false;
                         SelfieManageCampaignStatsCtrl.showDropdown = true;
+                        SelfieManageCampaignStatsCtrl.showCustom = true;
 
                         SelfieManageCampaignStatsCtrl.getStats(SelfieManageCampaignStatsCtrl.rangeOptions[2]);
                     });
@@ -634,8 +637,9 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should hide dropdown', function() {
+                    it('should hide dropdown and custom date area', function() {
                         expect(SelfieManageCampaignStatsCtrl.showDropdown).toBe(false);
+                        expect(SelfieManageCampaignStatsCtrl.showCustom).toBe(false);
                     });
 
                     it('should query for analytics with start and end date', function() {
@@ -665,6 +669,7 @@ define(['app'], function(appModule) {
                         SelfieManageCampaignStatsCtrl.rangeOptions[2].selected = true;
                         SelfieManageCampaignStatsCtrl.rangeOptions[3].selected = false;
                         SelfieManageCampaignStatsCtrl.showDropdown = true;
+                        SelfieManageCampaignStatsCtrl.showCustom = true;
 
                         SelfieManageCampaignStatsCtrl.getStats(SelfieManageCampaignStatsCtrl.rangeOptions[3]);
                     });
@@ -683,8 +688,9 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should hide dropdown', function() {
+                    it('should hide dropdown and custom date area', function() {
                         expect(SelfieManageCampaignStatsCtrl.showDropdown).toBe(false);
+                        expect(SelfieManageCampaignStatsCtrl.showCustom).toBe(false);
                     });
 
                     it('should query for analytics with start and end date', function() {
@@ -714,6 +720,7 @@ define(['app'], function(appModule) {
                         SelfieManageCampaignStatsCtrl.rangeOptions[2].selected = true;
                         SelfieManageCampaignStatsCtrl.rangeOptions[3].selected = true;
                         SelfieManageCampaignStatsCtrl.showDropdown = true;
+                        SelfieManageCampaignStatsCtrl.showCustom = true;
 
                         SelfieManageCampaignStatsCtrl.getStats(SelfieManageCampaignStatsCtrl.rangeOptions[0]);
                     });
@@ -732,8 +739,9 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should hide dropdown', function() {
+                    it('should hide dropdown and custom date area', function() {
                         expect(SelfieManageCampaignStatsCtrl.showDropdown).toBe(false);
+                        expect(SelfieManageCampaignStatsCtrl.showCustom).toBe(false);
                     });
 
                     it('should query for analytics without start and end date', function() {
@@ -763,6 +771,7 @@ define(['app'], function(appModule) {
                         SelfieManageCampaignStatsCtrl.rangeOptions[2].selected = true;
                         SelfieManageCampaignStatsCtrl.rangeOptions[3].selected = true;
                         SelfieManageCampaignStatsCtrl.showDropdown = true;
+                        SelfieManageCampaignStatsCtrl.showCustom = true;
 
                         SelfieManageCampaignStatsCtrl.customRange.dates.start = '01/12/2016';
                         SelfieManageCampaignStatsCtrl.customRange.dates.end = '10/01/2016';
@@ -779,8 +788,9 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should hide dropdown', function() {
+                    it('should hide dropdown but not custom area', function() {
                         expect(SelfieManageCampaignStatsCtrl.showDropdown).toBe(false);
+                        expect(SelfieManageCampaignStatsCtrl.showCustom).toBe(true);
                     });
 
                     it('should query for analytics without start and end date', function() {
