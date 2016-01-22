@@ -1,9 +1,10 @@
 # MiniReelinator
 
+## v1.33.0 (January 22, 2016)
 * *[v1.33.0.rc2]*
   * [FIX]: Fixed dropdown menu bug on manage payment options page
+* *[/v1.33.0.rc2]*
 
-## v1.33.0 (January 21, 2016)
 * *[v1.33.0.rc1]*
   * [DESIGN]: Added Support document link to nav, security seals to credit card
     popup and updated footer to show build on hover
