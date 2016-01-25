@@ -41,7 +41,10 @@
         }
     ],
     "name": "Diageo, Q4",
-    "pricing": {},
+    "pricing": {
+        "budget": 5000000,
+        "dailyLimit": 20000
+    },
     "status": "error",
     "targeting": {
         "geo": {

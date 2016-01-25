@@ -4,6 +4,16 @@
     "impressions": 86440,
     "views": 57564,
     "clicks": 978,
-    "totalSpend": "765.2500"
+    "totalSpend": "765.2500",
+    "linkClicks": {
+     },
+     "shareClicks": {
+     }
+  },
+  "today": {
+    "impressions": 440,
+    "views": 64,
+    "clicks": 78,
+    "totalSpend": "5.3200"
   }
 }

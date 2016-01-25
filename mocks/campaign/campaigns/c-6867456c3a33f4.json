@@ -60,7 +60,10 @@
         }
     ],
     "name": "Another Campaign",
-    "pricing": {},
+    "pricing": {
+        "budget": 750,
+        "dailyLimit": 100
+    },
     "status": "paused",
     "targeting": {
         "geo": {

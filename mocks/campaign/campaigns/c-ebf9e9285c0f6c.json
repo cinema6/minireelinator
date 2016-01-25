@@ -55,7 +55,10 @@
         }
     ],
     "name": "American Airlines Q1",
-    "pricing": {},
+    "pricing": {
+        "budget": 2450,
+        "dailyLimit": 100
+    },
     "status": "pending",
     "targeting": {
         "geo": {
