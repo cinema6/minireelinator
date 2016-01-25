@@ -37,7 +37,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             categories,
             paymentMethods,
             updateRequest,
-            stats,
             user,
             advertiser,
             interests;
@@ -136,7 +135,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             categories = [];
             paymentMethods = [];
             updateRequest = null;
-            stats = [{}];
             user = {
                 id: 'u-123'
             };
@@ -155,7 +153,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             cState = {
                 campaign: campaign,
                 card: card,
-                hasStats: true,
                 interests: interests
             };
 
@@ -322,7 +319,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieManageCampaignCtrl.paymentMethods = null;
                         SelfieManageCampaignCtrl._proxyCampaign = null;
 
-                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods, updateRequest: updateRequest, stats: stats, advertiser: advertiser});
+                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods, updateRequest: updateRequest, advertiser: advertiser});
                     });
 
                     expect(SelfieManageCampaignCtrl.card).toEqual(card);
@@ -331,8 +328,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
                     expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
                     expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
-                    expect(SelfieManageCampaignCtrl.hasStats).toEqual(cState.hasStats);
-                    expect(SelfieManageCampaignCtrl.stats).toEqual(stats);
                 });
 
                 describe('when there is an updateRequest', function() {

@@ -673,11 +673,11 @@ fa,
 
     /*  Buttons disabled    */
         .btn--disabled, .btn--disabled:hover {
-            background-color: #ccc;
-            color: #999;
-            border: 1px solid #ccc;
+            background-color: #ccc !important;
+            color: #999 !important;
+            border: 1px solid #ccc !important;
             /*border-color: rgba(0, 0, 0, 0.25);*/
-            box-shadow: 0 1px 1px rgba(0,0,0,0.25);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.25) !important;
             cursor: not-allowed;
         }
         .btnGroup .btn--disabled, .btnGroup .btn--disabled:hover {
@@ -1010,15 +1010,16 @@ fa,
             border-bottom: 1px dotted #ccc;
             cursor: pointer;
         }
+        .footer__group .hint--top:before {
+            border-top-color: #ccc;
+        }
         .footer__group .hint:after, .footer__group [data-hint]:after {
             background: #ccc;
             color: #777;
             text-shadow: none;
             box-shadow: 4px 4px 8px rgba(0,0,0,.1);
         }
-        .footer__group .hint--top:before {
-            border-top-color: #ccc;
-        }
+
 /*  ================================================
     mainNav classes
     ================================================
@@ -3704,11 +3705,13 @@ fa,
             background:#ddd
         }
 
-            .action__dropdown ul ul li:hover,  .action__dropdown ul ul li:hover button {
+            .action__dropdown ul ul li:hover,
+            .action__dropdown ul ul li:hover button {
                 background: #49B8B9;
                 color: #fff;
             }
-            .action__dropdown ul ul li button:hover {
+            .action__dropdown ul ul li button:hover,
+            .action__dropdown ul ul li button:hover i.fa {
                 color: #fff;
             }
 
@@ -3743,7 +3746,7 @@ fa,
         }
 
         .action__dropdown ul li:hover > ul {
-            display:block
+            display:block;
         }
 
         .action__dropdownItem--selected {
@@ -3755,8 +3758,13 @@ fa,
         .dateRange.action__dropdown ul li {
             cursor: pointer;
         }
+            .dateRange.action__dropdown ul li ul,
+            .dateRange.action__dropdown ul li:hover > ul {
+                display: block;
+            }
             .dateRange.action__dropdown ul li button.action__btn {
                 text-align: center;
+                color: #fff;
             }
             .dateRange.action__dropdown ul li button.action__btn:hover {
                 background-color: #0E7D81;
@@ -3767,18 +3775,41 @@ fa,
             display: block;
             font-weight: normal;
         }
+        .dateRange.action__dropdown ul li {
+            min-width: 170px;
+        }
+        .dateRange.action__dropdown ul li i.fa {
+            line-height: 1.5em;
+            vertical-align: baseline;
+        }
         .dateRange.action__dropdown ul ul li {
-            width: 200px;
+            width: 240px;
         }
             .dateRange.action__dropdown ul ul li a {
                 display: block;
             }
+            .dateRange.action__dropdown ul ul li button i.fa {
+                line-height: 2em;
+                vertical-align: middle;
+            }
+            .action__dropdown ul li.dateRange__custom--selected,
+            .action__dropdown ul li.dateRange__custom--selected button,
+            .action__dropdown ul li.dateRange__custom--selected button i.fa {
+                background: #49B8B9;
+                color: #fff;
+            }
         .dateRange__wrap {
             padding: 0.5em 1em 0.125em 1em;
-            display: none;
+            background: #f5f5f5;
+            /*display: none;*/
         }
         .dateRange__custom:hover .dateRange__wrap {
-            display: block;
+            /*display: block;*/
+        }
+        .dateRange__custom:hover button,
+        .dateRange__custom:hover button i.fa{
+            background: #49B8B9;
+            color: #fff;
         }
         .dateRange__wrap .form__textBox {
             margin-bottom: 0.5em;
@@ -3857,7 +3888,7 @@ fa,
             list-style-type: none;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background-color: #fff;
         }
         .pmtDropdown__menu--item:hover {
             background-color: #00c0ff;
@@ -4025,6 +4056,29 @@ fa,
     .addPayment__method .form__textBox {
         height: 42px;
     }
+    .payment__seals {
+        padding-left: 1em;
+    }
+        .payment__sealItem {
+            display: inline-block;
+            padding-left: 2em;
+            margin-bottom: -1em;
+        }
+        .payment__sealItem.braintree--seal img{
+            border: 1px solid #c7c7c7;
+        }
+        .payment__sealItem.paypal--seal {
+            padding-left: 0;
+        }
+        .payment__sealItem.paypal--seal img{
+            max-height: 44px;
+        }
+            .payment__itemText {
+                display: block;
+                font-size: 0.875em;
+                font-style: italic;
+                color: #666;
+            }
     /*alert modal*/
     .selfieModal.modalDialog__group {
         background: #fff;

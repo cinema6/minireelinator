@@ -4,6 +4,7 @@ define(['app'], function(appModule) {
     describe('Selfie:Manage:Campaign:Stats State', function() {
         var $rootScope,
             c6State,
+            CampaignService,
             selfieCampaignStats;
 
         beforeEach(function() {
@@ -12,11 +13,14 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$injector');
                 c6State = $injector.get('c6State');
+                CampaignService = $injector.get('CampaignService');
             });
 
             selfieCampaignStats = c6State.get('Selfie:Manage:Campaign:Stats');
             selfieCampaignStats.cParent = {
-                hasStats: false
+                campaign: {
+                    id: 'cam-123'
+                }
             };
         });
 
@@ -24,26 +28,13 @@ define(['app'], function(appModule) {
             expect(selfieCampaignStats).toEqual(jasmine.any(Object));
         });
 
-        describe('enter()', function() {
-            describe('when campaign has no stats', function() {
-                it('should go to the "Selfie:Manage:Campaign:Manage" state', function() {
-                    spyOn(c6State, 'goTo');
+        describe('model()', function() {
+            it('should call fetch the stats', function() {
+                spyOn(CampaignService, 'getAnalytics');
 
-                    selfieCampaignStats.enter();
+                selfieCampaignStats.model();
 
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage', null, null, true);
-                });
-            });
-
-            describe('when campaign does have stats', function() {
-                it('should not go to Manage tab', function() {
-                    spyOn(c6State, 'goTo');
-                    selfieCampaignStats.cParent.hasStats = true;
-
-                    selfieCampaignStats.enter();
-
-                    expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage', null, null, true);
-                });
+                expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: selfieCampaignStats.cParent.campaign.id});
             });
         });
     });

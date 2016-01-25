@@ -25,7 +25,7 @@
                 <li class="tabBar__item">
                     <a class="tabBar__btn" type="button" c6-sref="Selfie:Manage:Campaign:Payment">Payment Options</a>
                 </li>
-                <li ng-if="SelfieManageCampaignCtrl.hasStats" class="tabBar__item">
+                <li class="tabBar__item">
                     <a class="tabBar__btn" type="button" c6-sref="Selfie:Manage:Campaign:Stats">Stats</a>
                 </li>
                 <li ng-if="SelfieManageCampaignCtrl.showAdminTab" class="tabBar__item">
@@ -53,7 +53,7 @@
     <!-- <div ng-if="SelfieManageCampaignCtrl.tab === 'budget'" ng-include="'views/selfie/campaigns/manage/budget.html'" c6-alias="SelfieManageCampaignCtrl.validation as validation"></div> -->
 
     <div class="footer__group">
-        &copy; <span class="hint--top hint--item" data-hint="Build: {{AppCtrl.version}}">Copyright {{AppCtrl.year}}</span> Reelcontent. All rights reserved.
+        &copy; <span class="hint--item hint--top" data-hint="Build: {{AppCtrl.version}}">Copyright {{AppCtrl.year}}</span> Reelcontent. All rights reserved.
     </div><!--.footer__group-->
 
 </div><!-- .pageHolder -->

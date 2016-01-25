@@ -5,11 +5,28 @@
     "views": 1507,
     "totalSpend": "120.5600",
     "linkClicks": {
+        "facebook": 12,
+        "twitter": 21,
+        "instagram": 14,
+        "website": 57,
+        "action": 34
+     },
+     "shareClicks": {
+        "facebook": 10,
+        "twitter": 22,
+        "pinterest": 5
+     }
+  },
+  "today": {
+    "impressions": 351,
+    "views": 507,
+    "totalSpend": "32.6400",
+    "linkClicks": {
         "facebook": 2,
         "twitter": 2,
         "instagram": 4,
-        "website": 57,
-        "action": 34
+        "website": 20,
+        "action": 14
      },
      "shareClicks": {
         "facebook": 1,

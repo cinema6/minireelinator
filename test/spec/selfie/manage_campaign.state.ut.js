@@ -9,15 +9,13 @@ define(['app'], function(appModule) {
             newCampaignState,
             c6State,
             cinema6,
-            MiniReelService,
-            CampaignService;
+            MiniReelService;
 
         var card,
             categories,
             campaign,
             paymentMethods,
             updateRequest,
-            stats,
             user,
             advertiser;
 
@@ -30,7 +28,6 @@ define(['app'], function(appModule) {
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
-                CampaignService = $injector.get('CampaignService');
 
                 card = cinema6.db.create('card', MiniReelService.createCard('video'));
                 categories = [
@@ -78,7 +75,6 @@ define(['app'], function(appModule) {
                         }
                     }
                 };
-                stats = [];
                 user = {
                     id: 'u-123',
                     org: 'o-123'
@@ -132,7 +128,7 @@ define(['app'], function(appModule) {
         });
 
         describe('model()', function() {
-            var success, failure, updateRequestDeferred, advertiserDeferred, paymentMethodsDeferred, statsDeferred;
+            var success, failure, updateRequestDeferred, advertiserDeferred, paymentMethodsDeferred;
 
             beforeEach(function() {
                 success = jasmine.createSpy('success()');
@@ -140,7 +136,6 @@ define(['app'], function(appModule) {
                 updateRequestDeferred = $q.defer();
                 advertiserDeferred = $q.defer();
                 paymentMethodsDeferred = $q.defer();
-                statsDeferred = $q.defer();
 
                 spyOn(cinema6.db, 'findAll').and.returnValue(paymentMethodsDeferred.promise);
                 spyOn(cinema6.db, 'find').and.callFake(function(type) {
@@ -157,7 +152,6 @@ define(['app'], function(appModule) {
 
                     return response;
                 });
-                spyOn(CampaignService, 'getAnalytics').and.returnValue(statsDeferred.promise);
 
                 campaignState.campaign = campaign;
                 campaign.org = 'o-999';
@@ -172,11 +166,10 @@ define(['app'], function(appModule) {
                     });
                 });
 
-                it('should find the updateRequest, the stats, and the advertiser and paymentMethods for the org of the campaign creator', function() {
+                it('should find the updateRequest and the advertiser and paymentMethods for the org of the campaign creator', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
                     expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-123:ur-123');
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
-                    expect(CampaignService.getAnalytics).toHaveBeenCalledWith(campaign.id);
                 });
 
                 describe('when the requests are successful', function() {
@@ -184,14 +177,12 @@ define(['app'], function(appModule) {
                         $rootScope.$apply(function() {
                             updateRequestDeferred.resolve(updateRequest);
                             paymentMethodsDeferred.resolve(paymentMethods);
-                            statsDeferred.resolve(stats);
                             advertiserDeferred.resolve(advertiser);
                         });
 
                         expect(success).toHaveBeenCalledWith({
                             paymentMethods: paymentMethods,
                             updateRequest: updateRequest,
-                            stats: stats,
                             advertiser: advertiser
                         });
                     });
@@ -202,7 +193,6 @@ define(['app'], function(appModule) {
                         $rootScope.$apply(function() {
                             updateRequestDeferred.resolve(updateRequest);
                             paymentMethodsDeferred.resolve(paymentMethods);
-                            statsDeferred.resolve(stats);
                             advertiserDeferred.reject('Not Found');
                         });
 
@@ -223,21 +213,18 @@ define(['app'], function(appModule) {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
                     expect(cinema6.db.find).not.toHaveBeenCalledWith('updateRequest', jasmine.any(String));
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
-                    expect(CampaignService.getAnalytics).toHaveBeenCalledWith(campaign.id);
                 });
 
                 describe('when the requests are successful', function() {
                     it('should return the model object', function() {
                         $rootScope.$apply(function() {
                             paymentMethodsDeferred.resolve(paymentMethods);
-                            statsDeferred.resolve(stats);
                             advertiserDeferred.resolve(advertiser);
                         });
 
                         expect(success).toHaveBeenCalledWith({
                             paymentMethods: paymentMethods,
                             updateRequest: null,
-                            stats: stats,
                             advertiser: advertiser
                         });
                     });
@@ -247,7 +234,6 @@ define(['app'], function(appModule) {
                     it('should trigger failure', function() {
                         $rootScope.$apply(function() {
                             paymentMethodsDeferred.resolve(paymentMethods);
-                            statsDeferred.resolve(stats);
                             advertiserDeferred.reject('Not Found');
                         });
 
@@ -268,8 +254,7 @@ define(['app'], function(appModule) {
 
                 model = {
                     paymentMethods: paymentMethods,
-                    updateRequest: updateRequest,
-                    stats: stats
+                    updateRequest: updateRequest
                 };
 
                 interests = [
@@ -287,18 +272,6 @@ define(['app'], function(appModule) {
 
                 expect(campaignState.isAdmin).toBe(true);
                 expect(campaignState.updateRequest).toBe(updateRequest)
-            });
-
-            it('should set the hasStats flag on the state', function() {
-                campaignState.afterModel(model);
-
-                expect(campaignState.hasStats).toBe(false);
-
-                stats.push({});
-
-                campaignState.afterModel(model);
-
-                expect(campaignState.hasStats).toBe(true);
             });
 
             describe('when there is an update request', function() {
@@ -368,8 +341,7 @@ define(['app'], function(appModule) {
             beforeEach(function() {
                 model = {
                     paymentMethods: paymentMethods,
-                    updateRequest: updateRequest,
-                    stats: stats
+                    updateRequest: updateRequest
                 };
                 spyOn(c6State, 'goTo');
             });

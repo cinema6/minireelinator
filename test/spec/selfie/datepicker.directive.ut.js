@@ -47,87 +47,176 @@ define(['app','angular'], function(appModule, angular) {
                 }));
             });
 
-            it('should include options from the scope', function() {
-                $scope.minDate = '01/01/2015';
-                $scope.maxDate = '02/01/2015';
-                $scope.defaultDate = '+1m';
+            describe('when allow-past="true" is set', function() {
+                it('should include options from the scope', function() {
+                    $scope.minDate = '01/01/2015';
+                    $scope.maxDate = '02/01/2015';
+                    $scope.defaultDate = '+1m';
 
-                $input = $compile('<input datepicker min-date="minDate" max-date="maxDate" default-date="defaultDate"></input>')($scope);
+                    $input = $compile('<input datepicker allow-past="true" min-date="minDate" max-date="maxDate" default-date="defaultDate"></input>')($scope);
 
-                expect($input.datepicker).toHaveBeenCalledWith(jasmine.objectContaining({
-                    minDate: $scope.minDate,
-                    maxDate: $scope.maxDate,
-                    defaultDate: $scope.defaultDate
-                }));
+                    expect($input.datepicker).toHaveBeenCalledWith(jasmine.objectContaining({
+                        minDate: $scope.minDate,
+                        maxDate: $scope.maxDate,
+                        defaultDate: $scope.defaultDate
+                    }));
+                });
+            });
+
+            describe('when allow-past="true" is not set', function() {
+                it('should include options from the scope', function() {
+                    var today = new Date(),
+                        todayString = pad(today.getMonth() + 1) + '/' + pad(today.getDate()) + '/' + today.getFullYear();
+
+                    $scope.minDate = '01/01/2015';
+                    $scope.maxDate = '02/01/2015';
+                    $scope.defaultDate = '+1m';
+
+                    $input = $compile('<input datepicker min-date="minDate" max-date="maxDate" default-date="defaultDate"></input>')($scope);
+
+                    expect($input.datepicker).toHaveBeenCalledWith(jasmine.objectContaining({
+                        minDate: todayString,
+                        maxDate: $scope.maxDate,
+                        defaultDate: $scope.defaultDate
+                    }));
+                });
             });
         });
 
         describe('before every show', function() {
-            var beforeShow;
+            describe('when allow-past="true" is set', function() {
+                var beforeShow;
 
-            beforeEach(function() {
-                $scope.$apply(function() {
-                    $input = $compile('<input datepicker min-date="minDate" max-date="maxDate" default-date="defaultDate"></input><div id="ui-datepicker-div"></div>')($scope);
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        $input = $compile('<input datepicker allow-past="true" min-date="minDate" max-date="maxDate" default-date="defaultDate"></input><div id="ui-datepicker-div"></div>')($scope);
 
-                    $('body').append($input);
-                    $('body').append('<div id="ui-datepicker-div"></div>');
+                        $('body').append($input);
+                        $('body').append('<div id="ui-datepicker-div"></div>');
+                    });
+
+                    beforeShow = $input.datepicker.calls.mostRecent().args[0].beforeShow;
                 });
 
-                beforeShow = $input.datepicker.calls.mostRecent().args[0].beforeShow;
+                it('should update the datepicker with the minDate and maxDate', function() {
+                    var now = new Date(),
+                        laterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 1),
+                        laterDateMin = pad(now.getMonth() + 1) + '/' + pad(now.getDate() + 1) + '/' + (now.getFullYear() + 1),
+                        evenLaterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 2),
+                        evenLaterDateMax = pad(now.getMonth() + 1) + '/' + pad(now.getDate() - 1) + '/' + (now.getFullYear() + 2);
+
+                    beforeShow();
+
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', 0);
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', null);
+
+                    $scope.minDate = laterDate;
+                    $scope.maxDate = evenLaterDate;
+                    $scope.$digest();
+
+                    beforeShow();
+
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', laterDate);
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', evenLaterDate);
+                });
+
+                it('should allow a minDate earlier than today', function() {
+                    $scope.minDate = '01/01/2000';
+                    $scope.$digest();
+
+                    beforeShow();
+
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', $scope.minDate);
+                });
+
+                it('should calculate and set the datepicker position', function() {
+                    var $picker = $('#ui-datepicker-div');
+                    $picker.css('width','200px');
+                    $picker.css('position','absolute');
+                    $picker.css('top','0px');
+
+                    $input.css('position','fixed');
+                    $input.css('width','500px');
+                    $input.css('left','400px');
+                    $input.css('top','0px');
+                    $input.css('padding','0');
+                    $input.css('border','0');
+
+                    beforeShow();
+
+                    $timeout.flush();
+
+                    expect($picker.css('left')).toEqual('550px');
+                });
             });
 
-            it('should update the datepicker with the minDate and maxDate', function() {
-                var now = new Date(),
-                    laterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 1),
-                    laterDateMin = pad(now.getMonth() + 1) + '/' + pad(now.getDate() + 1) + '/' + (now.getFullYear() + 1),
-                    evenLaterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 2),
-                    evenLaterDateMax = pad(now.getMonth() + 1) + '/' + pad(now.getDate() - 1) + '/' + (now.getFullYear() + 2);
+            describe('when allow-past="true" is not set', function() {
+                var beforeShow;
 
-                beforeShow();
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        $input = $compile('<input datepicker min-date="minDate" max-date="maxDate" default-date="defaultDate"></input><div id="ui-datepicker-div"></div>')($scope);
 
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', 0);
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', null);
+                        $('body').append($input);
+                        $('body').append('<div id="ui-datepicker-div"></div>');
+                    });
 
-                $scope.minDate = laterDate;
-                $scope.maxDate = evenLaterDate;
-                $scope.$digest();
+                    beforeShow = $input.datepicker.calls.mostRecent().args[0].beforeShow;
+                });
 
-                beforeShow();
+                it('should update the datepicker with the minDate and maxDate', function() {
+                    var now = new Date(),
+                        laterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 1),
+                        laterDateMin = pad(now.getMonth() + 1) + '/' + pad(now.getDate() + 1) + '/' + (now.getFullYear() + 1),
+                        evenLaterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 2),
+                        evenLaterDateMax = pad(now.getMonth() + 1) + '/' + pad(now.getDate() - 1) + '/' + (now.getFullYear() + 2);
 
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', laterDate);
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', evenLaterDate);
-            });
+                    beforeShow();
 
-            it('should ensure that minDate is never earlier than today', function() {
-                var now = new Date(),
-                    today = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + now.getFullYear();
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', 0);
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', null);
 
-                $scope.minDate = '01/01/2000';
-                $scope.$digest();
+                    $scope.minDate = laterDate;
+                    $scope.maxDate = evenLaterDate;
+                    $scope.$digest();
 
-                beforeShow();
+                    beforeShow();
 
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', today);
-            });
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', laterDate);
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', evenLaterDate);
+                });
 
-            it('should calculate and set the datepicker position', function() {
-                var $picker = $('#ui-datepicker-div');
-                $picker.css('width','200px');
-                $picker.css('position','absolute');
-                $picker.css('top','0px');
+                it('should ensure that minDate is never earlier than today', function() {
+                    var now = new Date(),
+                        today = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + now.getFullYear();
 
-                $input.css('position','fixed');
-                $input.css('width','500px');
-                $input.css('left','400px');
-                $input.css('top','0px');
-                $input.css('padding','0');
-                $input.css('border','0');
+                    $scope.minDate = '01/01/2000';
+                    $scope.$digest();
 
-                beforeShow();
+                    beforeShow();
 
-                $timeout.flush();
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', today);
+                });
 
-                expect($picker.css('left')).toEqual('550px');
+                it('should calculate and set the datepicker position', function() {
+                    var $picker = $('#ui-datepicker-div');
+                    $picker.css('width','200px');
+                    $picker.css('position','absolute');
+                    $picker.css('top','0px');
+
+                    $input.css('position','fixed');
+                    $input.css('width','500px');
+                    $input.css('left','400px');
+                    $input.css('top','0px');
+                    $input.css('padding','0');
+                    $input.css('border','0');
+
+                    beforeShow();
+
+                    $timeout.flush();
+
+                    expect($picker.css('left')).toEqual('550px');
+                });
             });
         });
     });
