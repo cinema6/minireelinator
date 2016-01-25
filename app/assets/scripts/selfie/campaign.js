@@ -110,6 +110,43 @@ function( angular , c6State  , PaginatedListState                    ,
                 return $q.when(null);
             }
 
+            function generateStats(stats, campaign) {
+                return {
+                    total: {
+                        views: stats.summary.views,
+                        spend: stats.summary.totalSpend,
+                        budget: campaign.pricing.budget,
+                        remaining: campaign.pricing.budget - parseFloat(stats.summary.totalSpend),
+                        interactions: (function() {
+                            var total = 0;
+                            forEach(stats.summary.linkClicks, function(clicks) {
+                                total += clicks;
+                            });
+                            forEach(stats.summary.shareClicks, function(clicks) {
+                                total += clicks;
+                            });
+                            return total;
+                        }())
+                    },
+                    today: {
+                        views: stats.today.views,
+                        spend: stats.today.totalSpend,
+                        budget: campaign.pricing.dailyLimit,
+                        remaining: campaign.pricing.dailyLimit - parseFloat(stats.today.totalSpend),
+                        interactions: (function() {
+                            var total = 0;
+                            forEach(stats.today.linkClicks, function(clicks) {
+                                total += clicks;
+                            });
+                            forEach(stats.today.shareClicks, function(clicks) {
+                                total += clicks;
+                            });
+                            return total;
+                        }())
+                    }
+                };
+            }
+
             function updateModelData() {
                 var Ctrl = SelfieCampaignsCtrl,
                     model = Ctrl.model.items.value,
@@ -169,10 +206,8 @@ function( angular , c6State  , PaginatedListState                    ,
                                     return;
                                 }
 
-                                Ctrl.data[campaignId].stats = {
-                                    views: stat.summary.views,
-                                    spend: stat.summary.totalSpend
-                                };
+                                Ctrl.data[campaignId].stats = generateStats(stat, Ctrl.data[campaignId].campaign);
+
                             });
                         });
                 }
