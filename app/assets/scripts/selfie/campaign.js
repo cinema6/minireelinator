@@ -416,6 +416,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         this.campaign.user === SelfieState.cModel.id;
 
                     this.user = this.cParent.user;
+                    this.paymentOptional = !!this.user.entitlements.paymentOptional;
                 };
 
                 this.model = function() {
@@ -660,7 +661,8 @@ function( angular , c6State  , PaginatedListState                    ,
                                 !!card.params.action.label,
                             section5: true,
                             section6: this.budget,
-                            section7: true,
+                            section7: !!campaign.paymentMethod ||
+                                !!SelfieCampaignCtrl.paymentOptional,
                             section8: true
                         };
                     }
@@ -678,6 +680,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.schema = cState.schema;
                 this.isCreator = cState.isCreator;
                 this.user = cState.user;
+                this.paymentOptional = cState.paymentOptional;
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
