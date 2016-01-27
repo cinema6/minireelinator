@@ -73,7 +73,10 @@
             },
             "interests": []
         },
-        "pricing": {},
+        "pricing": {
+            "budget": 450,
+            "dailyLimit": 30
+        },
         "advertiserDisplayName": "Cotton USA",
         "created": "2014-12-02T18:03:22.663Z",
         "user": "u-82b0123da9678c",

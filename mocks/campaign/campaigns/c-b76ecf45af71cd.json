@@ -60,7 +60,10 @@
             "user": "u-86e21912d40ab4"
         }
     ],
-    "pricing": {},
+    "pricing": {
+        "budget": 450,
+        "dailyLimit": 30
+    },
     "targeting": {
         "geo": {
             "states": [],

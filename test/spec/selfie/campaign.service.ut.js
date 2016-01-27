@@ -1,4 +1,4 @@
-define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModule, c6uilib) {
+define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule, servicesModule, c6uilib, c6Defines) {
     'use strict';
 
     describe('CampaignService', function() {
@@ -318,6 +318,59 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         var result = CampaignService.normalize(campaign, user);
 
                         expect(result.advertiserDisplayName).toEqual(user.company);
+                    });
+                });
+            });
+
+            describe('previewUrlOf(campaign)', function() {
+                describe('when campaign has no video', function() {
+                    it('should be false', function() {
+                        var campaign = {
+                            id: 'cam-123',
+                            cards: [
+                                {
+                                    id: 'rc-123',
+                                    data: {}
+                                }
+                            ]
+                        };
+
+                        expect(CampaignService.previewUrlOf(campaign)).toBe(false);
+                    });
+                });
+
+                describe('when campaign has a video', function() {
+                    var campaign;
+
+                    beforeEach(function() {
+                        campaign = {
+                            id: 'cam-123',
+                            cards: [
+                                {
+                                    id: 'rc-123',
+                                    data: {
+                                        service: 'youtube',
+                                        videoid: '12345'
+                                    }
+                                }
+                            ]
+                        };
+                    });
+
+                    describe('when user is running locally or in staging', function() {
+                        it('should be /preview-staging/?previewSource=platform&campaign=[id]', function() {
+                            c6Defines.kDebug = true;
+
+                            expect(CampaignService.previewUrlOf(campaign)).toBe('//reelcontent.com/preview-staging/?previewSource=platform&campaign=cam-123');
+                        });
+                    });
+
+                    describe('when user is running in production', function() {
+                        it('should be /preview/?previewSource=platform&campaign=[id]', function() {
+                            c6Defines.kDebug = false;
+
+                            expect(CampaignService.previewUrlOf(campaign)).toBe('//reelcontent.com/preview/?previewSource=platform&campaign=cam-123');
+                        });
                     });
                 });
             });

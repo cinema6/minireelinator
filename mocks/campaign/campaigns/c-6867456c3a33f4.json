@@ -60,7 +60,10 @@
         }
     ],
     "name": "Another Campaign",
-    "pricing": {},
+    "pricing": {
+        "budget": 750,
+        "dailyLimit": 100
+    },
     "status": "paused",
     "targeting": {
         "geo": {
@@ -75,6 +78,7 @@
         "interests": []
     },
     "advertiserDisplayName": "Great Sponsor",
+    "advertiserId": "a-282824b8bb40a2",
     "created": "2015-08-03T15:22:42.280Z",
     "user": "u-35b096c999711b",
     "org": "o-a6fd7298acb6fa",
