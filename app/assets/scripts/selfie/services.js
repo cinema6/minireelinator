@@ -157,7 +157,7 @@ function( angular , c6uilib ,  c6Defines  ) {
             this.previewUrlOf = function(campaign) {
                 var debug = c6Defines.kDebug,
                     card = campaign.cards && campaign.cards[0],
-                    hasVideo = card.data.service && card.data.videoid;
+                    hasVideo = !!card.data.service && !!card.data.videoid;
 
                 return hasVideo && ('//reelcontent.com' +
                     (debug ? '/preview-staging/' : '/preview/') +
