@@ -131,8 +131,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     today: {
                         views: stats.today.views,
                         spend: stats.today.totalSpend,
-                        budget: campaign.pricing.dailyLimit,
-                        remaining: campaign.pricing.dailyLimit - parseFloat(stats.today.totalSpend),
+                        budget: campaign.pricing.dailyLimit || null,
+                        remaining: campaign.pricing.dailyLimit ?
+                            campaign.pricing.dailyLimit - parseFloat(stats.today.totalSpend) : null,
                         interactions: (function() {
                             var total = 0;
                             forEach(stats.today.linkClicks, function(clicks) {
@@ -156,6 +157,16 @@ function( angular , c6State  , PaginatedListState                    ,
                         updateRequests: []
                     };
 
+                // create an object that contains all sorts of computed data
+                // for each camapign. Each campaign object is stored by id
+                // for access in the view. As we loop through all the
+                // campaigns in the model we keep track of all the different
+                // campaign ids, user ids and update request ids so we can
+                // query for data as needed. We initialize each campaign
+                // object with a "campaign" property containing the current
+                // campaign object and preview url. The campaign data will
+                // be replaced later if there is a pending update request on
+                // the campaign because we want to show the most current data.
                 Ctrl.data = model.reduce(function(result, campaign) {
                     if (ids.campaigns.indexOf(campaign.id) < 0) {
                         ids.campaigns.push(campaign.id);
@@ -169,57 +180,63 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
 
                     result[campaign.id] = {
-                        campaign: !campaign.updateRequest ? campaign : null
+                        campaign: campaign,
+                        previewUrl: CampaignService.previewUrlOf(campaign)
                     };
 
                     return result;
                 }, {});
 
-                $q.when(ids.updateRequests.length ?
-                    cinema6.db.findAll('updateRequest', {ids: ids.updateRequests.join(',')}) :
-                    []).then(function(updateRequests) {
-                        updateRequests.forEach(function(updateRequest) {
-                            Ctrl.data[updateRequest.campaign].campaign = updateRequest.data;
-                        });
+                // request needed data
+                $q.all({
+                    updateRequests: ids.updateRequests.length ?
+                        cinema6.db.findAll('updateRequest', {ids: ids.updateRequests.join(',')}) :
+                        [],
+                    analytics: ids.campaigns.length ?
+                        CampaignService.getAnalytics({ids: ids.campaigns.join(',')}) :
+                        [],
+                    users: ids.users.length && cState.isAdmin ?
+                        CampaignService.getUserData(ids.users.join(',')) :
+                        {}
+                }).then(function(data) {
+                    // update requests: loop through all the found update requests
+                    // and replace the original campaign with the updated data
+                    data.updateRequests.forEach(function(updateRequest) {
+                        var id = updateRequest.campaign;
 
-                        model.forEach(function(campaign) {
-                            var _campaign = Ctrl.data[campaign.id].campaign,
-                                card = _campaign.cards && _campaign.cards[0];
-
-                            if (!card) { return; }
-
-                            Ctrl.data[campaign.id].logo = card.collateral.logo;
-
-                            thumbFor(card).then(function(thumb) {
-                                Ctrl.data[campaign.id].thumb = thumb;
-                            });
-                        });
+                        Ctrl.data[id].campaign = updateRequest.data;
                     });
 
-                if (ids.campaigns.length) {
-                    CampaignService.getAnalytics({ids: ids.campaigns.join(',')})
-                        .then(function(stats) {
-                            stats.forEach(function(stat) {
-                                var campaignId = stat.campaignId;
+                    // analytics: loop through each set of stats we found and
+                    // generate the stats data (uses function defined above)
+                    data.analytics.forEach(function(stat) {
+                        var id = stat.campaignId;
 
-                                if (!campaignId || !Ctrl.data[campaignId]) {
-                                    return;
-                                }
+                        Ctrl.data[id].stats = generateStats(stat, Ctrl.data[id].campaign);
+                    });
 
-                                Ctrl.data[campaignId].stats = generateStats(stat, Ctrl.data[campaignId].campaign);
+                    // now that all campaign objects contain the latest and greatest
+                    // data we loop through every campaign and get the thumbnail,
+                    // logo, and user data (if necessary)
+                    model.forEach(function(campaign) {
+                        var id = campaign.id,
+                            camp = Ctrl.data[id].campaign,
+                            card = camp.cards && camp.cards[0];
 
-                            });
+                        if (!card) { return; }
+
+                        // add logo
+                        Ctrl.data[id].logo = card.collateral.logo;
+
+                        // add user
+                        Ctrl.data[id].user = data.users[campaign.user];
+
+                        // add thumbnail
+                        thumbFor(card).then(function(thumb) {
+                            Ctrl.data[id].thumb = thumb;
                         });
-                }
-
-                if (ids.users.length && cState.isAdmin) {
-                    CampaignService.getUserData(ids.users.join(','))
-                        .then(function(userHash) {
-                            model.forEach(function(campaign) {
-                                Ctrl.data[campaign.id].user = userHash[campaign.user];
-                            });
-                        });
-                }
+                    });
+                });
             }
 
             Object.defineProperties(this, {

@@ -16,6 +16,8 @@
                 "id": "rc-72acb4edf87aeb",
                 "endDate": "2016-06-26T00:00:00.000Z",
                 "campaign": {
+                    "startDate": "2016-02-03T16:53:36.733Z",
+                    "endDate": "2016-10-28T16:53:36.733Z",
                     "campaignId": null,
                     "advertiserId": null,
                     "minViewTime": -1,
