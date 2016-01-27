@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[v1.34.0.rc1]*
+  * [FEATURE]: Add start/end date, interaction rate, stats for "today" to
+    the campaign list (REEL-49)
+  * [FEATURE]: Add creative preview link (REEL-45)    
+
 ## v1.33.1 (January 26, 2016)
 * *[v1.33.1.rc1]*
   * [FIX]: Require payment for campaign creation
