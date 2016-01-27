@@ -60,13 +60,13 @@
                     <button class="sortBar__colName hint--bottom" type="button" data-hint="Interaction Rate">Inter. Rate</button>
                 </li>
                 <li class="sortBar__item column__activityTotals">
-                    <button class="sortBar__btn" type="button">Activity</button> 
+                    <button class="sortBar__colName" type="button">Activity</button> 
                 </li>
                 <li class="sortBar__item column__budget">
                     <button class="sortBar__colName" type="button">Budget</button>
                 </li>
                 <li class="sortBar__item column__summaryToday">
-                    <button class="sortBar__btn" type="button">Today</button> 
+                    <button class="sortBar__colName" type="button">Today</button> 
                 </li>
                 <li class="sortBar__item column__summaryLifetime">
                     <button class="sortBar__colName" type="button">Lifetime</button>
@@ -137,48 +137,63 @@
 
             <div class="campaign__column column__campaignName">
                 <div>
-<!-- show rejection reason in data-hint -->
-                <span ng-if="$this.rejectionReason" class="state__msg msg--rejecetd hint--top" data-hint="We're sorry, <span ng-if='$this.status === 'draft''>this campaign has</span><span ng-if='$this.status !== 'draft''>your changes have</span> been rejected. {{$this.rejectionReason}}"><i class="fa fa-exclamation-circle" style="color: red;"></i></span>
-                <!--<span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, <span ng-if="$this.status === 'draft'">this campaign has</span><span ng-if="$this.status !== 'draft'">your changes have</span> been rejected. {{$this.rejectionReason}}-->
-                <span ng-if="$this.updateRequest" class="state__msg msg--pending hint--top" data-hint="Your update request is being processed..."><i class="fa fa-exclamation-circle"  style="color: orange;"></i></span>
-                <!--<span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...-->
-                <h1 class="campaign__name tk--hdr">
-                    {{SelfieCampaignsCtrl.data[$this.id].campaign.name}}
-                </h1>
-<!-- add preview link -->
-                <a href="#" class="campaign__previewLink" target="_blank"><i class="fa fa-external-link"></i></a></div>
+                    <span ng-if="$this.rejectionReason && $this.status === 'draft'" class="state__msg msg--rejected hint--top" data-hint="We're sorry, this campaign has been rejected. {{$this.rejectionReason}}"><i class="fa fa-exclamation-circle" style="color: red;"></i></span>
+                    <span ng-if="$this.rejectionReason && $this.status !== 'draft'" class="state__msg msg--rejected hint--top" data-hint="We're sorry, your changes have been rejected. {{$this.rejectionReason}}"><i class="fa fa-exclamation-circle" style="color: red;"></i></span>
+                    <!--<span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, <span ng-if="$this.status === 'draft'">this campaign has</span><span ng-if="$this.status !== 'draft'">your changes have</span> been rejected. {{$this.rejectionReason}}-->
+                    <span ng-if="$this.updateRequest" class="state__msg msg--pending hint--top" data-hint="Your update request is being processed..."><i class="fa fa-exclamation-circle"  style="color: orange;"></i></span>
+                    <!--<span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...-->
+                    <h1 class="campaign__name tk--hdr">
+                        {{SelfieCampaignsCtrl.data[$this.id].campaign.name}}
+                    </h1>
+                <!-- add preview link -->
+                <a ng-href="{{SelfieCampaignsCtrl.data[$this.id].previewUrl}}" ng-if="SelfieCampaignsCtrl.data[$this.id].previewUrl" class="campaign__previewLink" target="_blank"><i class="fa fa-external-link"></i></a>
+                </div>
+
                 <div ng-if="SelfieCampaignsCtrl.data[$this.id].user" class="campaign__owner text--small">by <em>{{SelfieCampaignsCtrl.data[$this.id].user.firstName}} {{SelfieCampaignsCtrl.data[$this.id].user.lastName}}</em> for <em>{{SelfieCampaignsCtrl.data[$this.id].user.company}}</em></div>
-                <div ng-if="SelfieCampaignsCtrl.data[$this.id].user" class="campaign__owner text--small">Duration: <em>11/13/15 - 01/12/16</em></div>
+
+                <!-- add duration -->
+                <div ng-if="$this.status !== 'draft' && $this.status !== 'pending' && SelfieCampaignsCtrl.data[$this.id].campaign.cards[0].campaign.startDate" class="campaign__owner text--small">Duration:
+                    <em>{{SelfieCampaignsCtrl.data[$this.id].campaign.cards[0].campaign.startDate | date : 'MM/dd/yy'}}
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].campaign.cards[0].campaign.endDate">
+                            - {{SelfieCampaignsCtrl.data[$this.id].campaign.cards[0].campaign.endDate | date : 'MM/dd/yy'}}
+                        </span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].campaign.cards[0].campaign.endDate">
+                            until complete
+                        </span>
+                    </em>
+                </div>
+
              <!--   <span ng-if="$this.rejectionReason" class="state--msg"><span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, <span ng-if="$this.status === 'draft'">this campaign has</span><span ng-if="$this.status !== 'draft'">your changes have</span> been rejected. {{$this.rejectionReason}}</span>
                 <span ng-if="$this.updateRequest" class="state--msg"><span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...</span>-->
+
             </div><!--.column__campaignName-->
 
             <div class="campaign__column column__totalViews">
                 <span class="campaign__viewTotal">
-                    <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.data[$this.id].stats.views | number}}</span>
-                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.views">--</span>
+                    <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.data[$this.id].stats.total.views | number}}</span>
+                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                 </span>
                 <!--<span class="campaign__viewDelta">
                     <i class="fa fa-arrow-circle-up"></i> 4,587
                 </span>
                 <div class="campaign__viewChart">&nbsp;</div>-->
             </div><!--.column__totalViews-->
-<!-- show total interactions -->
+
             <div class="campaign__column column__totalInteractions">
                 <span class="campaign__spendTotal">
-                    <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.spend"> {{SelfieCampaignsCtrl.data[$this.id].stats.spend | number:2}}</span>
-                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.spend">--</span>
+                    <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"> {{SelfieCampaignsCtrl.data[$this.id].stats.total.interactions | number}}</span>
+                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                 </span>
                 <!--<span class="campaign__spendDelta">
                     <i class="fa fa-arrow-circle-up"></i> $1,239.25
                 </span>
                 <div class="campaign__viewChart">&nbsp;</div>-->
             </div><!--.column__totalInteractions-->
-<!-- show interaction rate -->
+
             <div class="campaign__column column__totalInteractionRate">
                 <span class="campaign__viewTotal">
-                    <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.views"> <!-- show interaction rate here -->52 <i class="fa fa-percent"></i></span>
-                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.views">--</span>
+                    <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"> {{(SelfieCampaignsCtrl.data[$this.id].stats.total.interactions / SelfieCampaignsCtrl.data[$this.id].stats.total.views * 100) | number:2}} <i class="fa fa-percent"></i></span>
+                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                 </span>
                 <!--<span class="campaign__viewDelta">
                     <i class="fa fa-arrow-circle-up"></i> 4,587
@@ -186,61 +201,59 @@
                 <div class="campaign__viewChart">&nbsp;</div>-->
             </div><!--.column__totalInteractionRate-->
 
-            
-<!-- show views, interactions, interaction rate for stacked single column view -->
             <div class="campaign__column column__activityTotals">
                 <div class="campaign__budgetInfo">
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Views:</span>
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.data[$this.id].stats.views | number}}</span>
-                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.views">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.data[$this.id].stats.total.views | number}}</span>
+                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Interactions:</span>
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.spend"> {{SelfieCampaignsCtrl.data[$this.id].stats.spend | number:2}}</span>
-                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.spend">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"> {{SelfieCampaignsCtrl.data[$this.id].stats.total.interactions | number}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label hint--bottom" data-hint="Interaction Rate">Inter. Rate:</span>
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.views"> <!-- show interaction rate here -->52 <i class="fa fa-percent"></i></span>
-                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.views">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"> {{(SelfieCampaignsCtrl.data[$this.id].stats.total.interactions / SelfieCampaignsCtrl.data[$this.id].stats.total.views * 100) | number:2}} <i class="fa fa-percent"></i></span>
+                    <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                     </span>
                 </div>
             </div><!--.column__activityTotals-->
-<!-- show today's totals for spend, budget, remaining -->
+
             <div class="campaign__column column__summaryToday">
                 <div class="campaign__budgetInfo">
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Spend:</span>
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.spend"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.spend | number:2}}</span>
-                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.spend">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.today.spend | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Budget:</span>
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget | number:2}}</span>
-                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].campaign.pricing.dailyLimit"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].campaign.pricing.dailyLimit | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].campaign.pricing.dailyLimit">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Remaining:</span>
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.views"><!-- show today's remaining budget here -->{{SelfieCampaignsCtrl.data[$this.id].stats.views | number}}</span>
-                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.views">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.today.budget"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.today.remaining | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.today.budget">--</span>
                     </span>
                 </div>
             </div><!--.column__summaryTotals-->
-<!-- show lifetime totals for spend, budget, remaining -->            
+
             <div class="campaign__column column__summaryLifetime column__lifetime">
                 <div class="campaign__budgetInfo">
                     <span class="campaign__lifetimeNumbers">
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.spend"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.spend | number:2}}</span>
-                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.spend">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.total.spend | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                     </span>
                     <span class="campaign__lifetimeNumbers">
                         <span ng-if="SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget | number:2}}</span>
                         <span ng-if="!SelfieCampaignsCtrl.data[$this.id].campaign.pricing.budget">--</span>
                     </span>
                     <span class="campaign__lifetimeNumbers">
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.views"><i class="fa fa-play-circle"></i> <!-- show total remaining budget here --> {{SelfieCampaignsCtrl.data[$this.id].stats.views | number}}</span>
-                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.views">--</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.total.remaining | number:2}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                     </span>
                 </div>
             </div><!--.column__summaryTotals-->

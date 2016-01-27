@@ -34,6 +34,7 @@
             "templateUrl": null,
             "sponsored": true,
             "campaign": {
+                "startDate": "2015-10-28T16:47:08.836Z",
                 "campaignId": null,
                 "advertiserId": null,
                 "minViewTime": 3,
@@ -69,8 +70,7 @@
     ],
     "name": "Nike Summer Campaign",
     "pricing": {
-        "budget": 1000,
-        "dailyLimit": 45
+        "budget": 1000
     },
     "status": "active",
     "targeting": {
@@ -85,7 +85,9 @@
         },
         "interests": []
     },
+    "rejectionReason": "Inappropriate video content",
     "advertiserDisplayName": "Nike",
+    "advertiserId": "a-282824b8bb40a2",
     "created": "2015-08-05T16:08:51.216Z",
     "user": "u-35b096c999711b",
     "org": "o-a6fd7298acb6fa",

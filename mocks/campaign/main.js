@@ -261,7 +261,6 @@ module.exports = function(http) {
         }
 
         if (campaign.pricing.budget) {
-            campaign.pricing.dailyLimit = campaign.pricing.dailyLimit || campaign.pricing.budget;
             campaign.pricing.cost = cpv;
         }
 
@@ -324,7 +323,6 @@ module.exports = function(http) {
         var cpv = getCpv(campaign);
 
         if (campaign.pricing.budget) {
-            campaign.pricing.dailyLimit = campaign.pricing.dailyLimit || campaign.pricing.budget;
             campaign.pricing.cost = cpv;
         }
 

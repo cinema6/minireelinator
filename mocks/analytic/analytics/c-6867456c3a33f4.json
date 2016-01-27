@@ -4,12 +4,31 @@
     "impressions": 224,
     "views": 90,
     "clicks": 11,
-    "totalSpend": "16.2500"
+    "totalSpend": "16.2500",
+    "linkClicks": {
+        "facebook": 5,
+        "twitter": 4,
+        "youtube": 4,
+        "website": 9,
+        "action": 10
+     },
+     "shareClicks": {
+        "facebook": 3,
+        "twitter": 2
+     }
   },
   "today": {
     "impressions": 24,
     "views": 12,
     "clicks": 5,
-    "totalSpend": "6.1900"
+    "totalSpend": "6.1900",
+    "linkClicks": {
+        "facebook": 1,
+        "website": 5,
+        "action": 3
+     },
+     "shareClicks": {
+        "facebook": 1
+     }
   }
 }
