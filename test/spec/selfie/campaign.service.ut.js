@@ -358,18 +358,18 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                     });
 
                     describe('when user is running locally or in staging', function() {
-                        it('should be /preview-staging/?campaign=[id]', function() {
+                        it('should be /preview-staging/?previewSource=platform&campaign=[id]', function() {
                             c6Defines.kDebug = true;
 
-                            expect(CampaignService.previewUrlOf(campaign)).toBe('//reelcontent.com/preview-staging/?campaign=cam-123');
+                            expect(CampaignService.previewUrlOf(campaign)).toBe('//reelcontent.com/preview-staging/?previewSource=platform&campaign=cam-123');
                         });
                     });
 
                     describe('when user is running in production', function() {
-                        it('should be /preview/?campaign=[id]', function() {
+                        it('should be /preview/?previewSource=platform&campaign=[id]', function() {
                             c6Defines.kDebug = false;
 
-                            expect(CampaignService.previewUrlOf(campaign)).toBe('//reelcontent.com/preview/?campaign=cam-123');
+                            expect(CampaignService.previewUrlOf(campaign)).toBe('//reelcontent.com/preview/?previewSource=platform&campaign=cam-123');
                         });
                     });
                 });

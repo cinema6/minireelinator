@@ -161,7 +161,7 @@ function( angular , c6uilib ,  c6Defines  ) {
 
                 return hasVideo && ('//reelcontent.com' +
                     (debug ? '/preview-staging/' : '/preview/') +
-                    '?campaign=' + encodeURIComponent(campaign.id));
+                    '?previewSource=platform&campaign=' + encodeURIComponent(campaign.id));
             };
 
             this.getAnalytics = function(query) {
