@@ -170,6 +170,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 card: campaign.cards[0],
                 advertiser: advertiser,
                 user: user,
+                paymentOptional: false,
                 saveCampaign: jasmine.createSpy('cState.saveCampaign()'),
                 saveUpdateRequest: jasmine.createSpy('cState.saveUpdateRequest()')
             };
@@ -322,6 +323,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.validation.budget = true;
                         expect(SelfieCampaignCtrl.validation.sections.section6).toBe(true);
 
+                        SelfieCampaignCtrl.paymentOptional = false;
+                        expect(SelfieCampaignCtrl.validation.sections.section7).toBe(false);
+                        SelfieCampaignCtrl.paymentOptional = true;
+                        expect(SelfieCampaignCtrl.validation.sections.section7).toBe(true);
+                        SelfieCampaignCtrl.paymentOptional = false;
+                        cState.campaign.paymentMethod = 'pay-123';
                         expect(SelfieCampaignCtrl.validation.sections.section7).toBe(true);
 
                         expect(SelfieCampaignCtrl.validation.sections.section8).toBe(true);
@@ -368,6 +375,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl._proxyCampaign).toEqual(copy(cState.campaign));
                     expect(SelfieCampaignCtrl.originalCampaign).toEqual(campaign);
                     expect(SelfieCampaignCtrl.user).toEqual(user);
+                    expect(SelfieCampaignCtrl.paymentOptional).toEqual(cState.paymentOptional);
                 });
             });
 

@@ -1,5 +1,10 @@
 # MiniReelinator
 
+## v1.33.1 (January 26, 2016)
+* *[v1.33.1.rc1]*
+  * [FIX]: Require payment for campaign creation
+* *[/v1.33.1.rc1]*
+
 ## v1.33.0 (January 22, 2016)
 * *[v1.33.0.rc2]*
   * [FIX]: Fixed dropdown menu bug on manage payment options page
