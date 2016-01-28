@@ -146,7 +146,7 @@
                         {{SelfieCampaignsCtrl.data[$this.id].campaign.name}}
                     </h1>
                 <!-- add preview link -->
-                <a ng-href="{{SelfieCampaignsCtrl.data[$this.id].previewUrl}}" ng-if="SelfieCampaignsCtrl.data[$this.id].previewUrl" class="campaign__previewLink" target="_blank"><i class="fa fa-external-link"></i></a>
+                <a stop-propagate ng-href="{{SelfieCampaignsCtrl.data[$this.id].previewUrl}}" ng-if="SelfieCampaignsCtrl.data[$this.id].previewUrl" class="campaign__previewLink" target="_blank"><i class="fa fa-external-link"></i></a>
                 </div>
 
                 <div ng-if="SelfieCampaignsCtrl.data[$this.id].user" class="campaign__owner text--small">by <em>{{SelfieCampaignsCtrl.data[$this.id].user.firstName}} {{SelfieCampaignsCtrl.data[$this.id].user.lastName}}</em> for <em>{{SelfieCampaignsCtrl.data[$this.id].user.company}}</em></div>
