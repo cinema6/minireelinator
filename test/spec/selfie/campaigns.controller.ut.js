@@ -36,6 +36,14 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 campaigns.cParent = {
                     hasAdvertisers: false
                 };
+                campaigns.sort = 'lastUpdated,-1';
+                campaigns.filter = 'draft,pending,active,paused,canceled,expired,error';
+                campaigns.params = {
+                    filter: 'draft,pending,active,paused,canceled,expired,error',
+                    filterBy: 'statuses',
+                    sort: 'lastUpdated,-1',
+                    search: null
+                };
 
                 spyOn(cinema6.db, 'findAll').and.returnValue((function() {
                     var items = [];
@@ -221,29 +229,36 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
             describe('toggleSort(property)', function() {
                 it('should toggle the direction of the sort (-1 or 1)', function() {
+                    SelfieCampaignsCtrl.params = {};
+
                     expect(SelfieCampaignsCtrl.sort).toBe('lastUpdated,-1');
 
                     SelfieCampaignsCtrl.toggleSort('lastUpdated');
 
                     expect(SelfieCampaignsCtrl.sort).toBe('lastUpdated,1');
+                    expect(SelfieCampaignsCtrl.params.sort).toBe('lastUpdated,1');
 
                     SelfieCampaignsCtrl.toggleSort('name');
 
                     expect(SelfieCampaignsCtrl.sort).toBe('name,-1');
+                    expect(SelfieCampaignsCtrl.params.sort).toBe('name,-1');
                 });
             });
 
             describe('doSearch(text)', function() {
                 it('should set/remove the text on the Ctrl', function() {
+                    SelfieCampaignsCtrl.params = {};
                     expect(SelfieCampaignsCtrl.search).toBe(undefined);
 
                     SelfieCampaignsCtrl.doSearch('something');
 
                     expect(SelfieCampaignsCtrl.search).toBe('something');
+                    expect(SelfieCampaignsCtrl.params.search).toBe('something');
 
                     SelfieCampaignsCtrl.doSearch('');
 
                     expect(SelfieCampaignsCtrl.search).toBe(undefined);
+                    expect(SelfieCampaignsCtrl.params.search).toBe(undefined);
                 });
             });
 
@@ -264,6 +279,20 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     SelfieCampaignsCtrl.initWithModel(model);
 
                     expect(SelfieCampaignsCtrl.hasAdvertisers).toEqual(true);
+                });
+
+                it('should put the params object on the Ctrl', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.params).toEqual(campaigns.params);
+                });
+
+                it('should put any saved search text on the Ctrl', function() {
+                    campaigns.params.search = 'Hello';
+
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.searchText).toEqual(campaigns.params.search);
                 });
 
                 it('should add the filters to the Ctrl', function() {
@@ -602,6 +631,8 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
             describe('toggleFilter()', function() {
                 it('should update the filter query param based on which options are checked', function() {
+                    SelfieCampaignsCtrl.params = {};
+
                     SelfieCampaignsCtrl.filters = [
                         { name: 'Draft', id: 'draft', checked: true },
                         { name: 'Pending', id: 'pending', checked: false },
@@ -614,6 +645,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     SelfieCampaignsCtrl.toggleFilter();
 
                     expect(SelfieCampaignsCtrl.filter).toEqual('draft,approved,active,error');
+                    expect(SelfieCampaignsCtrl.params.filter).toEqual('draft,approved,active,error');
                 });
             });
 

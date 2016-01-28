@@ -6,7 +6,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             paginatedDbList,
             campaigns,
             $location,
-            $injector;
+            $injector,
+            SettingsService;
 
         var dbList,
             promise;
@@ -32,8 +33,10 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
                 c6State = $injector.get('c6State');
                 paginatedDbList = $injector.get('paginatedDbList');
-                $location = $injector.get('$location');
-                spyOn($location,'search').and.returnValue({});
+                SettingsService = $injector.get('SettingsService');
+
+                spyOn(SettingsService, 'register');
+                spyOn(SettingsService, 'getReadOnly');
 
                 campaigns = c6State.get('Selfie:Campaigns');
             });
@@ -47,59 +50,54 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             expect($injector.invoke).toHaveBeenCalledWith(PaginatedListState, campaigns);
         });
 
-        describe('properties', function() {
-            describe('filter', function() {
-                it('should be the filter query param from the url, or default to all statuses', function() {
-                    expect(campaigns.filter).toBe('draft,pending,active,paused,canceled,expired,error');
+        describe('beforeModel()', function() {
+            var defaults, savedParams;
 
-                    $location.search.and.returnValue({
-                        filter: 'active,draft',
-                        filterBy: 'statuses'
-                    });
-                    campaigns = $injector.instantiate(campaigns.constructor);
+            beforeEach(function() {
+                defaults = {
+                    filter: 'draft,pending,active,paused,canceled,expired,error',
+                    filterBy: 'statuses',
+                    sort: 'lastUpdated,-1',
+                    search: null
+                };
 
-                    expect(campaigns.filter).toBe('active,draft');
+                savedParams = {
+                    filter: 'pending,active',
+                    filterBy: 'budget',
+                    sort: 'name,1',
+                    search: 'Hello'
+                };
+
+                SettingsService.getReadOnly.and.returnValue(savedParams);
+
+                campaigns.beforeModel();
+            });
+
+            it('should register the params object with the SettingsService', function() {
+                expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
+                    localSync: true,
+                    defaults: defaults
                 });
             });
 
-            describe('filterBy', function() {
-                it('should be the filterBy query param from the url, or default to "status"', function() {
-                    expect(campaigns.filterBy).toBe('statuses');
-
-                    $location.search.and.returnValue({
-                        filter: 'active,draft',
-                        filterBy: 'budget'
-                    });
-                    campaigns = $injector.instantiate(campaigns.constructor);
-
-                    expect(campaigns.filterBy).toBe('budget');
-                });
+            it('should get the params from the SettingsService', function() {
+                expect(SettingsService.getReadOnly).toHaveBeenCalledWith('Selfie::params');
             });
 
-            describe('sort', function() {
-                it('should be the filterBy query param from the url, or default to "status"', function() {
-                    expect(campaigns.sort).toBe('lastUpdated,-1');
-
-                    $location.search.and.returnValue({
-                        filter: 'active,draft',
-                        filterBy: 'budget',
-                        sort: 'name,-1'
-                    });
-                    campaigns = $injector.instantiate(campaigns.constructor);
-
-                    expect(campaigns.sort).toBe('name,-1');
-                });
+            it('should add the saved params to the State', function() {
+                expect(campaigns.filter).toBe('pending,active');
+                expect(campaigns.filterBy).toBe('budget');
+                expect(campaigns.sort).toBe('name,1');
+                expect(campaigns.search).toBe('Hello');
             });
 
-            describe('queryParams', function() {
-                it('should add the filter and filterBy bindings', function() {
-                    expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
-                        filter: '=',
-                        filterBy: '=',
-                        sort: '=',
-                        search: '='
-                    }));
-                });
+            it('should add the params to the queryParams object', function() {
+                expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
+                    filter: '=',
+                    filterBy: '=',
+                    sort: '=',
+                    search: '='
+                }));
             });
         });
 
@@ -107,6 +105,10 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             var result;
 
             beforeEach(function() {
+                campaigns.filter = 'draft,pending,active,paused,canceled,expired,error';
+                campaigns.sort = 'lastUpdated,-1';
+                campaigns.search = null;
+
                 result = campaigns.model();
 
                 expect(paginatedDbList.calls.count()).toBe(1);
@@ -120,7 +122,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 expect(paginatedDbList).toHaveBeenCalledWith('selfieCampaign', {
                     sort: 'lastUpdated,-1',
                     application: 'selfie',
-                    statuses: 'draft,pending,active,paused,canceled,expired,error'
+                    statuses: 'draft,pending,active,paused,canceled,expired,error',
+                    text: null
                 }, campaigns.limit, campaigns.page);
             });
         });

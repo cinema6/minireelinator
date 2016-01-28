@@ -41,9 +41,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaigns', ['$injector','$location','SettingsService',
+            c6StateProvider.state('Selfie:Campaigns', ['$injector','SettingsService',
                                                        'paginatedDbList','c6State',
-            function                                  ( $injector , $location , SettingsService ,
+            function                                  ( $injector , SettingsService ,
                                                         paginatedDbList , c6State ) {
                 $injector.invoke(PaginatedListState, this);
 
@@ -56,7 +56,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.beforeModel = function() {
                     var params;
 
-                    SettingsService.register('Selfie::filters', this.params, {
+                    SettingsService.register('Selfie::params', this.params, {
                         localSync: true,
                         defaults: {
                             filter: 'draft,pending,active,paused,canceled,expired,error',
@@ -66,7 +66,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         }
                     });
 
-                    params = SettingsService.getReadOnly('Selfie::filters');
+                    params = SettingsService.getReadOnly('Selfie::params');
 
                     this.filter = params.filter;
                     this.filterBy = params.filterBy;
