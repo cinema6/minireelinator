@@ -5,6 +5,8 @@
     the campaign list (REEL-49)
   * [FEATURE]: Add creative preview link (REEL-45)
   * [FEATURE]: Saved last used filter, sort and search in Campaign List view
+  * [FIX]: Show error if daily limit is set and is less than total budget
+    divided over flight dates
 
 ## v1.33.1 (January 26, 2016)
 * *[v1.33.1.rc1]*
