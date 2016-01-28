@@ -41,9 +41,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaigns', ['$injector','$location',
+            c6StateProvider.state('Selfie:Campaigns', ['$injector','SettingsService',
                                                        'paginatedDbList','c6State',
-            function                                  ( $injector , $location ,
+            function                                  ( $injector , SettingsService ,
                                                         paginatedDbList , c6State ) {
                 $injector.invoke(PaginatedListState, this);
 
@@ -51,23 +51,42 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controller = 'SelfieCampaignsController';
                 this.controllerAs = 'SelfieCampaignsCtrl';
 
-                this.filter = $location.search().filter ||
-                    'draft,pending,active,paused,canceled,expired,error';
-                this.filterBy = $location.search().filterBy || 'statuses';
-                this.sort = $location.search().sort || 'lastUpdated,-1';
+                this.params = {};
 
-                extend(this.queryParams, {
-                    filter: '=',
-                    filterBy: '=',
-                    sort: '=',
-                    search: '='
-                });
+                this.beforeModel = function() {
+                    var params;
+
+                    SettingsService.register('Selfie::params', this.params, {
+                        localSync: true,
+                        defaults: {
+                            filter: 'draft,pending,active,paused,canceled,expired,error',
+                            filterBy: 'statuses',
+                            sort: 'lastUpdated,-1',
+                            search: null
+                        }
+                    });
+
+                    params = SettingsService.getReadOnly('Selfie::params');
+
+                    this.filter = params.filter;
+                    this.filterBy = params.filterBy;
+                    this.sort = params.sort;
+                    this.search = params.search;
+
+                    extend(this.queryParams, {
+                        filter: '=',
+                        filterBy: '=',
+                        sort: '=',
+                        search: '='
+                    });
+                };
 
                 this.model = function() {
                     return paginatedDbList('selfieCampaign', {
                         sort: this.sort,
                         application: 'selfie',
                         statuses: this.filter,
+                        text: this.search,
                     }, this.limit, this.page).ensureResolution();
                 };
                 this.afterModel = function() {
@@ -259,6 +278,8 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.model = model;
                 this.hasAdvertisers = cState.cParent.hasAdvertisers;
+                this.params = cState.params;
+                this.searchText = this.params.search;
 
                 updateModelData();
                 model.on('PaginatedListHasUpdated', updateModelData);
@@ -310,16 +331,19 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.toggleSort = function(prop) {
                 this.sort = prop + ',' + (parseInt(this.sort.split(',')[1]) === -1 ? 1 : -1);
+                this.params.sort = this.sort;
             };
 
             this.doSearch = function(text) {
                 this.search = text || undefined;
+                this.params.search = this.search;
             };
 
             this.toggleFilter = function() {
                 this.filter = this.filters.reduce(function(filters, filter) {
                     return filter.checked ? filters.concat(filter.id) : filters;
                 },[]).join(',');
+                this.params.filter = this.filter;
             };
         }])
 
