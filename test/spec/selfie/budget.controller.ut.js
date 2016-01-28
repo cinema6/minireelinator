@@ -67,7 +67,10 @@ define(['app'], function(appModule) {
                             gender: []
                         },
                         interests: []
-                    }
+                    },
+                    cards: [
+                        {   }
+                    ]
                 };
             });
 
@@ -213,18 +216,22 @@ define(['app'], function(appModule) {
                     SelfieBudgetCtrl.budget = 100;
                     SelfieBudgetCtrl.limit = 50;
                     expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+                    expect($scope.validation.dailyLimit).toBe(true);
 
                     SelfieBudgetCtrl.budget = 100;
                     SelfieBudgetCtrl.limit = 2;
                     expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+                    expect($scope.validation.dailyLimit).toBe(true);
 
                     SelfieBudgetCtrl.budget = 100;
                     SelfieBudgetCtrl.limit = 100;
                     expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+                    expect($scope.validation.dailyLimit).toBe(true);
 
                     SelfieBudgetCtrl.budget = 100.25;
                     SelfieBudgetCtrl.limit = 50.50;
                     expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+                    expect($scope.validation.dailyLimit).toBe(true);
                 });
 
                 it('should contain an error status number if limit is set but budget is not or the limit is not between 1.5% to 100% of total budget', function() {
@@ -232,19 +239,64 @@ define(['app'], function(appModule) {
 
                     SelfieBudgetCtrl.budget = null;
                     SelfieBudgetCtrl.limit = 20;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(1);
+                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({ code: 1 });
+                    expect($scope.validation.dailyLimit).toBe(false);
 
                     SelfieBudgetCtrl.budget = 100;
                     SelfieBudgetCtrl.limit = 1;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(2);
+                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({ code: 2 });
+                    expect($scope.validation.dailyLimit).toBe(false);
 
                     SelfieBudgetCtrl.budget = 100;
                     SelfieBudgetCtrl.limit = 101;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(3);
+                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({ code: 3 });
+                    expect($scope.validation.dailyLimit).toBe(false);
 
                     SelfieBudgetCtrl.budget = 100;
                     SelfieBudgetCtrl.limit = 20.123;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(4);
+                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({ code: 4 });
+                    expect($scope.validation.dailyLimit).toBe(false);
+                });
+
+                it('should have error code and min value if flight dates do not work with daily limit', function() {
+                    var today = new Date(),
+                        tomorrow = new Date(),
+                        threeDays = new Date(),
+                        sevenDays = new Date();
+
+                    tomorrow.setDate(today.getDate() + 1);
+                    threeDays.setDate(today.getDate() + 3);
+                    sevenDays.setDate(today.getDate() + 7);
+
+                    SelfieBudgetCtrl.budget = 100;
+                    SelfieBudgetCtrl.limit = 10;
+                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+                    expect($scope.validation.dailyLimit).toBe(true);
+
+                    campaign.cards[0].campaign = {
+                        endDate: threeDays.toISOString()
+                    };
+
+                    expect($scope.validation.dailyLimit).toBe(false);
+                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({
+                        code: 5,
+                        min: 100 / 2
+                    });
+
+                    campaign.cards[0].campaign = {
+                        startDate: threeDays.toISOString(),
+                        endDate: sevenDays.toISOString()
+                    };
+
+                    expect($scope.validation.dailyLimit).toBe(false);
+                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({
+                        code: 5,
+                        min: 100 / 4
+                    });
+
+                    SelfieBudgetCtrl.limit = 50;
+                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+                    expect($scope.validation.dailyLimit).toBe(true);
                 });
             });
         });
