@@ -319,8 +319,16 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.validation.sections.section5).toBe(true);
 
                         SelfieCampaignCtrl.validation.budget = false;
+                        SelfieCampaignCtrl.validation.dailyLimit = false;
                         expect(SelfieCampaignCtrl.validation.sections.section6).toBe(false);
                         SelfieCampaignCtrl.validation.budget = true;
+                        SelfieCampaignCtrl.validation.dailyLimit = false;
+                        expect(SelfieCampaignCtrl.validation.sections.section6).toBe(false);
+                        SelfieCampaignCtrl.validation.budget = false;
+                        SelfieCampaignCtrl.validation.dailyLimit = true;
+                        expect(SelfieCampaignCtrl.validation.sections.section6).toBe(false);
+                        SelfieCampaignCtrl.validation.budget = true;
+                        SelfieCampaignCtrl.validation.dailyLimit = true;
                         expect(SelfieCampaignCtrl.validation.sections.section6).toBe(true);
 
                         SelfieCampaignCtrl.paymentOptional = false;

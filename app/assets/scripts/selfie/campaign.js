@@ -712,7 +712,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             section4: !!card.title && !!card.links.Action &&
                                 !!card.params.action.label,
                             section5: true,
-                            section6: this.budget,
+                            section6: this.budget && this.dailyLimit,
                             section7: !!campaign.paymentMethod ||
                                 !!SelfieCampaignCtrl.paymentOptional,
                             section8: true

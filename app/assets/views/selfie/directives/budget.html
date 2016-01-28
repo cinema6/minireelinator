@@ -36,11 +36,12 @@
                 <!--The Daily Budget allows you to set a limit for how much your campaign can spend in a day. It must be more than {{SelfieBudgetCtrl.limitMinPercent * 100}}% of the total budget.-->
             </div>
         </div>
-        <div class="form__errorBox" ng-switch="SelfieBudgetCtrl.dailyLimitError">
+        <div class="form__errorBox" ng-switch="SelfieBudgetCtrl.dailyLimitError.code">
             <p class="form__errorMsg" ng-switch-when="1"><i class="fa fa-exclamation-triangle"></i> Please enter your Total Budget first </p>
             <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be greater than ${{SelfieBudgetCtrl.limitMinPercent * SelfieBudgetCtrl.budget | number:2}} </p>
             <p class="form__errorMsg" ng-switch-when="3"><i class="fa fa-exclamation-triangle"></i> Must be less than Total Budget </p>
             <p class="form__errorMsg" ng-switch-when="4"><i class="fa fa-exclamation-triangle"></i> Please enter a valid dollar amount </p>
+            <p class="form__errorMsg" ng-switch-when="5"><i class="fa fa-exclamation-triangle"></i> Based on your flight dates your limit must be at least ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}} </p>
         </div>
     </fieldset>
 

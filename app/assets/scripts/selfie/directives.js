@@ -857,6 +857,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
         function                              ( $scope , CampaignService ) {
             var SelfieBudgetCtrl = this,
                 campaign = $scope.campaign,
+                card = campaign.cards[0],
                 validation = $scope.validation || {},
                 schema = $scope.schema,
                 pricing = schema.pricing,
@@ -902,14 +903,42 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                     get: function() {
                         var budget = parseFloat(this.budget),
                             max = parseFloat(this.limit),
-                            validDecimal = !max || (/^[0-9]+(\.[0-9]{1,2})?$/).test(max);
+                            validDecimal = !max || (/^[0-9]+(\.[0-9]{1,2})?$/).test(max),
+                            startDate = card.campaign && card.campaign.startDate &&
+                                new Date(card.campaign.startDate),
+                            endDate = card.campaign && card.campaign.endDate &&
+                                new Date(card.campaign.endDate),
+                            oneDay = 24*60*60*1000,
+                            tomorrow = new Date(),
+                            days;
 
-                        if (max && !budget) { return 1; }
-                        if (max < budget * limitMinPercent) { return 2; }
-                        if (max > budget) { return 3; }
-                        if (!validDecimal) { return 4; }
+                        if (budget && endDate) {
+                            tomorrow.setDate(tomorrow.getDate() + 1);
+
+                            startDate = startDate || tomorrow;
+
+                            days = Math.round(
+                                Math.abs((endDate.getTime() - startDate.getTime()) / oneDay)
+                            ) || 1;
+                        }
+
+                        if (max && !budget) { return { code: 1 }; }
+                        if (max < budget * limitMinPercent) { return { code: 2 }; }
+                        if (max > budget) { return { code: 3 }; }
+                        if (!validDecimal) { return { code: 4 }; }
+                        if (max && budget && days && max < (budget / days)) {
+                            return { code: 5, min: budget / days };
+                        }
 
                         return false;
+                    }
+                }
+            });
+
+            Object.defineProperties(validation, {
+                dailyLimit: {
+                    get: function() {
+                        return !SelfieBudgetCtrl.dailyLimitError;
                     }
                 }
             });
