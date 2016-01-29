@@ -27,6 +27,17 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
     return angular.module('c6.app.selfie.directives', [])
         .value('Chart', Chart)
 
+        .directive('stopPropagate', [function() {
+            return {
+                restrict: 'A',
+                link: function(scope, $element) {
+                    $element.on('click', function(e) {
+                        e.stopPropagation();
+                    });
+                }
+            };
+        }])
+
         .directive('c6FillCheck', ['$timeout',
         function                  ( $timeout ) {
             return {

@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.34.0 (January 28, 2016)
+* *[v1.34.0.rc2]*
+  * [FIX]: Fix for an issue where clicking on the preview link failed
+    to open the preview page
+* *[/v1.34.0.rc2]*
+
 * *[v1.34.0.rc1]*
   * [FEATURE]: Add start/end date, interaction rate, stats for "today" to
     the campaign list (REEL-49)
