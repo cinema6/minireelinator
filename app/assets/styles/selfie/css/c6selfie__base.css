@@ -1680,19 +1680,19 @@ fa,
                 }
         .column__totalViews {
             width:7.5em;
-            padding:0 2em 0 0;
+            padding:0 1em 0 0;
             text-align: right;
         }
         .column__totalSpending,
         .column__totalInteractions {
             width:6.5em;
-            padding:0 2em 0 0;
+            padding:0 1em 0 0;
             text-align: right;
         }
         .column__totalInteractionRate {
-            width:4.5em;
+            width:6.5em;
             padding:0 2em 0 0;
-            text-align: center;
+            text-align: right;
         }
         .column__budget,
         .column__summaryToday,
