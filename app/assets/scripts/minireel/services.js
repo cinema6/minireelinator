@@ -277,6 +277,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             selected: []
                         };
 
+                    list.emit('PaginatedListWillUpdate');
+
                     this.page = page;
 
                     this.items = scopePromise(cinema6.db.findAll(this.type, extend(this.query, {
@@ -294,7 +296,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 total: Math.ceil(info.total / limit)
                             };
                             list.selectNone();
-
+                        })
+                        .finally(function() {
                             list.emit('PaginatedListHasUpdated');
                         });
 

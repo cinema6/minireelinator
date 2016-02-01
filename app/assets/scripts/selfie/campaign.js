@@ -41,10 +41,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaigns', ['$injector','SettingsService',
+            c6StateProvider.state('Selfie:Campaigns', ['$injector','SettingsService','$q',
                                                        'paginatedDbList','c6State',
-            function                                  ( $injector , SettingsService ,
-                                                        paginatedDbList , c6State ) {
+                                                       'SpinnerService',
+            function                                  ( $injector , SettingsService , $q ,
+                                                        paginatedDbList , c6State ,
+                                                        SpinnerService ) {
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/selfie/campaigns.html';
@@ -82,12 +84,17 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.model = function() {
+                    SpinnerService.display();
+
                     return paginatedDbList('selfieCampaign', {
                         sort: this.sort,
                         application: 'selfie',
                         statuses: this.filter,
                         text: this.search,
-                    }, this.limit, this.page).ensureResolution();
+                    }, this.limit, this.page).ensureResolution()
+                    .finally(function() {
+                        SpinnerService.close();
+                    });
                 };
                 this.afterModel = function() {
                     var user = c6State.get('Selfie').cModel;
@@ -99,10 +106,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
                                                   'ConfirmDialogService','ThumbnailService',
-                                                  'CampaignService','cinema6',
+                                                  'CampaignService','cinema6','SpinnerService',
         function                                 ( $injector , $scope , $q , cState ,
                                                    ConfirmDialogService , ThumbnailService ,
-                                                   CampaignService , cinema6 ) {
+                                                   CampaignService , cinema6 , SpinnerService ) {
             var SelfieCampaignsCtrl = this;
 
             $injector.invoke(PaginatedListController, this, {
@@ -287,6 +294,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 updateModelData();
                 model.on('PaginatedListHasUpdated', updateModelData);
+                model.on('PaginatedListHasUpdated', SpinnerService.close);
+                model.on('PaginatedListWillUpdate', SpinnerService.display);
 
                 this.filters = [
                     'draft',

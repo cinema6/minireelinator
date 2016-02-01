@@ -282,6 +282,36 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
+        .directive('spinner', ['SpinnerService',
+        function              ( SpinnerService ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/spinner.html',
+                scope: {},
+                link: function(scope) {
+                    scope.model = SpinnerService.model;
+                }
+            };
+        }])
+
+        .service('SpinnerService', [function() {
+            var model = {};
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.display = function() {
+                model.show = true;
+            };
+
+            this.close = function() {
+                model.show = false;
+            };
+        }])
+
         .directive('datepicker', ['$timeout',
         function                 ( $timeout ) {
             return {

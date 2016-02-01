@@ -216,7 +216,11 @@ module.exports = function(http) {
             startPosition = page.skip + 1,
             endPosition = page.skip + Math.min(page.limit, campaigns.length);
 
-        this.respond(200, Q.when(campaigns).delay(3000))
+        if (request.query.limit !== '1') {
+            // return this.respond(500, Q.when('NOT FOUND').delay(3000));
+        }
+
+        this.respond(200, Q.when(campaigns).delay(request.query.limit !== '1' ? 1000 : 0))
             .setHeaders({
                 'Content-Range': startPosition + '-' + endPosition + '/' + allCampaigns.length
             });
