@@ -235,7 +235,7 @@
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Remaining:</span>
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.today.budget"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.today.remaining | number:2}}</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.today.budget"> {{SelfieCampaignsCtrl.data[$this.id].stats.today.remaining | number:0}} <i class="fa fa-percent"></i></span>
                         <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.today.budget">--</span>
                     </span>
                 </div>
@@ -252,7 +252,7 @@
                         <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                     </span>
                     <span class="campaign__lifetimeNumbers">
-                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"><strong>$</strong> {{SelfieCampaignsCtrl.data[$this.id].stats.total.remaining | number:2}}</span>
+                        <span ng-if="SelfieCampaignsCtrl.data[$this.id].stats.total.views"> {{SelfieCampaignsCtrl.data[$this.id].stats.total.remaining | number:0}} <i class="fa fa-percent"></i></span>
                         <span ng-if="!SelfieCampaignsCtrl.data[$this.id].stats.total.views">--</span>
                     </span>
                 </div>

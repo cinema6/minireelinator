@@ -384,6 +384,50 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 pricing: {
                                     budget: 1000
                                 }
+                            },
+                            {
+                                id: 'cam-4',
+                                user: 'u-3',
+                                cards: [
+                                    {
+                                        params: {
+                                            sponsor: 'Toyota'
+                                        },
+                                        collateral: {
+                                            logo: 'toyota.jpg'
+                                        },
+                                        data: {
+                                            service: 'vimeo',
+                                            videoid: 'xyz'
+                                        }
+                                    }
+                                ],
+                                pricing: {
+                                    budget: 1000,
+                                    dailyLimit: 500
+                                }
+                            },
+                            {
+                                id: 'cam-5',
+                                user: 'u-3',
+                                cards: [
+                                    {
+                                        params: {
+                                            sponsor: 'Honda'
+                                        },
+                                        collateral: {
+                                            logo: 'honda.jpg'
+                                        },
+                                        data: {
+                                            service: 'vimeo',
+                                            videoid: '789'
+                                        }
+                                    }
+                                ],
+                                pricing: {
+                                    budget: 1000,
+                                    dailyLimit: 500
+                                }
                             }
                         ];
 
@@ -432,6 +476,16 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             campaign: model.items.value[2],
                             previewUrl: jasmine.any(String)
                         });
+
+                        expect(SelfieCampaignsCtrl.data['cam-4']).toEqual({
+                            campaign: model.items.value[3],
+                            previewUrl: jasmine.any(String)
+                        });
+
+                        expect(SelfieCampaignsCtrl.data['cam-5']).toEqual({
+                            campaign: model.items.value[4],
+                            previewUrl: jasmine.any(String)
+                        });
                     });
 
                     it('should get the preview url of each campaign', function() {
@@ -445,7 +499,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     });
 
                     it('should call the campaign service for stats', function() {
-                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: 'cam-1,cam-2,cam-3'});
+                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: 'cam-1,cam-2,cam-3,cam-4,cam-5'});
                     });
 
                     it('should not load user data if user is not admin', function() {
@@ -517,6 +571,36 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                             linkClicks: {},
                                             shareClicks: {}
                                         }
+                                    },
+                                    {
+                                        campaignId: 'cam-4',
+                                        summary: {
+                                            views: 2000,
+                                            totalSpend: '0.0000',
+                                            linkClicks: {},
+                                            shareClicks: {}
+                                        },
+                                        today: {
+                                            views: 0,
+                                            totalSpend: '0.0000',
+                                            linkClicks: {},
+                                            shareClicks: {}
+                                        }
+                                    },
+                                    {
+                                        campaignId: 'cam-5',
+                                        summary: {
+                                            views: 2000,
+                                            totalSpend: '200.50',
+                                            linkClicks: {},
+                                            shareClicks: {}
+                                        },
+                                        today: {
+                                            views: 236,
+                                            totalSpend: '20.2500',
+                                            linkClicks: {},
+                                            shareClicks: {}
+                                        }
                                     }
                                 ];
 
@@ -575,16 +659,16 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 expect(SelfieCampaignsCtrl.data['cam-1'].stats).toEqual({
                                     total: {
                                         views: 100,
-                                        spend: '10.00',
+                                        spend: 10,
                                         budget: 500,
-                                        remaining: 490,
+                                        remaining: 2,
                                         interactions: 280
                                     },
                                     today: {
                                         views: 23,
-                                        spend: '1.1200',
+                                        spend: 1.12,
                                         budget: 100,
-                                        remaining: 98.88,
+                                        remaining: 1.12,
                                         interactions: 28
                                     }
                                 });
@@ -592,16 +676,48 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 expect(SelfieCampaignsCtrl.data['cam-3'].stats).toEqual({
                                     total: {
                                         views: 2000,
-                                        spend: '500.50',
+                                        spend: 500.50,
                                         budget: 1000,
-                                        remaining: 499.50,
+                                        remaining: 50.05,
                                         interactions: 0
                                     },
                                     today: {
                                         views: 236,
-                                        spend: '18.1200',
+                                        spend: 18.12,
                                         budget: null,
                                         remaining: null,
+                                        interactions: 0
+                                    }
+                                });
+                                expect(SelfieCampaignsCtrl.data['cam-4'].stats).toEqual({
+                                    total: {
+                                        views: 2000,
+                                        spend: 0,
+                                        budget: 1000,
+                                        remaining: 100,
+                                        interactions: 0
+                                    },
+                                    today: {
+                                        views: 0,
+                                        spend: 0,
+                                        budget: 500,
+                                        remaining: 100,
+                                        interactions: 0
+                                    }
+                                });
+                                expect(SelfieCampaignsCtrl.data['cam-5'].stats).toEqual({
+                                    total: {
+                                        views: 2000,
+                                        spend: 200.50,
+                                        budget: 1000,
+                                        remaining: 20.05,
+                                        interactions: 0
+                                    },
+                                    today: {
+                                        views: 236,
+                                        spend: 20.25,
+                                        budget: 500,
+                                        remaining: 4.05,
                                         interactions: 0
                                     }
                                 });
@@ -619,6 +735,16 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                     company: 'Rambo, Inc.'
                                 });
                                 expect(SelfieCampaignsCtrl.data['cam-3'].user).toEqual({
+                                    firstName: 'Turtle',
+                                    lastName: 'Monster',
+                                    company: 'Monster, Inc.'
+                                });
+                                expect(SelfieCampaignsCtrl.data['cam-4'].user).toEqual({
+                                    firstName: 'Turtle',
+                                    lastName: 'Monster',
+                                    company: 'Monster, Inc.'
+                                });
+                                expect(SelfieCampaignsCtrl.data['cam-5'].user).toEqual({
                                     firstName: 'Turtle',
                                     lastName: 'Monster',
                                     company: 'Monster, Inc.'
@@ -777,6 +903,50 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 pricing: {
                                     budget: 1000
                                 }
+                            },
+                            {
+                                id: 'cam-4',
+                                user: 'u-3',
+                                cards: [
+                                    {
+                                        params: {
+                                            sponsor: 'Toyota'
+                                        },
+                                        collateral: {
+                                            logo: 'toyota.jpg'
+                                        },
+                                        data: {
+                                            service: 'vimeo',
+                                            videoid: 'xyz'
+                                        }
+                                    }
+                                ],
+                                pricing: {
+                                    budget: 1000,
+                                    dailyLimit: 500
+                                }
+                            },
+                            {
+                                id: 'cam-5',
+                                user: 'u-3',
+                                cards: [
+                                    {
+                                        params: {
+                                            sponsor: 'Honda'
+                                        },
+                                        collateral: {
+                                            logo: 'honda.jpg'
+                                        },
+                                        data: {
+                                            service: 'vimeo',
+                                            videoid: '789'
+                                        }
+                                    }
+                                ],
+                                pricing: {
+                                    budget: 1000,
+                                    dailyLimit: 500
+                                }
                             }
                         ];
 
@@ -825,6 +995,16 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             campaign: model.items.value[2],
                             previewUrl: jasmine.any(String)
                         });
+
+                        expect(SelfieCampaignsCtrl.data['cam-4']).toEqual({
+                            campaign: model.items.value[3],
+                            previewUrl: jasmine.any(String)
+                        });
+
+                        expect(SelfieCampaignsCtrl.data['cam-5']).toEqual({
+                            campaign: model.items.value[4],
+                            previewUrl: jasmine.any(String)
+                        });
                     });
 
                     it('should get the preview url of each campaign', function() {
@@ -838,7 +1018,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     });
 
                     it('should call the campaign service for stats', function() {
-                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: 'cam-1,cam-2,cam-3'});
+                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: 'cam-1,cam-2,cam-3,cam-4,cam-5'});
                     });
 
                     it('should not load user data if user is not admin', function() {
@@ -910,6 +1090,36 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                             linkClicks: {},
                                             shareClicks: {}
                                         }
+                                    },
+                                    {
+                                        campaignId: 'cam-4',
+                                        summary: {
+                                            views: 2000,
+                                            totalSpend: '0.0000',
+                                            linkClicks: {},
+                                            shareClicks: {}
+                                        },
+                                        today: {
+                                            views: 0,
+                                            totalSpend: '0.0000',
+                                            linkClicks: {},
+                                            shareClicks: {}
+                                        }
+                                    },
+                                    {
+                                        campaignId: 'cam-5',
+                                        summary: {
+                                            views: 2000,
+                                            totalSpend: '200.50',
+                                            linkClicks: {},
+                                            shareClicks: {}
+                                        },
+                                        today: {
+                                            views: 236,
+                                            totalSpend: '20.2500',
+                                            linkClicks: {},
+                                            shareClicks: {}
+                                        }
                                     }
                                 ];
 
@@ -968,16 +1178,16 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 expect(SelfieCampaignsCtrl.data['cam-1'].stats).toEqual({
                                     total: {
                                         views: 100,
-                                        spend: '10.00',
+                                        spend: 10,
                                         budget: 500,
-                                        remaining: 490,
+                                        remaining: 2,
                                         interactions: 280
                                     },
                                     today: {
                                         views: 23,
-                                        spend: '1.1200',
+                                        spend: 1.12,
                                         budget: 100,
-                                        remaining: 98.88,
+                                        remaining: 1.12,
                                         interactions: 28
                                     }
                                 });
@@ -985,16 +1195,48 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 expect(SelfieCampaignsCtrl.data['cam-3'].stats).toEqual({
                                     total: {
                                         views: 2000,
-                                        spend: '500.50',
+                                        spend: 500.50,
                                         budget: 1000,
-                                        remaining: 499.50,
+                                        remaining: 50.05,
                                         interactions: 0
                                     },
                                     today: {
                                         views: 236,
-                                        spend: '18.1200',
+                                        spend: 18.12,
                                         budget: null,
                                         remaining: null,
+                                        interactions: 0
+                                    }
+                                });
+                                expect(SelfieCampaignsCtrl.data['cam-4'].stats).toEqual({
+                                    total: {
+                                        views: 2000,
+                                        spend: 0,
+                                        budget: 1000,
+                                        remaining: 100,
+                                        interactions: 0
+                                    },
+                                    today: {
+                                        views: 0,
+                                        spend: 0,
+                                        budget: 500,
+                                        remaining: 100,
+                                        interactions: 0
+                                    }
+                                });
+                                expect(SelfieCampaignsCtrl.data['cam-5'].stats).toEqual({
+                                    total: {
+                                        views: 2000,
+                                        spend: 200.50,
+                                        budget: 1000,
+                                        remaining: 20.05,
+                                        interactions: 0
+                                    },
+                                    today: {
+                                        views: 236,
+                                        spend: 20.25,
+                                        budget: 500,
+                                        remaining: 4.05,
                                         interactions: 0
                                     }
                                 });
@@ -1016,80 +1258,20 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                     lastName: 'Monster',
                                     company: 'Monster, Inc.'
                                 });
+                                expect(SelfieCampaignsCtrl.data['cam-4'].user).toEqual({
+                                    firstName: 'Turtle',
+                                    lastName: 'Monster',
+                                    company: 'Monster, Inc.'
+                                });
+                                expect(SelfieCampaignsCtrl.data['cam-5'].user).toEqual({
+                                    firstName: 'Turtle',
+                                    lastName: 'Monster',
+                                    company: 'Monster, Inc.'
+                                });
                             });
                         });
                     });
                 });
-
-                // describe('adding the data', function() {
-                //     var statsDeferred, thumbDeferred;
-
-                //     beforeEach(function() {
-                //         statsDeferred = $q.defer();
-                //         thumbDeferred = {
-                //             ensureFulfillment: jasmine.createSpy('ensureFulfillment')
-                //                 .and.returnValue($q.when({large: 'large-thumb.jpg'}))
-                //         };
-
-                //         spyOn(CampaignService, 'getAnalytics').and.returnValue(statsDeferred.promise);
-                //         spyOn(ThumbnailService, 'getThumbsFor').and.returnValue(thumbDeferred);
-
-                //         model.items.value = [
-                //             {
-                //                 id: 'cam-1',
-                //                 cards: [
-                //                     {
-                //                         params: {},
-                //                         collateral: {},
-                //                         data: {}
-                //                     }
-                //                 ]
-                //             },
-                //             {
-                //                 id: 'cam-2',
-                //                 cards: [
-                //                     {
-                //                         params: {
-                //                             sponsor: 'Diageo'
-                //                         },
-                //                         collateral: {
-                //                             logo: 'diageo.jpg'
-                //                         },
-                //                         data: {
-                //                             service: 'youtube',
-                //                             videoid: '123'
-                //                         },
-                //                         thumb: 'thumb.jpg'
-                //                     }
-                //                 ]
-                //             }
-                //         ];
-
-                //         SelfieCampaignsCtrl.initWithModel(model);
-
-                //         model.emit('PaginatedListHasUpdated');
-
-                //         $scope.$digest();
-                //     });
-
-                //     it('should contain data for each campaign', function() {
-                //         expect(SelfieCampaignsCtrl.data['cam-1']).toEqual({
-                //             campaign: model.items.value[0],
-                //             logo: undefined,
-                //             thumb: null
-                //         });
-
-                //         expect(SelfieCampaignsCtrl.data['cam-2']).toEqual({
-                //             campaign: model.items.value[1],
-                //             logo: 'diageo.jpg',
-                //             thumb: 'thumb.jpg'
-                //         });
-                //     });
-
-                //     it('should call for stats', function() {
-                //         expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: 'cam-1,cam-2'});
-                //     });
-                // });
             });
         });
     });

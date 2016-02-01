@@ -130,12 +130,17 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function generateStats(stats, campaign) {
+                var totalSpend = parseFloat(stats.summary.totalSpend),
+                    todaySpend = parseFloat(stats.today.totalSpend),
+                    budget = campaign.pricing.budget,
+                    limit = campaign.pricing.dailyLimit;
+
                 return {
                     total: {
                         views: stats.summary.views,
-                        spend: stats.summary.totalSpend,
-                        budget: campaign.pricing.budget,
-                        remaining: campaign.pricing.budget - parseFloat(stats.summary.totalSpend),
+                        spend: totalSpend,
+                        budget: budget,
+                        remaining: totalSpend ? (totalSpend / budget * 100) : 100,
                         interactions: (function() {
                             var total = 0;
                             forEach(stats.summary.linkClicks, function(clicks) {
@@ -149,10 +154,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     },
                     today: {
                         views: stats.today.views,
-                        spend: stats.today.totalSpend,
-                        budget: campaign.pricing.dailyLimit || null,
-                        remaining: campaign.pricing.dailyLimit ?
-                            campaign.pricing.dailyLimit - parseFloat(stats.today.totalSpend) : null,
+                        spend: todaySpend,
+                        budget: limit || null,
+                        remaining: limit ? ((todaySpend / limit * 100) || 100) : null,
                         interactions: (function() {
                             var total = 0;
                             forEach(stats.today.linkClicks, function(clicks) {
