@@ -619,9 +619,11 @@ function( angular , c6State  , PaginatedListState                    ,
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
                                                  'c6Debounce','c6AsyncQueue','ConfirmDialogService',
                                                  'CampaignService','SelfieCampaignSummaryService',
+                                                 'SoftAlertService',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
                                                   c6Debounce , c6AsyncQueue , ConfirmDialogService ,
-                                                  CampaignService , SelfieCampaignSummaryService ) {
+                                                  CampaignService , SelfieCampaignSummaryService ,
+                                                  SoftAlertService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -638,9 +640,21 @@ function( angular , c6State  , PaginatedListState                    ,
                 return c6State.goTo('Selfie:CampaignDashboard');
             }
 
+            function handleSuccess() {
+                SoftAlertService.display({
+                    success: true,
+                    action: 'saved',
+                    timer: 3000
+                });
+            }
+
             function handleError(err) {
                 // Show alert? Show indicator?
                 $log.error('Could not save the Campaign', err);
+                SoftAlertService.display({
+                    success: false,
+                    timer: 3000
+                });
             }
 
             function watchForPreview(params, oldParams) {
@@ -775,10 +789,16 @@ function( angular , c6State  , PaginatedListState                    ,
             this.save = function() {
                 $log.info('saving');
 
+                SoftAlertService.display({
+                    success: true,
+                    action: 'saving'
+                });
+
                 $scope.$broadcast('SelfieCampaignWillSave');
 
                 return saveCampaign()
                     .then(updateProxy)
+                    .then(handleSuccess)
                     .catch(handleError);
             };
 

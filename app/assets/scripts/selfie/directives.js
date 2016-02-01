@@ -243,6 +243,45 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
+        .directive('softAlert', ['SoftAlertService',
+        function                ( SoftAlertService ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/soft_alert.html',
+                scope: {},
+                link: function(scope) {
+                    scope.model = SoftAlertService.model;
+                }
+            };
+        }])
+
+        .service('SoftAlertService', ['$timeout',
+        function                     ( $timeout ) {
+            var service = this,
+                model = {};
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.display = function(dialogModel) {
+                extend(model, dialogModel);
+                model.show = true;
+
+                if (model.timer) {
+                    $timeout(function() {
+                        service.close();
+                    }, model.timer);
+                }
+            };
+
+            this.close = function() {
+                model.show = false;
+            };
+        }])
+
         .directive('datepicker', ['$timeout',
         function                 ( $timeout ) {
             return {

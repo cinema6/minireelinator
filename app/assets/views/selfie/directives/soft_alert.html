@@ -1,0 +1,14 @@
+<div ng-show="model.show">
+    <!--Soft alerts (like "Save Draft") -->
+    <div class="softAlert softAlert__success" ng-show="model.success">
+        <!--show this when saving -->
+        <span ng-if="model.action === 'saving'"><span class="softAlert__success--icon"><i class="fa fa-check-circle animateBounce"></i></span> Saving Draft</span>
+        <!--show this when saved -->
+        <span ng-if="model.action === 'saved'"><span class="softAlert__success--icon"><i class="fa fa-check-circle"></i></span> Saved as Draft</span>
+    </div>
+
+    <div class="softAlert softAlert__failure" ng-show="!model.success">
+        <!--show this when saving fails-->
+        <span><span class="softAlert__failure--icon"><i class="fa fa-exclamation-triangle"></i></span> Saving Draft Failed</span>
+    </div>
+</div>

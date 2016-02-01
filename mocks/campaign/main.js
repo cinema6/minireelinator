@@ -216,7 +216,7 @@ module.exports = function(http) {
             startPosition = page.skip + 1,
             endPosition = page.skip + Math.min(page.limit, campaigns.length);
 
-        this.respond(200, campaigns)
+        this.respond(200, Q.when(campaigns).delay(3000))
             .setHeaders({
                 'Content-Range': startPosition + '-' + endPosition + '/' + allCampaigns.length
             });
@@ -334,7 +334,7 @@ module.exports = function(http) {
 
         this.respond(200, Q.when(extend(campaign, {
             id: id
-        })).delay(1000));
+        })).delay(2000));
     });
 
     http.whenDELETE('/api/campaign/**', function(request) {
