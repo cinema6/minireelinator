@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.35.0.rc1]*
+  * [FIX]: Show remaining budget as a percentage in campaign list view
+
 ## v1.34.0 (February 1, 2016)
 * *[v1.34.0.rc3]*
   * [DESIGN]: Corrected the order of budget and spend, updated interaction
