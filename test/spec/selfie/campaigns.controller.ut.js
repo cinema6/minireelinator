@@ -12,7 +12,8 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             paginatedDbList,
             $scope,
             SelfieCampaignsCtrl,
-            CampaignService;
+            CampaignService,
+            SpinnerService;
 
         var campaigns,
             model;
@@ -30,6 +31,10 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 paginatedDbList = $injector.get('paginatedDbList');
                 ThumbnailService = $injector.get('ThumbnailService');
                 CampaignService = $injector.get('CampaignService');
+                SpinnerService = $injector.get('SpinnerService');
+
+                spyOn(SpinnerService, 'display');
+                spyOn(SpinnerService, 'close');
 
                 campaigns = c6State.get('Selfie:Campaigns');
                 campaigns.isAdmin = false;
@@ -825,7 +830,29 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
         });
 
         describe('$scope events', function() {
+            describe('$on PaginatedListWillUpdate', function() {
+                it('should display the spinner', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    $scope.$apply(function() {
+                        model.emit('PaginatedListWillUpdate');
+                    });
+
+                    expect(SpinnerService.display).toHaveBeenCalled();
+                });
+            });
+
             describe('$on PaginatedListHasUpdated', function() {
+                it('should close the spinner', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    $scope.$apply(function() {
+                        model.emit('PaginatedListHasUpdated');
+                    });
+
+                    expect(SpinnerService.close).toHaveBeenCalled();
+                });
+
                 describe('adding the data', function() {
                     var statsDeferred, thumbDeferred, usersDeferred, updateRequestsDeferred, updateRequests;
 
@@ -978,6 +1005,10 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         $scope.$apply(function() {
                             model.emit('PaginatedListHasUpdated');
                         });
+                    });
+
+                    it('should close the spinner', function() {
+                        expect(SpinnerService.close).toHaveBeenCalled();
                     });
 
                     it('should contain data for each campaign', function() {

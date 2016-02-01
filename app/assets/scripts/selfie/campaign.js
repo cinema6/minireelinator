@@ -92,9 +92,9 @@ function( angular , c6State  , PaginatedListState                    ,
                         statuses: this.filter,
                         text: this.search,
                     }, this.limit, this.page).ensureResolution()
-                    .finally(function() {
-                        SpinnerService.close();
-                    });
+                        .finally(function() {
+                            SpinnerService.close();
+                        });
                 };
                 this.afterModel = function() {
                     var user = c6State.get('Selfie').cModel;

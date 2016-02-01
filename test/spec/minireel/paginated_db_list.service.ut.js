@@ -160,6 +160,8 @@ define(['minireel/services'], function(servicesModule) {
                         beforeEach(function() {
                             initialItems = result.items;
 
+                            spyOn(result, 'emit');
+
                             dbDeferred = $q.defer();
                             cinema6.db.findAll.calls.reset();
                             cinema6.db.findAll.and.returnValue(dbDeferred.promise);
@@ -172,6 +174,10 @@ define(['minireel/services'], function(servicesModule) {
 
                         it('should return itself', function() {
                             expect(updateResult).toBe(result);
+                        });
+
+                        it('should emit an event', function() {
+                            expect(result.emit).toHaveBeenCalledWith('PaginatedListWillUpdate');
                         });
 
                         it('should remake a db request', function() {
@@ -223,6 +229,16 @@ define(['minireel/services'], function(servicesModule) {
                                 expect(result.items.selected).toEqual([false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]);
                             });
                         });
+
+                        describe('when call request fails', function() {
+                            it('should broadcast an event', function() {
+                                $rootScope.$apply(function() {
+                                    dbDeferred.reject('ERROR');
+                                });
+
+                                expect(result.emit).toHaveBeenCalledWith('PaginatedListHasUpdated');
+                            });
+                        });
                     });
 
                     describe('goTo(page)', function() {
@@ -231,6 +247,8 @@ define(['minireel/services'], function(servicesModule) {
 
                         beforeEach(function() {
                             initialItems = result.items;
+
+                            spyOn(result, 'emit');
 
                             cinema6.db.findAll.calls.reset();
                             dbDeferred = $q.defer();
@@ -241,6 +259,10 @@ define(['minireel/services'], function(servicesModule) {
 
                         it('should return itself', function() {
                             expect(goToResult).toBe(result);
+                        });
+
+                        it('should emit an event', function() {
+                            expect(result.emit).toHaveBeenCalledWith('PaginatedListWillUpdate');
                         });
 
                         it('should make a db request', function() {
@@ -278,8 +300,6 @@ define(['minireel/services'], function(servicesModule) {
                                     }
                                 };
 
-                                spyOn(result, 'emit');
-
                                 $rootScope.$apply(function() {
                                     dbDeferred.resolve(items);
                                 });
@@ -297,6 +317,16 @@ define(['minireel/services'], function(servicesModule) {
                             });
 
                             it('should broadcast an event', function() {
+                                expect(result.emit).toHaveBeenCalledWith('PaginatedListHasUpdated');
+                            });
+                        });
+
+                        describe('when call request fails', function() {
+                            it('should broadcast an event', function() {
+                                $rootScope.$apply(function() {
+                                    dbDeferred.reject('ERROR');
+                                });
+
                                 expect(result.emit).toHaveBeenCalledWith('PaginatedListHasUpdated');
                             });
                         });

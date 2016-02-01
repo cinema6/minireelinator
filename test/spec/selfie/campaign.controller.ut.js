@@ -32,7 +32,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             MiniReelService,
             ConfirmDialogService,
             SelfieCampaignSummaryService,
-            SelfieCampaignCtrl;
+            SelfieCampaignCtrl,
+            SoftAlertService;
 
         var cState,
             campaign,
@@ -98,6 +99,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 CampaignService = $injector.get('CampaignService');
                 MiniReelService = $injector.get('MiniReelService');
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
+                SoftAlertService = $injector.get('SoftAlertService');
                 SelfieCampaignSummaryService = $injector.get('SelfieCampaignSummaryService');
             });
 
@@ -393,7 +395,16 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     cState.saveCampaign.and.returnValue(saveCampaignDeferred.promise);
 
+                    spyOn(SoftAlertService, 'display');
+
                     SelfieCampaignCtrl.save();
+                });
+
+                it('should display the soft alert', function() {
+                    expect(SoftAlertService.display).toHaveBeenCalledWith({
+                        success: true,
+                        action: 'saving'
+                    });
                 });
 
                 it('should broadcast a WillSave event', function() {
@@ -419,6 +430,31 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                         expect(SelfieCampaignCtrl._proxyCard).not.toBe(SelfieCampaignCtrl.campaign.cards[0]);
                         expect(SelfieCampaignCtrl._proxyCampaign).not.toBe(SelfieCampaignCtrl.campaign);
+                    });
+
+                    it('should display the "saved" soft alert', function() {
+                        $scope.$apply(function() {
+                            saveCampaignDeferred.resolve(SelfieCampaignCtrl.campaign);
+                        });
+
+                        expect(SoftAlertService.display).toHaveBeenCalledWith({
+                            success: true,
+                            action: 'saved',
+                            timer: 3000
+                        });
+                    });
+                });
+
+                describe('when campaign save fails', function() {
+                    it('should display "failed" soft alert', function() {
+                        $scope.$apply(function() {
+                            saveCampaignDeferred.reject('ERROR');
+                        });
+
+                        expect(SoftAlertService.display).toHaveBeenCalledWith({
+                            success: false,
+                            timer: 3000
+                        });
                     });
                 });
             });
