@@ -1,9 +1,10 @@
 # MiniReelinator
 
-## v1.34.0 (January 28, 2016)
+## v1.34.0 (February 1, 2016)
 * *[v1.34.0.rc3]*
-  * [DESIGN]: Corrected the order of budget and spend, updated interaction 
+  * [DESIGN]: Corrected the order of budget and spend, updated interaction
     rate label on campaign list
+* *[/v1.34.0.rc3]*
 
 * *[v1.34.0.rc2]*
   * [FIX]: Fix for an issue where clicking on the preview link failed
