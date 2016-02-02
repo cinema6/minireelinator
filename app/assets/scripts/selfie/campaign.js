@@ -140,7 +140,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         views: stats.summary.views,
                         spend: totalSpend,
                         budget: budget,
-                        remaining: totalSpend ? (totalSpend / budget * 100) : 100,
+                        remaining: totalSpend ? ((1 - (totalSpend / budget)) * 100) : 100,
                         interactions: (function() {
                             var total = 0;
                             forEach(stats.summary.linkClicks, function(clicks) {
@@ -156,7 +156,9 @@ function( angular , c6State  , PaginatedListState                    ,
                         views: stats.today.views,
                         spend: todaySpend,
                         budget: limit || null,
-                        remaining: limit ? ((todaySpend / limit * 100) || 100) : null,
+                        remaining: limit ?
+                            (((todaySpend / limit && (1 - todaySpend / limit)) * 100) || 100) :
+                            null,
                         interactions: (function() {
                             var total = 0;
                             forEach(stats.today.linkClicks, function(clicks) {
