@@ -1770,7 +1770,7 @@ fa,
                 .column__activityTotals .campaign__budgetNumbers {
                     padding-left: 4.5em;
                 }
-                .column__activityTotals .hint, [data-hint] {
+                .column__activityTotals .hint, .column__activityTotals [data-hint] {
                     position: absolute !important;
                 }
         }/*
@@ -4144,9 +4144,9 @@ fa,
             .loginModal.modalDialog__group {
                 background: #eee;
             }
-            .loginModal.modalDialog__group .form__textBox {
+            /*.loginModal.modalDialog__group .form__textBox {
                 border-bottom: 2px solid #eee;
-            }
+            }*/
     /*Modal tall*/
     .modalBody__group--tall {
         height: auto;
