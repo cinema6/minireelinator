@@ -331,7 +331,10 @@ module.exports = function(http) {
         }
 
         grunt.file.write(filePath, JSON.stringify(campaign, null, '    '));
-
+        
+        if (campaign.name === 'fail') {
+            return this.respond(500, Q.when('server error').delay(1000));
+        }
         if (rejectFlag) {
             return this.respond(401, Q.when('Not Authorized').delay(1000));
         }
