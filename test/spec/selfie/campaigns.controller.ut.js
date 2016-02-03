@@ -666,14 +666,14 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         views: 100,
                                         spend: 10,
                                         budget: 500,
-                                        remaining: 2,
+                                        remaining: 98,
                                         interactions: 280
                                     },
                                     today: {
                                         views: 23,
                                         spend: 1.12,
                                         budget: 100,
-                                        remaining: 1.12,
+                                        remaining: 98.88,
                                         interactions: 28
                                     }
                                 });
@@ -683,7 +683,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         views: 2000,
                                         spend: 500.50,
                                         budget: 1000,
-                                        remaining: 50.05,
+                                        remaining: 49.95,
                                         interactions: 0
                                     },
                                     today: {
@@ -715,14 +715,14 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         views: 2000,
                                         spend: 200.50,
                                         budget: 1000,
-                                        remaining: 20.05,
+                                        remaining: 79.95,
                                         interactions: 0
                                     },
                                     today: {
                                         views: 236,
                                         spend: 20.25,
                                         budget: 500,
-                                        remaining: 4.05,
+                                        remaining: 95.95,
                                         interactions: 0
                                     }
                                 });
@@ -1211,14 +1211,14 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         views: 100,
                                         spend: 10,
                                         budget: 500,
-                                        remaining: 2,
+                                        remaining: 98,
                                         interactions: 280
                                     },
                                     today: {
                                         views: 23,
                                         spend: 1.12,
                                         budget: 100,
-                                        remaining: 1.12,
+                                        remaining: 98.88,
                                         interactions: 28
                                     }
                                 });
@@ -1228,7 +1228,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         views: 2000,
                                         spend: 500.50,
                                         budget: 1000,
-                                        remaining: 50.05,
+                                        remaining: 49.95,
                                         interactions: 0
                                     },
                                     today: {
@@ -1260,14 +1260,14 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         views: 2000,
                                         spend: 200.50,
                                         budget: 1000,
-                                        remaining: 20.05,
+                                        remaining: 79.95,
                                         interactions: 0
                                     },
                                     today: {
                                         views: 236,
                                         spend: 20.25,
                                         budget: 500,
-                                        remaining: 4.05,
+                                        remaining: 95.95,
                                         interactions: 0
                                     }
                                 });

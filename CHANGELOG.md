@@ -1,7 +1,15 @@
 # MiniReelinator
 
-* *[v1.35.0.rc1]*
+## v1.34.2 (February 2, 2016)
+* *[v1.34.2.rc1]*
+  * [FIX]: Fix remaining budget calculation in campaign list view
+* *[/v1.34.2.rc1]*
+
+## v1.34.1 (February 2, 2016)
+* *[v1.34.1.rc1]*
   * [FIX]: Show remaining budget as a percentage in campaign list view
+  * [FIX]: Fixed create campaign TOC Link positioning issue for small window size
+* *[/v1.34.1.rc1]*
 
 ## v1.34.0 (February 1, 2016)
 * *[v1.34.0.rc3]*
