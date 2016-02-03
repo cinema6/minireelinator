@@ -38,6 +38,10 @@
                     <div class="grid__item one-whole campaignSummary__group" c6-alias="SelfieManageCampaignCtrl.summary as summary">
                         <div class="grid">
                             <div class="grid__item campaignItem__list">
+                                <h3 ng-if="SelfieManageCampaignCtrl.showAdminTab" class="tk--hdr">
+                                    Campaign ID: {{campaign.id}}<br>
+                                    Card ID: {{campaign.cards[0].id}}
+                                </h3>
                                 <h3 class="tk--hdr">Campaign Summary</h3>
                                 <div class="campaignItems">
                                     <ul>

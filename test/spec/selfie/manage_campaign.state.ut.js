@@ -346,7 +346,7 @@ define(['app'], function(appModule) {
                 spyOn(c6State, 'goTo');
             });
 
-            it('shoud go to the Selfie:Manage:Campaign:Manage state if user is not an admin', function() {
+            it('should go to the Selfie:Manage:Campaign:Manage state if user is not an admin', function() {
                 selfieState.cModel.entitlements.adminCampaigns = false;
 
                 campaignState.afterModel(model);
@@ -355,7 +355,17 @@ define(['app'], function(appModule) {
                 expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
             });
 
-            it('shoud go to the Selfie:Manage:Campaign:Admin state if user is an admin', function() {
+            it('shoud go to the Selfie:Manage:Campaign:Manage state if user is an admin and campaign does not have an update request', function() {
+                selfieState.cModel.entitlements.adminCampaigns = true;
+
+                campaignState.afterModel(model);
+                campaignState.updateRequest = null;
+                campaignState.enter();
+
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
+            });
+
+            it('shoud go to the Selfie:Manage:Campaign:Admin state if user is an admin and campaign has an update request', function() {
                 selfieState.cModel.entitlements.adminCampaigns = true;
 
                 campaignState.afterModel(model);

@@ -1814,8 +1814,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.enter = function() {
-                    // if user is Admin go to Selfie:Manage:Campaign:Admin
-                    if (this.isAdmin) {
+                    // if user is Admin and campaign has an update request
+                    // go to Selfie:Manage:Campaign:Admin
+                    if (this.isAdmin && this.updateRequest) {
                         return c6State.goTo('Selfie:Manage:Campaign:Admin');
                     } else {
                         return c6State.goTo('Selfie:Manage:Campaign:Manage');
