@@ -207,7 +207,7 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    ['Twitter','Pinterest','Instagram'].forEach(function(link) {
+                    ['Twitter','Pinterest','Instagram','Vimeo'].forEach(function(link) {
                         expect(SelfieCampaignSponsorCtrl.links).toContain({
                             cssClass: link.toLowerCase(),
                             name: link,
