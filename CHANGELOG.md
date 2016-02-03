@@ -1,6 +1,6 @@
 # MiniReelinator
 
-* *[v1.34.2.rc1]*
+* *[v1.35.0.rc1]*
   * [FEATURE]: Show a spinner when loading the campaign list, creating new
     campaigns and opening existing draft campaigns
   * [FEATURE]: Add "soft alerts" that appear in the top right of campaign
