@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.35.0.rc1]*
+  * [FEATURE]: Add Vimeo Social Sharing link field in Campaign Creation screen
+
 ## v1.34.2 (February 2, 2016)
 * *[v1.34.2.rc1]*
   * [FIX]: Fix remaining budget calculation in campaign list view
