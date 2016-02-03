@@ -9,6 +9,7 @@
   * [FEATURE]: Add spinners to buttons that trigger actions that may take
     a few seconds to complete: copy, cancel, delete campaign, submit campaign,
     add credit card and save credit card
+  * [FEATURE]: Add Vimeo Social Sharing link field in Campaign Creation screen
 
 ## v1.34.2 (February 2, 2016)
 * *[v1.34.2.rc1]*

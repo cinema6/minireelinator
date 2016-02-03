@@ -1179,7 +1179,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.links = [
                     'Sharing','Facebook','Twitter',
-                    'Instagram','YouTube','Pinterest'
+                    'Instagram','YouTube','Pinterest',
+                    'Vimeo'
                 ].map(function(name) {
                     var href = card.links[name] || '',
                         cssClass = name.toLowerCase();
