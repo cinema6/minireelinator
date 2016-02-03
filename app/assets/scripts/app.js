@@ -250,7 +250,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
             $provide.constant('UserAdapter', ['$http','$q','cinema6','config',
             function                         ( $http , $q , cinema6 , config ) {
-                //var self = this;
+                var self = this;
 
                 function clean(model) {
                     var advertiser = model.advertiser;
@@ -272,9 +272,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     return config.apiBase + '/account/user/' + id;
                 }
 
-                /*function decorateAllUsersWithOrgs(users) {
+                function decorateAllUsersWithOrgs(users) {
                     return $q.all(users.map(self.decorateWithOrg));
-                }*/
+                }
 
                 this.decorateWithOrg = function(user) {
                     return cinema6.db.find('org', user.org)
@@ -298,7 +298,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(putInArray);
                 };
 
-                /*this.findQuery = function(type, query) {
+                this.findQuery = function(type, query) {
                     function returnData(response) {
                         return response.data;
                     }
@@ -314,7 +314,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(returnData)
                         .then(decorateAllUsersWithOrgs)
                         .catch(handleError);
-                };*/
+                };
 
                 /*this.create = function(type, data) {
                     return $http.post(config.apiBase + '/account/user', data)
@@ -337,7 +337,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(putInArray);
                 };
 
-                ['findAll', 'findQuery', 'create', 'erase'].forEach(function(method) {
+                ['findAll', 'create', 'erase'].forEach(function(method) {
                     this[method] = function() {
                         return $q.reject('UserAdapter.' + method + '() method is not implemented.');
                     };
