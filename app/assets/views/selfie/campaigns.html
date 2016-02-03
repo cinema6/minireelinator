@@ -143,9 +143,7 @@
                     <span ng-if="$this.updateRequest && $this.status === 'pending'" class="state__msg msg--pending hint--top" data-hint="Your campaign is being processed..."><i class="fa fa-exclamation-circle"  style="color: orange;"></i></span>
                     <span ng-if="$this.updateRequest && $this.status !== 'pending'" class="state__msg msg--pending hint--top" data-hint="Your changes are being processed..."><i class="fa fa-exclamation-circle"  style="color: orange;"></i></span>
                     <!--<span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...-->
-                    <h1 class="campaign__name tk--hdr">
-                        {{SelfieCampaignsCtrl.data[$this.id].campaign.name}}
-                    </h1>
+                    <h1 class="campaign__name tk--hdr">{{SelfieCampaignsCtrl.data[$this.id].campaign.name}}</h1>
                 <!-- add preview link -->
                 <a stop-propagate ng-href="{{SelfieCampaignsCtrl.data[$this.id].previewUrl}}" ng-if="SelfieCampaignsCtrl.data[$this.id].previewUrl" class="campaign__previewLink" target="_blank"><i class="fa fa-external-link"></i></a>
                 </div>

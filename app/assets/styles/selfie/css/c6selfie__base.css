@@ -2165,6 +2165,10 @@ fa,
                 transition:color 0.3s;
                 display: inline;
             }
+            .campaign__name:empty:before {
+                content: 'NA';
+                visibility: hidden;
+            }
 
                 .campaign__item:hover .campaign__name, .campaign__item:hover .campaign__previewLink {
                     color:#119DA4;
