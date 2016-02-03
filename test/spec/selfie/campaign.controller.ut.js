@@ -440,7 +440,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SoftAlertService.display).toHaveBeenCalledWith({
                             success: true,
                             action: 'saved',
-                            timer: 3000
+                            timer: 3500
                         });
                     });
                 });
@@ -453,7 +453,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                         expect(SoftAlertService.display).toHaveBeenCalledWith({
                             success: false,
-                            timer: 3000
+                            timer: 3500
                         });
                     });
                 });
@@ -472,6 +472,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     spyOn(c6State, 'goTo');
                     spyOn(ConfirmDialogService, 'display');
                     spyOn(SelfieCampaignSummaryService, 'display');
+                    spyOn(SelfieCampaignSummaryService, 'close');
+                    spyOn(SelfieCampaignSummaryService, 'pending');
                     spyOn(campaign, 'pojoify').and.callThrough();
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                         updateRequest.data = obj.data;
@@ -535,6 +537,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                 expect(debouncedFns).toContain(onAffirm);
                             });
 
+                            it('should set summary save to pending', function() {
+                                expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(true);
+                            });
+
                             it('should save the campaign', function() {
                                 expect(cState.saveCampaign).toHaveBeenCalled();
                             });
@@ -595,6 +601,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         expect(cState.allowExit).toBe(true);
                                     });
                                 });
+
+                                describe('when update request fails', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            updateRequestDeferred.reject({data:'Error!'});
+                                        });
+                                    });
+
+                                    it('should close the summary', function() {
+                                        expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
+                                    });
+
+                                    it('should set summary pending to false', function() {
+                                        expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
+                                    });
+
+                                    it('should show an error modal', function() {
+                                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
+                                    });
+                                });
                             });
                         });
                     });
@@ -627,7 +653,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                 var onAffirm, onCancel;
 
                                 beforeEach(function() {
-                                    cState.saveUpdateRequest.and.returnValue(updateRequestDeferred);
+                                    cState.saveUpdateRequest.and.returnValue(updateRequestDeferred.promise);
                                     cState.updateRequest = { id: 'ur-123' };
 
                                     SelfieCampaignCtrl.submit();
@@ -645,6 +671,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         $rootScope.$apply(function() {
                                             onAffirm();
                                         });
+                                    });
+
+                                    it('should set summary save to pending', function() {
+                                        expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(true);
                                     });
 
                                     it('should save the updateRequest', function() {
@@ -665,6 +695,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                             });
                                         });
 
+                                        it('should set summary pending to false and close it', function() {
+                                            expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
+                                            expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
+                                        });
+
                                         it('should not modify the status on the campaign bound in the UI', function() {
                                             expect(SelfieCampaignCtrl.campaign.status).toBe('paused');
                                         });
@@ -675,6 +710,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                                         it('should set the allowExit flag on the cState', function() {
                                             expect(cState.allowExit).toBe(true);
+                                        });
+                                    });
+
+                                    describe('when update request fails', function() {
+                                        beforeEach(function() {
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.reject({data:'Error!'});
+                                            });
+                                        });
+
+                                        it('should close the summary', function() {
+                                            expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
+                                        });
+
+                                        it('should set summary pending to false', function() {
+                                            expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
+                                        });
+
+                                        it('should show an error modal', function() {
+                                            expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
                                         });
                                     });
                                 });
@@ -703,6 +758,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         $rootScope.$apply(function() {
                                             onAffirm();
                                         });
+                                    });
+
+                                    it('should set summary save to pending', function() {
+                                        expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(true);
                                     });
 
                                     it('should not save the campaign', function() {
@@ -750,6 +809,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                                 });
 
                                                 expect(cState.allowExit).toBe(true);
+                                            });
+                                        });
+
+                                        describe('when update request fails', function() {
+                                            beforeEach(function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.reject({data:'Error!'});
+                                                });
+                                            });
+
+                                            it('should close the summary', function() {
+                                                expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
+                                            });
+
+                                            it('should set summary pending to false', function() {
+                                                expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
+                                            });
+
+                                            it('should show an error modal', function() {
+                                                expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
                                             });
                                         });
                                     });
@@ -800,12 +879,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             .and.returnValue(newCampaignDeferred.promise);
                         return newCampaign;
                     });
+                    spyOn(ConfirmDialogService, 'display');
 
                     SelfieCampaignCtrl.copy();
                 });
 
                 it('should be wrapped in a c6AsyncQueue', function() {
                     expect(debouncedFns).toContain(SelfieCampaignCtrl.copy);
+                });
+
+                it('should set pendingCopy to true', function() {
+                    expect(SelfieCampaignCtrl.pendingCopy).toBe(true);
                 });
 
                 it('should create a new campaign with the current campaign', function() {
@@ -817,12 +901,42 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 describe('when the new campaign is saved', function() {
-                    it('should go to EditCampaign state with the new campaign', function() {
+                    beforeEach(function() {
                         $rootScope.$apply(function() {
                             newCampaignDeferred.resolve(newCampaign);
                         });
+                    });
 
+                    it('should not show an error modal', function() {
+                        expect(ConfirmDialogService.display).not.toHaveBeenCalled();
+                    });
+
+                    it('should go to EditCampaign state with the new campaign', function() {
                         expect(c6State.goTo).toHaveBeenCalledWith('Selfie:EditCampaign', [newCampaign]);
+                    });
+
+                    it('should remove pendingCopy flag', function() {
+                        expect(SelfieCampaignCtrl.pendingCopy).toBe(false);
+                    });
+                });
+
+                describe('when the request fails', function() {
+                    beforeEach(function() {
+                        $rootScope.$apply(function() {
+                            newCampaignDeferred.reject({data: 'Error!'});
+                        });
+                    });
+
+                    it('should not go to EditCampaign state with the new campaign', function() {
+                        expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:EditCampaign', [newCampaign]);
+                    });
+
+                    it('should show an error modal', function() {
+                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
+                    });
+
+                    it('should remove pendingCopy flag', function() {
+                        expect(SelfieCampaignCtrl.pendingCopy).toBe(false);
                     });
                 });
             });
@@ -832,6 +946,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                 beforeEach(function() {
                     spyOn(ConfirmDialogService, 'display');
+                    spyOn(campaign, 'erase').and.returnValue($q.when(null));
+                    spyOn(c6State, 'goTo');
 
                     SelfieCampaignCtrl.delete();
 
@@ -848,15 +964,24 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
 
                     it('should erase the campaign and go to the dashboard', function() {
-                        spyOn(campaign, 'erase').and.returnValue($q.when(null));
-                        spyOn(c6State, 'goTo');
-
                         $rootScope.$apply(function() {
                             onAffirm();
                         });
 
                         expect(campaign.erase).toHaveBeenCalled();
                         expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                    });
+
+                    it('should show an error modal if erase fails', function() {
+                        ConfirmDialogService.display.calls.reset();
+
+                        campaign.erase.and.returnValue($q.reject({data:'Error!'}));
+
+                        $rootScope.$apply(function() {
+                            onAffirm();
+                        });
+
+                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
                     });
                 });
             });

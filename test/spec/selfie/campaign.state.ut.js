@@ -15,7 +15,8 @@ define(['app'], function(appModule) {
                 MiniReelService,
                 SelfieLogoService,
                 CampaignService,
-                ConfirmDialogService;
+                ConfirmDialogService,
+                SpinnerService;
 
             var card,
                 categories,
@@ -38,6 +39,7 @@ define(['app'], function(appModule) {
                     SelfieLogoService = $injector.get('SelfieLogoService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
                     CampaignService = $injector.get('CampaignService');
+                    SpinnerService = $injector.get('SpinnerService');
 
                     card = MiniReelService.createCard('video');
                     categories = [
@@ -271,6 +273,8 @@ define(['app'], function(appModule) {
                         }
                     });
                     spyOn(SelfieLogoService, 'getLogos').and.returnValue($q.when(logos));
+                    spyOn(SpinnerService, 'display');
+                    spyOn(SpinnerService, 'close');
                 });
 
                 describe('when campaign has an org', function() {
@@ -290,6 +294,9 @@ define(['app'], function(appModule) {
                             logos: logos,
                             paymentMethods: paymentMethods
                         });
+
+                        expect(SpinnerService.display).toHaveBeenCalled();
+                        expect(SpinnerService.close).toHaveBeenCalled();
                     });
                 });
 
@@ -311,6 +318,28 @@ define(['app'], function(appModule) {
                             logos: logos,
                             paymentMethods: paymentMethods
                         });
+
+                        expect(SpinnerService.display).toHaveBeenCalled();
+                        expect(SpinnerService.close).toHaveBeenCalled();
+                    });
+                });
+
+                describe('when a request fails', function() {
+                    it('should still close the spinner', function() {
+                        campaign.org = 'o-99999';
+                        campaignState.campaign = campaign;
+                        campaignState.user = user;
+
+                        spyOn(c6State, 'goTo');
+                        SelfieLogoService.getLogos.and.returnValue($q.reject());
+
+                        $rootScope.$apply(function() {
+                            campaignState.model().then(success, failure);
+                        });
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                        expect(SpinnerService.display).toHaveBeenCalled();
+                        expect(SpinnerService.close).toHaveBeenCalled();
                     });
                 });
             });

@@ -433,8 +433,10 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService','c6State','$q',
                                                       'CampaignService','ConfirmDialogService',
+                                                      'SpinnerService',
             function                                 ( cinema6 , SelfieLogoService , c6State , $q ,
-                                                       CampaignService , ConfirmDialogService ) {
+                                                       CampaignService , ConfirmDialogService ,
+                                                       SpinnerService ) {
                 var SelfieState = c6State.get('Selfie');
 
                 function campaignExtend(target, extension) {
@@ -509,6 +511,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.model = function() {
+                    SpinnerService.display();
+
                     return $q.all({
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
                         logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id),
@@ -518,6 +522,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     }).catch(function() {
                         c6State.goTo('Selfie:CampaignDashboard');
                         return $q.reject();
+                    })
+                    .finally(function() {
+                        SpinnerService.close();
                     });
                 };
 
@@ -646,6 +653,9 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function returnToDashboard() {
+                SelfieCampaignSummaryService.close();
+                SelfieCampaignSummaryService.pending(false);
+
                 return c6State.goTo('Selfie:CampaignDashboard');
             }
 
@@ -653,16 +663,28 @@ function( angular , c6State  , PaginatedListState                    ,
                 SoftAlertService.display({
                     success: true,
                     action: 'saved',
-                    timer: 3000
+                    timer: 3500
                 });
             }
 
-            function handleError(err) {
-                // Show alert? Show indicator?
-                $log.error('Could not save the Campaign', err);
+            function handleSaveError() {
                 SoftAlertService.display({
                     success: false,
-                    timer: 3000
+                    timer: 3500
+                });
+            }
+
+            function showErrorModal(error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was an a problem processing your request: ' + error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
                 });
             }
 
@@ -808,7 +830,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 return saveCampaign()
                     .then(updateProxy)
                     .then(handleSuccess)
-                    .catch(handleError);
+                    .catch(handleSaveError);
             };
 
             this.submit = function() {
@@ -842,13 +864,18 @@ function( angular , c6State  , PaginatedListState                    ,
                         return SelfieCampaignSummaryService.close();
                     },
                     onAffirm: queue.debounce(function() {
-                        SelfieCampaignSummaryService.close();
+                        SelfieCampaignSummaryService.pending(true);
 
                         return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
                             .then(createUpdateRequest)
                             .then(setPending)
                             .then(returnToDashboard)
-                            .catch(handleError);
+                            .catch(function(err) {
+                                SelfieCampaignSummaryService.close();
+                                SelfieCampaignSummaryService.pending(false);
+                                return $q.reject(err);
+                            })
+                            .catch(showErrorModal);
                     })
                 });
             };
@@ -857,10 +884,16 @@ function( angular , c6State  , PaginatedListState                    ,
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
 
             this.copy = queue.debounce(function() {
-                return CampaignService.create(this.campaign, this.user, this.advertiser)
-                    .save().then(function(campaign) {
+                SelfieCampaignCtrl.pendingCopy = true;
+
+                return CampaignService.create(this.campaign, this.user, this.advertiser).save()
+                    .then(function(campaign) {
                         return c6State.goTo('Selfie:EditCampaign', [campaign]);
-                    }).catch(handleError);
+                    })
+                    .catch(showErrorModal)
+                    .finally(function() {
+                        SelfieCampaignCtrl.pendingCopy = false;
+                    });
             }, this);
 
             this.delete = function() {
@@ -878,7 +911,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         return cState._campaign.erase()
                             .then(function() {
                                 return c6State.goTo('Selfie:CampaignDashboard');
-                            }).catch(handleError);
+                            }).catch(showErrorModal);
                     })
                 });
             };
@@ -1677,6 +1710,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.model = model;
                 this.token = cState.token;
+                SelfieCampaignCtrl.pendingCreditCard = false;
             };
 
             this.success = function(method) {
@@ -1884,15 +1918,26 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function submitUpdate(action) {
+                ConfirmDialogService.pending(true);
+
                 return createUpdateRequest(action)
                     .then(setUpdateRequest)
                     .then(updateProxy)
                     .then(function() {
+                        ConfirmDialogService.close();
+                        ConfirmDialogService.pending(false);
+
                         if ((/delete|cancel/).test(action)) {
                             // if user has deleted or canceled the campaign
                             // we probably want to go back the dashboard
                             c6State.goTo('Selfie:CampaignDashboard');
                         }
+                    })
+                    .catch(function(err) {
+                        ConfirmDialogService.close();
+                        ConfirmDialogService.pending(false);
+
+                        return $q.reject(err);
                     })
                     .catch(handleError);
             }
@@ -1959,8 +2004,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         return ConfirmDialogService.close();
                     },
                     onAffirm: queue.debounce(function() {
-                        ConfirmDialogService.close();
-
                         return submitUpdate(action);
                     })
                 });
@@ -1987,9 +2030,16 @@ function( angular , c6State  , PaginatedListState                    ,
             }, this);
 
             this.copy = queue.debounce(function() {
+                SelfieManageCampaignCtrl.pendingCopy = true;
+
                 return CampaignService.create(this.campaign.pojoify(), this.user, this.advertiser)
-                    .save().then(function(campaign) {
+                    .save()
+                    .then(function(campaign) {
                         return c6State.goTo('Selfie:EditCampaign', [campaign]);
+                    })
+                    .catch(handleError)
+                    .finally(function() {
+                        SelfieManageCampaignCtrl.pendingCopy = false;
                     });
             }, this);
 

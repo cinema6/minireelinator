@@ -124,7 +124,7 @@ module.exports = function(http) {
 
         grunt.file.write(objectPath('updates', id), JSON.stringify(updateRequest, null, '    '));
 
-        this.respond(201, extend(updateRequest, { id: id }));
+        this.respond(201, Q.when(extend(updateRequest, { id: id })).delay(1000));
     });
 
     http.whenGET('/api/campaigns', function(request) {

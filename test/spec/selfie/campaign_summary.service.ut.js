@@ -126,5 +126,17 @@ define(['app'], function(appModule) {
                 expect(SelfieCampaignSummaryService.model.show).toBe(false);
             });
         });
+
+        describe('pending(bool)', function() {
+            it('should set the pending flag on the model', function() {
+                SelfieCampaignSummaryService.pending(true);
+
+                expect(SelfieCampaignSummaryService.model.pending).toBe(true);
+
+                SelfieCampaignSummaryService.pending(false);
+
+                expect(SelfieCampaignSummaryService.model.pending).toBe(false);
+            });
+        });
     });
 });

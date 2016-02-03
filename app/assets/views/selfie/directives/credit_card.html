@@ -16,7 +16,16 @@
                 <p class="tk--copy modal__copy">Your campaign would use the primary payment method provided in the account settings unless you choose to use a different option.</p>
             </header>
 
-            <div class="grid grid--center">
+            <div class="assetLoader ui__connector" ng-show="!ready">
+                <div class="assetLoader__status">
+                    <div class="assetLoader__status--icon">
+                        <div class="spinner"></div>
+                    </div>
+                    <div class="assetLoader__status--text text-small">Loading secure credit card form...</div>
+                </div>
+            </div>
+
+            <div class="grid grid--center" ng-show="ready">
 
                 <div class="grid__item two-thirds">
                     <div class="form__items addPayment__method">
@@ -129,7 +138,7 @@
                             </fieldset>
 
                             <div class="ui__btnHolder--sub">
-                                <button class="action__btn action__btn--wide">Save</button>
+                                <button ng-class="{ 'btnSpinner__waiting' : pending }" ng-click="pending = true" class="action__btn action__btn--wide">Save</button>
                             </div>
 
                             <span class="alertMessage alert__failure text--center" ng-show="!!errorMessage">{{errorMessage}}</span>
@@ -140,7 +149,7 @@
                 </div><!--.grid__item .three-fifths-->
             </div><!--.grid .grid--center-->
         </section><!--.grid__item .five-sixths-->
-            <div class="payment__seals grid__item one-whole">
+            <div class="payment__seals grid__item one-whole" ng-show="ready">
                 <div class="payment__sealItem braintree--seal">
                     <span class="payment__itemText"> Secure payments by</span>
                     <a href="https://www.braintreegateway.com/merchants/hrmsqg32vjw32sjz/verified" target="_blank">

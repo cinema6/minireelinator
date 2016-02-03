@@ -1056,6 +1056,11 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
                     braintree.setup(scope.clientToken, 'custom', {
                         id: 'c6-payment-method',
+                        onReady: function() {
+                            scope.$apply(function() {
+                                scope.ready = true;
+                            });
+                        },
                         hostedFields: {
                             number: {
                                 selector: '#c6-addCard-number'
@@ -1107,6 +1112,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         onError: function(event) {
                             scope.$apply(function() {
                                 scope.errorMessage = event.message;
+                                scope.pending = false;
                             });
                         },
                         onPaymentMethodReceived: function(method) {
@@ -1117,6 +1123,9 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                                 scope.onSuccess({ method: method })
                                     .catch(function(err) {
                                         scope.errorMessage = err.data;
+                                    })
+                                    .finally(function() {
+                                        scope.pending = false;
                                     });
                             });
                         }
@@ -1326,6 +1335,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
             this.close = function() {
                 model.show = false;
+            };
+
+            this.pending = function(bool) {
+                model.pending = bool;
             };
         }])
 

@@ -67,7 +67,7 @@ module.exports = function(http) {
             'Db2RlIjoiVVNEIn0sImNvaW5iYXNlRW5hYmxlZCI6ZmFsc2UsIm1lcmNoYW50SW'+
             'QiOiJ6dHJwaGNmMjgzYnhnbjJmIiwidmVubW8iOiJvZmYifQ==';
 
-        this.respond(200, { clientToken: token });
+        this.respond(200, Q.when({ clientToken: token }).delay(1000) );
     });
 
     http.whenPOST('/api/payments/methods', function(request) {

@@ -285,6 +285,10 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
             this.close = function() {
                 dialog = null;
             };
+
+            this.pending = function(bool) {
+                model.pending = bool;
+            };
         }])
 
         .directive('confirmDialog', ['ConfirmDialogService',
