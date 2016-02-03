@@ -67,6 +67,18 @@
                     expect(ConfirmDialogService.model.dialog).toBeNull();
                 });
             });
+
+            describe('pending(bool)', function() {
+                it('should set the pending prop on the model', function() {
+                    ConfirmDialogService.pending(true);
+
+                    expect(ConfirmDialogService.model.pending).toBe(true);
+
+                    ConfirmDialogService.pending(false);
+
+                    expect(ConfirmDialogService.model.pending).toBe(false);
+                });
+            });
         });
     });
 }());

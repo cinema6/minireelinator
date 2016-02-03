@@ -63,6 +63,7 @@ define(['app'], function(appModule) {
 
                     expect(SelfieAccountPaymentNewCtrl.model).toBe(model);
                     expect(SelfieAccountPaymentNewCtrl.token).toBe(cState.token);
+                    expect($scope.SelfieAccountPaymentCtrl.pendingCreditCard).toBe(false);
                 });
             });
 

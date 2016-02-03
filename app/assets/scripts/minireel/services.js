@@ -277,6 +277,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             selected: []
                         };
 
+                    list.emit('PaginatedListWillUpdate');
+
                     this.page = page;
 
                     this.items = scopePromise(cinema6.db.findAll(this.type, extend(this.query, {
@@ -294,7 +296,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 total: Math.ceil(info.total / limit)
                             };
                             list.selectNone();
-
+                        })
+                        .finally(function() {
                             list.emit('PaginatedListHasUpdated');
                         });
 
@@ -527,7 +530,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                     this.websiteData = function(uri) {
                         var encoded = encodeURIComponent(uri),
-                            whitelist = ['facebook','twitter','instagram','youtube','pinterest'];
+                            whitelist = ['facebook','twitter','instagram',
+                                'youtube','pinterest','vimeo'];
 
                         return $http.get('/api/collateral/website-data?uri=' + encoded)
                             .then(function(resp) {

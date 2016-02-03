@@ -124,7 +124,7 @@ module.exports = function(http) {
 
         grunt.file.write(objectPath('updates', id), JSON.stringify(updateRequest, null, '    '));
 
-        this.respond(201, extend(updateRequest, { id: id }));
+        this.respond(201, Q.when(extend(updateRequest, { id: id })).delay(1000));
     });
 
     http.whenGET('/api/campaigns', function(request) {
@@ -216,7 +216,11 @@ module.exports = function(http) {
             startPosition = page.skip + 1,
             endPosition = page.skip + Math.min(page.limit, campaigns.length);
 
-        this.respond(200, campaigns)
+        if (request.query.limit !== '1') {
+            // return this.respond(500, Q.when('NOT FOUND').delay(3000));
+        }
+
+        this.respond(200, Q.when(campaigns).delay(request.query.limit !== '1' ? 1000 : 0))
             .setHeaders({
                 'Content-Range': startPosition + '-' + endPosition + '/' + allCampaigns.length
             });
@@ -327,14 +331,17 @@ module.exports = function(http) {
         }
 
         grunt.file.write(filePath, JSON.stringify(campaign, null, '    '));
-
+        
+        if (campaign.name === 'fail') {
+            return this.respond(500, Q.when('server error').delay(1000));
+        }
         if (rejectFlag) {
             return this.respond(401, Q.when('Not Authorized').delay(1000));
         }
 
         this.respond(200, Q.when(extend(campaign, {
             id: id
-        })).delay(1000));
+        })).delay(2000));
     });
 
     http.whenDELETE('/api/campaign/**', function(request) {

@@ -86,6 +86,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             spyOn(ConfirmDialogService, 'display');
             spyOn(ConfirmDialogService, 'close');
+            spyOn(ConfirmDialogService, 'pending');
 
             c6State.get('Selfie').cModel = {
                 entitlements: {
@@ -498,6 +499,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         expect(debouncedFns).toContain(onAffirm);
                                     });
 
+                                    it('should set pending flag', function() {
+                                        expect(ConfirmDialogService.pending).toHaveBeenCalledWith(true);
+                                    });
+
                                     it('should create an update request with a pojoified campaign', function() {
                                         expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
                                             data: expectedData,
@@ -550,6 +555,25 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                             expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
                                         });
                                     });
+
+                                    describe('when the update request fails', function() {
+                                        beforeEach(function() {
+                                            ConfirmDialogService.display.calls.reset();
+
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.reject({data: 'Error!'});
+                                            });
+                                        });
+
+                                        it('should close the dialog', function() {
+                                            expect(ConfirmDialogService.close).toHaveBeenCalled()
+                                            expect(ConfirmDialogService.pending).toHaveBeenCalledWith(false);
+                                        });
+
+                                        it('should open a new error dialog', function() {
+                                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                        });
+                                    });
                                 });
 
                                 describe('when there is an existing update request', function() {
@@ -569,6 +593,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                                     it('should be wrapped in a c6AsyncQueue', function() {
                                         expect(debouncedFns).toContain(onAffirm);
+                                    });
+
+                                    it('should set pending flag', function() {
+                                        expect(ConfirmDialogService.pending).toHaveBeenCalledWith(true);
                                     });
 
                                     it('should not create an update request', function() {
@@ -636,14 +664,36 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                             });
                                         });
                                     });
+
+                                    describe('when the update request fails', function() {
+                                        beforeEach(function() {
+                                            ConfirmDialogService.display.calls.reset();
+
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.reject({data: 'Error!'});
+                                            });
+                                        });
+
+                                        it('should close the dialog', function() {
+                                            expect(ConfirmDialogService.close).toHaveBeenCalled()
+                                            expect(ConfirmDialogService.pending).toHaveBeenCalledWith(false);
+                                        });
+
+                                        it('should open a new error dialog', function() {
+                                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                        });
+                                    });
                                 });
                             });
                         });
                     });
 
                     describe('delete', function() {
+                        var eraseDeferred;
+
                         beforeEach(function() {
-                            spyOn(campaign, 'erase').and.returnValue($q.when(campaign));
+                            eraseDeferred = $q.defer();
+                            spyOn(campaign, 'erase').and.returnValue(eraseDeferred.promise);
                             // spyOn(c6State, 'goTo');
                             SelfieManageCampaignCtrl.update('delete');
 
@@ -666,20 +716,58 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                 expect(debouncedFns).toContain(onAffirm);
                             });
 
+                            it('should set pending flag', function() {
+                                expect(ConfirmDialogService.pending).toHaveBeenCalledWith(true);
+                            });
+
                             it('should call erase()', function() {
                                 expect(campaign.erase).toHaveBeenCalled();
                             });
 
-                            it('should not create an update request', function() {
-                                expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                            describe('when erase request succeeds', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        eraseDeferred.resolve(campaign);
+                                    });
+                                });
+
+                                it('should not create an update request', function() {
+                                    expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                                });
+
+                                it('should update proxy campaign', function() {
+                                    expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                });
+
+                                it('should go to Selfie:CampaignDashboard', function() {
+                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                });
                             });
 
-                            it('should update proxy campaign', function() {
-                                expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                            });
+                            describe('when erase request fails', function() {
+                                beforeEach(function() {
+                                    ConfirmDialogService.display.calls.reset();
 
-                            it('should go to Selfie:CampaignDashboard', function() {
-                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                    $rootScope.$apply(function() {
+                                        eraseDeferred.reject('Failed');
+                                    });
+                                });
+
+                                it('should not create an update request', function() {
+                                    expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                                });
+
+                                it('should not update proxy campaign', function() {
+                                    expect(SelfieManageCampaignCtrl._proxyCampaign).not.toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                });
+
+                                it('should not go to Selfie:CampaignDashboard', function() {
+                                    expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                });
+
+                                it('should show an error dialog', function() {
+                                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                });
                             });
                         });
                     });
@@ -759,6 +847,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(debouncedFns).toContain(SelfieManageCampaignCtrl.copy);
                 });
 
+                it('should set pendingCopy flag', function() {
+                    expect(SelfieManageCampaignCtrl.pendingCopy).toBe(true);
+                });
+
                 it('should create a new campaign with a pojoified campaign', function() {
                     expect(SelfieManageCampaignCtrl.campaign.pojoify).toHaveBeenCalled();
                     expect(CampaignService.create).toHaveBeenCalledWith(SelfieManageCampaignCtrl.campaign.pojoify(), user, advertiser);
@@ -769,12 +861,40 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 describe('when the new campaign is saved', function() {
-                    it('should go to EditCampaign state with the new campaign', function() {
+                    beforeEach(function() {
                         $rootScope.$apply(function() {
                             newCampaignDeferred.resolve(newCampaign);
                         });
+                    });
 
+                    it('should go to EditCampaign state with the new campaign', function() {
                         expect(c6State.goTo).toHaveBeenCalledWith('Selfie:EditCampaign', [newCampaign]);
+                    });
+
+                    it('should remove pendingCopy flag', function() {
+                        expect(SelfieManageCampaignCtrl.pendingCopy).toBe(false);
+                    });
+                });
+
+                describe('when the request fails', function() {
+                    beforeEach(function() {
+                        ConfirmDialogService.display.calls.reset();
+
+                        $rootScope.$apply(function() {
+                            newCampaignDeferred.reject('Error!');
+                        });
+                    });
+
+                    it('should not go to EditCampaign state with the new campaign', function() {
+                        expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:EditCampaign', [newCampaign]);
+                    });
+
+                    it('should open an error dialog', function() {
+                        expect(ConfirmDialogService.display).toHaveBeenCalled();
+                    });
+
+                    it('should remove pendingCopy flag', function() {
+                        expect(SelfieManageCampaignCtrl.pendingCopy).toBe(false);
                     });
                 });
             });

@@ -243,6 +243,75 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
+        .directive('softAlert', ['SoftAlertService',
+        function                ( SoftAlertService ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/soft_alert.html',
+                scope: {},
+                link: function(scope) {
+                    scope.model = SoftAlertService.model;
+                }
+            };
+        }])
+
+        .service('SoftAlertService', ['$timeout',
+        function                     ( $timeout ) {
+            var service = this,
+                model = {};
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.display = function(dialogModel) {
+                extend(model, dialogModel);
+                model.show = true;
+
+                if (model.timer) {
+                    $timeout(function() {
+                        service.close();
+                    }, model.timer);
+                }
+            };
+
+            this.close = function() {
+                model.show = false;
+            };
+        }])
+
+        .directive('spinner', ['SpinnerService',
+        function              ( SpinnerService ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/spinner.html',
+                scope: {},
+                link: function(scope) {
+                    scope.model = SpinnerService.model;
+                }
+            };
+        }])
+
+        .service('SpinnerService', [function() {
+            var model = {};
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.display = function() {
+                model.show = true;
+            };
+
+            this.close = function() {
+                model.show = false;
+            };
+        }])
+
         .directive('datepicker', ['$timeout',
         function                 ( $timeout ) {
             return {
@@ -987,6 +1056,11 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
                     braintree.setup(scope.clientToken, 'custom', {
                         id: 'c6-payment-method',
+                        onReady: function() {
+                            scope.$apply(function() {
+                                scope.ready = true;
+                            });
+                        },
                         hostedFields: {
                             number: {
                                 selector: '#c6-addCard-number'
@@ -1038,6 +1112,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                         onError: function(event) {
                             scope.$apply(function() {
                                 scope.errorMessage = event.message;
+                                scope.pending = false;
                             });
                         },
                         onPaymentMethodReceived: function(method) {
@@ -1048,6 +1123,9 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                                 scope.onSuccess({ method: method })
                                     .catch(function(err) {
                                         scope.errorMessage = err.data;
+                                    })
+                                    .finally(function() {
+                                        scope.pending = false;
                                     });
                             });
                         }
@@ -1257,6 +1335,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
             this.close = function() {
                 model.show = false;
+            };
+
+            this.pending = function(bool) {
+                model.pending = bool;
             };
         }])
 

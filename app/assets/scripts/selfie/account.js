@@ -437,6 +437,7 @@ function( angular , c6State  ) {
             this.initWithModel = function(model) {
                 this.model = model;
                 this.token = cState.token;
+                SelfieAccountPaymentCtrl.pendingCreditCard = false;
             };
 
             this.success = function(method) {

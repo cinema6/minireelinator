@@ -66,7 +66,7 @@
                         <i class="faa fa-plus"></i>
                         PayPal
                     </button><!--
-                --><a c6-sref="Selfie:Account:Payment:New" class="action__btnSecondary action__btnSecondary--big palm--one-whole"><i class="faa fa-plus"></i>
+                --><a c6-sref="Selfie:Account:Payment:New" ng-class="{ 'btnSpinner__waiting' : SelfieAccountPaymentCtrl.pendingCreditCard }" ng-click="SelfieAccountPaymentCtrl.pendingCreditCard = true" class="action__btnSecondary action__btnSecondary--big palm--one-whole"><i class="faa fa-plus"></i>
                         Credit Card</a>
                 </div>
                 </div>

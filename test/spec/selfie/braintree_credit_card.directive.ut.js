@@ -104,6 +104,18 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
             });
         });
 
+        describe('when braintree emits onReady', function() {
+            it('should set the ready flag on the scope', function() {
+                compileDirective();
+
+                expect(scope.ready).toBe(undefined);
+
+                config.onReady();
+
+                expect(scope.ready).toBe(true);
+            });
+        });
+
         describe('when braintree sends onFieldEvents', function() {
             var container, parentElement;
 
@@ -233,9 +245,15 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                         nonce: braintreeObject.nonce
                     }
                 });
+
+                $scope.$apply(function() {
+                    deferred.resolve({});
+                });
+
+                expect(scope.pending).toBe(false);
             });
 
-            it('should set an error maessage if onSuccess fails', function() {
+            it('should set an error message if onSuccess fails', function() {
                 config.onPaymentMethodReceived(braintreeObject);
 
                 $scope.$apply(function() {
@@ -243,6 +261,7 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                 });
 
                 expect(scope.errorMessage).toEqual('There was an error!');
+                expect(scope.pending).toBe(false);
             });
         });
 
@@ -255,6 +274,7 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                 config.onError(error);
 
                 expect(scope.errorMessage).toEqual(error.message);
+                expect(scope.pending).toBe(false);
             });
         });
     });

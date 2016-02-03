@@ -7,18 +7,24 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             campaigns,
             $location,
             $injector,
-            SettingsService;
+            $rootScope,
+            SettingsService,
+            SpinnerService;
 
         var dbList,
-            promise;
+            deferred;
 
         beforeEach(function() {
             module(servicesModule.name, function($provide) {
                 $provide.decorator('paginatedDbList', function($delegate, $q) {
                     return jasmine.createSpy('paginatedDbList()').and.callFake(function() {
-                        dbList = $delegate.apply(null, arguments);
+                        deferred = $q.defer();
+                        dbList = {
+                            ensureResolution: jasmine.createSpy('ensureResolution()')
+                                .and.returnValue(deferred.promise)
+                        };
 
-                        spyOn(dbList, 'ensureResolution').and.returnValue(promise = $q.when([]));
+                        // spyOn(dbList, 'ensureResolution').and;
 
                         return dbList;
                     });
@@ -30,13 +36,17 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             inject(function(_$injector_) {
                 $injector = _$injector_;
                 spyOn($injector, 'invoke').and.callThrough();
+                $rootScope = $injector.get('$rootScope');
 
                 c6State = $injector.get('c6State');
                 paginatedDbList = $injector.get('paginatedDbList');
                 SettingsService = $injector.get('SettingsService');
+                SpinnerService = $injector.get('SpinnerService');
 
                 spyOn(SettingsService, 'register');
                 spyOn(SettingsService, 'getReadOnly');
+                spyOn(SpinnerService, 'display');
+                spyOn(SpinnerService, 'close');
 
                 campaigns = c6State.get('Selfie:Campaigns');
             });
@@ -102,20 +112,27 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
         });
 
         describe('model()', function() {
-            var result;
+            var result, success, failure;
 
             beforeEach(function() {
+                success = jasmine.createSpy('success()');
+                failure = jasmine.createSpy('failure()');
+
                 campaigns.filter = 'draft,pending,active,paused,canceled,expired,error';
                 campaigns.sort = 'lastUpdated,-1';
                 campaigns.search = null;
 
-                result = campaigns.model();
+                result = campaigns.model().then(success, failure);
 
                 expect(paginatedDbList.calls.count()).toBe(1);
             });
 
-            it('should return the promise from the paginated db list', function() {
-                expect(result).toBe(promise);
+            it('should display the spinner', function() {
+                expect(SpinnerService.display).toHaveBeenCalled();
+            });
+
+            it('should return a promise', function() {
+                expect(result.then).toBeDefined();
             });
 
             it('should be for a list of campaigns', function() {
@@ -125,6 +142,48 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                     statuses: 'draft,pending,active,paused,canceled,expired,error',
                     text: null
                 }, campaigns.limit, campaigns.page);
+            });
+
+            describe('when the db call resolves', function() {
+                it('the model should resolve', function() {
+                    var items = [];
+
+                    $rootScope.$apply(function() {
+                        deferred.resolve(items);
+                    });
+
+                    expect(success).toHaveBeenCalledWith(items);
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should close the spinner', function() {
+                    var items = [];
+
+                    $rootScope.$apply(function() {
+                        deferred.resolve(items);
+                    });
+
+                    expect(SpinnerService.close).toHaveBeenCalled();
+                });
+            });
+
+            describe('when the db call rejects', function() {
+                it('the model should reject', function() {
+                    $rootScope.$apply(function() {
+                        deferred.reject();
+                    });
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalled();
+                });
+
+                it('should close the spinner', function() {
+                    $rootScope.$apply(function() {
+                        deferred.reject();
+                    });
+
+                    expect(SpinnerService.close).toHaveBeenCalled();
+                });
             });
         });
 

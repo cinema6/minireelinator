@@ -1,6 +1,14 @@
 # MiniReelinator
 
 * *[v1.35.0.rc1]*
+  * [FEATURE]: Show a spinner when loading the campaign list, creating new
+    campaigns and opening existing draft campaigns
+  * [FEATURE]: Add "soft alerts" that appear in the top right of campaign
+    creation screen showing when campaign is autosaving, when it has saved
+    and if there is an error saving
+  * [FEATURE]: Add spinners to buttons that trigger actions that may take
+    a few seconds to complete: copy, cancel, delete campaign, submit campaign,
+    add credit card and save credit card
   * [FEATURE]: Add Vimeo Social Sharing link field in Campaign Creation screen
 
 ## v1.34.2 (February 2, 2016)
