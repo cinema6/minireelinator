@@ -599,7 +599,8 @@
                                     instagram: 'http://instagram.com',
                                     pinterest: null,
                                     google: 'http://google.com',
-                                    tumblr: 'http://tumblr.com'
+                                    tumblr: 'http://tumblr.com',
+                                    vimeo: 'http://vimeo.com'
                                 },
                                 images: {
                                     profile: null
@@ -612,6 +613,7 @@
                                     twitter: null,
                                     instagram: 'http://instagram.com',
                                     pinterest: null,
+                                    vimeo: 'http://vimeo.com'
                                 },
                                 images: {
                                     profile: null

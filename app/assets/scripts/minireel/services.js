@@ -530,7 +530,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                     this.websiteData = function(uri) {
                         var encoded = encodeURIComponent(uri),
-                            whitelist = ['facebook','twitter','instagram','youtube','pinterest'];
+                            whitelist = ['facebook','twitter','instagram','youtube','pinterest','vimeo'];
 
                         return $http.get('/api/collateral/website-data?uri=' + encoded)
                             .then(function(resp) {
