@@ -111,9 +111,6 @@ define(['app'], function(appModule) {
                         case 'updateRequest':
                             response = updateRequestDeferred.promise;
                             break;
-                        case 'user':
-                            response = userDeferred.promise;
-                            break;
                         case 'advertiser':
                             response = advertiserDeferred.promise;
                             break;
@@ -121,6 +118,8 @@ define(['app'], function(appModule) {
 
                     return response;
                 });
+
+                spyOn(cinema6.db, 'findAll').and.returnValue(userDeferred.promise);
             });
 
             describe('when the campaign has an update request', function() {
@@ -137,7 +136,7 @@ define(['app'], function(appModule) {
                 });
 
                 it('should find the user and advertiser', function() {
-                    expect(cinema6.db.find).toHaveBeenCalledWith('user', 'u-123');
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('user', {ids: 'u-123', decorated: true});
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', 'a-123');
                 });
 
@@ -145,7 +144,7 @@ define(['app'], function(appModule) {
                     beforeEach(function() {
                         $rootScope.$apply(function() {
                             updateRequestDeferred.resolve(updateRequest);
-                            userDeferred.resolve(user);
+                            userDeferred.resolve([user]);
                             advertiserDeferred.resolve(advertiser);
                         });
                     });
@@ -184,7 +183,7 @@ define(['app'], function(appModule) {
                 });
 
                 it('should find the user and advertiser', function() {
-                    expect(cinema6.db.find).toHaveBeenCalledWith('user', 'u-123');
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('user', {ids: 'u-123', decorated: true});
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', 'a-123');
                 });
 
@@ -195,7 +194,7 @@ define(['app'], function(appModule) {
                 describe('when the requests are successful', function() {
                     beforeEach(function() {
                         $rootScope.$apply(function() {
-                            userDeferred.resolve(user);
+                            userDeferred.resolve([user]);
                             advertiserDeferred.resolve(advertiser);
                         });
                     });
@@ -215,7 +214,7 @@ define(['app'], function(appModule) {
                 describe('when any request fails', function() {
                     it('should trigger failure', function() {
                         $rootScope.$apply(function() {
-                            userDeferred.resolve(user);
+                            userDeferred.resolve([user]);
                             advertiserDeferred.reject('Not Found');
                         });
 

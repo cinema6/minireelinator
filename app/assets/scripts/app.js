@@ -284,11 +284,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
                 };
 
-                /*this.findAll = function() {
+                this.findAll = function() {
                     return $http.get(config.apiBase + '/account/users')
-                        .then(returnData)
+                        .then(pick('data'))
                         .then(decorateAllUsersWithOrgs);
-                };*/
+                };
 
                 this.find = function(type, id) {
                     return $http.get(url(id), {
@@ -299,10 +299,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.findQuery = function(type, query) {
-                    function returnData(response) {
-                        return response.data;
-                    }
-
                     function handleError(response) {
                         return response.status === 404 ?
                             [] : $q.reject(response);
@@ -311,7 +307,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     return $http.get(config.apiBase + '/account/users', {
                             params: query
                         })
-                        .then(returnData)
+                        .then(pick('data'))
                         .then(decorateAllUsersWithOrgs)
                         .catch(handleError);
                 };
@@ -337,7 +333,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(putInArray);
                 };
 
-                ['findAll', 'create', 'erase'].forEach(function(method) {
+                ['create', 'erase'].forEach(function(method) {
                     this[method] = function() {
                         return $q.reject('UserAdapter.' + method + '() method is not implemented.');
                     };
