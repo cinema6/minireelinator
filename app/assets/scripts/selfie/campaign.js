@@ -61,7 +61,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     SettingsService.register('Selfie::params', this.params, {
                         localSync: true,
                         defaults: {
-                            filter: 'draft,pending,active,paused,canceled,expired,error',
+                            filter: 'draft,pending,active,paused,canceled,completed,expired,error',
                             filterBy: 'statuses',
                             sort: 'lastUpdated,-1',
                             search: null
@@ -213,7 +213,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     result[campaign.id] = {
                         campaign: campaign,
-                        previewUrl: CampaignService.previewUrlOf(campaign)
+                        previewUrl: CampaignService.previewUrlOf(campaign),
+                        status: campaign.status === 'completed' ? 'Out of Budget' : campaign.status
                     };
 
                     return result;
@@ -305,11 +306,14 @@ function( angular , c6State  , PaginatedListState                    ,
                     'active',
                     'paused',
                     'canceled',
+                    'completed',
                     'expired',
                     'error'
                 ].map(function(filter) {
+                    var name = filter === 'completed' ? 'Out of Budget' : filter;
+
                     return {
-                        name: filter.charAt(0).toUpperCase() + filter.slice(1),
+                        name: name.charAt(0).toUpperCase() + name.slice(1),
                         id: filter,
                         checked: SelfieCampaignsCtrl.filter.indexOf(filter) > -1
                     };

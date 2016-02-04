@@ -72,7 +72,7 @@
     "pricing": {
         "budget": 1000
     },
-    "status": "active",
+    "status": "completed",
     "targeting": {
         "geo": {
             "states":[],
