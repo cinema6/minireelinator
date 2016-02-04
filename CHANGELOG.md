@@ -10,6 +10,8 @@
     a few seconds to complete: copy, cancel, delete campaign, submit campaign,
     add credit card and save credit card
   * [FEATURE]: Add Vimeo Social Sharing link field in Campaign Creation screen
+  * [FEATURE]: When Admin opens non-draft campaign with no pending update
+    direct them to Manage Campaign tab and show them Campaign and Card ID
 
 ## v1.34.2 (February 2, 2016)
 * *[v1.34.2.rc1]*
