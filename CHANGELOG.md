@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.35.0 (February 4, 2016)
 * *[v1.35.0.rc1]*
   * [FEATURE]: Show a spinner when loading the campaign list, creating new
     campaigns and opening existing draft campaigns
@@ -16,6 +17,7 @@
     broke the view
   * [FEATURE]: Add support for "completed" campaign status and display it as
     "Out of Budget" in the UI
+* *[/v1.35.0.rc1]*
 
 ## v1.34.2 (February 2, 2016)
 * *[v1.34.2.rc1]*
