@@ -20,8 +20,8 @@ function( angular , c6State  , PaginatedListState                    ,
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6',
-            function                                          ( c6State , cinema6 ) {
+            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6','CampaignService',
+            function                                          ( c6State , cinema6 , CampaignService ) {
                 this.beforeModel = function() {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
@@ -30,6 +30,15 @@ function( angular , c6State  , PaginatedListState                    ,
                     cinema6.db.findAll('advertiser', {org: org})
                         .then(function(advertisers) {
                             cState.hasAdvertisers = !!advertisers.length;
+                        });
+                };
+
+                this.afterModel = function() {
+                    var cState = this;
+
+                    return CampaignService.getOrgs()
+                        .then(function(orgs) {
+                            cState.orgs = orgs;
                         });
                 };
 
@@ -56,7 +65,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.params = {};
 
                 this.beforeModel = function() {
-                    var params;
+                    var user = c6State.get('Selfie').cModel,
+                        excludeOrgs = (user.config.platform && user.config.platform.excludeOrgs) || [],
+                        params;
 
                     SettingsService.register('Selfie::params', this.params, {
                         localSync: true,
@@ -74,12 +85,14 @@ function( angular , c6State  , PaginatedListState                    ,
                     this.filterBy = params.filterBy;
                     this.sort = params.sort;
                     this.search = params.search;
+                    this.excludeOrgs = (excludeOrgs.length && excludeOrgs.join(',')) || null;
 
                     extend(this.queryParams, {
                         filter: '=',
                         filterBy: '=',
                         sort: '=',
-                        search: '='
+                        search: '=',
+                        excludeOrgs: '='
                     });
                 };
 
@@ -91,6 +104,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         application: 'selfie',
                         statuses: this.filter,
                         text: this.search,
+                        excludeOrgs: this.excludeOrgs
                     }, this.limit, this.page).ensureResolution()
                         .finally(function() {
                             SpinnerService.close();
@@ -279,6 +293,13 @@ function( angular , c6State  , PaginatedListState                    ,
                             return status.checked;
                         }).length === this.filters.length;
                     }
+                },
+                allOrgsChecked: {
+                    get: function() {
+                        return this.orgs.filter(function(status) {
+                            return status.checked;
+                        }).length === this.orgs.length;
+                    }
                 }
             });
 
@@ -316,6 +337,14 @@ function( angular , c6State  , PaginatedListState                    ,
                         name: name.charAt(0).toUpperCase() + name.slice(1),
                         id: filter,
                         checked: SelfieCampaignsCtrl.filter.indexOf(filter) > -1
+                    };
+                });
+
+                this.orgs = cState.cParent.orgs.map(function(org) {
+                    return {
+                        name: org.name,
+                        id: org.id,
+                        checked: SelfieCampaignsCtrl.excludeOrgs.indexOf(org.id) === -1
                     };
                 });
             };
@@ -363,6 +392,19 @@ function( angular , c6State  , PaginatedListState                    ,
                     return filter.checked ? filters.concat(filter.id) : filters;
                 },[]).join(',');
                 this.params.filter = this.filter;
+            };
+
+            this.toggleOrg = function() {
+                this.excludeOrgs = this.orgs.reduce(function(filters, filter) {
+                    return !filter.checked ? filters.concat(filter.id) : filters;
+                },[]).join(',');
+            };
+
+            this.toggleAllOrgs = function(bool) {
+                this.orgs.forEach(function(status) {
+                    status.checked = bool;
+                });
+                this.toggleOrg();
             };
         }])
 

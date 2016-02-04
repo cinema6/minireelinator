@@ -57,7 +57,7 @@ function(angular ) {
                 }
             }
         });
-        copyProps(['filter','filterBy','limit','page','sort','search'], cState, this);
+        copyProps(['filter','filterBy','limit','page','sort','search','excludeOrgs'], cState, this);
 
         $scope.$watch(ctrlProp('page'), nonInitializingWatchFn(function(page) {
             var model = PaginatedListCtrl.model;
@@ -120,6 +120,17 @@ function(angular ) {
             } else {
                 model.query.text = search;
             }
+
+            model.update(model.query, model.limit);
+            PaginatedListCtrl.page = 1;
+        }));
+
+        $scope.$watch(ctrlProp('excludeOrgs'), nonInitializingWatchFn(function(exclusion) {
+            var model = PaginatedListCtrl.model;
+
+            if (exclusion === model.query.excludeOrgs) { return; }
+
+            model.query.excludeOrgs = exclusion || null;
 
             model.update(model.query, model.limit);
             PaginatedListCtrl.page = 1;

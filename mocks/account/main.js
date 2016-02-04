@@ -217,6 +217,27 @@ module.exports = function(http) {
         this.respond(200, extend(updatedOrg, {id: id}));
     });
 
+    http.whenGET('/api/account/orgs', function(request) {
+        var orgs = grunt.file.expand(path.resolve(__dirname, './orgs/*.json'))
+                .map(function(path) {
+                    var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                    return extend(grunt.file.readJSON(path), { id: id });
+                })
+                .map(function(_org) {
+                    var fields = (request.query.fields || '').split(','),
+                        org = {};
+
+                    fields.forEach(function(field) {
+                        org[field] = _org[field];
+                    });
+
+                    return request.query.fields ? org : _org;
+                });
+
+        this.respond(200, orgs);
+    });
+
     /***********************************************************************************************
      * Advertiser Endpoints
      **********************************************************************************************/
