@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.35.0 (February 4, 2016)
+* *[v1.35.0.rc2]*
+  * [FIX]: Fix for an issue where the payment optional entitlement was being
+    read from the campaign creator instead of the logged in Selfie user
+* *[/v1.35.0.rc2]*
+
 * *[v1.35.0.rc1]*
   * [FEATURE]: Show a spinner when loading the campaign list, creating new
     campaigns and opening existing draft campaigns
