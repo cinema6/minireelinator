@@ -352,7 +352,7 @@ define(['app'], function(appModule) {
                 campaignState.afterModel(model);
                 campaignState.enter();
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage', null, null, true);
             });
 
             it('shoud go to the Selfie:Manage:Campaign:Manage state if user is an admin and campaign does not have an update request', function() {
@@ -362,7 +362,7 @@ define(['app'], function(appModule) {
                 campaignState.updateRequest = null;
                 campaignState.enter();
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage', null, null, true);
             });
 
             it('shoud go to the Selfie:Manage:Campaign:Admin state if user is an admin and campaign has an update request', function() {
@@ -371,7 +371,7 @@ define(['app'], function(appModule) {
                 campaignState.afterModel(model);
                 campaignState.enter();
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Admin');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Admin', null, null, true);
             });
         });
     });
