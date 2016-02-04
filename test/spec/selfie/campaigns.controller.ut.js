@@ -42,9 +42,9 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     hasAdvertisers: false
                 };
                 campaigns.sort = 'lastUpdated,-1';
-                campaigns.filter = 'draft,pending,active,paused,canceled,expired,error';
+                campaigns.filter = 'draft,pending,active,paused,canceled,completed,expired,error';
                 campaigns.params = {
-                    filter: 'draft,pending,active,paused,canceled,expired,error',
+                    filter: 'draft,pending,active,paused,canceled,completed,expired,error',
                     filterBy: 'statuses',
                     sort: 'lastUpdated,-1',
                     search: null
@@ -310,6 +310,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: false },
                         { name: 'Canceled', id: 'canceled', checked: false },
+                        { name: 'Out of Budget', id: 'completed', checked: false },
                         { name: 'Expired', id: 'expired', checked: false },
                         { name: 'Error', id: 'error', checked: true }
                     ]);
@@ -338,6 +339,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 id: 'cam-1',
                                 user: 'u-1',
                                 updateRequest: 'ur-111',
+                                status: 'pending',
                                 cards: [
                                     {
                                         params: {},
@@ -353,6 +355,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-2',
                                 user: 'u-2',
+                                status: 'draft',
                                 cards: [
                                     {
                                         params: {
@@ -372,6 +375,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-3',
                                 user: 'u-3',
+                                status: 'draft',
                                 cards: [
                                     {
                                         params: {
@@ -393,6 +397,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-4',
                                 user: 'u-3',
+                                status: 'completed',
                                 cards: [
                                     {
                                         params: {
@@ -415,6 +420,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-5',
                                 user: 'u-3',
+                                status: 'expired',
                                 cards: [
                                     {
                                         params: {
@@ -469,27 +475,32 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     it('should contain data for each campaign', function() {
                         expect(SelfieCampaignsCtrl.data['cam-1']).toEqual({
                             campaign: model.items.value[0],
-                            previewUrl: false
+                            previewUrl: false,
+                            status: 'pending'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-2']).toEqual({
                             campaign: model.items.value[1],
-                            previewUrl: jasmine.any(String)
+                            previewUrl: jasmine.any(String),
+                            status: 'draft'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-3']).toEqual({
                             campaign: model.items.value[2],
-                            previewUrl: jasmine.any(String)
+                            previewUrl: jasmine.any(String),
+                            status: 'draft'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-4']).toEqual({
                             campaign: model.items.value[3],
-                            previewUrl: jasmine.any(String)
+                            previewUrl: jasmine.any(String),
+                            status: 'Out of Budget'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-5']).toEqual({
                             campaign: model.items.value[4],
-                            previewUrl: jasmine.any(String)
+                            previewUrl: jasmine.any(String),
+                            status: 'expired'
                         });
                     });
 
@@ -879,6 +890,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 id: 'cam-1',
                                 user: 'u-1',
                                 updateRequest: 'ur-111',
+                                status: 'pending',
                                 cards: [
                                     {
                                         params: {},
@@ -894,6 +906,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-2',
                                 user: 'u-2',
+                                status: 'draft',
                                 cards: [
                                     {
                                         params: {
@@ -913,6 +926,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-3',
                                 user: 'u-3',
+                                status: 'draft',
                                 cards: [
                                     {
                                         params: {
@@ -934,6 +948,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-4',
                                 user: 'u-3',
+                                status: 'completed',
                                 cards: [
                                     {
                                         params: {
@@ -956,6 +971,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-5',
                                 user: 'u-3',
+                                status: 'expired',
                                 cards: [
                                     {
                                         params: {
@@ -1014,27 +1030,32 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     it('should contain data for each campaign', function() {
                         expect(SelfieCampaignsCtrl.data['cam-1']).toEqual({
                             campaign: model.items.value[0],
-                            previewUrl: false
+                            previewUrl: false,
+                            status: 'pending'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-2']).toEqual({
                             campaign: model.items.value[1],
-                            previewUrl: jasmine.any(String)
+                            previewUrl: jasmine.any(String),
+                            status: 'draft'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-3']).toEqual({
                             campaign: model.items.value[2],
-                            previewUrl: jasmine.any(String)
+                            previewUrl: jasmine.any(String),
+                            status: 'draft'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-4']).toEqual({
                             campaign: model.items.value[3],
-                            previewUrl: jasmine.any(String)
+                            previewUrl: jasmine.any(String),
+                            status: 'Out of Budget'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-5']).toEqual({
                             campaign: model.items.value[4],
-                            previewUrl: jasmine.any(String)
+                            previewUrl: jasmine.any(String),
+                            status: 'expired'
                         });
                     });
 
