@@ -14,6 +14,8 @@
     direct them to Manage Campaign tab and show them Campaign and Card ID
   * [FIX]: Fix for an issue where opening/editing another user's campaign
     broke the view
+  * [FEATURE]: Add support for "completed" campaign status and display it as
+    "Out of Budget" in the UI
 
 ## v1.34.2 (February 2, 2016)
 * *[v1.34.2.rc1]*
