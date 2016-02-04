@@ -12,6 +12,8 @@
   * [FEATURE]: Add Vimeo Social Sharing link field in Campaign Creation screen
   * [FEATURE]: When Admin opens non-draft campaign with no pending update
     direct them to Manage Campaign tab and show them Campaign and Card ID
+  * [FIX]: Fix for an issue where opening/editing another user's campaign
+    broke the view
 
 ## v1.34.2 (February 2, 2016)
 * *[v1.34.2.rc1]*
