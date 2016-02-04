@@ -419,11 +419,11 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     return $q.all({
                         updateRequest: (id ? cinema6.db.find('updateRequest', id) : $q.when(null)),
-                        users: cinema6.db.findAll('user', {ids: campaign.user, decorated: true}),
+                        user: cinema6.db.find('user', campaign.user),
                         advertiser: cinema6.db.find('advertiser', campaign.advertiserId)
                     }).then(function(promises) {
                         cState.updateRequest = promises.updateRequest;
-                        cState.user = promises.users[0];
+                        cState.user = promises.user;
                         cState.advertiser = promises.advertiser;
                         cState.campaign = CampaignService.normalize(campaign, promises.user);
                     });
@@ -513,7 +513,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         this.campaign.user === SelfieState.cModel.id;
 
                     this.user = this.cParent.user;
-                    this.paymentOptional = !!this.user.entitlements.paymentOptional;
+                    this.paymentOptional = !!SelfieState.cModel.entitlements.paymentOptional;
                 };
 
                 this.model = function() {

@@ -250,7 +250,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
             $provide.constant('UserAdapter', ['$http','$q','cinema6','config',
             function                         ( $http , $q , cinema6 , config ) {
-                var self = this;
+                // var self = this;
 
                 function clean(model) {
                     var advertiser = model.advertiser;
@@ -272,9 +272,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     return config.apiBase + '/account/user/' + id;
                 }
 
-                function decorateAllUsersWithOrgs(users) {
+                /*function decorateAllUsersWithOrgs(users) {
                     return $q.all(users.map(self.decorateWithOrg));
-                }
+                }*/
 
                 this.decorateWithOrg = function(user) {
                     return cinema6.db.find('org', user.org)
@@ -284,11 +284,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
                 };
 
-                this.findAll = function() {
+                /*this.findAll = function() {
                     return $http.get(config.apiBase + '/account/users')
                         .then(pick('data'))
                         .then(decorateAllUsersWithOrgs);
-                };
+                };*/
 
                 this.find = function(type, id) {
                     return $http.get(url(id), {
@@ -298,7 +298,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(putInArray);
                 };
 
-                this.findQuery = function(type, query) {
+                /*this.findQuery = function(type, query) {
                     function handleError(response) {
                         return response.status === 404 ?
                             [] : $q.reject(response);
@@ -310,7 +310,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(pick('data'))
                         .then(decorateAllUsersWithOrgs)
                         .catch(handleError);
-                };
+                };*/
 
                 /*this.create = function(type, data) {
                     return $http.post(config.apiBase + '/account/user', data)
@@ -333,7 +333,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(putInArray);
                 };
 
-                ['create', 'erase'].forEach(function(method) {
+                ['findAll', 'findQuery', 'create', 'erase'].forEach(function(method) {
                     this[method] = function() {
                         return $q.reject('UserAdapter.' + method + '() method is not implemented.');
                     };

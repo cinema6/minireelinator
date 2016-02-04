@@ -110,7 +110,8 @@ define(['app'], function(appModule) {
                         org: {
                             id: 'o-123'
                         },
-                        id: 'u-123'
+                        id: 'u-123',
+                        entitlements: {}
                     };
                     campaignState = c6State.get(stateName);
                 });
@@ -239,8 +240,8 @@ define(['app'], function(appModule) {
                     });
                 });
 
-                describe('when the user has paymentOptional entitlement', function() {
-                    it('should set the paymentOptional flag to true', function() {
+                describe('when the Selfie user has paymentOptional entitlement', function() {
+                    it('should set the paymentOptional flag to true, regardless of the campaign user entitlements', function() {
                         campaignState.cParent.advertiser = advertiser;
                         campaignState.cParent.campaign = campaign;
                         campaignState.cParent.user = user;
@@ -250,6 +251,11 @@ define(['app'], function(appModule) {
                         expect(campaignState.paymentOptional).toBe(false);
 
                         user.entitlements.paymentOptional = true;
+                        campaignState.beforeModel();
+
+                        expect(campaignState.paymentOptional).toBe(false);
+
+                        selfieState.cModel.entitlements.paymentOptional = true;
                         campaignState.beforeModel();
 
                         expect(campaignState.paymentOptional).toBe(true);

@@ -70,7 +70,7 @@
                 });
             });
 
-            xdescribe('findAll(type)', function() {
+            describe('findAll(type)', function() {
                 var failure;
 
                 beforeEach(function() {
@@ -86,7 +86,7 @@
                 });
             });
 
-            describe('findAll(type)', function() {
+            xdescribe('findAll(type)', function() {
                 var users,
                     success;
 
@@ -155,7 +155,7 @@
                 });
             });
 
-            xdescribe('findQuery(type, query)', function() {
+            describe('findQuery(type, query)', function() {
                 var failure;
 
                 beforeEach(function() {
@@ -174,7 +174,7 @@
                 });
             });
 
-            describe('findQuery(type, query)', function() {
+            xdescribe('findQuery(type, query)', function() {
                 var success, failure,
                     users;
 
