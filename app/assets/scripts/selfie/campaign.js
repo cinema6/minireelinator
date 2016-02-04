@@ -1814,11 +1814,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.enter = function() {
-                    // if user is Admin go to Selfie:Manage:Campaign:Admin
-                    if (this.isAdmin) {
-                        return c6State.goTo('Selfie:Manage:Campaign:Admin');
+                    // if user is Admin and campaign has an update request
+                    // go to Selfie:Manage:Campaign:Admin
+                    if (this.isAdmin && this.updateRequest) {
+                        return c6State.goTo('Selfie:Manage:Campaign:Admin', null, null, true);
                     } else {
-                        return c6State.goTo('Selfie:Manage:Campaign:Manage');
+                        return c6State.goTo('Selfie:Manage:Campaign:Manage', null, null, true);
                     }
                 };
 
