@@ -415,11 +415,11 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     return $q.all({
                         updateRequest: (id ? cinema6.db.find('updateRequest', id) : $q.when(null)),
-                        user: cinema6.db.find('user', campaign.user),
+                        users: cinema6.db.findAll('user', {ids: campaign.user, decorated: true}),
                         advertiser: cinema6.db.find('advertiser', campaign.advertiserId)
                     }).then(function(promises) {
                         cState.updateRequest = promises.updateRequest;
-                        cState.user = promises.user;
+                        cState.user = promises.users[0];
                         cState.advertiser = promises.advertiser;
                         cState.campaign = CampaignService.normalize(campaign, promises.user);
                     });

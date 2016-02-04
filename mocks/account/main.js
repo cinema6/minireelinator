@@ -99,6 +99,16 @@ module.exports = function(http) {
                     }
 
                     return user;
+                })
+                .map(function(user) {
+                    var decorated = request.query.decorated;
+
+                    if (!decorated) {
+                        delete user.permissions;
+                        delete user.entitlements;
+                    }
+
+                    return user
                 });
 
         try {
