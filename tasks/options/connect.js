@@ -15,22 +15,22 @@
                     context: '/api',
                     port: 443,
                     https: true,
-                    host: 'staging.cinema6.com',
+                    host: 'platform-staging.reelcontent.com',
                     protocol: 'https:',
                     headers: {
-                        origin : 'https://staging.cinema6.com',
-                        host: 'staging.cinema6.com'
+                        origin : 'https://platform-staging.reelcontent.com',
+                        host: 'platform-staging.reelcontent.com'
                     }
                 },
                 {
                     context: '/collateral',
                     port: 443,
                     https: true,
-                    host: 'staging.cinema6.com',
+                    host: 'platform-staging.reelcontent.com',
                     protocol: 'https:',
                     headers: {
-                        origin : 'https://staging.cinema6.com',
-                        host: 'staging.cinema6.com'
+                        origin : 'https://platform-staging.reelcontent.com',
+                        host: 'platform-staging.reelcontent.com'
                     }
                 }
             ],

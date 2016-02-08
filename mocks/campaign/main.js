@@ -73,6 +73,10 @@ module.exports = function(http) {
             });
 
         if (request.body.status === 'rejected') {
+            if(!request.body.rejectionReason) {
+                this.respond(400, 'Cannot reject update without a reason');
+                return;
+            }
             campaign.rejectionReason = request.body.rejectionReason;
             campaign.status = campaign.status === 'pending' ? 'draft' : campaign.status;
             delete campaign.updateRequest;

@@ -40,7 +40,7 @@ function( angular , c6State  , editor   , MiniReelListController          ,
                 this.controllerAs = 'SponsorManagerCtrl';
 
                 this.title = function() {
-                    return 'Cinema6 Sponsorship Manager';
+                    return 'Reelcontent Sponsorship Manager';
                 };
                 this.model = function() {
                     return miniReel.getMiniReelList(this.filter, this.limit, this.page)

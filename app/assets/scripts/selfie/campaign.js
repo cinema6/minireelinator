@@ -73,7 +73,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     if (!params) {
                         SettingsService.register('Selfie::params', this.params, {
                             defaults: {
-                                filter: 'draft,pending,active,paused,canceled,completed,expired,error',
+                                filter: 'error,draft,pending,active,paused,canceled,'+
+                                    'completed,outOfBudget,expired',
                                 filterBy: 'statuses',
                                 sort: 'lastUpdated,-1',
                                 search: null,
@@ -242,7 +243,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     result[campaign.id] = {
                         campaign: campaign,
                         previewUrl: CampaignService.previewUrlOf(campaign),
-                        status: campaign.status === 'completed' ? 'Out of Budget' : campaign.status
+                        status: /completed|outOfBudget/.test(campaign.status) ?
+                            'Out of Budget' : campaign.status
                     };
 
                     return result;
@@ -341,11 +343,10 @@ function( angular , c6State  , PaginatedListState                    ,
                     'active',
                     'paused',
                     'canceled',
-                    'completed',
-                    'expired',
-                    'error'
+                    'completed,outOfBudget',
+                    'expired'
                 ].map(function(filter) {
-                    var name = filter === 'completed' ? 'Out of Budget' : filter;
+                    var name = filter === 'completed,outOfBudget' ? 'Out of Budget' : filter;
 
                     return {
                         name: name.charAt(0).toUpperCase() + name.slice(1),
@@ -404,7 +405,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.toggleFilter = function() {
                 this.filter = this.filters.reduce(function(filters, filter) {
                     return filter.checked ? filters.concat(filter.id) : filters;
-                },[]).join(',');
+                },['error']).join(',');
                 this.params.filter = this.filter;
             };
 
@@ -2416,7 +2417,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     campaign: campaign,
                     updatedCampaign: updatedCampaign,
                     previewCard: (updateRequest) ? copy(updatedCampaign.cards[0]) : null,
-                    rejectionReason: ''
+                    rejectionReason: '',
+                    error: null
                 });
             };
 
@@ -2426,6 +2428,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     status: 'approved'
                 }).then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
+                }).catch(function(error) {
+                    self.error = 'There was a problem approving the campaign: ' + error.data;
                 });
             };
 
@@ -2435,6 +2439,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     rejectionReason: self.rejectionReason
                 }).then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
+                }).catch(function(error) {
+                    self.error = 'There was a problem rejecting the campaign: ' + error.data;
                 });
             };
 
