@@ -1471,18 +1471,16 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             var CARD_APPROVAL_FIELDS = [
                 'id', 'type', 'title', 'note', 'thumb',
                 'data\\.(service|videoid)', 'collateral\\.logo',
-                'links.*', 'shareLinks.*',
-                'params\\.action.*', 'campaign\\.(adtechName|startDate|endDate)'
+                'links.*', 'shareLinks.*', 'params\\.action.*',
+                'campaign\\.(startDate|endDate)'
             ];
 
             // Campaign Constants
             var CAMPAIGN_PREFIX = 'Campaign';
             var CAMPAIGN_EDITABLE_FIELDS = ['name', 'advertiserDisplayName'];
             var CAMPAIGN_APPROVAL_FIELDS = [
-                'adtechId', 'name', 'advertiserDisplayName',
-                'created', 'user', 'org', 'lastUpdated',
-                'status', 'updateRequest', 'id',
-                'targeting.*', 'pricing\\.(budget|dailyLimit|cost)'
+                'advertiserId', 'name', 'advertiserDisplayName', 'created', 'user', 'org',
+                'status', 'id', 'targeting.*', 'pricing\\.(budget|dailyLimit|cost)'
             ];
 
             // Constructs the summary object used to generate the table
