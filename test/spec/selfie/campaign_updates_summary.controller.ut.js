@@ -45,7 +45,7 @@ define(['app'], function(appModule) {
                             }
                         }
                     ],
-                    adtechId: 'original id'
+                    advertiserId: 'original id'
                 };
                 updatedCampaign = {
                     id: 'cam-123',
@@ -61,7 +61,7 @@ define(['app'], function(appModule) {
                             }
                         }
                     ],
-                    adtechId: 'updated id'
+                    advertiserId: 'updated id'
                 };
             });
 
@@ -139,7 +139,7 @@ define(['app'], function(appModule) {
                     {
                         originalValue: 'original id',
                         updatedValue: 'updated id',
-                        title: 'Campaign.adtechId',
+                        title: 'Campaign.advertiserId',
                         editable: false
                     },
                     {
@@ -172,7 +172,7 @@ define(['app'], function(appModule) {
             it('should check the campaign changes against a whitelist', function() {
                 spyOn(Ctrl, '_isWhitelisted').and.callThrough();
                 Ctrl._loadSummary(campaign, updatedCampaign);
-                ['name', 'foo', 'title', 'adtechId'].forEach(function(key) {
+                ['name', 'foo', 'title', 'advertiserId'].forEach(function(key) {
                     expect(Ctrl._isWhitelisted).toHaveBeenCalledWith(jasmine.any(Array), key);
                 });
             });
