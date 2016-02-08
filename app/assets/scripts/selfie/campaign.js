@@ -61,7 +61,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     SettingsService.register('Selfie::params', this.params, {
                         localSync: true,
                         defaults: {
-                            filter: 'error,draft,pending,active,paused,canceled,completed,outOfBudget,expired',
+                            filter: 'error,draft,pending,active,paused,canceled,'+
+                                'completed,outOfBudget,expired',
                             filterBy: 'statuses',
                             sort: 'lastUpdated,-1',
                             search: null
@@ -214,7 +215,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     result[campaign.id] = {
                         campaign: campaign,
                         previewUrl: CampaignService.previewUrlOf(campaign),
-                        status: /completed|outOfBudget/.test(campaign.status) ? 'Out of Budget' : campaign.status
+                        status: /completed|outOfBudget/.test(campaign.status) ?
+                            'Out of Budget' : campaign.status
                     };
 
                     return result;

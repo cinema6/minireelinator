@@ -27,7 +27,8 @@ define(function() {
 
     if (c6.kDebug) {
         // This URL must include the page's protocol to work in Firefox
-        window.__C6_URL_ROOT__ = protocol + '//' + (c6.kLocal ? 'platform-staging.reelcontent.com' : hostname);
+        window.__C6_URL_ROOT__ = protocol + '//' +
+            (c6.kLocal ? 'platform-staging.reelcontent.com' : hostname);
     }
 
     return c6;
