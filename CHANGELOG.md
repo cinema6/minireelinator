@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.35.1 (February 8, 2016)
 * *[v1.35.1.rc1]*
   * Remove adtech fields and some other confusing entries from the update request summary table
   * [FIX]: Show errors when failing to approve or reject a campaign in the admin tab
@@ -10,6 +11,7 @@
     "Out of Budget"
   * Remove "Error" filter from campaign list UI but always query for campaigns
     with errors
+* *[/v1.35.1.rc1]*
 
 ## v1.35.0 (February 4, 2016)
 * *[v1.35.0.rc2]*
