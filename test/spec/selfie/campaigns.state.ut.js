@@ -65,7 +65,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
             beforeEach(function() {
                 defaults = {
-                    filter: 'draft,pending,active,paused,canceled,completed,expired,error',
+                    filter: 'error,draft,pending,active,paused,canceled,completed,outOfBudget,expired',
                     filterBy: 'statuses',
                     sort: 'lastUpdated,-1',
                     search: null
@@ -118,7 +118,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 success = jasmine.createSpy('success()');
                 failure = jasmine.createSpy('failure()');
 
-                campaigns.filter = 'draft,pending,active,paused,canceled,completed,expired,error';
+                campaigns.filter = 'error,draft,pending,active,paused,canceled,completed,outOfBudget,expired';
                 campaigns.sort = 'lastUpdated,-1';
                 campaigns.search = null;
 
@@ -139,7 +139,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 expect(paginatedDbList).toHaveBeenCalledWith('selfieCampaign', {
                     sort: 'lastUpdated,-1',
                     application: 'selfie',
-                    statuses: 'draft,pending,active,paused,canceled,completed,expired,error',
+                    statuses: 'error,draft,pending,active,paused,canceled,completed,outOfBudget,expired',
                     text: null
                 }, campaigns.limit, campaigns.page);
             });
