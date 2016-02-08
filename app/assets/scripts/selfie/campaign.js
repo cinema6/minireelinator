@@ -66,26 +66,40 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.beforeModel = function() {
                     var user = c6State.get('Selfie').cModel,
-                        excludeOrgs = (user.config.platform && user.config.platform.excludeOrgs) || [],
-                        params;
+                        config = user.config,
+                        excludeOrgs = (config.platform && config.platform.excludeOrgs) || [],
+                        params = SettingsService.getReadOnly('Selfie::params');
 
-                    SettingsService.register('Selfie::params', this.params, {
-                        localSync: true,
-                        defaults: {
-                            filter: 'draft,pending,active,paused,canceled,completed,expired,error',
-                            filterBy: 'statuses',
-                            sort: 'lastUpdated,-1',
-                            search: null
-                        }
-                    });
+                    if (!params) {
+                        SettingsService.register('Selfie::params', this.params, {
+                            defaults: {
+                                filter: 'draft,pending,active,paused,canceled,completed,expired,error',
+                                filterBy: 'statuses',
+                                sort: 'lastUpdated,-1',
+                                search: null,
+                                excludeOrgs: excludeOrgs.join(',')
+                            },
+                            sync: function(settings) {
+                                config.platform = config.platform || {};
+                                config.platform.excludeOrgs = (settings.excludeOrgs &&
+                                    settings.excludeOrgs.split(',')) || [];
 
-                    params = SettingsService.getReadOnly('Selfie::params');
+                                user.save();
+                            },
+                            localSync: user.id,
+                            validateLocal: function(currentUserId, prevUserId) {
+                                return currentUserId === prevUserId;
+                            }
+                        });
+
+                        params = SettingsService.getReadOnly('Selfie::params');
+                    }
 
                     this.filter = params.filter;
                     this.filterBy = params.filterBy;
                     this.sort = params.sort;
                     this.search = params.search;
-                    this.excludeOrgs = (excludeOrgs.length && excludeOrgs.join(',')) || null;
+                    this.excludeOrgs = params.excludeOrgs;
 
                     extend(this.queryParams, {
                         filter: '=',
@@ -398,6 +412,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.excludeOrgs = this.orgs.reduce(function(filters, filter) {
                     return !filter.checked ? filters.concat(filter.id) : filters;
                 },[]).join(',');
+                this.params.excludeOrgs = this.excludeOrgs;
             };
 
             this.toggleAllOrgs = function(bool) {
