@@ -1346,11 +1346,60 @@ fa,
         }
         /* filter row styles*/
         .filterBtn__group .ui__clickDropMenu {
-            margin: 0 0 0 5px;
+            margin: 0.5em 0 0 0;
+            list-style-type: none;
         }
+            .filterBtn__group .ui__clickDropMenu:before {
+                width: 1em;
+                height: 1em;
+                display: block;
+                background: #fff;
+                content: '';
+                position: absolute;
+                margin-top: -0.5em;
+                margin-left: 6.5em;
+                transform: rotate(45deg);
+                border-left: 1px solid #ddd;
+                border-top: 1px solid #ddd;
+                z-index: -1;
+            }
             .filterBtn__group .ui__clickDropBtn {
                 padding: 0.25em;
+                width: 16em;
             }
+            .filterOptions.ui__clickDropBtn {
+                text-align: center;
+            }
+                .filterOptions .btnGroup {
+                    margin: 0.5em 0;
+                }
+                .filterOptions .btnGroup .btn {
+                    width: auto;
+                    font-weight: normal;
+                    padding: 0 1em !important;
+                }
+                    .filterOptions .btnGroup .btn:hover,
+                    .filterOptions .btnGroup .btn:active {
+                        border-color: #d5d5d5;
+                        background: #fff;
+                    }
+                    .filterOptions .btnGroup .btn--active {
+                        border-color: #d5d5d5;
+                        background: #fff;
+                    }
+                .filterBtn__group ul li ul {
+                    padding: 0;
+                    list-style-type: none;
+                    max-height: 220px;
+                    overflow-y: auto;
+                }
+                    .filterBtn__group ul li ul li.ui__clickDropBtn {
+                        width: 100%;
+                    }
+                .filterOrg__search {
+                    margin: 0.25em 0.35em;
+                    display: block;
+                }
 
     /*  sortBar classes
         ================================================ */
