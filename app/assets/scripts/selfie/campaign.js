@@ -20,8 +20,10 @@ function( angular , c6State  , PaginatedListState                    ,
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6','CampaignService',
-            function                                          ( c6State , cinema6 , CampaignService ) {
+            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6',
+                                                               'CampaignService',
+            function                                          ( c6State , cinema6 ,
+                                                                CampaignService ) {
                 this.beforeModel = function() {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
