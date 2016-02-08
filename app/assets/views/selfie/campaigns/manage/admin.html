@@ -23,6 +23,10 @@
                             <br>
                             <input type="text" ng-model="Ctrl.rejectionReason" class="form__textBox" placeholder="Rejection reason"></input>
                             </fieldset>
+                            <div ng-show="Ctrl.error" class="alertMessage alert__failure text--center">
+                                {{Ctrl.error}}
+                            </div>
+                            <br>
                             <div class="action__btnGroup ui__btnHolder">
                                 <button ng-click="Ctrl.approveCampaign()" class="action__btn action__btn--big">Approve</button>
                                 <button ng-click="Ctrl.rejectCampaign()" class="action__btn action__btn--big">Reject</button>
