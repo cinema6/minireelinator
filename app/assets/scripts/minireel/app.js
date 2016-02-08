@@ -36,7 +36,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
 
         .config(['VPAIDServiceProvider', function(VPAIDServiceProvider) {
             VPAIDServiceProvider.swfUrl(
-                '//lib.cinema6.com/c6ui/v3.7.3-0-g68ed6ac/videos/swf/player.swf'
+                '//lib.reelcontent.com/c6ui/v3.7.3-0-g68ed6ac/videos/swf/player.swf'
             );
         }])
 

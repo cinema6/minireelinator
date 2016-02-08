@@ -89,7 +89,7 @@ function( angular , c6uilib , c6State  , services   ,
                 });
 
                 this.title = function() {
-                    return 'Cinema6 Ad Manager';
+                    return 'Reelcontent Ad Manager';
                 };
                 this.model = function() {
                     return this.cParent.getMiniReelList(this.filter, this.limit, this.page)
