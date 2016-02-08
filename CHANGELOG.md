@@ -8,6 +8,8 @@
   * Change all "Cinema6" references in UI to "Reelcontent"
   * Temporarily treat both "completed" and "outOfBudget" campaign statuses as
     "Out of Budget"
+  * Remove "Error" filter from campaign list UI but always query for campaigns
+    with errors
 
 ## v1.35.0 (February 4, 2016)
 * *[v1.35.0.rc2]*
