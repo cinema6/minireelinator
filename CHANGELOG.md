@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.36.0.rc1]*
+  * Remove adtech fields and some other confusing entries from the update request summary table
+  * [FEATURE]: Show errors when failing to approve or reject a campaign in the admin tab
+
 ## v1.35.0 (February 4, 2016)
 * *[v1.35.0.rc2]*
   * [FIX]: Fix for an issue where the payment optional entitlement was being

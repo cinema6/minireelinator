@@ -2358,7 +2358,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     campaign: campaign,
                     updatedCampaign: updatedCampaign,
                     previewCard: (updateRequest) ? copy(updatedCampaign.cards[0]) : null,
-                    rejectionReason: ''
+                    rejectionReason: '',
+                    error: null
                 });
             };
 
@@ -2368,6 +2369,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     status: 'approved'
                 }).then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
+                }).catch(function(error) {
+                    self.error = 'There was a problem approving the campaign: ' + error.data;
                 });
             };
 
@@ -2377,6 +2380,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     rejectionReason: self.rejectionReason
                 }).then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
+                }).catch(function(error) {
+                    self.error = 'There was a problem rejecting the campaign: ' + error.data;
                 });
             };
 

@@ -205,6 +205,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieManageCampaignAdminCtrl.previewCard).not.toBe(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0]);
                         expect(SelfieManageCampaignAdminCtrl.previewCard).toEqual(copy(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0]));
                         expect(SelfieManageCampaignAdminCtrl.rejectionReason).toBe('');
+                        expect(SelfieManageCampaignAdminCtrl.error).toBe(null);
                     });
                 });
 
@@ -226,12 +227,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('approveCampaign()', function() {
-                beforeEach(function() {
+                it('should update and save the updateRequest', function() {
                     SelfieManageCampaignAdminCtrl.approveCampaign();
                     $scope.$digest();
-                });
-                
-                it('should update and save the updateRequest', function() {
                     expect(cState.saveUpdateRequest).toHaveBeenCalledWith({
                         data: SelfieManageCampaignAdminCtrl.updatedCampaign,
                         status: 'approved'
@@ -239,18 +237,25 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 it('should redirect to the campaign dashboard', function() {
+                    SelfieManageCampaignAdminCtrl.approveCampaign();
+                    $scope.$digest();
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                });
+                
+                it('should set the error property if a problem occurs', function() {
+                    cState.saveUpdateRequest.and.returnValue($q.reject({ data: 'epic fail' }));
+                    SelfieManageCampaignAdminCtrl.approveCampaign();
+                    $scope.$digest();
+                    expect(SelfieManageCampaignAdminCtrl.error).toBe('There was a problem approving the campaign: epic fail');
+                    expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
                 });
             });
 
             describe('rejectCampaign()', function() {
-                beforeEach(function() {
+                it('should update and save the updateRequest', function() {
                     SelfieManageCampaignAdminCtrl.rejectionReason = 'fix your campaign';
                     SelfieManageCampaignAdminCtrl.rejectCampaign();
                     $scope.$digest();
-                });
-
-                it('should update and save the updateRequest', function() {
                     expect(cState.saveUpdateRequest).toHaveBeenCalledWith({
                         status: 'rejected',
                         rejectionReason: 'fix your campaign'
@@ -258,7 +263,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 it('should redirect to the campaign dashboard', function() {
+                    SelfieManageCampaignAdminCtrl.rejectCampaign();
+                    $scope.$digest();
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                });
+                
+                it('should set the error property if a problem occurs', function() {
+                    cState.saveUpdateRequest.and.returnValue($q.reject({ data: 'epic fail' }));
+                    SelfieManageCampaignAdminCtrl.rejectCampaign();
+                    $scope.$digest();
+                    expect(SelfieManageCampaignAdminCtrl.error).toBe('There was a problem rejecting the campaign: epic fail');
+                    expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
                 });
             });
 
