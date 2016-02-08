@@ -9,7 +9,7 @@ define(function() {
     c6.kSelfie = !!window.SELFIE || (/platform/).test(hostname);
     c6.kDebug = c6.kLocal || (/staging/).test(hostname);
     c6.kPortalHome = c6.kDebug ?
-        'https://staging.cinema6.com/' : 'https://portal.cinema6.com/';
+        'https://studio-staging.reelcontent.com/' : 'https://studio.reelcontent.com/';
     c6.kPlatformHome = c6.kDebug ?
         'https://platform-staging.reelcontent.com/' : 'https://platform.reelcontent.com/';
     c6.kHasKarma = false;
@@ -27,7 +27,7 @@ define(function() {
 
     if (c6.kDebug) {
         // This URL must include the page's protocol to work in Firefox
-        window.__C6_URL_ROOT__ = protocol + '//' + (c6.kLocal ? 'staging.cinema6.com' : hostname);
+        window.__C6_URL_ROOT__ = protocol + '//' + (c6.kLocal ? 'platform-staging.reelcontent.com' : hostname);
     }
 
     return c6;
