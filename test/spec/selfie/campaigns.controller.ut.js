@@ -367,12 +367,15 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             SelfieCampaignsCtrl.excludeOrgs = null;
                             SelfieCampaignsCtrl.initWithModel(model);
 
-                            expect(SelfieCampaignsCtrl.orgs).toEqual([
+                            expect(SelfieCampaignsCtrl.allOrgs).toEqual([
                                 { name: 'Diageo', id: 'o-111', checked: true },
                                 { name: 'Toyota', id: 'o-222', checked: true },
                                 { name: 'Honda', id: 'o-333', checked: true },
                                 { name: 'Cinema6', id: 'o-444', checked: true }
                             ]);
+
+                            expect(SelfieCampaignsCtrl.orgs).toEqual(SelfieCampaignsCtrl.allOrgs);
+                            expect(SelfieCampaignsCtrl.orgs).not.toBe(SelfieCampaignsCtrl.allOrgs);
                         });
                     });
 
@@ -381,12 +384,15 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             SelfieCampaignsCtrl.excludeOrgs = 'o-222,o-444';
                             SelfieCampaignsCtrl.initWithModel(model);
 
-                            expect(SelfieCampaignsCtrl.orgs).toEqual([
+                            expect(SelfieCampaignsCtrl.allOrgs).toEqual([
                                 { name: 'Diageo', id: 'o-111', checked: true },
                                 { name: 'Toyota', id: 'o-222', checked: false },
                                 { name: 'Honda', id: 'o-333', checked: true },
                                 { name: 'Cinema6', id: 'o-444', checked: false }
                             ]);
+
+                            expect(SelfieCampaignsCtrl.orgs).toEqual(SelfieCampaignsCtrl.allOrgs);
+                            expect(SelfieCampaignsCtrl.orgs).not.toBe(SelfieCampaignsCtrl.allOrgs);
                         });
                     });
                 });
@@ -918,7 +924,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 it('should update the excludeOrgs query param based on which options are checked', function() {
                     SelfieCampaignsCtrl.params = {};
 
-                    SelfieCampaignsCtrl.orgs = [
+                    SelfieCampaignsCtrl.allOrgs = SelfieCampaignsCtrl.orgs = [
                         { name: 'Diageo', id: 'o-111', checked: true },
                         { name: 'Toyota', id: 'o-222', checked: false },
                         { name: 'Honda', id: 'o-333', checked: true },
@@ -930,7 +936,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     expect(SelfieCampaignsCtrl.excludeOrgs).toEqual('o-222,o-444');
                     expect(SelfieCampaignsCtrl.params.excludeOrgs).toEqual('o-222,o-444');
 
-                    SelfieCampaignsCtrl.orgs = [
+                    SelfieCampaignsCtrl.allOrgs = SelfieCampaignsCtrl.orgs = [
                         { name: 'Diageo', id: 'o-111', checked: true },
                         { name: 'Toyota', id: 'o-222', checked: true },
                         { name: 'Honda', id: 'o-333', checked: true },
@@ -949,7 +955,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     it('should mark all the orgs as checked and should call toggleOrg()', function() {
                         spyOn(SelfieCampaignsCtrl, 'toggleOrg');
 
-                        SelfieCampaignsCtrl.orgs = [
+                        SelfieCampaignsCtrl.allOrgs = SelfieCampaignsCtrl.orgs =[
                             { name: 'Diageo', id: 'o-111', checked: true },
                             { name: 'Toyota', id: 'o-222', checked: false },
                             { name: 'Honda', id: 'o-333', checked: true },
@@ -957,6 +963,10 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         ];
 
                         SelfieCampaignsCtrl.toggleAllOrgs(true);
+
+                        SelfieCampaignsCtrl.allOrgs.forEach(function(status) {
+                            expect(status.checked).toBe(true);
+                        });
 
                         SelfieCampaignsCtrl.orgs.forEach(function(status) {
                             expect(status.checked).toBe(true);
@@ -970,7 +980,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     it('should mark all the statuses as checked and should call toggleFilter()', function() {
                         spyOn(SelfieCampaignsCtrl, 'toggleOrg');
 
-                        SelfieCampaignsCtrl.orgs = [
+                        SelfieCampaignsCtrl.allOrgs = SelfieCampaignsCtrl.orgs = [
                             { name: 'Diageo', id: 'o-111', checked: true },
                             { name: 'Toyota', id: 'o-222', checked: false },
                             { name: 'Honda', id: 'o-333', checked: true },
@@ -979,12 +989,51 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                         SelfieCampaignsCtrl.toggleAllOrgs(false);
 
+                        SelfieCampaignsCtrl.allOrgs.forEach(function(status) {
+                            expect(status.checked).toBe(false);
+                        });
+
                         SelfieCampaignsCtrl.orgs.forEach(function(status) {
                             expect(status.checked).toBe(false);
                         });
 
                         expect(SelfieCampaignsCtrl.toggleOrg).toHaveBeenCalled();
                     });
+                });
+            });
+
+            describe('searchOrgs(text)', function() {
+                it('should filter orgs that match the text in their id or name', function() {
+                    SelfieCampaignsCtrl.allOrgs = [
+                        { name: 'Diageo', id: 'o-111', checked: true },
+                        { name: 'Toyota', id: 'o-222', checked: false },
+                        { name: 'Honda', id: 'o-333', checked: true },
+                        { name: 'Cinema6', id: 'o-444', checked: false }
+                    ];
+
+                    SelfieCampaignsCtrl.searchOrgs('h');
+
+                    expect(SelfieCampaignsCtrl.orgs.length).toEqual(1);
+                    expect(SelfieCampaignsCtrl.orgs[0]).toBe(SelfieCampaignsCtrl.allOrgs[2]);
+
+                    SelfieCampaignsCtrl.searchOrgs('O');
+
+                    expect(SelfieCampaignsCtrl.orgs.length).toEqual(4);
+                    expect(SelfieCampaignsCtrl.orgs[0]).toBe(SelfieCampaignsCtrl.allOrgs[0]);
+                    expect(SelfieCampaignsCtrl.orgs[1]).toBe(SelfieCampaignsCtrl.allOrgs[1]);
+                    expect(SelfieCampaignsCtrl.orgs[2]).toBe(SelfieCampaignsCtrl.allOrgs[2]);
+                    expect(SelfieCampaignsCtrl.orgs[3]).toBe(SelfieCampaignsCtrl.allOrgs[3]);
+
+                    SelfieCampaignsCtrl.searchOrgs('4');
+
+                    expect(SelfieCampaignsCtrl.orgs.length).toEqual(1);
+                    expect(SelfieCampaignsCtrl.orgs[0]).toBe(SelfieCampaignsCtrl.allOrgs[3]);
+
+                    SelfieCampaignsCtrl.searchOrgs('N');
+
+                    expect(SelfieCampaignsCtrl.orgs.length).toEqual(2);
+                    expect(SelfieCampaignsCtrl.orgs[0]).toBe(SelfieCampaignsCtrl.allOrgs[2]);
+                    expect(SelfieCampaignsCtrl.orgs[1]).toBe(SelfieCampaignsCtrl.allOrgs[3]);
                 });
             });
         });
