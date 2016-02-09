@@ -13,8 +13,19 @@
             <span class="filterBtn__group" c6-click-outside="showDropdown = false">
                 <button class="btn filterBtn btn--primary btn--small btn__nav" ng-click="showDropdown = !showDropdown" type="button"><span class="ui__clickDrop sortBar__btn--Dropdown"><i class="faa fa-filter"></i></span></button>
                 <ul class="ui__clickDropMenu" ng-show="showDropdown">
-                    <li ng-repeat="filter in SelfieCampaignsCtrl.filters" class="ui__clickDropBtn" type="button" title="{{filter.name}}">
-                        <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleFilter($index)"> <span class="btn__label faa">{{filter.name}}</span></label>
+                    <!--<li class="ui__clickDropBtn dropdownBtn filterOptions text--center" type="button">
+                        <span class="btnGroup">
+                            <label class="checkbox--inline btn btn--active text--right"><span class="btn__label faa">Status</span></label>
+                            <label class="checkbox--inline btn text--left"><span class="btn__label faa">Organization</span></label>
+                        </span>
+                        <span class="filterOrg__search"><input type="text" placeholder="Search" class="form__textBox"></span>
+                    </li>-->
+                    <li>
+                        <ul>
+                            <li class="ui__clickDropBtn" ng-repeat="filter in SelfieCampaignsCtrl.filters" title="{{filter.name}}" type="button" >
+                            <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleFilter($index)"> <span class="btn__label faa">{{filter.name}}</span></label>
+                            <li>
+                        </ul>
                     </li>
                     <li ng-show="SelfieCampaignsCtrl.allStatusesChecked" ng-click="SelfieCampaignsCtrl.toggleAllStatuses(false)" class="ui__clickDropBtn dropdownBtn text--center" type="button" title="Uncheck All">
                         <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Uncheck All</span></label>
