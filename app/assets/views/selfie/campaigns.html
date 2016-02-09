@@ -25,7 +25,7 @@
                 </ul>
             </span>
 
-            <span class="filterBtn__group" c6-click-outside="showOrgDropdown = false">
+            <span class="filterBtn__group" ng-if="SelfieCampaignsCtrl.orgs.length > 1" c6-click-outside="showOrgDropdown = false">
                 <button class="btn filterBtn btn--primary btn--small btn__nav" ng-click="showOrgDropdown = !showOrgDropdown" type="button"><span class="ui__clickDrop sortBar__btn--Dropdown"><i class="faa fa-filter"></i></span></button>
                 <ul class="ui__clickDropMenu" ng-show="showOrgDropdown">
                     <li ng-repeat="filter in SelfieCampaignsCtrl.orgs" class="ui__clickDropBtn" type="button" title="{{filter.name}}">

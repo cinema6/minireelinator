@@ -69,6 +69,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.beforeModel = function() {
                     var user = c6State.get('Selfie').cModel,
                         config = user.config,
+                        orgs = this.cParent.orgs || [],
+                        hasSingleOrg = orgs.length === 1 && orgs[0].id === user.org.id,
                         excludeOrgs = (config.platform && config.platform.excludeOrgs) || [],
                         params = SettingsService.getReadOnly('Selfie::params');
 
@@ -80,14 +82,18 @@ function( angular , c6State  , PaginatedListState                    ,
                                 filterBy: 'statuses',
                                 sort: 'lastUpdated,-1',
                                 search: null,
-                                excludeOrgs: excludeOrgs.join(',')
+                                excludeOrgs: (!hasSingleOrg && excludeOrgs.join(',')) || null
                             },
                             sync: function(settings) {
-                                config.platform = config.platform || {};
-                                config.platform.excludeOrgs = (settings.excludeOrgs &&
-                                    settings.excludeOrgs.split(',')) || [];
+                                var savedOrgs = (config.platform || {}).excludeOrgs,
+                                    newOrgs = (!hasSingleOrg && settings.excludeOrgs &&
+                                        settings.excludeOrgs.split(',')) || [];
 
-                                user.save();
+                                if (!equals(savedOrgs, newOrgs)) {
+                                    config.platform = config.platform || {};
+                                    config.platform.excludeOrgs = newOrgs;
+                                    user.save();
+                                }
                             },
                             localSync: user.id,
                             validateLocal: function(currentUserId, prevUserId) {
@@ -361,7 +367,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     return {
                         name: org.name,
                         id: org.id,
-                        checked: SelfieCampaignsCtrl.excludeOrgs.indexOf(org.id) === -1
+                        checked: (SelfieCampaignsCtrl.excludeOrgs || '').indexOf(org.id) === -1
                     };
                 });
             };
@@ -414,7 +420,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.toggleOrg = function() {
                 this.excludeOrgs = this.orgs.reduce(function(filters, filter) {
                     return !filter.checked ? filters.concat(filter.id) : filters;
-                },[]).join(',');
+                },[]).join(',') || null;
                 this.params.excludeOrgs = this.excludeOrgs;
             };
 
