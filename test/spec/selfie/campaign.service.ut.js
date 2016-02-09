@@ -416,6 +416,51 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                 });
             });
 
+            describe('getOrgs()', function() {
+                var success, failure, orgs;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    orgs = [
+                        {
+                            id: 'o-111'
+                        },
+                        {
+                            id: 'o-222'
+                        },
+                        {
+                            id: 'o-333'
+                        }
+                    ];
+                });
+
+                it('should request stats for a single campaign and return an array', function() {
+                    $httpBackend.expectGET('/api/account/orgs?fields=id,name')
+                        .respond(200, orgs);
+
+                    CampaignService.getOrgs().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith(orgs);
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should reject the promise if the request fails', function() {
+                    $httpBackend.expectGET('/api/account/orgs?fields=id,name')
+                        .respond(404, 'NOT FOUND');
+
+                    CampaignService.getOrgs().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).not.toHaveBeenCalledWith(orgs);
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
             describe('hasCampaigns', function() {
                 var success, failure, campaigns;
 

@@ -327,13 +327,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
-            this.toggleAllStatuses = function(bool) {
-                this.filters.forEach(function(status) {
-                    status.checked = bool;
-                });
-                this.toggleFilter();
-            };
-
             this.initWithModel = function(model) {
                 this.model = model;
                 this.hasAdvertisers = cState.cParent.hasAdvertisers;
@@ -415,6 +408,13 @@ function( angular , c6State  , PaginatedListState                    ,
                     return filter.checked ? filters.concat(filter.id) : filters;
                 },['error']).join(',');
                 this.params.filter = this.filter;
+            };
+
+            this.toggleAllStatuses = function(bool) {
+                this.filters.forEach(function(status) {
+                    status.checked = bool;
+                });
+                this.toggleFilter();
             };
 
             this.toggleOrg = function() {

@@ -7,7 +7,10 @@ define(['app'], function(appModule) {
             selfieCampaignDashboard,
             selfieState,
             cinema6,
+            CampaignService,
             $q;
+
+        var deferredOrgs;
 
         beforeEach(function() {
             module(appModule.name);
@@ -16,8 +19,12 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
+                CampaignService = $injector.get('CampaignService');
                 $q = $injector.get('$q');
             });
+
+            deferredOrgs = $q.defer();
+            spyOn(CampaignService, 'getOrgs').and.returnValue(deferredOrgs.promise);
 
             selfieState = c6State.get('Selfie');
             selfieState.cModel = {
@@ -54,6 +61,28 @@ define(['app'], function(appModule) {
                 });
 
                 expect(selfieCampaignDashboard.hasAdvertisers).toBe(true);
+            });
+        });
+
+        describe('afterModel()', function() {
+            beforeEach(function() {
+                selfieCampaignDashboard.afterModel();
+            });
+
+            it('should fetch all orgs', function() {
+                expect(CampaignService.getOrgs).toHaveBeenCalled();
+            });
+
+            describe('when orgs are returned', function() {
+                it('should put them on the cState', function() {
+                    var orgs = [{id: '1'},{id: '2'}];
+
+                    $rootScope.$apply(function() {
+                        deferredOrgs.resolve(orgs);
+                    });
+
+                    expect(selfieCampaignDashboard.orgs).toBe(orgs);
+                });
             });
         });
 
