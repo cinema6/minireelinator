@@ -18,7 +18,7 @@ function( angular , c6State  , password         , email         ) {
                     c6State.goTo('Account:Password', null, null, true);
                 };
                 this.title = function() {
-                    return 'Cinema6: Account Settings';
+                    return 'Reelcontent: Account Settings';
                 };
             }]);
 

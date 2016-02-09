@@ -301,7 +301,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 });
 
                 it('should add the filters to the Ctrl', function() {
-                    SelfieCampaignsCtrl.filter = 'active,error';
+                    SelfieCampaignsCtrl.filter = 'active,completed,outOfBudget';
                     SelfieCampaignsCtrl.initWithModel(model);
 
                     expect(SelfieCampaignsCtrl.filters).toEqual([
@@ -310,9 +310,8 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: false },
                         { name: 'Canceled', id: 'canceled', checked: false },
-                        { name: 'Out of Budget', id: 'completed', checked: false },
-                        { name: 'Expired', id: 'expired', checked: false },
-                        { name: 'Error', id: 'error', checked: true }
+                        { name: 'Out of Budget', id: 'completed,outOfBudget', checked: true },
+                        { name: 'Expired', id: 'expired', checked: false }
                     ]);
                 });
 
@@ -375,7 +374,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-3',
                                 user: 'u-3',
-                                status: 'draft',
+                                status: 'outOfBudget',
                                 cards: [
                                     {
                                         params: {
@@ -488,7 +487,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         expect(SelfieCampaignsCtrl.data['cam-3']).toEqual({
                             campaign: model.items.value[2],
                             previewUrl: jasmine.any(String),
-                            status: 'draft'
+                            status: 'Out of Budget'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-4']).toEqual({
@@ -781,13 +780,13 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         { name: 'Approved', id: 'approved', checked: true },
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: false },
-                        { name: 'Error', id: 'error', checked: true }
+                        { name: 'Out of Budget', id: 'completed,outOfBudget', checked: true }
                     ];
 
                     SelfieCampaignsCtrl.toggleFilter();
 
-                    expect(SelfieCampaignsCtrl.filter).toEqual('draft,approved,active,error');
-                    expect(SelfieCampaignsCtrl.params.filter).toEqual('draft,approved,active,error');
+                    expect(SelfieCampaignsCtrl.filter).toEqual('error,draft,approved,active,completed,outOfBudget');
+                    expect(SelfieCampaignsCtrl.params.filter).toEqual('error,draft,approved,active,completed,outOfBudget');
                 });
             });
 
@@ -926,7 +925,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             {
                                 id: 'cam-3',
                                 user: 'u-3',
-                                status: 'draft',
+                                status: 'outOfBudget',
                                 cards: [
                                     {
                                         params: {
@@ -1043,7 +1042,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         expect(SelfieCampaignsCtrl.data['cam-3']).toEqual({
                             campaign: model.items.value[2],
                             previewUrl: jasmine.any(String),
-                            status: 'draft'
+                            status: 'Out of Budget'
                         });
 
                         expect(SelfieCampaignsCtrl.data['cam-4']).toEqual({

@@ -1,8 +1,17 @@
 # MiniReelinator
 
-* *[v1.36.0.rc1]*
+## v1.35.1 (February 8, 2016)
+* *[v1.35.1.rc1]*
   * Remove adtech fields and some other confusing entries from the update request summary table
-  * [FEATURE]: Show errors when failing to approve or reject a campaign in the admin tab
+  * [FIX]: Show errors when failing to approve or reject a campaign in the admin tab
+  * Change cinema6.com urls to reelcontent.com. This includes new home pages for
+    the Platform and Studio, updated API base urls and library paths
+  * Change all "Cinema6" references in UI to "Reelcontent"
+  * Temporarily treat both "completed" and "outOfBudget" campaign statuses as
+    "Out of Budget"
+  * Remove "Error" filter from campaign list UI but always query for campaigns
+    with errors
+* *[/v1.35.1.rc1]*
 
 ## v1.35.0 (February 4, 2016)
 * *[v1.35.0.rc2]*
