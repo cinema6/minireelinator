@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.36.0.rc1]*
+  * [DESIGN]: Added styles to allow filtering campaigns by organizations
+
 ## v1.35.1 (February 8, 2016)
 * *[v1.35.1.rc1]*
   * Remove adtech fields and some other confusing entries from the update request summary table
