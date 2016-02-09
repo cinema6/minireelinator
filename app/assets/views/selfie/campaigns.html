@@ -13,13 +13,13 @@
             <span class="filterBtn__group" c6-click-outside="showDropdown = false">
                 <button class="btn filterBtn btn--primary btn--small btn__nav" ng-click="showDropdown = !showDropdown" type="button"><span class="ui__clickDrop sortBar__btn--Dropdown"><i class="faa fa-filter"></i></span></button>
                 <ul class="ui__clickDropMenu" ng-show="showDropdown">
-                    <li class="ui__clickDropBtn dropdownBtn filterOptions text--center" type="button">
+                    <!--<li class="ui__clickDropBtn dropdownBtn filterOptions text--center" type="button">
                         <span class="btnGroup">
-                            <label class="checkbox--inline btn text--right"><span class="btn__label faa">Status</span></label>
+                            <label class="checkbox--inline btn btn--active text--right"><span class="btn__label faa">Status</span></label>
                             <label class="checkbox--inline btn text--left"><span class="btn__label faa">Organization</span></label>
                         </span>
                         <span class="filterOrg__search"><input type="text" placeholder="Search" class="form__textBox"></span>
-                    </li>
+                    </li>-->
                     <li>
                         <ul>
                             <li class="ui__clickDropBtn" ng-repeat="filter in SelfieCampaignsCtrl.filters" title="{{filter.name}}" type="button" >

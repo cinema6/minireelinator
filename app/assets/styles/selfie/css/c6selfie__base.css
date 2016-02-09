@@ -1390,7 +1390,7 @@ fa,
                 .filterBtn__group ul li ul {
                     padding: 0;
                     list-style-type: none;
-                    max-height: 220px;
+                    max-height: 260px;
                     overflow-y: auto;
                 }
                     .filterBtn__group ul li ul li.ui__clickDropBtn {
