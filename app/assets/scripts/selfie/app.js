@@ -1,5 +1,5 @@
-define( ['angular','c6_state','./services','./directives','./campaign'],
-function( angular , c6State  , services   , directives   , campaign   ) {
+define( ['angular','c6_state','./services','./directives','./campaign','c6_defines'],
+function( angular , c6State  , services   , directives   , campaign   , c6Defines  ) {
     /* jshint -W106 */
     'use strict';
 
@@ -60,7 +60,9 @@ function( angular , c6State  , services   , directives   , campaign   ) {
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:App', ['c6State','SettingsService','CampaignService',
-            function                            ( c6State , SettingsService , CampaignService ) {
+                                                 'intercom',
+            function                            ( c6State , SettingsService , CampaignService ,
+                                                  intercom ) {
                 this.templateUrl = 'views/selfie/app.html';
 
                 this.model = function() {
@@ -68,7 +70,15 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                 };
                 this.afterModel = function() {
                     var user = c6State.get('Selfie').cModel,
+                        intercomSettings = {
+                            app_id: c6Defines.kIntercomId,
+                            name: user.firstName + ' ' + user.lastName,
+                            email: user.email,
+                            created_at: user.created
+                        },
                         cState = this;
+
+                    intercom('boot', intercomSettings);
 
                     if (!user.org.config.minireelinator) {
                         user.org.config.minireelinator = {};

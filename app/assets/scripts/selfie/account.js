@@ -142,7 +142,9 @@ function( angular , c6State  ) {
         }])
 
         .controller('SelfieResendActivationController', ['c6State','AuthService','AccountService',
-        function                                        ( c6State , AuthService , AccountService) {
+                                                         'intercom',
+        function                                        ( c6State , AuthService , AccountService ,
+                                                          intercom ) {
             var SelfieResendActivationCtrl = this;
 
             this.error = null;
@@ -166,6 +168,7 @@ function( angular , c6State  ) {
             this.logout = function() {
                 return AuthService.logout()
                     .then(function transition() {
+                        intercom('shutdown');
                         return c6State.goTo('Selfie:Login', null, {});
                     });
             };

@@ -23,6 +23,7 @@ define(function() {
     c6.kYouTubeDataApiKey = window.YouTubeApiKey || 'AIzaSyCmHsFIiXhjAuHM_piTxSHPsQgvZwueLlk';
     c6.kFlickrDataApiKey = window.FlickrApiKey || 'c60c2b10ac89da96a09fe02811db0ea6';
     c6.kInstagramDataApiKey = window.InstagramApiKey || 'f5e4125b62b946879b7dbdd38aeef55c';
+    c6.kIntercomId = window.IntercomId || 'xpkkvhlv';
     c6.embeds = [];
 
     if (c6.kDebug) {

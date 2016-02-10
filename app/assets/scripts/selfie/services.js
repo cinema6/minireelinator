@@ -601,7 +601,8 @@ function( angular , c6uilib ,  c6Defines  ) {
             };
         }])
 
-        .service('SelfieLoginDialogService', ['$q',function($q) {
+        .service('SelfieLoginDialogService', ['$q','intercom',
+        function                             ( $q , intercom ) {
             var model = {},
                 deferred;
 
@@ -612,6 +613,7 @@ function( angular , c6uilib ,  c6Defines  ) {
             });
 
             this.display = function() {
+                intercom('shutdown');
                 model.show = true;
                 deferred = $q.defer();
                 return deferred.promise;
