@@ -2,6 +2,7 @@
 
 * *[v1.36.0.rc1]*
   * [DESIGN]: Added styles to allow filtering campaigns by organizations
+  * [DESIGN]: Added styles for zip radius targeting
 
 ## v1.35.1 (February 8, 2016)
 * *[v1.35.1.rc1]*
