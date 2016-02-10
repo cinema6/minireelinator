@@ -1393,7 +1393,7 @@ fa,
                     max-height: 260px;
                     overflow-y: auto;
                 }
-                    .filterBtn__group ul li ul li.ui__clickDropBtn {
+                    .filterBtn__group ul li ul li ul li.ui__clickDropBtn {
                         width: 100%;
                     }
                 .filterOrg__search {

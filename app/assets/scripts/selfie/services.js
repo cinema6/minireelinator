@@ -178,6 +178,13 @@ function( angular , c6uilib ,  c6Defines  ) {
                     });
             };
 
+            this.getOrgs = function() {
+                return $http.get(c6UrlMaker('account/orgs?fields=id,name', 'api'))
+                    .then(function(response) {
+                        return response.data;
+                    });
+            };
+
             this.getUserData = function(ids) {
                 var multi = (ids || '').split(',').length > 1,
                     url = c6UrlMaker('account/users' + (multi ? ('?ids='+ids+'&') : '/'+ids+'?') +

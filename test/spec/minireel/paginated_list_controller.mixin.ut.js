@@ -16,6 +16,7 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
 
         beforeEach(function() {
             state = {
+                excludeOrgs: null,
                 filterBy: null,
                 filter: null,
                 sort: null,
@@ -96,6 +97,12 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
             describe('limits', function() {
                 it('should be an array of the available limits', function() {
                     expect(PaginatedListCtrl.limits).toEqual([20, 50, 100]);
+                });
+            });
+
+            describe('excludeOrgs', function() {
+                it('should be initialized as the state\'s excludeOrgs', function() {
+                    expect(PaginatedListCtrl.excludeOrgs).toEqual(state.excludeOrgs);
                 });
             });
 
@@ -428,6 +435,49 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
                             expect(model.update).toHaveBeenCalled();
                             expect(model.update.calls.mostRecent().args[0].text).toBe(undefined);
                         });
+                    });
+                });
+
+                describe('this.excludeOrgs', function() {
+                    beforeEach(function() {
+                        model.goTo.calls.reset();
+
+                        $scope.$apply(function() {
+                            PaginatedListCtrl.page = 3;
+                            PaginatedListCtrl.excludeOrgs = 'o-111,o-222';
+                        });
+                    });
+
+                    it('should update the model with new query', function() {
+                        expect(model.update).toHaveBeenCalledWith(model.query, 50);
+                    });
+
+                    it('should set the PaginatedListCtrl.page back to 1', function() {
+                        expect(PaginatedListCtrl.page).toBe(1);
+                    });
+
+                    it('should not call goTo again', function() {
+                        expect(cinema6.db.findAll.calls.count()).toBe(1);
+                    });
+
+                    it('should be null if undefined', function() {
+                        model.update.calls.reset();
+
+                        $scope.$apply(function() {
+                            PaginatedListCtrl.excludeOrgs = undefined;
+                        });
+
+                        expect(model.query.excludeOrgs).toEqual(null);
+                    });
+
+                    it('should not update the model if unchanged', function() {
+                        model.update.calls.reset();
+
+                        $scope.$apply(function() {
+                            PaginatedListCtrl.excludeOrgs = 'o-111,o-222';
+                        });
+
+                        expect(model.update).not.toHaveBeenCalled();
                     });
                 });
             });

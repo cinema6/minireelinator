@@ -21,7 +21,9 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6',
-            function                                          ( c6State , cinema6 ) {
+                                                               'CampaignService',
+            function                                          ( c6State , cinema6 ,
+                                                                CampaignService ) {
                 this.beforeModel = function() {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
@@ -30,6 +32,15 @@ function( angular , c6State  , PaginatedListState                    ,
                     cinema6.db.findAll('advertiser', {org: org})
                         .then(function(advertisers) {
                             cState.hasAdvertisers = !!advertisers.length;
+                        });
+                };
+
+                this.afterModel = function() {
+                    var cState = this;
+
+                    return CampaignService.getOrgs()
+                        .then(function(orgs) {
+                            cState.orgs = orgs;
                         });
                 };
 
@@ -56,31 +67,55 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.params = {};
 
                 this.beforeModel = function() {
-                    var params;
+                    var user = c6State.get('Selfie').cModel,
+                        config = user.config,
+                        orgs = this.cParent.orgs || [],
+                        hasSingleOrg = orgs.length === 1 && orgs[0].id === user.org.id,
+                        excludeOrgs = (config.platform && config.platform.excludeOrgs) || [],
+                        params = SettingsService.getReadOnly('Selfie::params');
 
-                    SettingsService.register('Selfie::params', this.params, {
-                        localSync: true,
-                        defaults: {
-                            filter: 'error,draft,pending,active,paused,canceled,'+
-                                'completed,outOfBudget,expired',
-                            filterBy: 'statuses',
-                            sort: 'lastUpdated,-1',
-                            search: null
-                        }
-                    });
+                    if (!params) {
+                        SettingsService.register('Selfie::params', this.params, {
+                            defaults: {
+                                filter: 'error,draft,pending,active,paused,canceled,'+
+                                    'completed,outOfBudget,expired',
+                                filterBy: 'statuses',
+                                sort: 'lastUpdated,-1',
+                                search: null,
+                                excludeOrgs: (!hasSingleOrg && excludeOrgs.join(',')) || null
+                            },
+                            sync: function(settings) {
+                                var savedOrgs = (config.platform || {}).excludeOrgs,
+                                    newOrgs = (!hasSingleOrg && settings.excludeOrgs &&
+                                        settings.excludeOrgs.split(',')) || [];
 
-                    params = SettingsService.getReadOnly('Selfie::params');
+                                if (!equals(savedOrgs, newOrgs)) {
+                                    config.platform = config.platform || {};
+                                    config.platform.excludeOrgs = newOrgs;
+                                    user.save();
+                                }
+                            },
+                            localSync: user.id,
+                            validateLocal: function(currentUserId, prevUserId) {
+                                return currentUserId === prevUserId;
+                            }
+                        });
+
+                        params = SettingsService.getReadOnly('Selfie::params');
+                    }
 
                     this.filter = params.filter;
                     this.filterBy = params.filterBy;
                     this.sort = params.sort;
                     this.search = params.search;
+                    this.excludeOrgs = params.excludeOrgs;
 
                     extend(this.queryParams, {
                         filter: '=',
                         filterBy: '=',
                         sort: '=',
-                        search: '='
+                        search: '=',
+                        excludeOrgs: '='
                     });
                 };
 
@@ -92,6 +127,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         application: 'selfie',
                         statuses: this.filter,
                         text: this.search,
+                        excludeOrgs: this.excludeOrgs
                     }, this.limit, this.page).ensureResolution()
                         .finally(function() {
                             SpinnerService.close();
@@ -281,15 +317,15 @@ function( angular , c6State  , PaginatedListState                    ,
                             return status.checked;
                         }).length === this.filters.length;
                     }
+                },
+                allOrgsChecked: {
+                    get: function() {
+                        return this.orgs.filter(function(status) {
+                            return status.checked;
+                        }).length === this.orgs.length;
+                    }
                 }
             });
-
-            this.toggleAllStatuses = function(bool) {
-                this.filters.forEach(function(status) {
-                    status.checked = bool;
-                });
-                this.toggleFilter();
-            };
 
             this.initWithModel = function(model) {
                 this.model = model;
@@ -319,6 +355,16 @@ function( angular , c6State  , PaginatedListState                    ,
                         checked: SelfieCampaignsCtrl.filter.indexOf(filter) > -1
                     };
                 });
+
+                this.allOrgs = cState.cParent.orgs.map(function(org) {
+                    return {
+                        name: org.name,
+                        id: org.id,
+                        checked: (SelfieCampaignsCtrl.excludeOrgs || '').indexOf(org.id) === -1
+                    };
+                });
+                this.orgs = this.allOrgs;
+                this.showOrgFilter = false;
             };
 
             this.editStateFor = function(campaign) {
@@ -364,6 +410,44 @@ function( angular , c6State  , PaginatedListState                    ,
                     return filter.checked ? filters.concat(filter.id) : filters;
                 },['error']).join(',');
                 this.params.filter = this.filter;
+            };
+
+            this.toggleAllStatuses = function(bool) {
+                this.filters.forEach(function(status) {
+                    status.checked = bool;
+                });
+                this.toggleFilter();
+            };
+
+            this.toggleOrg = function(org) {
+                if (org) {
+                    this.allOrgs[this.allOrgs.indexOf(org)].checked = org.checked;
+                }
+
+                this.excludeOrgs = this.allOrgs.reduce(function(filters, filter) {
+                    return !filter.checked ? filters.concat(filter.id) : filters;
+                },[]).join(',') || null;
+
+                this.params.excludeOrgs = this.excludeOrgs;
+            };
+
+            this.toggleAllOrgs = function(bool) {
+                var allOrgs = this.allOrgs;
+
+                this.orgs.forEach(function(org) {
+                    allOrgs[allOrgs.indexOf(org)].checked = bool;
+                });
+
+                this.toggleOrg();
+            };
+
+            this.searchOrgs = function(text) {
+                this.orgs = this.allOrgs.filter(function(org) {
+                    var lowerCase = text.toLowerCase();
+
+                    return !text || org.name.toLowerCase().indexOf(lowerCase) > -1 ||
+                        org.id.toLowerCase().indexOf(lowerCase) > -1;
+                });
             };
         }])
 

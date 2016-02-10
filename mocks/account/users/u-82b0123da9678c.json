@@ -1,6 +1,10 @@
 {
     "applications": ["e-99263e70058290"],
-    "config": {},
+    "config": {
+        "platform": {
+            "excludeOrgs": ["o-b2c617abe4d6a"]
+        }
+    },
     "firstName": "Sammy",
     "lastName": "Selfie",
     "company": "Selfie, Inc.",
