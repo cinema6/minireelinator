@@ -45,7 +45,7 @@
                             <li>
                                 <ul>
                                     <li ng-repeat="filter in SelfieCampaignsCtrl.orgs" class="ui__clickDropBtn" type="button" title="{{filter.name}}">
-                                        <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleOrg($index)"> <span class="btn__label faa">{{filter.name}}</span></label>
+                                        <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleOrg(filter)"> <span class="btn__label faa">{{filter.name}}</span></label>
                                     </li>
                                 </ul>
                             </li>

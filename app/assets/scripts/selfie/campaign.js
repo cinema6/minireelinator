@@ -363,7 +363,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         checked: (SelfieCampaignsCtrl.excludeOrgs || '').indexOf(org.id) === -1
                     };
                 });
-                this.orgs = copy(this.allOrgs);
+                this.orgs = this.allOrgs;
                 this.showOrgFilter = false;
             };
 
@@ -419,17 +419,25 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.toggleFilter();
             };
 
-            this.toggleOrg = function() {
+            this.toggleOrg = function(org) {
+                if (org) {
+                    this.allOrgs[this.allOrgs.indexOf(org)].checked = org.checked;
+                }
+
                 this.excludeOrgs = this.allOrgs.reduce(function(filters, filter) {
                     return !filter.checked ? filters.concat(filter.id) : filters;
                 },[]).join(',') || null;
+
                 this.params.excludeOrgs = this.excludeOrgs;
             };
 
             this.toggleAllOrgs = function(bool) {
-                this.orgs.forEach(function(status) {
-                    status.checked = bool;
+                var allOrgs = this.allOrgs;
+
+                this.orgs.forEach(function(org) {
+                    allOrgs[allOrgs.indexOf(org)].checked = bool;
                 });
+
                 this.toggleOrg();
             };
 

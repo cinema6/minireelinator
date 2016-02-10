@@ -374,8 +374,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 { name: 'Cinema6', id: 'o-444', checked: true }
                             ]);
 
-                            expect(SelfieCampaignsCtrl.orgs).toEqual(SelfieCampaignsCtrl.allOrgs);
-                            expect(SelfieCampaignsCtrl.orgs).not.toBe(SelfieCampaignsCtrl.allOrgs);
+                            expect(SelfieCampaignsCtrl.orgs).toBe(SelfieCampaignsCtrl.allOrgs);
                         });
                     });
 
@@ -391,8 +390,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 { name: 'Cinema6', id: 'o-444', checked: false }
                             ]);
 
-                            expect(SelfieCampaignsCtrl.orgs).toEqual(SelfieCampaignsCtrl.allOrgs);
-                            expect(SelfieCampaignsCtrl.orgs).not.toBe(SelfieCampaignsCtrl.allOrgs);
+                            expect(SelfieCampaignsCtrl.orgs).toBe(SelfieCampaignsCtrl.allOrgs);
                         });
                     });
                 });
@@ -920,82 +918,128 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 });
             });
 
-            describe('toggleOrg()', function() {
-                it('should update the excludeOrgs query param based on which options are checked', function() {
-                    SelfieCampaignsCtrl.params = {};
+            describe('toggleOrg(org)', function() {
+                describe('when an org is passed in', function() {
+                    beforeEach(function() {
+                        SelfieCampaignsCtrl.params = {};
 
-                    SelfieCampaignsCtrl.allOrgs = SelfieCampaignsCtrl.orgs = [
-                        { name: 'Diageo', id: 'o-111', checked: true },
-                        { name: 'Toyota', id: 'o-222', checked: false },
-                        { name: 'Honda', id: 'o-333', checked: true },
-                        { name: 'Cinema6', id: 'o-444', checked: false }
-                    ];
+                        SelfieCampaignsCtrl.allOrgs = [
+                            { name: 'Diageo', id: 'o-111', checked: true },
+                            { name: 'Toyota', id: 'o-222', checked: false },
+                            { name: 'Honda', id: 'o-333', checked: true },
+                            { name: 'Cinema6', id: 'o-444', checked: true }
+                        ];
 
-                    SelfieCampaignsCtrl.toggleOrg();
+                        SelfieCampaignsCtrl.orgs = SelfieCampaignsCtrl.allOrgs.map(function(org) { return org; });
 
-                    expect(SelfieCampaignsCtrl.excludeOrgs).toEqual('o-222,o-444');
-                    expect(SelfieCampaignsCtrl.params.excludeOrgs).toEqual('o-222,o-444');
+                        SelfieCampaignsCtrl.orgs[3].checked = false;
+                    });
 
-                    SelfieCampaignsCtrl.allOrgs = SelfieCampaignsCtrl.orgs = [
-                        { name: 'Diageo', id: 'o-111', checked: true },
-                        { name: 'Toyota', id: 'o-222', checked: true },
-                        { name: 'Honda', id: 'o-333', checked: true },
-                        { name: 'Cinema6', id: 'o-444', checked: true }
-                    ];
+                    it('should set the "checked" flag on the corresponding org in allOrgs array', function() {
+                        SelfieCampaignsCtrl.toggleOrg(SelfieCampaignsCtrl.orgs[1]);
 
-                    SelfieCampaignsCtrl.toggleOrg();
+                        expect(SelfieCampaignsCtrl.allOrgs[3].checked).toBe(false);
+                    });
 
-                    expect(SelfieCampaignsCtrl.excludeOrgs).toEqual(null);
-                    expect(SelfieCampaignsCtrl.params.excludeOrgs).toEqual(null);
+                    it('should set the excludeOrgs prop on the Ctrl and params object', function() {
+                        SelfieCampaignsCtrl.toggleOrg(SelfieCampaignsCtrl.orgs[1]);
+
+                        expect(SelfieCampaignsCtrl.excludeOrgs).toEqual('o-222,o-444');
+                        expect(SelfieCampaignsCtrl.params.excludeOrgs).toEqual('o-222,o-444');
+                    });
+                });
+
+                describe('when an org is not passed in', function() {
+                    beforeEach(function() {
+                        SelfieCampaignsCtrl.params = {};
+
+                        SelfieCampaignsCtrl.allOrgs = [
+                            { name: 'Diageo', id: 'o-111', checked: true },
+                            { name: 'Toyota', id: 'o-222', checked: false },
+                            { name: 'Honda', id: 'o-333', checked: true },
+                            { name: 'Cinema6', id: 'o-444', checked: true }
+                        ];
+                    });
+
+                    it('should set not update the allOrgs array', function() {
+                        SelfieCampaignsCtrl.toggleOrg();
+
+                        expect(SelfieCampaignsCtrl.allOrgs[3].checked).toBe(true);
+                    });
+
+                    it('should set the excludeOrgs prop on the Ctrl and params object', function() {
+                        SelfieCampaignsCtrl.toggleOrg();
+
+                        expect(SelfieCampaignsCtrl.excludeOrgs).toEqual('o-222');
+                        expect(SelfieCampaignsCtrl.params.excludeOrgs).toEqual('o-222');
+                    });
+
+                    it('should set the excludeOrgs query param to null if everything is checked', function() {
+                        SelfieCampaignsCtrl.allOrgs = [
+                            { name: 'Diageo', id: 'o-111', checked: true },
+                            { name: 'Toyota', id: 'o-222', checked: true },
+                            { name: 'Honda', id: 'o-333', checked: true },
+                            { name: 'Cinema6', id: 'o-444', checked: true }
+                        ];
+
+                        SelfieCampaignsCtrl.toggleOrg();
+
+                        expect(SelfieCampaignsCtrl.excludeOrgs).toEqual(null);
+                        expect(SelfieCampaignsCtrl.params.excludeOrgs).toEqual(null);
+                    });
                 });
             });
 
             describe('toggleAllOrgs(bool)', function() {
                 describe('when bool === true', function() {
-                    it('should mark all the orgs as checked and should call toggleOrg()', function() {
+                    it('should mark all the visible orgs as checked and should call toggleOrg()', function() {
                         spyOn(SelfieCampaignsCtrl, 'toggleOrg');
 
-                        SelfieCampaignsCtrl.allOrgs = SelfieCampaignsCtrl.orgs =[
-                            { name: 'Diageo', id: 'o-111', checked: true },
+                        SelfieCampaignsCtrl.allOrgs = [
+                            { name: 'Diageo', id: 'o-111', checked: false },
                             { name: 'Toyota', id: 'o-222', checked: false },
-                            { name: 'Honda', id: 'o-333', checked: true },
+                            { name: 'Honda', id: 'o-333', checked: false },
                             { name: 'Cinema6', id: 'o-444', checked: false }
                         ];
 
+                        SelfieCampaignsCtrl.orgs = [SelfieCampaignsCtrl.allOrgs[1], SelfieCampaignsCtrl.allOrgs[2]];
+
                         SelfieCampaignsCtrl.toggleAllOrgs(true);
 
-                        SelfieCampaignsCtrl.allOrgs.forEach(function(status) {
-                            expect(status.checked).toBe(true);
-                        });
+                        expect(SelfieCampaignsCtrl.orgs[0].checked).toBe(true);
+                        expect(SelfieCampaignsCtrl.orgs[1].checked).toBe(true);
 
-                        SelfieCampaignsCtrl.orgs.forEach(function(status) {
-                            expect(status.checked).toBe(true);
-                        });
+                        expect(SelfieCampaignsCtrl.allOrgs[0].checked).toBe(false);
+                        expect(SelfieCampaignsCtrl.allOrgs[1].checked).toBe(true);
+                        expect(SelfieCampaignsCtrl.allOrgs[2].checked).toBe(true);
+                        expect(SelfieCampaignsCtrl.allOrgs[3].checked).toBe(false);
 
                         expect(SelfieCampaignsCtrl.toggleOrg).toHaveBeenCalled();
                     });
                 });
 
                 describe('when bool === false', function() {
-                    it('should mark all the statuses as checked and should call toggleFilter()', function() {
+                    it('should mark all the visible orgs as checked and should call toggleFilter()', function() {
                         spyOn(SelfieCampaignsCtrl, 'toggleOrg');
 
-                        SelfieCampaignsCtrl.allOrgs = SelfieCampaignsCtrl.orgs = [
+                        SelfieCampaignsCtrl.allOrgs = [
                             { name: 'Diageo', id: 'o-111', checked: true },
-                            { name: 'Toyota', id: 'o-222', checked: false },
+                            { name: 'Toyota', id: 'o-222', checked: true },
                             { name: 'Honda', id: 'o-333', checked: true },
-                            { name: 'Cinema6', id: 'o-444', checked: false }
+                            { name: 'Cinema6', id: 'o-444', checked: true }
                         ];
+
+                        SelfieCampaignsCtrl.orgs = [SelfieCampaignsCtrl.allOrgs[1], SelfieCampaignsCtrl.allOrgs[2]];
 
                         SelfieCampaignsCtrl.toggleAllOrgs(false);
 
-                        SelfieCampaignsCtrl.allOrgs.forEach(function(status) {
-                            expect(status.checked).toBe(false);
-                        });
+                        expect(SelfieCampaignsCtrl.orgs[0].checked).toBe(false);
+                        expect(SelfieCampaignsCtrl.orgs[1].checked).toBe(false);
 
-                        SelfieCampaignsCtrl.orgs.forEach(function(status) {
-                            expect(status.checked).toBe(false);
-                        });
+                        expect(SelfieCampaignsCtrl.allOrgs[0].checked).toBe(true);
+                        expect(SelfieCampaignsCtrl.allOrgs[1].checked).toBe(false);
+                        expect(SelfieCampaignsCtrl.allOrgs[2].checked).toBe(false);
+                        expect(SelfieCampaignsCtrl.allOrgs[3].checked).toBe(true);
 
                         expect(SelfieCampaignsCtrl.toggleOrg).toHaveBeenCalled();
                     });
