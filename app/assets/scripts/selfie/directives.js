@@ -927,12 +927,13 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             this.addNewZip = function() {
                 var newZip = this.newZip,
                     valid = /^\d{5}$/.test(newZip),
+                    allowed = codesArray.length <= this.maxCodes - 1,
                     index;
 
                 if (!newZip) { return; }
 
                 // if it's valid and not on the campaign already, add it
-                if (valid && codesArray.indexOf(newZip) === -1) {
+                if (valid && codesArray.indexOf(newZip) === -1 && allowed) {
                     codesArray.push(newZip);
                 }
 
@@ -946,6 +947,11 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                 // if we do then remove it from it's position
                 if (index !== undefined) {
                     this.zips.splice(index, 1);
+                }
+
+                // don't add zip to list or reset newZip
+                if (!allowed) {
+                    return;
                 }
 
                 // then add the new one
