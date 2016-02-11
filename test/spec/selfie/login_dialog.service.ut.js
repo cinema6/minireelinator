@@ -4,10 +4,15 @@
     define(['app'], function(appModule) {
         describe('SelfieLoginDialogService', function() {
             var $rootScope,
-                SelfieLoginDialogService;
+                SelfieLoginDialogService,
+                intercom;
 
             beforeEach(function() {
-                module(appModule.name);
+                intercom = jasmine.createSpy('intercom');
+
+                module(appModule.name, ['$provide', function($provide) {
+                    $provide.value('intercom', intercom);
+                }]);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
@@ -36,6 +41,10 @@
             describe('display()', function() {
                 beforeEach(function() {
                     SelfieLoginDialogService.display();
+                });
+
+                it('should "shutdown" intercom', function() {
+                    expect(intercom).toHaveBeenCalledWith('shutdown');
                 });
 
                 it('should set model.show to true', function() {

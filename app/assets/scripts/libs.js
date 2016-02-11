@@ -1,5 +1,7 @@
-define(['angular', 'metagetta'], function(angular, metagetta) {
+define(['angular', 'metagetta', 'intercom'], function(angular, metagetta, intercom) {
     'use strict';
-    
-    return angular.module('c6.libs', []).value('metagetta', metagetta);
+
+    return angular.module('c6.libs', [])
+        .value('metagetta', metagetta)
+        .value('intercom', intercom);
 });

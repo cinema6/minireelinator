@@ -61,6 +61,10 @@
                 c6embed: libUrl('c6embed/v1/utils'),
                 metagetta: libUrl('metagetta/v0.2.0-0-g8b51280/metagetta'),
                 braintree: 'lib/braintree',
+                intercom: [
+                    'https://widget.intercom.io/widget/xpkkvhlv',
+                    'lib/intercom'
+                ],
                 chartjs: [
                     'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min',
                     'lib/chartjs.min'
@@ -96,6 +100,9 @@
                     init: function(c6Defines) {
                         return c6Defines;
                     }
+                },
+                intercom: {
+                    exports: 'Intercom'
                 }
             }
         });

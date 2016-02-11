@@ -1,4 +1,4 @@
-define(['app'], function(appModule) {
+define(['app','c6_defines'], function(appModule, c6Defines) {
     'use strict';
 
     describe('Selfie:App State', function() {
@@ -12,13 +12,18 @@ define(['app'], function(appModule) {
             selfieApp;
 
         var selfieExperience,
-            user;
+            user,
+            intercom;
 
         beforeEach(function() {
             selfieExperience = {};
 
             user = {
                 id: 'u-5dd4066eb1c277',
+                email: 'selfie@reelcontent.com',
+                firstName: 'Sammy',
+                lastName: 'Selfie',
+                created: '2015-06-26T00:00:00.000Z',
                 org: {
                     id: 'o-0e8ad18c6c1086',
                     config: {
@@ -32,7 +37,13 @@ define(['app'], function(appModule) {
                 save: jasmine.createSpy('user.save()')
             };
 
-            module(appModule.name);
+            c6Defines.kIntercomId = '123xyz';
+
+            intercom = jasmine.createSpy('intercom');
+
+            module(appModule.name, ['$provide', function($provide) {
+                $provide.value('intercom', intercom);
+            }]);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -76,6 +87,15 @@ define(['app'], function(appModule) {
                 spyOn(SettingsService, 'register').and.callThrough();
                 spyOn(CampaignService, 'hasCampaigns').and.returnValue(campaignsDeferred.promise);
                 selfieApp.afterModel();
+            });
+
+            it('should "boot" intercom with user settings', function() {
+                expect(intercom).toHaveBeenCalledWith('boot', {
+                    app_id: c6Defines.kIntercomId,
+                    email: user.email,
+                    name: user.firstName + ' ' + user.lastName,
+                    created_at: user.created
+                });
             });
 
             it('should register org settings with the settings service', function() {
