@@ -5,6 +5,7 @@
   * [FEATURE]: Add Org filter in campaign list view for users who can see
     campaigns from other Orgs
   * [FEATURE]: Save Org filter settings when user filters Orgs
+  * [DESIGN]: Added styles for zip radius targeting
 
 ## v1.35.1 (February 8, 2016)
 * *[v1.35.1.rc1]*
