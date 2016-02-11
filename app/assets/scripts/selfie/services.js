@@ -102,7 +102,10 @@ function( angular , c6uilib ,  c6Defines  ) {
                         targeting: {
                             geo: {
                                 states: copy([]),
-                                dmas: copy([])
+                                dmas: copy([]),
+                                zipcodes: {
+                                    codes: copy([])
+                                }
                             },
                             demographics: {
                                 age: copy([]),
@@ -140,7 +143,10 @@ function( angular , c6uilib ,  c6Defines  ) {
                         targeting: {
                             geo: {
                                 states: copy([]),
-                                dmas: copy([])
+                                dmas: copy([]),
+                                zipcodes: {
+                                    codes: copy([])
+                                }
                             },
                             demographics: {
                                 age: copy([]),
