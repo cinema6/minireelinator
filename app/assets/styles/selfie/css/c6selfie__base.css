@@ -4068,7 +4068,7 @@ fa,
         background:#000; opacity:0.75;
     }
         .modal__overlay--confirm {
-            z-index:2100;
+            z-index:5100;
         }
     .modal__group {
         position:fixed; z-index: 2200; top:50%; left:50%;
@@ -4096,7 +4096,7 @@ fa,
         overflow: hidden;
     }
         .modalDialog__group--confirm {
-            z-index:2200;
+            z-index:5200;
         }
     .modalHeader__group {
         min-height:3em;
