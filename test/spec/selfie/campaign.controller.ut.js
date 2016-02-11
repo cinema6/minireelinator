@@ -33,7 +33,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             ConfirmDialogService,
             SelfieCampaignSummaryService,
             SelfieCampaignCtrl,
-            SoftAlertService;
+            SoftAlertService,
+            intercom;
 
         var cState,
             campaign,
@@ -61,7 +62,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         beforeEach(function() {
             debouncedFns = [];
 
-            module(appModule.name);
+            intercom = jasmine.createSpy('intercom');
+
+            module(appModule.name, ['$provide', function($provide) {
+                $provide.value('intercom', intercom);
+            }]);
             module(function($provide) {
                 $provide.decorator('c6AsyncQueue', function($delegate) {
                     return jasmine.createSpy('c6AsyncQueue()').and.callFake(function() {
@@ -134,10 +139,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 }
             });
             campaign = cinema6.db.create('selfieCampaign', {
+                id: 'cam-123',
+                advertiserId: 'a-123',
                 name: undefined,
                 pricing: {},
                 status: 'draft',
-                appllication: 'selfie',
+                application: 'selfie',
                 advertiserDisplayName: 'My Company',
                 paymentMethod: undefined,
                 targeting: {
@@ -585,6 +592,19 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         expect(SelfieCampaignCtrl.campaign.status).toBe('pending');
                                     });
 
+                                    it('should send intercom a "submitCampaign" event with metadata', function() {
+                                        $rootScope.$apply(function() {
+                                            updateRequestDeferred.resolve(updateRequest);
+                                        });
+
+                                        expect(intercom).toHaveBeenCalledWith('trackEvent', 'submitCampaign', {
+                                            campaignId: cState._campaign.id,
+                                            campaignName: cState._campaign.name,
+                                            advertiserId: cState._campaign.advertiserId,
+                                            advertiserName: cState._campaign.advertiserDisplayName
+                                        });
+                                    });
+
                                     it('should go to the dashboard', function() {
                                         $rootScope.$apply(function() {
                                             updateRequestDeferred.resolve(updateRequest);
@@ -607,6 +627,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         $rootScope.$apply(function() {
                                             updateRequestDeferred.reject({data:'Error!'});
                                         });
+                                    });
+
+                                    it('should not send intercom a "submitCampaign" event with metadata', function() {
+                                        expect(intercom).not.toHaveBeenCalled();
                                     });
 
                                     it('should close the summary', function() {
@@ -693,6 +717,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                                     campaign: 'cam-123'
                                                 });
                                             });
+                                        });
+
+                                        it('should not send intercom a "submitCampaign" event with metadata', function() {
+                                            expect(intercom).not.toHaveBeenCalled();
                                         });
 
                                         it('should set summary pending to false and close it', function() {

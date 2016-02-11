@@ -1,5 +1,5 @@
-define( ['angular','c6uilib', 'c6_defines'],
-function( angular , c6uilib ,  c6Defines  ) {
+define( ['angular','c6uilib', 'c6_defines','../libs'],
+function( angular , c6uilib ,  c6Defines  , libs    ) {
     'use strict';
 
     var extend = angular.extend,
@@ -26,7 +26,7 @@ function( angular , c6uilib ,  c6Defines  ) {
         return target;
     }
 
-    return angular.module('c6.app.selfie.services', [c6uilib.name])
+    return angular.module('c6.app.selfie.services', [c6uilib.name, libs.name])
 
         .service('CampaignService', ['cinema6','c6State','MiniReelService','$q',
                                      'NormalizationService','$http','c6UrlMaker',
