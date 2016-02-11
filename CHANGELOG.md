@@ -6,6 +6,8 @@
     campaigns from other Orgs
   * [FEATURE]: Save Org filter settings when user filters Orgs
   * [DESIGN]: Added styles for zip radius targeting
+  * [FEATURE]: Add Intercom user tracking events for tracking campaign creation,
+    updates and submission
 
 ## v1.35.1 (February 8, 2016)
 * *[v1.35.1.rc1]*
