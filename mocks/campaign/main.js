@@ -132,7 +132,7 @@ module.exports = function(http) {
     });
 
     http.whenGET('/api/campaigns', function(request) {
-        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'statuses', 'fields', 'ids']),
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'statuses', 'fields', 'ids','excludeOrgs']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
@@ -174,6 +174,13 @@ module.exports = function(http) {
                     return !text ||
                         (name.indexOf(text.toLowerCase()) > -1 ||
                         displayName.indexOf(text.toLowerCase()) > -1);
+                })
+                .filter(function(campaign) {
+                    var exclusions = request.query.excludeOrgs,
+                        exclusionsArray = (exclusions || '').split(','),
+                        org = campaign.org;
+
+                    return !exclusions || exclusionsArray.indexOf(org) === -1;
                 }),
             campaigns = allCampaigns
                 .filter(function(campaign, index) {
