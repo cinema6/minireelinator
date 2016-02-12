@@ -257,6 +257,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.validation.budget = false;
+                    SelfieCampaignCtrl.validation.radius = false;
 
                     SelfieCampaignCtrl.campaign.name = 'Campaign Name';
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
@@ -289,6 +290,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.validation.budget = true;
+                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
+
+                    SelfieCampaignCtrl.validation.radius = true;
                     expect(SelfieCampaignCtrl.canSubmit).toBe(true);
                 });
             });
@@ -296,6 +300,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             describe('validation', function() {
                 it('should be defined by default', function() {
                     expect(SelfieCampaignCtrl.validation.budget).toBe(true);
+                    expect(SelfieCampaignCtrl.validation.radius).toBe(true);
                     expect(SelfieCampaignCtrl.validation.show).toBe(false);
                     expect(SelfieCampaignCtrl.validation.sections).toEqual(jasmine.any(Object));
                 });
@@ -326,6 +331,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.validation.sections.section4).toBe(true);
 
                         expect(SelfieCampaignCtrl.validation.sections.section5).toBe(true);
+                        SelfieCampaignCtrl.validation.radius = false;
+                        expect(SelfieCampaignCtrl.validation.sections.section5).toBe(false);
 
                         SelfieCampaignCtrl.validation.budget = false;
                         SelfieCampaignCtrl.validation.dailyLimit = false;

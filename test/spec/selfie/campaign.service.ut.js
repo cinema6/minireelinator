@@ -125,7 +125,10 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                             targeting: {
                                 geo: {
                                     states: [],
-                                    dmas: []
+                                    dmas: [],
+                                    zipcodes: {
+                                        codes: []
+                                    }
                                 },
                                 demographics: {
                                     age: [],
@@ -709,7 +712,10 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                                 targeting: {
                                     geo: {
                                         states: [],
-                                        dmas: []
+                                        dmas: [],
+                                        zipcodes: {
+                                            codes: []
+                                        }
                                     },
                                     demographics: {
                                         age: [],
@@ -747,6 +753,14 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                         expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.06);
 
                         campaign.targeting.geo.dmas.push('New York City');
+
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.06);
+
+                        campaign.targeting.geo.zipcodes.codes.push('11231');
+
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.06);
+
+                        campaign.targeting.geo.zipcodes.codes.push('56732');
 
                         expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.06);
 
@@ -790,7 +804,10 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                                 targeting: {
                                     geo: {
                                         states: [],
-                                        dmas: []
+                                        dmas: [],
+                                        zipcodes: {
+                                            codes: []
+                                        }
                                     },
                                     demographics: {
                                         age: [],
@@ -831,37 +848,45 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
 
                         expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.07);
 
-                        campaign.targeting.interests.push('comedy');
+                        campaign.targeting.geo.zipcodes.codes.push('12878');
 
                         expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
+
+                        campaign.targeting.geo.zipcodes.codes.push('12879');
+
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
+
+                        campaign.targeting.interests.push('comedy');
+
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.09);
 
                         campaign.targeting.interests.push('entertainment');
 
-                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.09);
 
                         campaign.targeting.demographics.age.push('18-24');
 
-                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.09);
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.10);
 
                         campaign.targeting.demographics.age.push('25-40');
 
-                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.09);
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.10);
 
                         campaign.targeting.demographics.income.push('20,000-50,000');
 
-                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.10);
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.11);
 
                         campaign.targeting.demographics.income.push('120,000-150,000');
 
-                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.10);
-
-                        campaign.targeting.demographics.gender.push('Male');
-
                         expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.11);
 
                         campaign.targeting.demographics.gender.push('Male');
 
-                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.11);
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.12);
+
+                        campaign.targeting.demographics.gender.push('Male');
+
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.12);
                     });
                 });
 
@@ -871,7 +896,10 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                                 targeting: {
                                     geo: {
                                         states: [],
-                                        dmas: []
+                                        dmas: [],
+                                        zipcodes: {
+                                            codes: []
+                                        }
                                     },
                                     demographics: {
                                         age: [],
@@ -943,6 +971,14 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                         campaign.targeting.demographics.gender.push('Male');
 
                         expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.13);
+
+                        campaign.targeting.geo.zipcodes.codes.push('12878');
+
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.14);
+
+                        campaign.targeting.geo.zipcodes.codes.push('12879');
+
+                        expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.14);
                     });
                 });
             });
@@ -968,7 +1004,10 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                             },
                             geo: {
                                 states: ['Alabama','Alaska'],
-                                dmas: ['NYC']
+                                dmas: ['NYC'],
+                                zipcodes: {
+                                    codes: ['11231','11019','12345']
+                                }
                             },
                             interests: ['cat-1','cat-3']
                         },
@@ -1051,6 +1090,10 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                             dmas: {
                                 name: 'DMA',
                                 list: 'NYC'
+                            },
+                            zipcodes: {
+                                name: 'Zip Codes',
+                                list: '11231, 11019, 12345'
                             }
                         });
                     });

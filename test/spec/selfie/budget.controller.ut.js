@@ -59,7 +59,10 @@ define(['app'], function(appModule) {
                     targeting: {
                         geo: {
                             states: [],
-                            dmas: []
+                            dmas: [],
+                            zipcodes: {
+                                codes: []
+                            }
                         },
                         demographics: {
                             age: [],
