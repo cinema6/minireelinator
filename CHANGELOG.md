@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.36.0 (February 12, 2016)
 * *[v1.36.0.rc1]*
   * [DESIGN]: Added styles to allow filtering campaigns by organizations
   * [FEATURE]: Add Org filter in campaign list view for users who can see
@@ -9,6 +10,12 @@
   * [FEATURE]: Add Intercom user tracking events for tracking campaign creation,
     updates and submission
   * [DESIGN]: Updated layout for sign up and sign up success pages
+  * [FEATURE]: Add zip code targeting
+  * [FIX]: Fix for an issue where the login prompt was hidden by the
+    loading spinner
+  * [FIX]: Fix for an issue where user's were unable to delete their
+    primary payment method
+* *[v1.36.0.rc1]*
 
 ## v1.35.1 (February 8, 2016)
 * *[v1.35.1.rc1]*
