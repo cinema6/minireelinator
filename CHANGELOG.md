@@ -8,6 +8,7 @@
   * [DESIGN]: Added styles for zip radius targeting
   * [FEATURE]: Add Intercom user tracking events for tracking campaign creation,
     updates and submission
+  * [DESIGN]: Updated layout for sign up and sign up success pages
 
 ## v1.35.1 (February 8, 2016)
 * *[v1.35.1.rc1]*
