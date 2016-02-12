@@ -886,6 +886,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.validation = {
                 budget: true,
+                radius: true,
                 show: false
             };
 
@@ -901,7 +902,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             section3: !!card.data.service && !!card.data.videoid,
                             section4: !!card.title && !!card.links.Action &&
                                 !!card.params.action.label,
-                            section5: true,
+                            section5: this.radius,
                             section6: this.budget && this.dailyLimit,
                             section7: !!campaign.paymentMethod ||
                                 !!SelfieCampaignCtrl.paymentOptional,

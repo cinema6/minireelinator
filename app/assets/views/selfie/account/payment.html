@@ -33,9 +33,9 @@
                             <ul>
                               <li><button><i class="fa fa-ellipsis-v"></i><span class="ir">Menu</span></button>
                                 <ul>
-                                  <li><button ng-click="SelfieAccountPaymentCtrl.confirmPrimary(method)">Make Primary</button></li>
+                                  <li ng-if="!method.default"><button ng-click="SelfieAccountPaymentCtrl.confirmPrimary(method)">Make Primary</button></li>
                                   <li><button ng-if="method.type === 'creditCard'" ng-click="SelfieAccountPaymentCtrl.edit(method)">Edit</button></li>
-                                  <li ng-if="!method.default"><button ng-click="SelfieAccountPaymentCtrl.confirmDelete(method)">Delete</button></li>
+                                  <li><button ng-click="SelfieAccountPaymentCtrl.confirmDelete(method)">Delete</button></li>
                                 </ul>
                               </li>
                             </ul>

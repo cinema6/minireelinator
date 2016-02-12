@@ -1,5 +1,5 @@
-define( ['angular','select2','braintree','jqueryui','chartjs'],
-function( angular , select2 , braintree , jqueryui , Chart   ) {
+define( ['angular','select2','braintree','jqueryui','chartjs','c6_defines'],
+function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
     'use strict';
 
     var $ = angular.element,
@@ -199,6 +199,22 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
                         if (input && input.click) {
                             input.click();
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('hiddenInputFocus', ['$document',function($document) {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+
+                    $element.on('click', function() {
+                        var input = $document[0].getElementById(attrs.hiddenInputFocus);
+
+                        if (input && input.focus) {
+                            input.focus();
                         }
                     });
                 }
@@ -835,7 +851,8 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                 restrict: 'E',
                 scope: {
                     campaign: '=',
-                    schema: '='
+                    schema: '=',
+                    validation: '='
                 },
                 templateUrl: 'views/selfie/directives/geotargeting.html',
                 controller: 'SelfieGeotargetingController',
@@ -844,28 +861,140 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
         }])
 
         .controller('SelfieGeotargetingController', ['$scope','GeoService',
-        function                                    ( $scope , GeoService ) {
+                                                     'CampaignService',
+        function                                    ( $scope , GeoService ,
+                                                      CampaignService ) {
             var SelfieGeotargetingCtrl = this,
                 campaign = $scope.campaign,
-                schema = $scope.schema;
+                zipcodes = campaign.targeting.geo.zipcodes,
+                codesArray = zipcodes.codes,
+                schema = $scope.schema,
+                config = schema.targeting.geo,
+                validation = $scope.validation;
 
+            this.pricePerGeo = schema.pricing.cost.__pricePerGeo;
+            this.minRadius = config.zipcodes.radius.__min;
+            this.maxRadius = config.zipcodes.radius.__max;
+            this.defaultRadius = config.zipcodes.radius.__default;
+            this.maxCodes = config.zipcodes.codes.__length;
+
+            this.newZip = null;
+            this.radius = zipcodes.radius || this.defaultRadius;
+            this.dmaOptions = GeoService.dmas;
             this.stateOptions = GeoService.usa.map(function(state) {
                 return {
                     state: state,
                     country: 'usa'
                 };
             });
-
-            this.dmaOptions = GeoService.dmas;
-
-            // we filter the options and use only the ones saved on the campaign
             this.states = this.stateOptions.filter(function(option) {
                 return campaign.targeting.geo.states.filter(function(state) {
                     return option.state === state;
                 }).length > 0;
             });
+            this.zips = zipcodes.codes.map(function(zip) {
+                return { code: zip, valid: true };
+            });
 
-            this.pricePerGeo = schema.pricing.cost.__pricePerGeo;
+            Object.defineProperties(this, {
+                radiusError: {
+                    get: function() {
+                        var errorCode = 0;
+                        if (this.radius < this.minRadius) { errorCode = 2; }
+                        if (this.radius > this.maxRadius) { errorCode = 3; }
+                        if (!this.radius) { errorCode = 1; }
+                        validation.radius = !errorCode || !this.zips.length;
+                        return errorCode;
+                    }
+                }
+            });
+
+            this.setRadius = function() {
+                if (!this.radiusError) {
+                    zipcodes.radius = this.radius;
+                }
+            };
+
+            this.removeZip = function(i) {
+                var zip = this.zips[i],
+                    index = codesArray.indexOf(zip.code);
+
+                this.zips.splice(i, 1);
+
+                if (index > -1) {
+                    codesArray.splice(index, 1);
+                }
+            };
+
+            this.validateZip = function() {
+                var newZip = this.newZip,
+                    self = this;
+
+                if (!newZip || codesArray.length >= this.maxCodes) { return; }
+
+                CampaignService.getZip(newZip)
+                    .then(function() {
+                        self.addNewZip({
+                            code: newZip,
+                            valid: true
+                        });
+                    })
+                    .catch(function() {
+                        self.addNewZip({
+                            code: newZip,
+                            valid: false
+                        });
+                    });
+            };
+
+            this.addNewZip = function(zip) {
+                var index;
+
+                // if it's valid and not on the campaign already, add it
+                if (zip.valid && codesArray.indexOf(zip.code) === -1) {
+                    codesArray.push(zip.code);
+                }
+
+                // see if we already have this zip in the UI
+                this.zips.forEach(function(z, i) {
+                    if (z.code === zip.code) {
+                        index = i;
+                    }
+                });
+
+                // if we do then remove it from it's position
+                if (index !== undefined) {
+                    this.zips.splice(index, 1);
+                }
+
+                // then add the new one
+                this.zips.push(zip);
+
+                // reset the value in the UI
+                this.newZip = null;
+
+                this.setRadius();
+            };
+
+            this.handleZipKeydown = function(e) {
+                var keyCode = e.keyCode;
+
+                if (keyCode === 8 && !this.newZip) {
+                    this.removeZip(this.zips.length-1);
+                }
+
+                if (keyCode === 188 || keyCode === 13) {
+                    this.validateZip();
+                }
+            };
+
+            this.handleZipChange = function() {
+                var newZip = this.newZip;
+
+                if (newZip && /\D/.test(newZip)) {
+                    this.newZip = newZip.replace(/\D/g,'');
+                }
+            };
 
             // we watch the geo choices and save an array of states
             $scope.$watch(function() {
@@ -1246,8 +1375,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
-        .controller('SelfieLoginDialogController', ['$q','AuthService','SelfieLoginDialogService',
-        function                                   ( $q , AuthService , SelfieLoginDialogService ) {
+        .controller('SelfieLoginDialogController', ['$q','AuthService','intercom',
+                                                    'SelfieLoginDialogService',
+        function                                   ( $q , AuthService , intercom ,
+                                                     SelfieLoginDialogService ) {
             var LoginCtrl = this;
 
             this.error = null;
@@ -1273,6 +1404,15 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
                 function goToApp(user) {
                     SelfieLoginDialogService.success();
+
+                    /* jshint camelcase:false */
+                    intercom('boot', {
+                        app_id: c6Defines.kIntercomId,
+                        name: user.firstName + ' ' + user.lastName,
+                        email: user.email,
+                        created_at: user.created
+                    });
+                    /* jshint camelcase:true */
 
                     LoginCtrl.model.email = '';
                     LoginCtrl.model.password = '';

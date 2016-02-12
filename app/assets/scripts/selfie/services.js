@@ -102,7 +102,10 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                         targeting: {
                             geo: {
                                 states: copy([]),
-                                dmas: copy([])
+                                dmas: copy([]),
+                                zipcodes: {
+                                    codes: copy([])
+                                }
                             },
                             demographics: {
                                 age: copy([]),
@@ -140,7 +143,10 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                         targeting: {
                             geo: {
                                 states: copy([]),
-                                dmas: copy([])
+                                dmas: copy([]),
+                                zipcodes: {
+                                    codes: copy([])
+                                }
                             },
                             demographics: {
                                 age: copy([]),
@@ -173,6 +179,13 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
 
             this.getSchema = function() {
                 return $http.get(c6UrlMaker('campaigns/schema?personalized=true', 'api'))
+                    .then(function(response) {
+                        return response.data;
+                    });
+            };
+
+            this.getZip = function(zip) {
+                return $http.get(c6UrlMaker('geo/zipcodes/' + zip, 'api'))
                     .then(function(response) {
                         return response.data;
                     });
@@ -226,12 +239,13 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     hasInterests = interests.length,
                     hasStates = geos.states.length,
                     hasDmas = geos.dmas.length,
+                    hasZips = geos.zipcodes.codes.length,
                     hasAge = demos.age.length,
                     hasIncome = demos.income.length,
                     hasGender = demos.gender.length,
 
                     geoPrice = getPrice(
-                        [hasStates, hasDmas], priceForGeo, pricePerGeo
+                        [hasStates, hasDmas, hasZips], priceForGeo, pricePerGeo
                     ),
                     demoPrice = getPrice(
                         [hasAge, hasIncome, hasGender], priceForDemo, pricePerDemo
@@ -293,10 +307,23 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                         geoResults = {};
 
                     forEach(geo, function(geo, type) {
+                        var name;
+
+                        switch (type) {
+                        case 'dmas':
+                            name = 'DMA';
+                            break;
+                        case 'states':
+                            name = 'States';
+                            break;
+                        case 'zipcodes':
+                            name = 'Zip Codes';
+                            break;
+                        }
+
                         geoResults[type] = {
-                            name: type === 'dmas' ? 'DMA' :
-                                type.slice(0, 1).toUpperCase() + type.slice(1),
-                            list: geo.join(', ')
+                            name: name,
+                            list: type === 'zipcodes' ? geo.codes.join(', ') : geo.join(', ')
                         };
                     });
 
