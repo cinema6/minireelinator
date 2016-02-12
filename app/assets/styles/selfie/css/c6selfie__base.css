@@ -935,7 +935,7 @@ fa,
         }
     /*sign up features*/
     .productFeatures {
-        margin-top: 4.75em;
+        margin-top: 1em;
         padding-left: 4.5em;
     }
     .productFeatures_list {
@@ -948,18 +948,22 @@ fa,
         padding-left: 0.5em;
     }
     .productFeatured_item {
-        margin-bottom: 1.5em;
+        margin-bottom: 0.5em;
     }
     .productFeatures_list li {
         list-style-type: none;
         padding: 0;
     }
     .productFeatured_itemIcon {
-        display: table-cell;
+        display: inline-block;
         float: left;
-        height: 48px;
-        width: 48px;
+        height: 36px;
+        width: 36px;
+        line-height: 36px;
         text-align: center;
+        background: #119DA3;
+        color: #fff;
+        border-radius: 50%;
     }
         .productFeatured_itemIcon i.fa {
             font-size: 2em;
@@ -973,12 +977,148 @@ fa,
     }
     .productFeatured_itemInfo .productFeatured_item--header {
         font-size: 1.25em;
+        line-height: 36px;
         margin-top: 0;
         margin-left: 0.5em;
         margin-bottom: 0;
     }
 
-
+    /*New Sign Up Page Styles*/
+    .signup__header {
+        background: #ffffff;
+        min-height: 70px;
+        border: none;
+        font-weight: 400;
+        margin-bottom: 0 !important;
+        -webkit-backface-visibility: hidden;
+        -webkit-box-shadow: 0px 2px 8px 0px rgba(50, 50, 50, 0.08);
+        box-shadow: 0px 2px 8px 0px rgba(50, 50, 50, 0.08);
+    }
+        .signup__header .signup__gridHolder {
+            padding-top: 0.25em;
+            height: 70px;
+        }
+        .signup__header .header__nav {
+            list-style-type: none;
+        }
+        .signup__header .header__nav li {
+            display: inline-block;
+        }
+        .signup__header .header__nav li a {
+            text-transform: uppercase;
+            line-height: 34px;
+            padding: 18px;
+            color: #333;
+        }
+        .signup__header .header__nav li a:hover {
+            color: #119DA3;
+        }
+        .signup__headline {
+            margin: 0;
+        }
+        .signup__tagline {
+            color: #119DA3;
+            text-transform: uppercase;
+            margin-top: 0;
+            margin-bottom: 2em;
+            font-weight: 400;
+        }
+    .signup__secured {
+        display: inline-block;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 0.25em;
+        cursor: default;
+    }
+        .signup__secured--icon {
+            background: #2875db;
+            color: #fff;
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            font-size: 1.5em;
+            line-height: 36px;
+            border-radius: 2px;
+        }
+        .signup__secured--icon .fa {
+            font-size: 24px;
+        }
+        .signup__secured--label {
+            color: #666;
+            display: inline-block;
+            line-height: 36px;
+            font-size: 1em;
+            margin: 0 0.5em 0 0.25em;
+            vertical-align: top;
+        }
+    .signup__footer {
+        display: block;
+    }
+        .customer__links {
+            list-style-type: none;
+            padding: 0 0 0 2em;
+            margin: 0 0 1em 0;
+        }
+        .customer__links:before {
+            content: 'Trusted by';
+            font-style: italic;
+            display: block;
+            text-align: center;
+            margin-left: -2em;
+            margin-bottom: 1em;
+            margin-top: 1em;
+        }
+            .customer__links li {
+                display: inline-block;
+            }
+                .customer__links li span {
+                    width: 190px;
+                    height: 70px;
+                    display: inline-block;
+                }
+        .customer__links .microsoft-logo {
+            background: url('../img/microsoft-logo.png');
+        }
+        .customer__links .callaway-logo {
+            background: url('../img/callaway-logo.png');
+        }
+        .customer__links .oldnavy-logo {
+            background: url('../img/old-navy-logo.png');
+        }
+        .customer__links .wistia-logo {
+            background: url('../img/wistia-logo.png');
+        }
+        .customer__links .aus-tourism-logo {
+            background: url('../img/aus-tourism-logo.png');
+        }
+    .productFeatured_itemText {
+        font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
+        font-weight: 400;
+        font-size: 1.25em;
+    }
+    .productFeatures__placement {
+        margin-left: -2em;
+        margin-right: -2em;
+    }
+        .productFeatures__placement .placement__img {
+            display: block;
+            overflow: hidden;
+        }
+    /*.productFeatures__placement .placement__img {
+        background: url('../img/about_video_card.png');
+        background-size: 415px 221px;
+        background-repeat: no-repeat;
+        display: block;
+        width: 100%;
+        height: 300px;
+    }*/
+        .productFeatures__placement .placement__img img {
+            border-bottom: 1px solid #ddd;
+        }
+        .signup__gridHolder .alertMessage {
+            display: inline-block !important;
+        }
 /*  ================================================
     site framework classes
     ================================================ */
@@ -2952,6 +3092,7 @@ fa,
             }
         .form__errorMsg {
             font-size:0.8125em;
+            border-radius: 4px;
             margin:0;
             background:#C90000;
             color:#fff;

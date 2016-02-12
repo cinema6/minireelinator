@@ -1,12 +1,28 @@
+<header class="signup__header grid">
+    <div class="signup__gridHolder grid grid--middle">
+        <div class="grid__item one-quarter">
+            <span class="rc__logo"></span><span class="ir">Reelcontent</span></h1>
+        </div><!--
+        --><div class="grid__item three-quarters text--right">
+            <ul class="header__nav">
+                <li><a href="http://reelcontent.com/#section2">Video Card</a></li>
+                <li><a href="http://reelcontent.com/#section3">Advertisers</a></li>
+                <li><a href="http://reelcontent.com/#section4">Platform</a></li>
+                <li><a href="http://reelcontent.com/#section7">About</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
 <div class="signup__gridHolder" c6-alias="SelfieSignUpCtrl.model as user">
     <div class="grid one-whole">
-        <div class="grid__item">
-            <h1 class="tk--hdr logo"><span class="rc__logo"></span><span class="ir">Reelcontent</span></h1>
+        <div class="grid__item grid--center">
+            <h1 class="signup__headline tk--hdr">Video Ads Made Easy</h1>
+            <h2 class="tk--hdr signup__tagline">Reelcontent. Real Results.</h2>
         </div>
     </div>
     <div class="grid one-whole">
         <div class="grid__item one-half">
-            <h2 class="tk--hdr signup__pagetitle">Sign up</h2>
+            <h2 class="tk--hdr signup__pagetitle">Create a FREE account</h2>
             <div class="grid grid--center">
                 <div class="form__items form--narrow">
                     <form name="signup">
@@ -123,18 +139,41 @@
 					<div class="subActions__box text--center">
 		                <p class="subAction">Existing user? <a c6-sref="Selfie:Login">Login now</a></p>
 		            </div>
+                    <div class="subActions__box text--center">
+                        <div class="signup__secured">
+                            <span class="signup__secured--icon"><i class="fa fa-shield"></i></span>
+                            <span class="signup__secured--label" title="RSA 2048bit security">Secured Platform</span>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
         </div><!--
         --><div class="grid__item one-half">
             <section class="productFeatures border--left">
+                <div class="productFeatures__placement">
+                    <span class="placement__img"><img src="/assets/styles/selfie/img/about_video_card.png" /> </span>
+                </div>
+                <p class="productFeatured_itemText">Reelcontent makes it real simple for you to get your video in front of customers.</p>
+                <p class="productFeatured_itemText">It's as easy as:</p>
                 <ul class="productFeatures_list">
-                    <li class="productFeatured_item"><div class="productFeatured_itemIcon"><i class="fa fa-film"></i></div><div class="productFeatured_itemInfo"><h2 class="productFeatured_item--header tk--hdr">Easy-to-use</h2><ul><li><p>You just need a promotional video and a few minutes to get started.</p></li></ul></div></li>
-                    <li class="productFeatured_item"><div class="productFeatured_itemIcon"><i class="fa fa-line-chart"></i></div><div class="productFeatured_itemInfo"><h2 class="productFeatured_item--header tk--hdr">Effective</h2><ul><li><p>Our format allows you to include more than video. You can add text information, links, and social sharing buttons.</p></li></ul></div></li>
-                    <li class="productFeatured_item"><div class="productFeatured_itemIcon"><i class="fa fa-map-marker"></i></div><div class="productFeatured_itemInfo"><h2 class="productFeatured_item--header tk--hdr">Targeted</h2><ul><li><p>You choose who sees your ad: where they are, who they are, and what their interests are.</p></li></ul></div></li>
+                    <li class="productFeatured_item"><div class="productFeatured_itemIcon">1</div><div class="productFeatured_itemInfo"><h2 class="productFeatured_item--header tk--hdr">Add your video</h2></div></li>
+                    <li class="productFeatured_item"><div class="productFeatured_itemIcon">2</i></div><div class="productFeatured_itemInfo"><h2 class="productFeatured_item--header tk--hdr">Add text description and social links</h2></div></li>
+                    <li class="productFeatured_item"><div class="productFeatured_itemIcon">3</div><div class="productFeatured_itemInfo"><h2 class="productFeatured_item--header tk--hdr">Choose your audience and submit</h2></div></li>
                 </ul>
             </section>
         </div>
-    </div>    
+    </div>
 </div>
+<footer class="signup__footer">
+    <div class="signup__gridHolder">
+        <ul class="customer__links">
+            <li><span class="microsoft-logo"></span></li>
+            <li><span class="callaway-logo"></span></li>
+            <li><span class="oldnavy-logo"></span></li>
+            <li><span class="wistia-logo"></span></li>
+            <li><span class="aus-tourism-logo"></span></li>
+            
+        </ul>
+    </div>
+</footer>
