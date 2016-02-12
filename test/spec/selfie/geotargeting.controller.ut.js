@@ -5,7 +5,9 @@ define(['app'], function(appModule) {
         var $rootScope,
             $scope,
             $controller,
+            $q,
             GeoService,
+            CampaignService,
             SelfieGeotargetingCtrl;
 
         var campaign,
@@ -27,6 +29,8 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                $q = $injector.get('$q');
+                CampaignService = $injector.get('CampaignService');
 
                 campaign = {
                     targeting: {
@@ -367,20 +371,24 @@ define(['app'], function(appModule) {
                 });
             });
 
-            describe('addNewZip()', function() {
+            describe('validateZip()', function() {
+                var zipDeferred;
+
                 beforeEach(function() {
-                    spyOn(SelfieGeotargetingCtrl, 'setRadius');
+                    zipDeferred = $q.defer();
+
+                    spyOn(CampaignService, 'getZip').and.returnValue(zipDeferred.promise);
+                    spyOn(SelfieGeotargetingCtrl, 'addNewZip');
                 });
 
                 describe('if no zip is defined', function() {
                     it('should do nothing', function() {
                         SelfieGeotargetingCtrl.newZip = '';
 
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.validateZip();
 
-                        expect(campaign.targeting.geo.zipcodes.codes).toEqual([]);
-                        expect(SelfieGeotargetingCtrl.zips).toEqual([]);
-                        expect(SelfieGeotargetingCtrl.setRadius).not.toHaveBeenCalled();
+                        expect(CampaignService.getZip).not.toHaveBeenCalled();
+                        expect(SelfieGeotargetingCtrl.addNewZip).not.toHaveBeenCalled();
                     });
                 });
 
@@ -392,29 +400,68 @@ define(['app'], function(appModule) {
                         ];
 
                         compileCtrl();
-                        spyOn(SelfieGeotargetingCtrl, 'setRadius');
+                        spyOn(SelfieGeotargetingCtrl, 'addNewZip');
 
                         SelfieGeotargetingCtrl.newZip = '05672';
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.validateZip();
 
-                        expect(campaign.targeting.geo.zipcodes.codes.length).toEqual(20);
-                        expect(SelfieGeotargetingCtrl.zips.length).toEqual(20);
-                        expect(SelfieGeotargetingCtrl.setRadius).not.toHaveBeenCalled();
+                        expect(CampaignService.getZip).not.toHaveBeenCalled();
+                        expect(SelfieGeotargetingCtrl.addNewZip).not.toHaveBeenCalled();
                     });
+                });
+
+                describe('when a zip is defined', function() {
+                    beforeEach(function() {
+                        SelfieGeotargetingCtrl.newZip = '12345';
+
+                        SelfieGeotargetingCtrl.validateZip();
+                    });
+
+                    it('should call the campaign service', function() {
+                        expect(CampaignService.getZip).toHaveBeenCalledWith('12345');
+                    });
+
+                    describe('when the request succeeds', function() {
+                        it('should call addNewZip and pass in a valid object', function() {
+                            $scope.$apply(function() {
+                                zipDeferred.resolve();
+                            });
+
+                            expect(SelfieGeotargetingCtrl.addNewZip).toHaveBeenCalledWith({
+                                code: '12345', valid: true
+                            });
+                        });
+                    });
+
+                    describe('when the request fails', function() {
+                        it('should call addNewZip and pass in an invalid object', function() {
+                            $scope.$apply(function() {
+                                zipDeferred.reject();
+                            });
+
+                            expect(SelfieGeotargetingCtrl.addNewZip).toHaveBeenCalledWith({
+                                code: '12345', valid: false
+                            });
+                        });
+                    });
+                });
+            });
+
+            describe('addNewZip()', function() {
+                beforeEach(function() {
+                    spyOn(SelfieGeotargetingCtrl, 'setRadius');
                 });
 
                 describe('when it is valid', function() {
                     it('it should be added to the campaign zipcodes array if not already there', function() {
-                        SelfieGeotargetingCtrl.newZip = '12345';
-
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.addNewZip({ code: '12345', valid: true });
 
                         expect(campaign.targeting.geo.zipcodes.codes).toEqual(['12345']);
 
                         SelfieGeotargetingCtrl.newZip = '12345';
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.addNewZip({ code: '12345', valid: true });
                         SelfieGeotargetingCtrl.newZip = '12345';
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.addNewZip({ code: '12345', valid: true });
 
                         expect(campaign.targeting.geo.zipcodes.codes).toEqual(['12345']);
                     });
@@ -422,9 +469,7 @@ define(['app'], function(appModule) {
 
                 describe('when it is not valid', function() {
                     it('it not should be added to the campaign zipcodes array', function() {
-                        SelfieGeotargetingCtrl.newZip = '123';
-
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.addNewZip({ code: '123', valid: false });
 
                         expect(campaign.targeting.geo.zipcodes.codes.indexOf('123')).toEqual(-1);
                     });
@@ -438,9 +483,7 @@ define(['app'], function(appModule) {
                             { code: '54321', valid: true }
                         ];
 
-                        SelfieGeotargetingCtrl.newZip = '01234';
-
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.addNewZip({ code: '01234', valid: true });
 
                         expect(SelfieGeotargetingCtrl.zips.length).toBe(3);
                         expect(SelfieGeotargetingCtrl.zips[2]).toEqual({
@@ -457,9 +500,7 @@ define(['app'], function(appModule) {
                             { code: '54321', valid: true }
                         ];
 
-                        SelfieGeotargetingCtrl.newZip = '99999';
-
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.addNewZip({ code: '99999', valid: true });
 
                         expect(SelfieGeotargetingCtrl.zips.length).toBe(4);
                         expect(SelfieGeotargetingCtrl.zips[3]).toEqual({
@@ -470,17 +511,13 @@ define(['app'], function(appModule) {
 
                 describe('when any new zip added, regardless of validity', function() {
                     it('should reset newZip to null', function() {
-                        SelfieGeotargetingCtrl.newZip = '99999';
-
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.addNewZip({ code: '99999', valid: false });
 
                         expect(SelfieGeotargetingCtrl.newZip).toBe(null);
                     });
 
                     it('should set radius', function() {
-                        SelfieGeotargetingCtrl.newZip = '99999';
-
-                        SelfieGeotargetingCtrl.addNewZip();
+                        SelfieGeotargetingCtrl.addNewZip({ code: '99999', valid: false });
 
                         expect(SelfieGeotargetingCtrl.setRadius).toHaveBeenCalled();
                     });
@@ -490,7 +527,7 @@ define(['app'], function(appModule) {
             describe('handleZipKeydown(e)', function() {
                 beforeEach(function() {
                     spyOn(SelfieGeotargetingCtrl, 'removeZip');
-                    spyOn(SelfieGeotargetingCtrl, 'addNewZip');
+                    spyOn(SelfieGeotargetingCtrl, 'validateZip');
                 });
 
                 describe('when keyCode is 8 (delete button)', function() {
@@ -521,15 +558,15 @@ define(['app'], function(appModule) {
 
                         SelfieGeotargetingCtrl.handleZipKeydown({keyCode: 188});
 
-                        expect(SelfieGeotargetingCtrl.addNewZip).toHaveBeenCalled();
+                        expect(SelfieGeotargetingCtrl.validateZip).toHaveBeenCalled();
 
-                        SelfieGeotargetingCtrl.addNewZip.calls.reset();
+                        SelfieGeotargetingCtrl.validateZip.calls.reset();
 
                         SelfieGeotargetingCtrl.newZip = '';
 
                         SelfieGeotargetingCtrl.handleZipKeydown({keyCode: 13});
 
-                        expect(SelfieGeotargetingCtrl.addNewZip).toHaveBeenCalled();
+                        expect(SelfieGeotargetingCtrl.validateZip).toHaveBeenCalled();
                     });
                 });
 
@@ -539,14 +576,14 @@ define(['app'], function(appModule) {
 
                         SelfieGeotargetingCtrl.handleZipKeydown({keyCode: 45});
 
-                        expect(SelfieGeotargetingCtrl.addNewZip).not.toHaveBeenCalled();
+                        expect(SelfieGeotargetingCtrl.validateZip).not.toHaveBeenCalled();
                         expect(SelfieGeotargetingCtrl.removeZip).not.toHaveBeenCalled();
 
                         SelfieGeotargetingCtrl.newZip = '';
 
                         SelfieGeotargetingCtrl.handleZipKeydown({keyCode: 6});
 
-                        expect(SelfieGeotargetingCtrl.addNewZip).not.toHaveBeenCalled();
+                        expect(SelfieGeotargetingCtrl.validateZip).not.toHaveBeenCalled();
                         expect(SelfieGeotargetingCtrl.removeZip).not.toHaveBeenCalled();
                     });
                 });

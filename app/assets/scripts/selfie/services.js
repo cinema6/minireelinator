@@ -184,6 +184,13 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     });
             };
 
+            this.getZip = function(zip) {
+                return $http.get(c6UrlMaker('geo/zipcodes/' + zip, 'api'))
+                    .then(function(response) {
+                        return response.data;
+                    });
+            };
+
             this.getOrgs = function() {
                 return $http.get(c6UrlMaker('account/orgs?fields=id,name', 'api'))
                     .then(function(response) {

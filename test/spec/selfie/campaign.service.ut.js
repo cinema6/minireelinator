@@ -394,7 +394,7 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                     };
                 });
 
-                it('should request stats for a single campaign and return an array', function() {
+                it('should request the schema', function() {
                     $httpBackend.expectGET('/api/campaigns/schema?personalized=true')
                         .respond(200, schema);
 
@@ -415,6 +415,51 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                     $httpBackend.flush();
 
                     expect(success).not.toHaveBeenCalledWith(schema);
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
+            describe('getZip(zip)', function() {
+                var success, failure, zip;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    zip = {
+                        status: 'active',
+                        country: 'US',
+                        zipcode: '12345',
+                        city: 'Princeton',
+                        stateName: 'New Jersey',
+                        stateCode: 'NJ',
+                        countyName: 'Mercer',
+                        countyCode: '123',
+                        loc: []
+                    };
+                });
+
+                it('should request the zip', function() {
+                    $httpBackend.expectGET('/api/geo/zipcodes/12345')
+                        .respond(200, zip);
+
+                    CampaignService.getZip('12345').then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith(zip);
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should reject the promise if the request fails', function() {
+                    $httpBackend.expectGET('/api/geo/zipcodes/12345')
+                        .respond(404, 'NOT FOUND');
+
+                    CampaignService.getZip('12345').then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).not.toHaveBeenCalledWith(zip);
                     expect(failure).toHaveBeenCalled();
                 });
             });

@@ -861,7 +861,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
         }])
 
         .controller('SelfieGeotargetingController', ['$scope','GeoService',
-        function                                    ( $scope , GeoService ) {
+                                                     'CampaignService',
+        function                                    ( $scope , GeoService ,
+                                                      CampaignService ) {
             var SelfieGeotargetingCtrl = this,
                 campaign = $scope.campaign,
                 zipcodes = campaign.targeting.geo.zipcodes,
@@ -924,21 +926,38 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 }
             };
 
-            this.addNewZip = function() {
+            this.validateZip = function() {
                 var newZip = this.newZip,
-                    valid = /^\d{5}$/.test(newZip),
-                    index;
+                    self = this;
 
                 if (!newZip || codesArray.length >= this.maxCodes) { return; }
 
+                CampaignService.getZip(newZip)
+                    .then(function() {
+                        self.addNewZip({
+                            code: newZip,
+                            valid: true
+                        });
+                    })
+                    .catch(function() {
+                        self.addNewZip({
+                            code: newZip,
+                            valid: false
+                        });
+                    });
+            };
+
+            this.addNewZip = function(zip) {
+                var index;
+
                 // if it's valid and not on the campaign already, add it
-                if (valid && codesArray.indexOf(newZip) === -1) {
-                    codesArray.push(newZip);
+                if (zip.valid && codesArray.indexOf(zip.code) === -1) {
+                    codesArray.push(zip.code);
                 }
 
                 // see if we already have this zip in the UI
-                this.zips.forEach(function(zip, i) {
-                    if (zip.code === newZip) {
+                this.zips.forEach(function(z, i) {
+                    if (z.code === zip.code) {
                         index = i;
                     }
                 });
@@ -949,10 +968,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 }
 
                 // then add the new one
-                this.zips.push({
-                    code: newZip,
-                    valid: valid
-                });
+                this.zips.push(zip);
 
                 // reset the value in the UI
                 this.newZip = null;
@@ -968,7 +984,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 }
 
                 if (keyCode === 188 || keyCode === 13) {
-                    this.addNewZip();
+                    this.validateZip();
                 }
             };
 
@@ -1389,12 +1405,14 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 function goToApp(user) {
                     SelfieLoginDialogService.success();
 
+                    /* jshint camelcase:false */
                     intercom('boot', {
                         app_id: c6Defines.kIntercomId,
                         name: user.firstName + ' ' + user.lastName,
                         email: user.email,
                         created_at: user.created
                     });
+                    /* jshint camelcase:true */
 
                     LoginCtrl.model.email = '';
                     LoginCtrl.model.password = '';
