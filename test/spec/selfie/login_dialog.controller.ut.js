@@ -1,4 +1,4 @@
-define(['app'], function(appModule) {
+define(['app','c6_defines'], function(appModule, c6Defines) {
     'use strict';
 
     describe('SelfieLoginDialogController', function() {
@@ -8,10 +8,16 @@ define(['app'], function(appModule) {
             $q,
             AuthService,
             SelfieLoginDialogService,
-            LoginCtrl;
+            LoginCtrl,
+            intercom;
 
         beforeEach(function() {
-            module(appModule.name);
+            c6Defines.kIntercomId = '123xyz';
+            intercom = jasmine.createSpy('intercom');
+
+            module(appModule.name, ['$provide', function($provide) {
+                $provide.value('intercom', intercom);
+            }]);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -131,7 +137,10 @@ define(['app'], function(appModule) {
 
                         beforeEach(function() {
                             user = {
-                                email: 'josh@cinema6.com'
+                                email: 'josh@cinema6.com',
+                                firstName: 'Josh',
+                                lastName: 'Minzner',
+                                created: '2014-08-21T19:45:54.572Z'
                             };
 
                             spyOn(SelfieLoginDialogService, 'success');
@@ -147,6 +156,15 @@ define(['app'], function(appModule) {
 
                         it('should call SelfieLoginDialogService.success()', function() {
                             expect(SelfieLoginDialogService.success).toHaveBeenCalled();
+                        });
+
+                        it('should boot up intercom with meta data', function() {
+                            expect(intercom).toHaveBeenCalledWith('boot', {
+                                app_id: c6Defines.kIntercomId,
+                                name: user.firstName + ' ' + user.lastName,
+                                email: user.email,
+                                created_at: user.created
+                            });
                         });
 
                         it('should reset model', function() {

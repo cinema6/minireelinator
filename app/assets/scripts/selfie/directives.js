@@ -1,5 +1,5 @@
-define( ['angular','select2','braintree','jqueryui','chartjs'],
-function( angular , select2 , braintree , jqueryui , Chart   ) {
+define( ['angular','select2','braintree','jqueryui','chartjs','c6_defines'],
+function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
     'use strict';
 
     var $ = angular.element,
@@ -1359,8 +1359,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
-        .controller('SelfieLoginDialogController', ['$q','AuthService','SelfieLoginDialogService',
-        function                                   ( $q , AuthService , SelfieLoginDialogService ) {
+        .controller('SelfieLoginDialogController', ['$q','AuthService','intercom',
+                                                    'SelfieLoginDialogService',
+        function                                   ( $q , AuthService , intercom ,
+                                                     SelfieLoginDialogService ) {
             var LoginCtrl = this;
 
             this.error = null;
@@ -1386,6 +1388,13 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
                 function goToApp(user) {
                     SelfieLoginDialogService.success();
+
+                    intercom('boot', {
+                        app_id: c6Defines.kIntercomId,
+                        name: user.firstName + ' ' + user.lastName,
+                        email: user.email,
+                        created_at: user.created
+                    });
 
                     LoginCtrl.model.email = '';
                     LoginCtrl.model.password = '';
