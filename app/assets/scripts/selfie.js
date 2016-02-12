@@ -38,8 +38,8 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
             }]);
         }])
 
-        .controller('SelfieController', ['$scope','AuthService','c6State','tracker',
-        function                        ( $scope , AuthService , c6State , tracker ) {
+        .controller('SelfieController', ['$scope','AuthService','c6State','tracker','intercom',
+        function                        ( $scope , AuthService , c6State , tracker , intercom ) {
             var self = this;
 
             this.initWithModel = function(model) {
@@ -49,6 +49,7 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
             this.logout = function() {
                 return AuthService.logout()
                     .then(function transition() {
+                        intercom('shutdown');
                         return c6State.goTo('Selfie:Login', null, {});
                     });
             };

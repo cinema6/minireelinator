@@ -524,10 +524,10 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService','c6State','$q',
                                                       'CampaignService','ConfirmDialogService',
-                                                      'SpinnerService',
+                                                      'SpinnerService','intercom',
             function                                 ( cinema6 , SelfieLogoService , c6State , $q ,
                                                        CampaignService , ConfirmDialogService ,
-                                                       SpinnerService ) {
+                                                       SpinnerService , intercom ) {
                 var SelfieState = c6State.get('Selfie');
 
                 function campaignExtend(target, extension) {
@@ -708,6 +708,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     var cState = this,
                         master = this._campaign,
                         current = this.campaign,
+                        isNew = !current.status && !master.status,
                         saveable = this.isCreator && !master._erased &&
                             (!current.status || current.status === 'draft');
 
@@ -717,6 +718,22 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     return campaignExtend(this._campaign, this.campaign).save()
                         .then(function() {
+                            var intercomData = {
+                                    campaignId: master.id,
+                                    campaignName: master.name || null,
+                                    advertiserId: master.advertiserId,
+                                    advertiserName: master.advertiserDisplayName || null
+                                },
+                                shouldSendUpdate = !cState.intercomData ||
+                                    !equals(cState.intercomData, intercomData);
+
+                            if (isNew) {
+                                intercom('trackEvent', 'createCampaign', intercomData);
+                            } else if (shouldSendUpdate) {
+                                intercom('trackEvent', 'updateCampaign', intercomData);
+                                cState.intercomData = intercomData;
+                            }
+
                             return cState.campaign;
                         });
                 };
@@ -726,11 +743,11 @@ function( angular , c6State  , PaginatedListState                    ,
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
                                                  'c6Debounce','c6AsyncQueue','ConfirmDialogService',
                                                  'CampaignService','SelfieCampaignSummaryService',
-                                                 'SoftAlertService',
+                                                 'SoftAlertService','intercom',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
                                                   c6Debounce , c6AsyncQueue , ConfirmDialogService ,
                                                   CampaignService , SelfieCampaignSummaryService ,
-                                                  SoftAlertService ) {
+                                                  SoftAlertService , intercom ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -806,7 +823,16 @@ function( angular , c6State  , PaginatedListState                    ,
                 return cinema6.db.create('updateRequest', {
                     data: campaign,
                     campaign: campaign.id
-                }).save();
+                }).save().then(function() {
+                    if (isDraft) {
+                        intercom('trackEvent', 'submitCampaign', {
+                            campaignId: campaign.id,
+                            campaignName: campaign.name,
+                            advertiserId: campaign.advertiserId,
+                            advertiserName: campaign.advertiserDisplayName
+                        });
+                    }
+                });
             }
 
             function setPending() {

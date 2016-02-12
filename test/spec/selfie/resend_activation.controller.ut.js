@@ -9,10 +9,15 @@ define(['app'], function(appModule) {
             AccountService,
             $q,
             $scope,
-            SelfieResendActivationCtrl;
+            SelfieResendActivationCtrl,
+            intercom;
 
         beforeEach(function() {
-            module(appModule.name);
+            intercom = jasmine.createSpy('intercom');
+
+            module(appModule.name, ['$provide', function($provide) {
+                $provide.value('intercom', intercom);
+            }]);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -50,6 +55,10 @@ define(['app'], function(appModule) {
 
                 it('should transition back to the login state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {});
+                });
+
+                it('should send intercom a "shutdown" event', function() {
+                    expect(intercom).toHaveBeenCalledWith('shutdown');
                 });
             });
 

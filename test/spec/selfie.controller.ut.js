@@ -11,7 +11,8 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             SelfieCtrl,
             tracker;
 
-        var user;
+        var user,
+            intercom;
 
         function instantiate() {
             $scope = $rootScope.$new();
@@ -32,7 +33,11 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
                 }
             };
 
-            module(appModule.name);
+            intercom = jasmine.createSpy('intercom');
+
+            module(appModule.name, ['$provide', function($provide) {
+                $provide.value('intercom', intercom);
+            }]);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -86,6 +91,10 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
 
                 it('should transition back to the login state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {});
+                });
+
+                it('should send intercom a "shutdown" event', function() {
+                    expect(intercom).toHaveBeenCalledWith('shutdown');
                 });
             });
 

@@ -16,7 +16,8 @@ define(['app'], function(appModule) {
                 SelfieLogoService,
                 CampaignService,
                 ConfirmDialogService,
-                SpinnerService;
+                SpinnerService,
+                intercom;
 
             var card,
                 categories,
@@ -28,7 +29,11 @@ define(['app'], function(appModule) {
                 user;
 
             beforeEach(function() {
-                module(appModule.name);
+                intercom = jasmine.createSpy('intercom');
+
+                module(appModule.name, ['$provide', function($provide) {
+                    $provide.value('intercom', intercom);
+                }]);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
@@ -808,6 +813,97 @@ define(['app'], function(appModule) {
 
                         expect(campaignState._campaign.targeting.interests).toEqual([]);
                         expect(campaignState._campaign.targeting.demographics.age).toEqual([]);
+                    });
+
+                    describe('intercom tracking', function() {
+                        describe('when campaign is new', function() {
+                            it('should send a "createCampaign" event with metadata', function() {
+                                campaignState._campaign.status = undefined;
+                                campaignState.campaign.status = undefined;
+
+                                campaignState._campaign.id = 'cam-123';
+                                campaignState._campaign.name = undefined;
+                                campaignState._campaign.advertiserId = 'a-123';
+                                campaignState._campaign.advertiserDisplayName = undefined;
+
+                                $rootScope.$apply(function() {
+                                    campaignState.saveCampaign();
+                                });
+
+                                expect(intercom).toHaveBeenCalledWith('trackEvent', 'createCampaign', {
+                                    campaignId: 'cam-123',
+                                    campaignName: null,
+                                    advertiserId: 'a-123',
+                                    advertiserName: null
+                                });
+                            });
+                        });
+
+                        describe('when campaign is not new', function() {
+                            describe('when "updateCampaign" has not yet been fired', function() {
+                                it('should send an "updateCampaign" event with metadata', function() {
+                                    campaignState._campaign.status = 'draft';
+                                    campaignState.campaign.status = undefined;
+
+                                    campaignState._campaign.id = 'cam-123';
+                                    campaignState._campaign.name = 'My Campaign';
+                                    campaignState._campaign.advertiserId = 'a-123';
+                                    campaignState._campaign.advertiserDisplayName = 'Toyota';
+
+                                    $rootScope.$apply(function() {
+                                        campaignState.saveCampaign();
+                                    });
+
+                                    expect(intercom).toHaveBeenCalledWith('trackEvent', 'updateCampaign', {
+                                        campaignId: 'cam-123',
+                                        campaignName: 'My Campaign',
+                                        advertiserId: 'a-123',
+                                        advertiserName: 'Toyota'
+                                    });
+                                });
+                            });
+
+                            describe('when "updateCampaign" has fired and meta data has not changed', function() {
+                                it('should only send one "updateCampaign" event with metadata', function() {
+                                    campaignState._campaign.status = 'draft';
+                                    campaignState.campaign.status = 'draft';
+
+                                    campaignState._campaign.id = 'cam-123';
+                                    campaignState._campaign.name = 'My Campaign';
+                                    campaignState._campaign.advertiserId = 'a-123';
+                                    campaignState._campaign.advertiserDisplayName = 'Toyota';
+
+
+                                    $rootScope.$apply(function() {
+                                        campaignState.saveCampaign();
+                                    });
+
+                                    expect(intercom).toHaveBeenCalledWith('trackEvent', 'updateCampaign', {
+                                        campaignId: 'cam-123',
+                                        campaignName: 'My Campaign',
+                                        advertiserId: 'a-123',
+                                        advertiserName: 'Toyota'
+                                    });
+
+                                    expect(campaignState.intercomData).toEqual({
+                                        campaignId: 'cam-123',
+                                        campaignName: 'My Campaign',
+                                        advertiserId: 'a-123',
+                                        advertiserName: 'Toyota'
+                                    });
+
+                                    $rootScope.$apply(function() {
+                                        campaignState.saveCampaign();
+                                    });
+
+                                    $rootScope.$apply(function() {
+                                        campaignState.saveCampaign();
+                                    });
+
+                                    expect(intercom.calls.count()).toBe(1);
+                                });
+                            });
+                        });
                     });
                 });
             });

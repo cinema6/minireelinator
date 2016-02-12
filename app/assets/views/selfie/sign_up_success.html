@@ -1,14 +1,28 @@
-<div class="prelogin__gridHolder">
-    <div class="grid grid--center grid--middle">
+<header class="signup__header grid">
+    <div class="signup__gridHolder grid grid--middle">
+        <div class="grid__item one-quarter">
+            <span class="rc__logo"></span><span class="ir">Reelcontent</span></h1>
+        </div><!--
+        --><div class="grid__item three-quarters text--right">
+            <ul class="header__nav">
+                <li><a href="http://reelcontent.com/#section2">Video Card</a></li>
+                <li><a href="http://reelcontent.com/#section3">Advertisers</a></li>
+                <li><a href="http://reelcontent.com/#section4">Platform</a></li>
+                <li><a href="http://reelcontent.com/#section7">About</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
+<div class="signup__gridHolder" c6-alias="SelfieSignUpCtrl.model as user">
+    <div class="grid one-whole">
         <div class="grid__item one-whole">
-            <div class="brandingHead">
-                <h1 class="text--center tk--hdr"><span class="rc__logo logo--center"></span><span class="ir">Reelcontent</span></h1>
+            <div class="grid grid--center">
+                <h2 class="tk--hdr text--center">Please Activate Your Account</h2>
+                <p class="text--center">Thank you for registering for Reelcontent Self-Serve Video Ads!</p>
+                <p ng-show="SelfieSignUpSuccessCtrl.model.email" class="subAction alertMessage alert__success text--center">Before you can continue, you must activate your account.<br><strong>Please check your email {{SelfieSignUpSuccessCtrl.model.email}} for an activation link.</strong></p>
+                <p class="subAction text--center">Didn't get the email?<br>
+                    <a c6-sref="Selfie:Login">Login</a> in order to resend the confirmation link.</p>
             </div>
-            <h2 class="tk--hdr text--center">Please Activate Your Account</h2>
-            <p class="text--center">Thank you for registering for Reelcontent Self-Serve Video Ads!</p>
-            <p ng-show="SelfieSignUpSuccessCtrl.model.email" class="subAction alertMessage alert__success text--center">Before you can continue, you must activate your account.<br><strong>Please check your email {{SelfieSignUpSuccessCtrl.model.email}} for an activation link.</strong></p>
-            <p class="subAction text--center">Didn't get the email?<br>
-                <a c6-sref="Selfie:Login">Login</a> in order to resend the confirmation link.</p>
         </div>
     </div>
 </div>
