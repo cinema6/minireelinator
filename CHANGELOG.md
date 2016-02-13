@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.36.0 (February 12, 2016)
+* *[v1.36.0.rc2]*
+  * [DEV]: Fix for an issue where Intercom's variable path was breaking
+    the the r.js optimization build step
+* *[/v1.36.0.rc2]*
+
 * *[v1.36.0.rc1]*
   * [DESIGN]: Added styles to allow filtering campaigns by organizations
   * [FEATURE]: Add Org filter in campaign list view for users who can see
