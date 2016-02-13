@@ -9,7 +9,8 @@ module.exports = {
             removeCombined: true,
             paths: {
                 templates: '../../../.tmp/templates',
-                chartjs: 'empty:'
+                chartjs: 'empty:',
+                intercom: 'empty:'
             },
             modules: [{
                 name: 'main'
