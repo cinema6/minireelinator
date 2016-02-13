@@ -2,9 +2,6 @@
     /* global requirejs */
     'use strict';
 
-    window.IntercomId = window.DEBUG || (/staging/).test(window.location.hostname) ?
-        'xpkkvhlv' : 'npspbisd';
-
     requirejs.config({
         baseUrl: 'scripts',
         paths: {
@@ -23,7 +20,6 @@
             c6embed: 'https://lib.reelcontent.com/c6embed/v1/utils.min',
             metagetta: 'https://lib.reelcontent.com/metagetta/v0.2.0-0-g8b51280/metagetta.min',
             braintree: 'https://js.braintreegateway.com/v2/braintree',
-            intercom: 'https://widget.intercom.io/widget/' + window.IntercomId,
             chartjs: [
                 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min',
                 'lib/chartjs.min'
@@ -54,7 +50,18 @@
                     window.__c6_ga__ = function() {};
                     return c6Defines;
                 }
-            },
+            }
+        }
+    });
+
+    requirejs.config({
+        baseUrl: 'scripts',
+        paths: {
+            intercom: 'https://widget.intercom.io/widget/' +
+                (window.DEBUG || (/staging/).test(window.location.hostname) ?
+                    'xpkkvhlv' : 'npspbisd')
+        },
+        shim: {
             intercom: {
                 exports: 'Intercom'
             }
