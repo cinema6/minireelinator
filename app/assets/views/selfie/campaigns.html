@@ -23,42 +23,35 @@
                     </li>
 
                     <li ng-show="!SelfieCampaignsCtrl.showOrgFilter">
-                        <ul style="padding-left:0">
+                        <ul>
+                            <li class="ui__clickDropBtn" ng-repeat="filter in SelfieCampaignsCtrl.filters" title="{{filter.name}}" type="button" >
+                                <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleFilter($index)"> <span class="btn__label faa">{{filter.name}}</span></label>
                             <li>
-                                <ul>
-                                    <li class="ui__clickDropBtn" ng-repeat="filter in SelfieCampaignsCtrl.filters" title="{{filter.name}}" type="button" >
-                                        <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleFilter($index)"> <span class="btn__label faa">{{filter.name}}</span></label>
-                                    <li>
-                                </ul>
-                            </li>
-                            <li ng-show="SelfieCampaignsCtrl.allStatusesChecked" ng-click="SelfieCampaignsCtrl.toggleAllStatuses(false)" class="ui__clickDropBtn dropdownBtn text--center" type="button" title="Uncheck All">
-                                <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Uncheck All</span></label>
-                            </li>
-                            <li ng-show="!SelfieCampaignsCtrl.allStatusesChecked" ng-click="SelfieCampaignsCtrl.toggleAllStatuses(true)" class="ui__clickDropBtn dropdownBtn" type="button" title="Check All">
-                                <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Check All</span></label>
-                            </li>
                         </ul>
                     </li>
-
+                    <li ng-show="SelfieCampaignsCtrl.allStatusesChecked && !SelfieCampaignsCtrl.showOrgFilter" ng-click="SelfieCampaignsCtrl.toggleAllStatuses(false)" class="ui__clickDropBtn dropdownBtn text--center" type="button" title="Uncheck All">
+                        <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Uncheck All</span></label>
+                    </li>
+                    <li ng-show="!SelfieCampaignsCtrl.allStatusesChecked && !SelfieCampaignsCtrl.showOrgFilter" ng-click="SelfieCampaignsCtrl.toggleAllStatuses(true)" class="ui__clickDropBtn dropdownBtn" type="button" title="Check All">
+                        <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Check All</span></label>
+                    </li>
                     <li ng-show="SelfieCampaignsCtrl.showOrgFilter">
-                        <ul style="padding-left:0">
-                            <li>
-                                <ul>
-                                    <li ng-repeat="filter in SelfieCampaignsCtrl.orgs" class="ui__clickDropBtn" type="button" title="{{filter.name}}">
-                                        <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleOrg(filter)"> <span class="btn__label faa">{{filter.name}}</span></label>
-                                    </li>
-                                </ul>
+                        <ul>
+                            <li ng-repeat="filter in SelfieCampaignsCtrl.orgs" class="ui__clickDropBtn" type="button" title="{{filter.name}}">
+                                <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleOrg(filter)"> <span class="btn__label faa">{{filter.name}}</span></label>
                             </li>
+                        </ul>
+                        <ul>
                             <li ng-show="SelfieCampaignsCtrl.orgs.length === 0" class="ui__clickDropBtn">
                                 <label class="checkbox--inline"><span class="btn__label faa">No results</span></label>
                             </li>
-                            <li ng-show="SelfieCampaignsCtrl.allOrgsChecked" ng-click="SelfieCampaignsCtrl.toggleAllOrgs(false)" class="ui__clickDropBtn dropdownBtn text--center" type="button" title="Uncheck All">
-                                <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Uncheck All</span></label>
-                            </li>
-                            <li ng-show="!SelfieCampaignsCtrl.allOrgsChecked" ng-click="SelfieCampaignsCtrl.toggleAllOrgs(true)" class="ui__clickDropBtn dropdownBtn" type="button" title="Check All">
-                                <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Check All</span></label>
-                            </li>
                         </ul>
+                    </li>
+                    <li ng-show="SelfieCampaignsCtrl.allOrgsChecked && SelfieCampaignsCtrl.showOrgFilter" ng-click="SelfieCampaignsCtrl.toggleAllOrgs(false)" class="ui__clickDropBtn dropdownBtn text--center" type="button" title="Uncheck All">
+                        <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Uncheck All</span></label>
+                    </li>
+                    <li ng-show="!SelfieCampaignsCtrl.allOrgsChecked && SelfieCampaignsCtrl.showOrgFilter" ng-click="SelfieCampaignsCtrl.toggleAllOrgs(true)" class="ui__clickDropBtn dropdownBtn" type="button" title="Check All">
+                        <label class="checkbox--inline action__btn text--center"><span class="btn__label faa">Check All</span></label>
                     </li>
                 </ul>
 
