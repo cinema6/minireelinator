@@ -1405,13 +1405,12 @@ function( angular , c6State  , PaginatedListState                    ,
             // the first time a user enters a website,
             // after that they need to use the "import" button
             this.checkWebsite = function() {
-                var website = this.validateWebsite(),
-                    currentWebsite = card.links.Website;
+                var website = this.validateWebsite();
 
                 this.siteDataSuccess = false;
                 this.siteDataFailure = false;
 
-                if (!website || this.allowImport || website === currentWebsite) {
+                if (!website || this.allowImport) {
                     this.updateLinks();
                     return;
                 }

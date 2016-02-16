@@ -527,19 +527,6 @@ define(['app'], function(appModule) {
                     });
                 });
 
-                describe('when Ctrl.website === card.links.website', function() {
-                    it('should do nothing escept updateLinks', function() {
-                        SelfieCampaignSponsorCtrl.allowImport = false;
-                        SelfieCampaignSponsorCtrl.website = 'http://website.com';
-                        card.links.Website = 'http://website.com';
-
-                        SelfieCampaignSponsorCtrl.checkWebsite();
-
-                        expect(CollateralService.websiteData).not.toHaveBeenCalled();
-                        expect(SelfieCampaignSponsorCtrl.updateLinks).toHaveBeenCalled();
-                    });
-                });
-
                 describe('when website data should be fetched', function() {
                     beforeEach(function() {
                         SelfieCampaignSponsorCtrl.allowImport = false;
