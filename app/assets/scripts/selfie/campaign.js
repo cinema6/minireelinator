@@ -365,6 +365,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
                 this.orgs = this.allOrgs;
                 this.showOrgFilter = false;
+                this.showFilterDropdown = false;
             };
 
             this.editStateFor = function(campaign) {
@@ -405,6 +406,22 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.params.search = this.search;
             };
 
+            this.applyFilters = function() {
+                if (this.showFilterDropdown) {
+                    this.toggleFilter();
+                    this.toggleOrg();
+                    this.showFilterDropdown = false;
+                }
+            };
+
+            this.toggleDropdown = function() {
+                if (this.showFilterDropdown) {
+                    this.applyFilters();
+                } else {
+                    this.showFilterDropdown = true;
+                }
+            };
+
             this.toggleFilter = function() {
                 this.filter = this.filters.reduce(function(filters, filter) {
                     return filter.checked ? filters.concat(filter.id) : filters;
@@ -416,7 +433,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.filters.forEach(function(status) {
                     status.checked = bool;
                 });
-                this.toggleFilter();
             };
 
             this.toggleOrg = function(org) {
@@ -437,8 +453,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.orgs.forEach(function(org) {
                     allOrgs[allOrgs.indexOf(org)].checked = bool;
                 });
-
-                this.toggleOrg();
             };
 
             this.searchOrgs = function(text) {
