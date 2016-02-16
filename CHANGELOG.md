@@ -1,6 +1,12 @@
 # MiniReelinator
 
 ## v1.36.0 (February 16, 2016)
+* *[v1.36.0.rc4]*
+  * [FIX]: Fix for an issue where a website url is not properly scraped
+    when user leaves the website input field
+  * [DESIGN]: Fix image path to graphic on sign up page
+* *[/v1.36.0.rc4]*
+
 * *[v1.36.0.rc3]*
   * [DESIGN]: Fix for an issue with org filter styles
   * [FIX]: Apply filter selections when dropdown closes instead of after
