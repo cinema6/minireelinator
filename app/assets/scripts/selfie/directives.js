@@ -979,7 +979,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             this.handleZipKeydown = function(e) {
                 var keyCode = e.keyCode;
 
-                if (keyCode === 8 && !this.newZip) {
+                if (keyCode === 8 && !this.newZip && this.zips.length) {
                     this.removeZip(this.zips.length-1);
                 }
 
