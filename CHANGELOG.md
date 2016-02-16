@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.36.0 (February 16, 2016)
+* *[v1.36.0.rc5]*
+  * [DEV]: Add backup Intercom module in case their library fails to load
+* *[/v1.36.0.rc5]*
+
 * *[v1.36.0.rc4]*
   * [FIX]: Fix for an issue where a website url is not properly scraped
     when user leaves the website input field

@@ -57,9 +57,12 @@
     requirejs.config({
         baseUrl: 'scripts',
         paths: {
-            intercom: 'https://widget.intercom.io/widget/' +
-                (window.DEBUG || (/staging/).test(window.location.hostname) ?
-                    'xpkkvhlv' : 'npspbisd')
+            intercom: [
+                'https://widget.intercom.io/widget/' +
+                    (window.DEBUG || (/staging/).test(window.location.hostname) ?
+                        'xpkkvhlv' : 'npspbisd'),
+                'backup/intercom'
+            ]
         },
         shim: {
             intercom: {
