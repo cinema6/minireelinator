@@ -54,7 +54,7 @@
                 <ul class="inputItems__group">
                     <li ng-repeat="zip in SelfieGeotargetingCtrl.zips" ng-class="{ 'inputItem-error' : !zip.valid }" class="inputItem" title="{{zip.code}}"><span stop-propagate ng-click="SelfieGeotargetingCtrl.removeZip($index)" class="inputItem__remove" role="presentation">×</span>{{zip.code}}</li>
                     <li class="inputItem--form">
-                        <input ng-model="SelfieGeotargetingCtrl.newZip" ng-change="SelfieGeotargetingCtrl.handleZipChange()" ng-keydown="SelfieGeotargetingCtrl.handleZipKeydown($event)" class="multi__input--formField" type="text" tabindex="-1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="rc-zip-input" placeholder="" style="width:3.5em">
+                        <input ng-model="SelfieGeotargetingCtrl.newZip" ng-change="SelfieGeotargetingCtrl.handleZipChange()" ng-keydown="SelfieGeotargetingCtrl.handleZipKeydown($event)" ng-blur="SelfieGeotargetingCtrl.validateZip()" class="multi__input--formField" type="text" tabindex="-1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="rc-zip-input" placeholder="" style="width:3.5em">
                     </li>
                 </ul>
             </div>
@@ -72,7 +72,7 @@
     </fieldset>
 
     <fieldset class="form__item" ng-show="!!SelfieGeotargetingCtrl.zips.length" ng-class="{ 'ui--hasError': SelfieGeotargetingCtrl.radiusError }">
-        <input c6-fill-check ng-model="SelfieGeotargetingCtrl.radius" class="form__textBox" type="number" tabindex="-1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="c6-zip-radius" id="c6-zip-radius" placeholder="">
+        <input c6-fill-check ng-model="SelfieGeotargetingCtrl.radius" ng-blur="SelfieGeotargetingCtrl.setRadius()" class="form__textBox" type="number" tabindex="-1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="c6-zip-radius" id="c6-zip-radius" placeholder="">
         <label class="form__label" for="c6-zip-radius">
             <i class="fa fa-times ui--error"></i>
             Radius
