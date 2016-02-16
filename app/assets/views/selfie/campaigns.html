@@ -10,10 +10,10 @@
             <h1 class="mainHeader__breadcrumbs tk--hdr">
                 Campaigns 
             </h1>
-            <span class="filterBtn__group" c6-click-outside="showDropdown = false">
-                <button class="btn filterBtn btn--primary btn--small btn__nav" ng-click="showDropdown = !showDropdown" type="button"><span class="ui__clickDrop sortBar__btn--Dropdown"><i class="faa fa-filter"></i></span></button>
+            <span class="filterBtn__group" c6-click-outside="SelfieCampaignsCtrl.applyFilters()">
+                <button class="btn filterBtn btn--primary btn--small btn__nav" ng-click="SelfieCampaignsCtrl.toggleDropdown()" type="button"><span class="ui__clickDrop sortBar__btn--Dropdown"><i class="faa fa-filter"></i></span></button>
 
-                <ul class="ui__clickDropMenu" ng-show="showDropdown">
+                <ul class="ui__clickDropMenu" ng-show="SelfieCampaignsCtrl.showFilterDropdown">
                     <li class="ui__clickDropBtn dropdownBtn filterOptions text--center" type="button" ng-if="SelfieCampaignsCtrl.orgs.length > 1 || SelfieCampaignsCtrl.showOrgFilter">
                         <span class="btnGroup">
                             <label ng-click="SelfieCampaignsCtrl.showOrgFilter = false" ng-class="{ 'btn--active' : !SelfieCampaignsCtrl.showOrgFilter }" class="checkbox--inline btn text--right"><span class="btn__label faa">Status</span></label>
@@ -25,7 +25,7 @@
                     <li ng-show="!SelfieCampaignsCtrl.showOrgFilter">
                         <ul>
                             <li class="ui__clickDropBtn" ng-repeat="filter in SelfieCampaignsCtrl.filters" title="{{filter.name}}" type="button" >
-                                <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleFilter($index)"> <span class="btn__label faa">{{filter.name}}</span></label>
+                                <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked"> <span class="btn__label faa">{{filter.name}}</span></label>
                             <li>
                         </ul>
                     </li>
@@ -38,7 +38,7 @@
                     <li ng-show="SelfieCampaignsCtrl.showOrgFilter">
                         <ul>
                             <li ng-repeat="filter in SelfieCampaignsCtrl.orgs" class="ui__clickDropBtn" type="button" title="{{filter.name}}">
-                                <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleOrg(filter)"> <span class="btn__label faa">{{filter.name}}</span></label>
+                                <label class="checkbox--inline"><input type="checkbox" class="checkbox__input" name="statusFilter" value="filter.name" ng-model="filter.checked"> <span class="btn__label faa">{{filter.name}}</span></label>
                             </li>
                         </ul>
                         <ul>

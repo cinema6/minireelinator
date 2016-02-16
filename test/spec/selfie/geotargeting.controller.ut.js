@@ -532,20 +532,23 @@ define(['app'], function(appModule) {
 
                 describe('when keyCode is 8 (delete button)', function() {
                     it('should call removeZip() with the index of the last zip in the UI if there is no newZip', function() {
-                        SelfieGeotargetingCtrl.zips = [
-                            { code: '01234', valid: true },
-                            { code: '123', valid: false },
-                            { code: '54321', valid: true }
-                        ];
-
                         SelfieGeotargetingCtrl.newZip = '123';
-
                         SelfieGeotargetingCtrl.handleZipKeydown({keyCode: 8});
 
                         expect(SelfieGeotargetingCtrl.removeZip).not.toHaveBeenCalled();
 
                         SelfieGeotargetingCtrl.newZip = '';
+                        SelfieGeotargetingCtrl.zips = [];
+                        SelfieGeotargetingCtrl.handleZipKeydown({keyCode: 8});
 
+                        expect(SelfieGeotargetingCtrl.removeZip).not.toHaveBeenCalled();
+
+                        SelfieGeotargetingCtrl.newZip = '';
+                        SelfieGeotargetingCtrl.zips = [
+                            { code: '01234', valid: true },
+                            { code: '123', valid: false },
+                            { code: '54321', valid: true }
+                        ];
                         SelfieGeotargetingCtrl.handleZipKeydown({keyCode: 8});
 
                         expect(SelfieGeotargetingCtrl.removeZip).toHaveBeenCalledWith(2);

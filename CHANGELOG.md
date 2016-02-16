@@ -1,8 +1,13 @@
 # MiniReelinator
 
-## v1.36.0 (February 12, 2016)
+## v1.36.0 (February 16, 2016)
 * *[v1.36.0.rc3]*
   * [DESIGN]: Fix for an issue with org filter styles
+  * [FIX]: Apply filter selections when dropdown closes instead of after
+    every selection
+  * [FIX]: Validate zip code when user clicks away from zip input field
+  * [FIX]: Update radius when user clicks away from radius input field
+* *[/v1.36.0.rc3]*
 
 * *[v1.36.0.rc2]*
   * [DEV]: Fix for an issue where Intercom's variable path was breaking
