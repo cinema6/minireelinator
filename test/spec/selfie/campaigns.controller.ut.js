@@ -292,6 +292,71 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 });
             });
 
+            describe('applyFilters()', function() {
+                beforeEach(function() {
+                    spyOn(SelfieCampaignsCtrl, 'toggleFilter');
+                    spyOn(SelfieCampaignsCtrl, 'toggleOrg');
+                });
+
+                describe('when showFilterDropdown is false', function() {
+                    it('should do nothing', function() {
+                        SelfieCampaignsCtrl.showFilterDropdown = false;
+
+                        SelfieCampaignsCtrl.applyFilters();
+
+                        expect(SelfieCampaignsCtrl.toggleFilter).not.toHaveBeenCalled();
+                        expect(SelfieCampaignsCtrl.toggleOrg).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when showFilterDropdown is true', function() {
+                    beforeEach(function() {
+                        SelfieCampaignsCtrl.showFilterDropdown = true;
+
+                        SelfieCampaignsCtrl.applyFilters();
+                    });
+
+                    it('should call toggleFilter()', function() {
+                        expect(SelfieCampaignsCtrl.toggleFilter).toHaveBeenCalled();
+                    });
+
+                    it('should call toggleOrg()', function() {
+                        expect(SelfieCampaignsCtrl.toggleOrg).toHaveBeenCalled();
+                    });
+
+                    it('should set showFilterDropdown to false', function() {
+                        expect(SelfieCampaignsCtrl.showFilterDropdown).toBe(false);
+                    });
+                });
+            });
+
+            describe('toggleDropdown()', function() {
+                beforeEach(function() {
+                    spyOn(SelfieCampaignsCtrl, 'applyFilters');
+                });
+
+                describe('when showFilterDropdown is false', function() {
+                    it('should set it to true', function() {
+                        SelfieCampaignsCtrl.showFilterDropdown = false;
+
+                        SelfieCampaignsCtrl.toggleDropdown();
+
+                        expect(SelfieCampaignsCtrl.showFilterDropdown).toBe(true);
+                        expect(SelfieCampaignsCtrl.applyFilters).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when showFilterDropdown is true', function() {
+                    it('should call applyFilters()', function() {
+                        SelfieCampaignsCtrl.showFilterDropdown = true;
+
+                        SelfieCampaignsCtrl.toggleDropdown();
+
+                        expect(SelfieCampaignsCtrl.applyFilters).toHaveBeenCalled();
+                    });
+                });
+            });
+
             describe('initWithModel(model)', function() {
                 it('should put the model on the Ctrl', function() {
                     SelfieCampaignsCtrl.initWithModel(model);
@@ -872,9 +937,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
             describe('toggleAllStatuses(bool)', function() {
                 describe('when bool === true', function() {
-                    it('should mark all the statuses as checked and should call toggleFilter()', function() {
-                        spyOn(SelfieCampaignsCtrl, 'toggleFilter');
-
+                    it('should mark all the statuses as checked', function() {
                         SelfieCampaignsCtrl.filters = [
                             { name: 'Draft', id: 'draft', checked: false },
                             { name: 'Pending', id: 'pending', checked: false },
@@ -889,15 +952,11 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         SelfieCampaignsCtrl.filters.forEach(function(status) {
                             expect(status.checked).toBe(true);
                         });
-
-                        expect(SelfieCampaignsCtrl.toggleFilter).toHaveBeenCalled();
                     });
                 });
 
                 describe('when bool === false', function() {
-                    it('should mark all the statuses as checked and should call toggleFilter()', function() {
-                        spyOn(SelfieCampaignsCtrl, 'toggleFilter');
-
+                    it('should mark all the statuses as checked', function() {
                         SelfieCampaignsCtrl.filters = [
                             { name: 'Draft', id: 'draft', checked: false },
                             { name: 'Pending', id: 'pending', checked: false },
@@ -912,8 +971,6 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         SelfieCampaignsCtrl.filters.forEach(function(status) {
                             expect(status.checked).toBe(false);
                         });
-
-                        expect(SelfieCampaignsCtrl.toggleFilter).toHaveBeenCalled();
                     });
                 });
             });
@@ -992,9 +1049,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
             describe('toggleAllOrgs(bool)', function() {
                 describe('when bool === true', function() {
-                    it('should mark all the visible orgs as checked and should call toggleOrg()', function() {
-                        spyOn(SelfieCampaignsCtrl, 'toggleOrg');
-
+                    it('should mark all the visible orgs as checked', function() {
                         SelfieCampaignsCtrl.allOrgs = [
                             { name: 'Diageo', id: 'o-111', checked: false },
                             { name: 'Toyota', id: 'o-222', checked: false },
@@ -1013,15 +1068,11 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         expect(SelfieCampaignsCtrl.allOrgs[1].checked).toBe(true);
                         expect(SelfieCampaignsCtrl.allOrgs[2].checked).toBe(true);
                         expect(SelfieCampaignsCtrl.allOrgs[3].checked).toBe(false);
-
-                        expect(SelfieCampaignsCtrl.toggleOrg).toHaveBeenCalled();
                     });
                 });
 
                 describe('when bool === false', function() {
-                    it('should mark all the visible orgs as checked and should call toggleFilter()', function() {
-                        spyOn(SelfieCampaignsCtrl, 'toggleOrg');
-
+                    it('should mark all the visible orgs as unchecked', function() {
                         SelfieCampaignsCtrl.allOrgs = [
                             { name: 'Diageo', id: 'o-111', checked: true },
                             { name: 'Toyota', id: 'o-222', checked: true },
@@ -1040,8 +1091,6 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         expect(SelfieCampaignsCtrl.allOrgs[1].checked).toBe(false);
                         expect(SelfieCampaignsCtrl.allOrgs[2].checked).toBe(false);
                         expect(SelfieCampaignsCtrl.allOrgs[3].checked).toBe(true);
-
-                        expect(SelfieCampaignsCtrl.toggleOrg).toHaveBeenCalled();
                     });
                 });
             });
