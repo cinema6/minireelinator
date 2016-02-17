@@ -3271,7 +3271,7 @@ fa,
         }
 
 /*  ================================================
-    Multi-input styles (used for zio code)
+    Multi-input styles (used for zip code)
     ================================================ */
     .inputItems {
         border: 1px solid #ddd;
@@ -3286,7 +3286,7 @@ fa,
             border: 1px solid #49B8B9;
             background: #ffffff;
         }
-    #c6-zip {
+    #c6-zipCode {
         border: 0;
         clip: rect(0 0 0 0);
         height: 1px;
@@ -4324,6 +4324,10 @@ fa,
         .modalFooter__guideText {
             margin:1.75em 8em 0;
             text-align: center; font-size:0.75em;
+        }
+        .modalFooter__group .btnSpinner__waiting:focus {
+            padding-right: 2.5rem;
+            transition: padding 0.2s ease-in;
         }
 
     @media screen and (max-width:65em), screen and (max-height:39.375em) {
