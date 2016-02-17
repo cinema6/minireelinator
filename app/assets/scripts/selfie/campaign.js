@@ -19,6 +19,12 @@ function( angular , c6State  , PaginatedListState                    ,
         return (norm < 10 ? '0' : '') + norm;
     }
 
+    function dashboardStateArgs(cState) {
+        return (/Dashboard/).test(cState.cName) ?
+            [cState.cName, null, ((/All/).test(cState.cName) ? null : {pending: 'true'}), true] :
+            dashboardStateArgs(cState.cParent);
+    }
+
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -2078,7 +2084,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         if ((/delete|cancel/).test(action)) {
                             // if user has deleted or canceled the campaign
                             // we probably want to go back the dashboard
-                            c6State.goTo('Selfie:CampaignDashboard');
+                            c6State.goTo.apply(null, dashboardStateArgs(cState));
                         }
                     })
                     .catch(function(err) {
@@ -2119,6 +2125,10 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
+
+            this.backToDashboard = function() {
+                c6State.goTo.apply(null, dashboardStateArgs(cState));
+            };
 
             this.initWithModel = function(model) {
                 this.campaign = cState.campaign;
@@ -2509,7 +2519,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     data: self.updatedCampaign,
                     status: 'approved'
                 }).then(function() {
-                    c6State.goTo('Selfie:CampaignDashboard');
+                    c6State.goTo.apply(null, dashboardStateArgs(cState));
                 }).catch(function(error) {
                     self.error = 'There was a problem approving the campaign: ' + error.data;
                 });
@@ -2520,7 +2530,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     status: 'rejected',
                     rejectionReason: self.rejectionReason
                 }).then(function() {
-                    c6State.goTo('Selfie:CampaignDashboard');
+                    c6State.goTo.apply(null, dashboardStateArgs(cState));
                 }).catch(function(error) {
                     self.error = 'There was a problem rejecting the campaign: ' + error.data;
                 });
