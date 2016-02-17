@@ -12,6 +12,8 @@ function( angular , c6State  , PaginatedListState                    ,
         isObject = angular.isObject,
         isArray = angular.isArray;
 
+    var _campaignListParams = {};
+
     function pad(num) {
         var norm = Math.abs(Math.floor(num));
         return (norm < 10 ? '0' : '') + norm;
@@ -54,17 +56,19 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaigns', ['$injector','SettingsService','$q',
                                                        'paginatedDbList','c6State',
-                                                       'SpinnerService',
+                                                       'SpinnerService','$location',
             function                                  ( $injector , SettingsService , $q ,
                                                         paginatedDbList , c6State ,
-                                                        SpinnerService ) {
+                                                        SpinnerService , $location ) {
+                var pending = $location.search().pending;
+
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/selfie/campaigns.html';
                 this.controller = 'SelfieCampaignsController';
                 this.controllerAs = 'SelfieCampaignsCtrl';
 
-                this.params = {};
+                this.params = _campaignListParams;
 
                 this.beforeModel = function() {
                     var user = c6State.get('Selfie').cModel,
@@ -122,13 +126,18 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     SpinnerService.display();
 
-                    return paginatedDbList('selfieCampaign', {
-                        sort: this.sort,
-                        application: 'selfie',
-                        statuses: this.filter,
-                        text: this.search,
-                        excludeOrgs: this.excludeOrgs
-                    }, this.limit, this.page).ensureResolution()
+                    return paginatedDbList(
+                        'selfieCampaign',
+                        extend({
+                            sort: this.sort,
+                            application: 'selfie',
+                            statuses: this.filter,
+                            text: this.search,
+                            excludeOrgs: this.excludeOrgs
+                        }, (pending ? {pendingUpdate: true } : {})),
+                        this.limit,
+                        this.page
+                    ).ensureResolution()
                         .finally(function() {
                             SpinnerService.close();
                         });

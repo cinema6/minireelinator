@@ -132,7 +132,7 @@ module.exports = function(http) {
     });
 
     http.whenGET('/api/campaigns', function(request) {
-        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'statuses', 'fields', 'ids','excludeOrgs']),
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'statuses', 'fields', 'ids','excludeOrgs','pendingUpdate']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
@@ -181,6 +181,11 @@ module.exports = function(http) {
                         org = campaign.org;
 
                     return !exclusions || exclusionsArray.indexOf(org) === -1;
+                })
+                .filter(function(campaign) {
+                    var pending = request.query.pendingUpdate;
+
+                    return !pending || campaign.updateRequest;
                 }),
             campaigns = allCampaigns
                 .filter(function(campaign, index) {
