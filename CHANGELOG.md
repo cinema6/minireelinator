@@ -1,7 +1,9 @@
 # MiniReelinator
 
+## v1.36.1 (February 17, 2016)
 * *[v1.36.1.rc1]*
   * [FIX]: Fixed the zip code input style issue on payment modal
+* *[/v1.36.1.rc1]*
 
 ## v1.36.0 (February 16, 2016)
 * *[v1.36.0.rc5]*
