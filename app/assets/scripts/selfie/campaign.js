@@ -530,7 +530,13 @@ function( angular , c6State  , PaginatedListState                    ,
                         user: cinema6.db.find('user', campaign.user),
                         advertiser: cinema6.db.find('advertiser', campaign.advertiserId)
                     }).then(function(promises) {
-                        cState.updateRequest = promises.updateRequest;
+                        var ur = promises.updateRequest;
+
+                        if (ur && ur.data) {
+                            ur.data = CampaignService.normalize(ur.data, promises.user);
+                        }
+
+                        cState.updateRequest = ur;
                         cState.user = promises.user;
                         cState.advertiser = promises.advertiser;
                         cState.campaign = CampaignService.normalize(campaign, promises.user);
