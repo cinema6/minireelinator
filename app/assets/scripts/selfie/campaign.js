@@ -60,8 +60,6 @@ function( angular , c6State  , PaginatedListState                    ,
             function                                  ( $injector , SettingsService , $q ,
                                                         paginatedDbList , c6State ,
                                                         SpinnerService , $location ) {
-                var pending = $location.search().pending;
-
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/selfie/campaigns.html';
@@ -124,6 +122,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.model = function() {
+                    var pending = $location.search().pending;
+
                     SpinnerService.display();
 
                     return paginatedDbList(

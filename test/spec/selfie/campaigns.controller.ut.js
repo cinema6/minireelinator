@@ -36,7 +36,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 spyOn(SpinnerService, 'display');
                 spyOn(SpinnerService, 'close');
 
-                campaigns = c6State.get('Selfie:Campaigns');
+                campaigns = c6State.get('Selfie:All:Campaigns');
                 campaigns.isAdmin = false;
                 campaigns.cParent = {
                     hasAdvertisers: false,
