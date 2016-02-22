@@ -80,6 +80,7 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                 application.name = 'Selfie';
                 selfie = c6State.get('Selfie');
                 selfie.cModel = {
+                    id: 'u-111',
                     advertiser: {
                         id: 'a-111'
                     },
@@ -277,6 +278,13 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
 
                         expect(result.name).toEqual(existingCampaign.name + ' (Copy)');
                         expect(result.application).toEqual('selfie');
+                    });
+
+                    it('should not copy payment method if the selfie user is not the campaign creator', function() {
+                        result = CampaignService.create(existingCampaign, user);
+
+                        expect(result.paymentMethod).toBe(undefined);
+                        expect(result.paymentMethod).not.toEqual(existingCampaign.paymentMethod);
                     });
 
                     it('should be a new campaign object', function() {
