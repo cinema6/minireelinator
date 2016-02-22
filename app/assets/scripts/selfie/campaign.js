@@ -1802,7 +1802,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function handleError(error) {
                 ConfirmDialogService.display({
-                    prompt: 'There was an a problem saving your payment method: ' + error.data,
+                    prompt: 'There was a problem saving your payment method: ' + error.data,
                     affirm: 'OK',
 
                     onCancel: function() {
