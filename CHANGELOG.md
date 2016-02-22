@@ -3,6 +3,8 @@
 * *[v1.37.0.rc1]*
   * [FEATURE]: Add "Awaiting Approval" campaign list view
   * [FEATURE]: Display lifetime date range on stats page
+  * [FIX]: When copying a campaign only copy the payment method if the
+    user is the campaign creator
 
 ## v1.36.1 (February 17, 2016)
 * *[v1.36.1.rc1]*
