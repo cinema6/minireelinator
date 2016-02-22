@@ -180,6 +180,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             };
 
             cState = {
+                cParent: {
+                    cName: 'Selfie:All:CampaignDashboard'
+                },
                 campaign: campaign,
                 updateRequest: updateRequest,
                 saveUpdateRequest: jasmine.createSpy('saveUpdateRequest()').and.returnValue($q.when())
@@ -227,6 +230,28 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('approveCampaign()', function() {
+                describe('when parent dashboard state is Pending', function() {
+                    it('should go to Selfie:Pending:CampaignDashboard', function() {
+                        cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
+
+                        SelfieManageCampaignAdminCtrl.approveCampaign();
+                        $scope.$digest();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
+                    });
+                });
+
+                describe('when parent dashboard state is All', function() {
+                    it('should go to Selfie:All:CampaignDashboard', function() {
+                        cState.cParent.cName = 'Selfie:All:CampaignDashboard';
+
+                        SelfieManageCampaignAdminCtrl.approveCampaign();
+                        $scope.$digest();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                    });
+                });
+
                 it('should update and save the updateRequest', function() {
                     SelfieManageCampaignAdminCtrl.approveCampaign();
                     $scope.$digest();
@@ -236,12 +261,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
                 });
 
-                it('should redirect to the campaign dashboard', function() {
-                    SelfieManageCampaignAdminCtrl.approveCampaign();
-                    $scope.$digest();
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                });
-                
                 it('should set the error property if a problem occurs', function() {
                     cState.saveUpdateRequest.and.returnValue($q.reject({ data: 'epic fail' }));
                     SelfieManageCampaignAdminCtrl.approveCampaign();
@@ -252,6 +271,28 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('rejectCampaign()', function() {
+                describe('when parent dashboard state is Pending', function() {
+                    it('should go to Selfie:Pending:CampaignDashboard', function() {
+                        cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
+
+                        SelfieManageCampaignAdminCtrl.rejectCampaign();
+                        $scope.$digest();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
+                    });
+                });
+
+                describe('when parent dashboard state is All', function() {
+                    it('should go to Selfie:All:CampaignDashboard', function() {
+                        cState.cParent.cName = 'Selfie:All:CampaignDashboard';
+
+                        SelfieManageCampaignAdminCtrl.rejectCampaign();
+                        $scope.$digest();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                    });
+                });
+
                 it('should update and save the updateRequest', function() {
                     SelfieManageCampaignAdminCtrl.rejectionReason = 'fix your campaign';
                     SelfieManageCampaignAdminCtrl.rejectCampaign();
@@ -262,12 +303,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
                 });
 
-                it('should redirect to the campaign dashboard', function() {
-                    SelfieManageCampaignAdminCtrl.rejectCampaign();
-                    $scope.$digest();
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                });
-                
                 it('should set the error property if a problem occurs', function() {
                     cState.saveUpdateRequest.and.returnValue($q.reject({ data: 'epic fail' }));
                     SelfieManageCampaignAdminCtrl.rejectCampaign();

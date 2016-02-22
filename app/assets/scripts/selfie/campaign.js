@@ -12,9 +12,17 @@ function( angular , c6State  , PaginatedListState                    ,
         isObject = angular.isObject,
         isArray = angular.isArray;
 
+    var _campaignListParams = {};
+
     function pad(num) {
         var norm = Math.abs(Math.floor(num));
         return (norm < 10 ? '0' : '') + norm;
+    }
+
+    function dashboardStateArgs(cState) {
+        return (/Dashboard/).test(cState.cName) ?
+            [cState.cName, null, ((/All/).test(cState.cName) ? null : {pending: 'true'}), true] :
+            dashboardStateArgs(cState.cParent);
     }
 
     return angular.module('c6.app.selfie.campaign', [c6State.name])
@@ -54,17 +62,17 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaigns', ['$injector','SettingsService','$q',
                                                        'paginatedDbList','c6State',
-                                                       'SpinnerService',
+                                                       'SpinnerService','$location',
             function                                  ( $injector , SettingsService , $q ,
                                                         paginatedDbList , c6State ,
-                                                        SpinnerService ) {
+                                                        SpinnerService , $location ) {
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/selfie/campaigns.html';
                 this.controller = 'SelfieCampaignsController';
                 this.controllerAs = 'SelfieCampaignsCtrl';
 
-                this.params = {};
+                this.params = _campaignListParams;
 
                 this.beforeModel = function() {
                     var user = c6State.get('Selfie').cModel,
@@ -120,15 +128,22 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.model = function() {
+                    var pending = $location.search().pending;
+
                     SpinnerService.display();
 
-                    return paginatedDbList('selfieCampaign', {
-                        sort: this.sort,
-                        application: 'selfie',
-                        statuses: this.filter,
-                        text: this.search,
-                        excludeOrgs: this.excludeOrgs
-                    }, this.limit, this.page).ensureResolution()
+                    return paginatedDbList(
+                        'selfieCampaign',
+                        extend({
+                            sort: this.sort,
+                            application: 'selfie',
+                            statuses: this.filter,
+                            text: this.search,
+                            excludeOrgs: this.excludeOrgs
+                        }, (pending ? {pendingUpdate: true } : {})),
+                        this.limit,
+                        this.page
+                    ).ensureResolution()
                         .finally(function() {
                             SpinnerService.close();
                         });
@@ -521,7 +536,13 @@ function( angular , c6State  , PaginatedListState                    ,
                         user: cinema6.db.find('user', campaign.user),
                         advertiser: cinema6.db.find('advertiser', campaign.advertiserId)
                     }).then(function(promises) {
-                        cState.updateRequest = promises.updateRequest;
+                        var ur = promises.updateRequest;
+
+                        if (ur && ur.data) {
+                            ur.data = CampaignService.normalize(ur.data, promises.user);
+                        }
+
+                        cState.updateRequest = ur;
                         cState.user = promises.user;
                         cState.advertiser = promises.advertiser;
                         cState.campaign = CampaignService.normalize(campaign, promises.user);
@@ -2063,7 +2084,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         if ((/delete|cancel/).test(action)) {
                             // if user has deleted or canceled the campaign
                             // we probably want to go back the dashboard
-                            c6State.goTo('Selfie:CampaignDashboard');
+                            c6State.goTo.apply(null, dashboardStateArgs(cState));
                         }
                     })
                     .catch(function(err) {
@@ -2104,6 +2125,10 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
+
+            this.backToDashboard = function() {
+                c6State.goTo.apply(null, dashboardStateArgs(cState));
+            };
 
             this.initWithModel = function(model) {
                 this.campaign = cState.campaign;
@@ -2494,7 +2519,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     data: self.updatedCampaign,
                     status: 'approved'
                 }).then(function() {
-                    c6State.goTo('Selfie:CampaignDashboard');
+                    c6State.goTo.apply(null, dashboardStateArgs(cState));
                 }).catch(function(error) {
                     self.error = 'There was a problem approving the campaign: ' + error.data;
                 });
@@ -2505,7 +2530,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     status: 'rejected',
                     rejectionReason: self.rejectionReason
                 }).then(function() {
-                    c6State.goTo('Selfie:CampaignDashboard');
+                    c6State.goTo.apply(null, dashboardStateArgs(cState));
                 }).catch(function(error) {
                     self.error = 'There was a problem rejecting the campaign: ' + error.data;
                 });

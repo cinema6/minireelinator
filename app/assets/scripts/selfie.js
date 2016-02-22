@@ -44,6 +44,7 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
 
             this.initWithModel = function(model) {
                 this.model = model;
+                this.isAdmin = !!model.entitlements.adminCampaigns;
             };
 
             this.logout = function() {

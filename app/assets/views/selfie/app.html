@@ -3,8 +3,8 @@
         <a c6-sref="Selfie:CampaignDashboard" title="Campaigns" class="mainNav__campaigns"><span class="rc__logo--square"><span class="ir">Reelcontent</span></span></a>
     </div>
     <!--<div class=" mainNav__item--active"><!-- add "mainNav__item--active" class to div to highlight current nav item-->
-    <!-- <a c6-sref="#" title="Pending Tasks" class="mainNav__campaigns mainNav__item"><i class="fa fa-clock-o mainNav__iconOnly"></i><span class="mainNav__label">Waiting Approval</span></a> -->
-    <a c6-sref="Selfie:CampaignDashboard" title="Campaigns" class="mainNav__campaigns mainNav__item"><i class="fa fa-flag mainNav__iconOnly"></i><span class="mainNav__label">Campaigns</span></a>
+    <a ng-if="SelfieCtrl.isAdmin" c6-sref="Selfie:Pending:CampaignDashboard" c6-params="{pending: 'true'}" title="Pending Tasks" class="mainNav__campaigns mainNav__item"><i class="fa fa-clock-o mainNav__iconOnly"></i><span class="mainNav__label">Awaiting Approval</span></a>
+    <a c6-sref="Selfie:All:CampaignDashboard" c6-params="{}" title="Campaigns" class="mainNav__campaigns mainNav__item"><i class="fa fa-flag mainNav__iconOnly"></i><span class="mainNav__label">Campaigns</span></a>
     <a c6-sref="Selfie:Account" c6-params="{}" title="Account Settings" class="mainNav__settings mainNav__item"><i class="fa fa-cog mainNav__iconOnly"></i><span class="mainNav__label">Account Settings</span></a>
     <a href="http://www.reelcontent.com/support/" target="_blank" c6-params="{}" title="Support" class="mainNav__settings mainNav__item"><i class="fa fa-question-circle mainNav__iconOnly"></i><span class="mainNav__label">Support</span></a>
 

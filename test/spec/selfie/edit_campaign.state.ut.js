@@ -156,8 +156,9 @@ define(['app'], function(appModule) {
                         expect(editCampaignState.advertiser).toEqual(advertiser);
                     });
 
-                    it('should normalize the campaign', function() {
-                        expect(CampaignService.normalize).toHaveBeenCalled();
+                    it('should normalize the campaign and the update request data', function() {
+                        expect(CampaignService.normalize).toHaveBeenCalledWith(campaign, user);
+                        expect(CampaignService.normalize).toHaveBeenCalledWith(updateRequest.data, user);
                         expect(editCampaignState.campaign).toEqual(campaign);
                     });
                 });
@@ -207,7 +208,8 @@ define(['app'], function(appModule) {
                     });
 
                     it('should normalize the campaign', function() {
-                        expect(CampaignService.normalize).toHaveBeenCalled();
+                        expect(CampaignService.normalize).toHaveBeenCalledWith(campaign, user);
+                        expect(CampaignService.normalize.calls.count()).toBe(1);
                         expect(editCampaignState.campaign).toEqual(campaign);
                     });
                 });

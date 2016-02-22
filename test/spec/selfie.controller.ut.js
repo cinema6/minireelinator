@@ -27,6 +27,7 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
         beforeEach(function() {
             user = {
                 id: 'u-22edfa1071d94b',
+                entitlements: {},
                 permissions: {
                     experiences: {},
                     orgs: {}
@@ -70,6 +71,22 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             describe('model', function() {
                 it('should be the user', function() {
                     expect(SelfieCtrl.model).toBe(user);
+                });
+            });
+
+            describe('isAdmin', function() {
+                it('should be true when the user has adminsCampaigns entitlement', function() {
+                    user.entitlements.adminCampaigns = true;
+                    SelfieCtrl = instantiate();
+
+                    expect(SelfieCtrl.isAdmin).toBe(true);
+                });
+
+                it('should be false when the user does not have adminsCampaigns entitlement', function() {
+                    delete user.entitlements.adminCampaigns;
+                    SelfieCtrl = instantiate();
+
+                    expect(SelfieCtrl.isAdmin).toBe(false);
                 });
             });
         });

@@ -12,36 +12,97 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.map('Selfie:App', function() {
-                this.route('/campaigns', 'Selfie:CampaignDashboard', function() {
-                    this.state('Selfie:Campaigns');
+                this.route('/campaigns',
+                    'Selfie:CampaignDashboard',
+                    'Selfie:All:CampaignDashboard',
+                    function() {
+                        this.state('Selfie:Campaigns', 'Selfie:All:Campaigns');
 
-                    this.route('/new', 'Selfie:NewCampaign', function() {
-                        this.state('Selfie:Campaign', 'Selfie:New:Campaign', function() {
-                            this.state('Selfie:Campaign:Website','Selfie:New:Campaign:Website');
-                            this.state(
-                                'Selfie:Campaign:Payment:New',
-                                'Selfie:New:Campaign:Payment:New'
-                            );
+                        this.route('/new', 'Selfie:NewCampaign', function() {
+                            this.state('Selfie:Campaign', 'Selfie:New:Campaign', function() {
+                                this.state(
+                                    'Selfie:Campaign:Website',
+                                    'Selfie:New:Campaign:Website'
+                                );
+                                this.state(
+                                    'Selfie:Campaign:Payment:New',
+                                    'Selfie:New:Campaign:Payment:New'
+                                );
+                            });
                         });
-                    });
-                    this.route('/edit/:campaignId', 'Selfie:EditCampaign', function() {
-                        this.state('Selfie:Campaign', 'Selfie:Edit:Campaign', function() {
-                            this.state('Selfie:Campaign:Website','Selfie:Edit:Campaign:Website');
-                            this.state(
-                                'Selfie:Campaign:Payment:New',
-                                'Selfie:Edit:Campaign:Payment:New'
-                            );
+                        this.route('/edit/:campaignId', 'Selfie:EditCampaign', function() {
+                            this.state('Selfie:Campaign', 'Selfie:Edit:Campaign', function() {
+                                this.state(
+                                    'Selfie:Campaign:Website',
+                                    'Selfie:Edit:Campaign:Website'
+                                );
+                                this.state(
+                                    'Selfie:Campaign:Payment:New',
+                                    'Selfie:Edit:Campaign:Payment:New'
+                                );
+                            });
                         });
+                        this.route('/manage/:campaignId',
+                            'Selfie:ManageCampaign',
+                            'Selfie:All:ManageCampaign',
+                            function() {
+                                this.state(
+                                    'Selfie:Manage:Campaign',
+                                    'Selfie:All:Manage:Campaign',
+                                    function() {
+                                        this.route('/manage',
+                                            'Selfie:Manage:Campaign:Manage',
+                                            'Selfie:All:Manage:Campaign:Manage'
+                                        );
+                                        this.route('/payment',
+                                            'Selfie:Manage:Campaign:Payment',
+                                            'Selfie:All:Manage:Campaign:Payment'
+                                        );
+                                        this.route('/stats',
+                                            'Selfie:Manage:Campaign:Stats',
+                                            'Selfie:All:Manage:Campaign:Stats'
+                                        );
+                                        this.route('/admin',
+                                            'Selfie:Manage:Campaign:Admin',
+                                            'Selfie:All:Manage:Campaign:Admin'
+                                        );
+                                    });
+                            });
                     });
-                    this.route('/manage/:campaignId', 'Selfie:ManageCampaign', function() {
-                        this.state('Selfie:Manage:Campaign', function() {
-                            this.route('/manage', 'Selfie:Manage:Campaign:Manage');
-                            this.route('/payment', 'Selfie:Manage:Campaign:Payment');
-                            this.route('/stats', 'Selfie:Manage:Campaign:Stats');
-                            this.route('/admin', 'Selfie:Manage:Campaign:Admin');
-                        });
+
+                this.route('/pending',
+                    'Selfie:CampaignDashboard',
+                    'Selfie:Pending:CampaignDashboard',
+                    function() {
+                        this.state('Selfie:Campaigns', 'Selfie:Pending:Campaigns');
+
+                        this.route('/manage/:campaignId',
+                            'Selfie:ManageCampaign',
+                            'Selfie:Pending:ManageCampaign',
+                            function() {
+                                this.state(
+                                    'Selfie:Manage:Campaign',
+                                    'Selfie:Pending:Manage:Campaign',
+                                    function() {
+                                        this.route('/manage',
+                                            'Selfie:Manage:Campaign:Manage',
+                                            'Selfie:Pending:Manage:Campaign:Manage'
+                                        );
+                                        this.route('/payment',
+                                            'Selfie:Manage:Campaign:Payment',
+                                            'Selfie:Pending:Manage:Campaign:Payment'
+                                        );
+                                        this.route('/stats',
+                                            'Selfie:Manage:Campaign:Stats',
+                                            'Selfie:Pending:Manage:Campaign:Stats'
+                                        );
+                                        this.route('/admin',
+                                            'Selfie:Manage:Campaign:Admin',
+                                            'Selfie:Pending:Manage:Campaign:Admin'
+                                        );
+                                    });
+                            });
                     });
-                });
 
                 this.route('/account', 'Selfie:Account', function() {
                     this.route('/overview', 'Selfie:Account:Overview');
