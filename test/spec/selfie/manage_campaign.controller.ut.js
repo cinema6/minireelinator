@@ -152,6 +152,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             ];
 
             cState = {
+                cParent: {
+                    cName: 'Selfie:All:CampaignDashboard'
+                },
                 campaign: campaign,
                 card: card,
                 interests: interests
@@ -311,6 +314,32 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('methods', function() {
+            describe('backToDashboard()', function() {
+                beforeEach(function() {
+                    spyOn(c6State, 'goTo');
+                });
+
+                describe('when parent dashboard state is Pending', function() {
+                    it('should go to Selfie:Pending:CampaignDashboard', function() {
+                        cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
+
+                        SelfieManageCampaignCtrl.backToDashboard();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
+                    });
+                });
+
+                describe('when parent dashboard state is All', function() {
+                    it('should go to Selfie:All:CampaignDashboard', function() {
+                        cState.cParent.cName = 'Selfie:All:CampaignDashboard';
+
+                        SelfieManageCampaignCtrl.backToDashboard();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                    });
+                });
+            });
+
             describe('initWithModel(model)', function() {
                 it('should set properties on the Ctrl', function() {
                     $scope.$apply(function() {
@@ -608,59 +637,129 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     });
 
                                     describe('when updateRequest status is approved', function() {
-                                        beforeEach(function() {
-                                            updateRequest.status = 'approved';
+                                        describe('when parent dashboard state is Pending', function() {
+                                            describe('if action is cancel', function() {
+                                                it('should go to Selfie:Pending:CampaignDashboard', function() {
+                                                    cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
 
-                                            $rootScope.$apply(function() {
-                                                updateRequestDeferred.resolve(updateRequest);
+                                                    updateRequest.status = 'approved';
+
+                                                    $rootScope.$apply(function() {
+                                                        updateRequestDeferred.resolve(updateRequest);
+                                                    });
+
+                                                    if (action === 'cancel') {
+                                                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
+                                                    } else {
+                                                        expect(c6State.goTo).not.toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
+                                                    }
+                                                });
                                             });
                                         });
 
-                                        it('should not add the updateRequest id to the campaign', function() {
-                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
+                                        describe('when parent dashboard state is All', function() {
+                                            describe('if action is cancel', function() {
+                                                it('should go to Selfie:All:CampaignDashboard', function() {
+                                                    cState.cParent.cName = 'Selfie:All:CampaignDashboard';
+
+                                                    updateRequest.status = 'approved';
+
+                                                    $rootScope.$apply(function() {
+                                                        updateRequestDeferred.resolve(updateRequest);
+                                                    });
+
+                                                    if (action === 'cancel') {
+                                                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                                                    } else {
+                                                        expect(c6State.goTo).not.toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                                                    }
+                                                });
+                                            });
                                         });
 
-                                        it('should update proxy campaign', function() {
-                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                        });
+                                        describe('regardless of parent dashboard state', function() {
+                                            beforeEach(function() {
+                                                updateRequest.status = 'approved';
 
-                                        describe('if action is cancel', function() {
-                                            it('should go to Selfie:Dashboard', function() {
-                                                if (action === 'cancel') {
-                                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard')
-                                                }
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+                                            });
+
+                                            it('should not add the updateRequest id to the campaign', function() {
+                                                expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
+                                            });
+
+                                            it('should update proxy campaign', function() {
+                                                expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
                                             });
                                         });
                                     });
 
                                     describe('when updateRequest status is not approved', function() {
-                                        beforeEach(function() {
-                                            updateRequest.status = 'pending';
-                                            updateRequest.id = 'cam-123:ur-1234';
+                                        describe('when parent dashboard state is Pending', function() {
+                                            describe('if action is cancel', function() {
+                                                it('should go to Selfie:Pending:CampaignDashboard', function() {
+                                                    cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
 
-                                            $rootScope.$apply(function() {
-                                                updateRequestDeferred.resolve(updateRequest);
+                                                    updateRequest.status = 'pending';
+                                                    updateRequest.id = 'cam-123:ur-1234';
+
+                                                    $rootScope.$apply(function() {
+                                                        updateRequestDeferred.resolve(updateRequest);
+                                                    });
+
+                                                    if (action === 'cancel') {
+                                                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
+                                                    } else {
+                                                        expect(c6State.goTo).not.toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
+                                                    }
+                                                });
                                             });
                                         });
 
-                                        it('should add the updateRequest id to the campaign', function() {
-                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
+                                        describe('when parent dashboard state is All', function() {
+                                            describe('if action is cancel', function() {
+                                                it('should go to Selfie:All:CampaignDashboard', function() {
+                                                    cState.cParent.cName = 'Selfie:All:CampaignDashboard';
+
+                                                    updateRequest.status = 'pending';
+                                                    updateRequest.id = 'cam-123:ur-1234';
+
+                                                    $rootScope.$apply(function() {
+                                                        updateRequestDeferred.resolve(updateRequest);
+                                                    });
+
+                                                    if (action === 'cancel') {
+                                                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                                                    } else {
+                                                        expect(c6State.goTo).not.toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                                                    }
+                                                });
+                                            });
                                         });
 
-                                        it('should add the updateRequest to the controller and state', function() {
-                                            expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
-                                            expect(cState.updateRequest).toEqual(updateRequest);
-                                        });
+                                        describe('regardless of parent dashboard state', function() {
+                                            beforeEach(function() {
+                                                updateRequest.status = 'pending';
+                                                updateRequest.id = 'cam-123:ur-1234';
 
-                                        it('should update proxy campaign', function() {
-                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                        });
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+                                            });
 
-                                        describe('if action is cancel', function() {
-                                            it('should go to Selfie:Dashboard', function() {
-                                                if (action === 'cancel') {
-                                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard')
-                                                }
+                                            it('should add the updateRequest id to the campaign', function() {
+                                                expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
+                                            });
+
+                                            it('should add the updateRequest to the controller and state', function() {
+                                                expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
+                                                expect(cState.updateRequest).toEqual(updateRequest);
+                                            });
+
+                                            it('should update proxy campaign', function() {
+                                                expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
                                             });
                                         });
                                     });
@@ -725,48 +824,96 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             });
 
                             describe('when erase request succeeds', function() {
-                                beforeEach(function() {
-                                    $rootScope.$apply(function() {
-                                        eraseDeferred.resolve(campaign);
+                                describe('when parent dashboard state is Pending', function() {
+                                    it('should not go to Selfie:Pending:CampaignDashboard', function() {
+                                        cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
+
+                                        $rootScope.$apply(function() {
+                                            eraseDeferred.resolve(campaign);
+                                        });
+
+                                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
                                     });
                                 });
 
-                                it('should not create an update request', function() {
-                                    expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                                describe('when parent dashboard state is All', function() {
+                                    it('should go to Selfie:All:CampaignDashboard', function() {
+                                        cState.cParent.cName = 'Selfie:All:CampaignDashboard';
+
+                                        $rootScope.$apply(function() {
+                                            eraseDeferred.resolve(campaign);
+                                        });
+
+                                        expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                                    });
                                 });
 
-                                it('should update proxy campaign', function() {
-                                    expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                });
+                                describe('regardless of parent dashboard state', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            eraseDeferred.resolve(campaign);
+                                        });
+                                    });
 
-                                it('should go to Selfie:CampaignDashboard', function() {
-                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                    it('should not create an update request', function() {
+                                        expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                                    });
+
+                                    it('should update proxy campaign', function() {
+                                        expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                    });
                                 });
                             });
 
                             describe('when erase request fails', function() {
-                                beforeEach(function() {
-                                    ConfirmDialogService.display.calls.reset();
+                                describe('when parent dashboard state is Pending', function() {
+                                    it('should not go to Selfie:Pending:CampaignDashboard', function() {
+                                        ConfirmDialogService.display.calls.reset();
 
-                                    $rootScope.$apply(function() {
-                                        eraseDeferred.reject('Failed');
+                                        cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
+
+                                        $rootScope.$apply(function() {
+                                            eraseDeferred.reject('Failed');
+                                        });
+
+                                        expect(c6State.goTo).not.toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
                                     });
                                 });
 
-                                it('should not create an update request', function() {
-                                    expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                                describe('when parent dashboard state is All', function() {
+                                    it('should go to Selfie:All:CampaignDashboard', function() {
+                                        ConfirmDialogService.display.calls.reset();
+
+                                        cState.cParent.cName = 'Selfie:All:CampaignDashboard';
+
+                                        $rootScope.$apply(function() {
+                                            eraseDeferred.reject('Failed');
+                                        });
+
+                                        expect(c6State.goTo).not.toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                                    });
                                 });
 
-                                it('should not update proxy campaign', function() {
-                                    expect(SelfieManageCampaignCtrl._proxyCampaign).not.toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                });
+                                describe('regardless of parent dashboard state', function() {
+                                    beforeEach(function() {
+                                        ConfirmDialogService.display.calls.reset();
 
-                                it('should not go to Selfie:CampaignDashboard', function() {
-                                    expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                                });
+                                        $rootScope.$apply(function() {
+                                            eraseDeferred.reject('Failed');
+                                        });
+                                    });
 
-                                it('should show an error dialog', function() {
-                                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                    it('should not create an update request', function() {
+                                        expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                                    });
+
+                                    it('should not update proxy campaign', function() {
+                                        expect(SelfieManageCampaignCtrl._proxyCampaign).not.toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                    });
+
+                                    it('should show an error dialog', function() {
+                                        expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                    });
                                 });
                             });
                         });
