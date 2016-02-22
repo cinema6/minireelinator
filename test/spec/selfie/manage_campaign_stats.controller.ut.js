@@ -10,6 +10,9 @@ define(['app'], function(appModule) {
             SelfieManageCampaignStatsCtrl,
             cState;
 
+        var campaign,
+            card;
+
         function pad(num) {
             var norm = Math.abs(Math.floor(num));
             return (norm < 10 ? '0' : '') + norm;
@@ -47,43 +50,19 @@ define(['app'], function(appModule) {
                 CampaignService = $injector.get('CampaignService');
             });
 
+            card = {
+                id: 'rc-123',
+                campaign: {}
+            };
+
+            campaign = {
+                id: 'cam-123',
+                cards: [card]
+            };
+
             cState = {
                 cParent: {
-                    campaign: {
-                        id: 'cam-123',
-                        statusHistory: [
-                            {
-                                status: 'active',
-                                userId: 'u-a78b667f18fdac',
-                                user: 'evan@reelcontent.com',
-                                date: '2016-01-19T15:40:51.888Z'
-                            },
-                            {
-                                status: 'paused',
-                                userId: 'u-53321fcb4e0af6',
-                                user: 'nkarp@cinema6.com',
-                                date: '2015-11-21T17:26:23.969Z'
-                            },
-                            {
-                                status: 'active',
-                                userId: 'u-c8b79e3821e693',
-                                user: 'howard@cinema6.com',
-                                date: '2015-11-05T20:52:13.205Z'
-                            },
-                            {
-                                status: 'pending',
-                                userId: 'u-a44f206f353c24',
-                                user: 'howard@reelcontent.com',
-                                date: '2015-11-05T20:51:13.458Z'
-                            },
-                            {
-                                status: 'draft',
-                                userId: 'u-a44f206f353c24',
-                                user: 'howard@reelcontent.com',
-                                date: '2015-11-05T20:46:14.641Z'
-                            }
-                        ]
-                    }
+                    campaign: campaign
                 }
             };
 
@@ -453,17 +432,19 @@ define(['app'], function(appModule) {
             });
 
             describe('rangeOptions', function() {
-                var today, yesterday, oneWeek, oneMonth;
+                var today, yesterday, oneWeek, oneMonth, nextWeek;
 
                 beforeEach(function() {
                     today = new Date();
                     yesterday = new Date();
                     oneWeek = new Date();
                     oneMonth = new Date();
+                    nextWeek = new Date();
 
                     yesterday.setDate(today.getDate() - 1);
                     oneWeek.setDate(today.getDate() - 7);
                     oneMonth.setDate(today.getDate() - 30);
+                    nextWeek.setDate(today.getDate() + 7);
                 });
 
                 it('should be an array of objects', function() {
@@ -474,16 +455,69 @@ define(['app'], function(appModule) {
                 });
 
                 describe('Lifetime', function() {
-                    it('should not have a start or end date', function() {
-                        var start = new Date(cState.cParent.campaign.statusHistory[2].date);
+                    describe('when there is no start date', function() {
+                        it('should not have a start or end date', function() {
+                            expect(SelfieManageCampaignStatsCtrl.rangeOptions[0]).toEqual({
+                                label: 'Lifetime',
+                                selected: true,
+                                dates: {
+                                    start: null,
+                                    end: null
+                                }
+                            });
+                        });
+                    });
 
-                        expect(SelfieManageCampaignStatsCtrl.rangeOptions[0]).toEqual({
-                            label: 'Lifetime',
-                            selected: true,
-                            dates: {
-                                start: null,
-                                end: null
-                            }
+                    describe('when there is a start date but no end date', function() {
+                        it('should include the start date and an end date of today', function() {
+                            card.campaign.startDate = '2015-10-28T16:47:08.836Z';
+
+                            compileCtrl();
+
+                            expect(SelfieManageCampaignStatsCtrl.rangeOptions[0]).toEqual({
+                                label: 'Lifetime',
+                                selected: true,
+                                dates: {
+                                    start: formatDateForView(new Date(card.campaign.startDate)),
+                                    end: formatDateForView(today)
+                                }
+                            });
+                        });
+                    });
+
+                    describe('when there is a start date and an end date earlier than today', function() {
+                        it('should include the start date and end date', function() {
+                            card.campaign.startDate = '2015-10-28T16:47:08.836Z';
+                            card.campaign.endDate = '2015-11-28T16:47:08.836Z';
+
+                            compileCtrl();
+
+                            expect(SelfieManageCampaignStatsCtrl.rangeOptions[0]).toEqual({
+                                label: 'Lifetime',
+                                selected: true,
+                                dates: {
+                                    start: formatDateForView(new Date(card.campaign.startDate)),
+                                    end: formatDateForView(new Date(card.campaign.endDate))
+                                }
+                            });
+                        });
+                    });
+
+                    describe('when there is a start date and an end date later than today', function() {
+                        it('should include the start date and an end date of today', function() {
+                            card.campaign.startDate = '2015-10-28T16:47:08.836Z';
+                            card.campaign.endDate = nextWeek.toISOString();
+
+                            compileCtrl();
+
+                            expect(SelfieManageCampaignStatsCtrl.rangeOptions[0]).toEqual({
+                                label: 'Lifetime',
+                                selected: true,
+                                dates: {
+                                    start: formatDateForView(new Date(card.campaign.startDate)),
+                                    end: formatDateForView(today)
+                                }
+                            });
                         });
                     });
                 });

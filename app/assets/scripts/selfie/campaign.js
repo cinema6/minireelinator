@@ -1802,7 +1802,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function handleError(error) {
                 ConfirmDialogService.display({
-                    prompt: 'There was an a problem saving your payment method: ' + error.data,
+                    prompt: 'There was a problem saving your payment method: ' + error.data,
                     affirm: 'OK',
 
                     onCancel: function() {
@@ -2238,6 +2238,7 @@ function( angular , c6State  , PaginatedListState                    ,
         function                                           ( $scope , CampaignService , cState ) {
             var SelfieManageCampaignStatsCtrl = this,
                 campaign = cState.cParent.campaign,
+                card = (campaign.cards && campaign.cards[0]) || {},
                 defaultStats = {};
 
             function formatDate(date, joiner, replace) {
@@ -2350,10 +2351,23 @@ function( angular , c6State  , PaginatedListState                    ,
                 {
                     label: 'Lifetime',
                     selected: true,
-                    dates: {
-                        start: null,
-                        end: null
-                    }
+                    dates: (function() {
+                        var startDate = card.campaign && card.campaign.startDate,
+                            endDate = card.campaign && card.campaign.endDate,
+                            today = new Date();
+
+                        if (startDate) {
+                            startDate = new Date(startDate);
+                        }
+
+                        endDate = (endDate && new Date(endDate)) || new Date();
+                        endDate = endDate > today ? today : endDate;
+
+                        return {
+                            start: startDate ? formatDate(startDate, '/') : null,
+                            end: startDate ? formatDate(endDate, '/') : null
+                        };
+                    }())
                 },
                 {
                     label: 'Yesterday',

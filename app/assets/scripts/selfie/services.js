@@ -98,7 +98,10 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                         pricing: copy({}),
                         application: value('selfie'),
                         advertiserDisplayName: copy(_user.company),
-                        paymentMethod: copy(),
+                        paymentMethod: function(base) {
+                            var appUser = getAppUser();
+                            return _user.id === appUser.id ? base.paymentMethod : undefined;
+                        },
                         targeting: {
                             geo: {
                                 states: copy([]),
