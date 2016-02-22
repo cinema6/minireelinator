@@ -2,6 +2,7 @@
 
 * *[v1.37.0.rc1]*
   * [FEATURE]: Add "Awaiting Approval" campaign list view
+  * [FEATURE]: Display lifetime date range on stats page
 
 ## v1.36.1 (February 17, 2016)
 * *[v1.36.1.rc1]*
