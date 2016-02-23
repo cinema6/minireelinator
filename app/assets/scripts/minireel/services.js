@@ -418,8 +418,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     }
 
                     function handleError(err) {
-                        console.log(err);
-                        return $q.reject(err);
+                        var data = err.data,
+                            message;
+
+                        if (isArray(data)) {
+                            message = data[0].error;
+                        } else if (isObject(data)) {
+                            message = data.error;
+                        } else {
+                            message = data;
+                        }
+
+                        return $q.reject(message);
                     }
 
                     this.uploadFromUri = function(uri) {

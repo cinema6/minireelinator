@@ -49,8 +49,8 @@ module.exports = function(http) {
     });
 
     http.whenPOST('/api/collateral/files', function(request) {
-        this.respond(400, 'Must provide files to upload.');
-        // this.respond(413, [{ code: 413, name: 'fileName', error: 'File is too big.' }]);
+        // this.respond(400, 'Must provide files to upload.');
+        this.respond(413, [{ code: 413, name: 'fileName', error: 'File is too big.' }]);
         // this.respond(415, [{ code: 415, name: 'fileName', error: 'Unsupported file type.' }]);
         // this.respond(500, [{ code: 500, name: 'fileName', error: 'Error uploading file.' }]);
     });

@@ -1271,8 +1271,7 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function handleUploadError(err) {
-                SelfieCampaignSponsorCtrl.uploadError = true;
-                console.log(err);
+                SelfieCampaignSponsorCtrl.uploadError = err;
             }
 
             // we need to build an array of objects for the dropdown,
