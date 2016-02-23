@@ -11,7 +11,8 @@ define(['app'], function(appModule) {
                 CampaignService,
                 $q;
 
-            var deferredOrgs;
+            var deferredOrgs,
+                deferredAdvertisers;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -25,6 +26,7 @@ define(['app'], function(appModule) {
                 });
 
                 deferredOrgs = $q.defer();
+                deferredAdvertisers = $q.defer();
                 spyOn(CampaignService, 'getOrgs').and.returnValue(deferredOrgs.promise);
 
                 selfieState = c6State.get('Selfie');
@@ -41,32 +43,10 @@ define(['app'], function(appModule) {
                 expect(selfieCampaignDashboard).toEqual(jasmine.any(Object));
             });
 
-            describe('beforeModel()', function() {
-                it('should fetch the users advertisers and set a hasAdvertisers flag on the state', function() {
-                    spyOn(cinema6.db, 'findAll').and.returnValue($q.when([]));
-
-                    $rootScope.$apply(function() {
-                        selfieCampaignDashboard.beforeModel();
-                    });
-
-                    expect(selfieCampaignDashboard.hasAdvertisers).toBe(false);
-
-                    cinema6.db.findAll.and.returnValue($q.when([
-                        {
-                            id: 'a-123'
-                        }
-                    ]));
-
-                    $rootScope.$apply(function() {
-                        selfieCampaignDashboard.beforeModel();
-                    });
-
-                    expect(selfieCampaignDashboard.hasAdvertisers).toBe(true);
-                });
-            });
-
             describe('afterModel()', function() {
                 beforeEach(function() {
+                    spyOn(cinema6.db, 'findAll').and.returnValue(deferredAdvertisers.promise);
+
                     selfieCampaignDashboard.afterModel();
                 });
 
@@ -74,15 +54,22 @@ define(['app'], function(appModule) {
                     expect(CampaignService.getOrgs).toHaveBeenCalled();
                 });
 
-                describe('when orgs are returned', function() {
+                it('should fetch all advertisers', function() {
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('advertiser', {org: 'o-123'});
+                });
+
+                describe('when orgs and advertisers are returned', function() {
                     it('should put them on the cState', function() {
-                        var orgs = [{id: '1'},{id: '2'}];
+                        var orgs = [{id: '1'},{id: '2'}],
+                            advertisers = [{id: '1'},{id: '2'}];
 
                         $rootScope.$apply(function() {
                             deferredOrgs.resolve(orgs);
+                            deferredAdvertisers.resolve(advertisers);
                         });
 
                         expect(selfieCampaignDashboard.orgs).toBe(orgs);
+                        expect(selfieCampaignDashboard.advertisers).toBe(advertisers);
                     });
                 });
             });

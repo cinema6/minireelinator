@@ -39,7 +39,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 campaigns = c6State.get('Selfie:All:Campaigns');
                 campaigns.isAdmin = false;
                 campaigns.cParent = {
-                    hasAdvertisers: false,
+                    advertisers: [],
                     orgs: []
                 };
                 campaigns.sort = 'lastUpdated,-1';
@@ -369,7 +369,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                     expect(SelfieCampaignsCtrl.hasAdvertisers).toEqual(false);
 
-                    campaigns.cParent.hasAdvertisers = true;
+                    campaigns.cParent.advertisers = [{id: 'a-111'}];
 
                     SelfieCampaignsCtrl.initWithModel(model);
 
