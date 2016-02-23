@@ -417,9 +417,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return result;
                     }
 
+                    function handleError(err) {
+                        console.log(err);
+                        return $q.reject(err);
+                    }
+
                     this.uploadFromUri = function(uri) {
                         return $http.post('/api/collateral/uri', { uri: uri })
-                            .then(returnPath);
+                            .then(returnPath)
+                            .catch(handleError);
                     };
 
                     this.uploadFromFile = function(file) {
@@ -434,7 +440,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         file = FileService.open(file);
 
                         promise = FileService.upload('/api/collateral/files', [ file ])
-                            .then(returnPath, null, updateProgress);
+                            .then(returnPath, handleError, updateProgress);
 
                         return promise;
                     };
