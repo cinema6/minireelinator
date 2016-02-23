@@ -758,6 +758,112 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                 });
             });
 
+            describe('getTargetingCost(schema)', function() {
+                describe('when pricing for main targeting categories are all equal', function() {
+                    it('should contain an object with pricing data', function() {
+                        var schema = {
+                            pricing: {
+                                cost: {
+                                    __base: 0.05,
+                                    __pricePerGeo: 0.00,
+                                    __priceForGeoTargeting: 0.01,
+                                    __pricePerDemo: 0.00,
+                                    __priceForDemoTargeting: 0.01,
+                                    __priceForInterests: 0.01
+                                }
+                            }
+                        };
+
+                        var result = CampaignService.getTargetingCost(schema);
+
+                        expect(result.categories).toEqual({
+                            areEqual: true,
+                            geo: 0.01,
+                            demo: 0.01,
+                            interests: 0.01
+                        });
+                    });
+                });
+
+                describe('when pricing for main targeting categories are not all equal', function() {
+                    it('should contain an object with pricing data', function() {
+                        var schema = {
+                            pricing: {
+                                cost: {
+                                    __base: 0.05,
+                                    __pricePerGeo: 0.00,
+                                    __priceForGeoTargeting: 0.01,
+                                    __pricePerDemo: 0.00,
+                                    __priceForDemoTargeting: 0.02,
+                                    __priceForInterests: 0.01
+                                }
+                            }
+                        };
+
+                        var result = CampaignService.getTargetingCost(schema);
+
+                        expect(result.categories).toEqual({
+                            areEqual: false,
+                            geo: 0.01,
+                            demo: 0.02,
+                            interests: 0.01
+                        });
+                    });
+                });
+
+                describe('when pricing for targeting sub-categories are all equal', function() {
+                    it('should contain an object with pricing data', function() {
+                        var schema = {
+                            pricing: {
+                                cost: {
+                                    __base: 0.05,
+                                    __pricePerGeo: 0.01,
+                                    __priceForGeoTargeting: 0.00,
+                                    __pricePerDemo: 0.01,
+                                    __priceForDemoTargeting: 0.00,
+                                    __priceForInterests: 0.01
+                                }
+                            }
+                        };
+
+                        var result = CampaignService.getTargetingCost(schema);
+
+                        expect(result.subcategories).toEqual({
+                            areEqual: true,
+                            geo: 0.01,
+                            demo: 0.01,
+                            interests: 0.01
+                        });
+                    });
+                });
+
+                describe('when pricing for targeting sub-categories are not all equal', function() {
+                    it('should contain an object with pricing data', function() {
+                        var schema = {
+                            pricing: {
+                                cost: {
+                                    __base: 0.05,
+                                    __pricePerGeo: 0.01,
+                                    __priceForGeoTargeting: 0.00,
+                                    __pricePerDemo: 0.02,
+                                    __priceForDemoTargeting: 0.00,
+                                    __priceForInterests: 0.01
+                                }
+                            }
+                        };
+
+                        var result = CampaignService.getTargetingCost(schema);
+
+                        expect(result.subcategories).toEqual({
+                            areEqual: false,
+                            geo: 0.01,
+                            demo: 0.02,
+                            interests: 0.01
+                        });
+                    });
+                });
+            });
+
             describe('getCpv(campaign, schema)', function() {
                 describe('when pricing is FOR demo, geo and interests', function() {
                     it('should add $.01 each for demo, location, interests', function() {

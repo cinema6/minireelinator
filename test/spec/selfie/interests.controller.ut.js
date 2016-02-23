@@ -5,10 +5,12 @@ define(['app'], function(appModule) {
         var $rootScope,
             $scope,
             $controller,
-            SelfieInterestsCtrl;
+            SelfieInterestsCtrl,
+            CampaignService;
 
         var campaign,
-            categories;
+            categories,
+            costData;
 
         function compileCtrl() {
             $scope.$apply(function() {
@@ -24,6 +26,18 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                CampaignService = $injector.get('CampaignService');
+
+                costData = {
+                    categories: {
+                        areEqual: true,
+                        geo: 0.1,
+                        demo: 0.1,
+                        interests: 0.1
+                    }
+                };
+
+                spyOn(CampaignService, 'getTargetingCost').and.returnValue(costData);
 
                 campaign = {
                     targeting: {
@@ -125,6 +139,11 @@ define(['app'], function(appModule) {
             compileCtrl();
 
             expect($scope.campaign.targeting.interests).toEqual([]);
+        });
+
+        it('should get the targeting cost data', function() {
+            expect(CampaignService.getTargetingCost).toHaveBeenCalled();
+            expect(SelfieInterestsCtrl.cost).toBe(costData);
         });
 
         describe('properties', function() {

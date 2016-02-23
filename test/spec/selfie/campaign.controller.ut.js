@@ -43,7 +43,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             logos,
             paymentMethods,
             advertiser,
-            user;
+            user,
+            targetingCostData;
 
         var saveCampaignDeferred,
             debouncedFns;
@@ -107,6 +108,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 SoftAlertService = $injector.get('SoftAlertService');
                 SelfieCampaignSummaryService = $injector.get('SelfieCampaignSummaryService');
             });
+
+            targetingCostData = {
+                categories: {
+                    areEqual: true,
+                    geo: 0.1,
+                    demo: 0.1,
+                    interests: 0.1
+                }
+            };
+
+            spyOn(CampaignService, 'getTargetingCost').and.returnValue(targetingCostData);
 
             advertiser = {
                 id: 'a-123',
@@ -400,6 +412,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.originalCampaign).toEqual(campaign);
                     expect(SelfieCampaignCtrl.user).toEqual(user);
                     expect(SelfieCampaignCtrl.paymentOptional).toEqual(cState.paymentOptional);
+                    expect(SelfieCampaignCtrl.targetingCost).toEqual(targetingCostData);
                 });
             });
 

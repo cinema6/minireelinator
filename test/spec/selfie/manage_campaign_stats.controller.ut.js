@@ -485,6 +485,23 @@ define(['app'], function(appModule) {
                         });
                     });
 
+                    describe('when there is a start date that is in the future', function() {
+                        it('should not have a start or end date', function() {
+                            card.campaign.startDate = nextWeek.toISOString();
+
+                            compileCtrl();
+
+                            expect(SelfieManageCampaignStatsCtrl.rangeOptions[0]).toEqual({
+                                label: 'Lifetime',
+                                selected: true,
+                                dates: {
+                                    start: null,
+                                    end: null
+                                }
+                            });
+                        });
+                    });
+
                     describe('when there is a start date and an end date earlier than today', function() {
                         it('should include the start date and end date', function() {
                             card.campaign.startDate = '2015-10-28T16:47:08.836Z';
