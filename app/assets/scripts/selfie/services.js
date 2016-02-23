@@ -225,6 +225,36 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     });
             };
 
+            this.getTargetingCost = function(schema) {
+                var cost = schema.pricing.cost,
+                    pricePerGeo = cost.__pricePerGeo,
+                    priceForGeo = cost.__priceForGeoTargeting,
+                    pricePerDemo = cost.__pricePerDemo,
+                    priceForDemo = cost.__priceForDemoTargeting,
+                    priceForInterests = cost.__priceForInterests;
+
+                var categoriesAreEqual = priceForGeo === priceForInterests &&
+                    priceForGeo === priceForDemo && !!priceForGeo;
+
+                var subcategoriesAreEqual = pricePerGeo === priceForInterests &&
+                    pricePerGeo === pricePerDemo && !!pricePerGeo;
+
+                return {
+                    categories: {
+                        areEqual: categoriesAreEqual,
+                        geo: priceForGeo,
+                        demo: priceForDemo,
+                        interests: priceForInterests
+                    },
+                    subcategories: {
+                        areEqual: subcategoriesAreEqual,
+                        geo: pricePerGeo,
+                        demo: pricePerDemo,
+                        interests: priceForInterests
+                    }
+                };
+            };
+
             this.getCpv = function(campaign, schema) {
                 var targeting = campaign.targeting,
                     interests = targeting.interests,

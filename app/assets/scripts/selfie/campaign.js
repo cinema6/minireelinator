@@ -945,6 +945,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.isCreator = cState.isCreator;
                 this.user = cState.user;
                 this.paymentOptional = cState.paymentOptional;
+                this.targetingCost = CampaignService.getTargetingCost(this.schema);
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);

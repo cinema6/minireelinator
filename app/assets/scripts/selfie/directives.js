@@ -654,8 +654,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
-        .controller('SelfieInterestsController', ['$scope',
-        function                                 ( $scope ) {
+        .controller('SelfieInterestsController', ['$scope','CampaignService',
+        function                                 ( $scope , CampaignService ) {
             var campaign = $scope.campaign,
                 categories = $scope.categories,
                 schema = $scope.schema,
@@ -835,6 +835,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 }
             };
 
+            this.cost = CampaignService.getTargetingCost(schema);
+
             // remove any old, unused categories from interest array
             campaign.targeting.interests = campaign.targeting.interests
                 .filter(function(interest) {
@@ -877,6 +879,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             this.maxRadius = config.zipcodes.radius.__max;
             this.defaultRadius = config.zipcodes.radius.__default;
             this.maxCodes = config.zipcodes.codes.__length;
+            this.cost = CampaignService.getTargetingCost(schema);
 
             this.newZip = null;
             this.radius = zipcodes.radius || this.defaultRadius;
@@ -1022,7 +1025,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
         }])
 
         .controller('SelfieDemographicsController', ['DemographicsService','$scope',
-        function                                    ( DemographicsService , $scope ) {
+                                                     'CampaignService',
+        function                                    ( DemographicsService , $scope ,
+                                                      CampaignService ) {
             var SelfieDemographicsCtrl = this,
                 campaign = $scope.campaign,
                 schema = $scope.schema,
@@ -1032,6 +1037,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             this.incomeOptions = DemographicsService.incomes;
             this.genderOptions = ['Male','Female'];
             this.pricePerDemo = schema.pricing.cost.__pricePerDemo;
+            this.cost = CampaignService.getTargetingCost(schema);
 
             this.gender = demographics.gender;
 
