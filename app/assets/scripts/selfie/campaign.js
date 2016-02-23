@@ -2345,6 +2345,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                         if (startDate) {
                             startDate = new Date(startDate);
+                            startDate = startDate < today ? startDate : null;
                         }
 
                         endDate = (endDate && new Date(endDate)) || new Date();
