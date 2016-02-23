@@ -769,10 +769,10 @@ define(['app'], function(appModule) {
                 describe('when promise is rejected', function() {
                     it('should show error', function() {
                         $scope.$apply(function() {
-                            deferred.reject();
+                            deferred.reject('Invalid');
                         });
 
-                        expect(SelfieCampaignSponsorCtrl.uploadError).toBe(true);
+                        expect(SelfieCampaignSponsorCtrl.uploadError).toBe('Invalid');
                     });
                 });
             });
@@ -934,10 +934,10 @@ define(['app'], function(appModule) {
                 describe('when promise is rejected', function() {
                     it('should show error', function() {
                         $scope.$apply(function() {
-                            deferred.reject();
+                            deferred.reject('Invalid');
                         });
 
-                        expect(SelfieCampaignSponsorCtrl.uploadError).toBe(true);
+                        expect(SelfieCampaignSponsorCtrl.uploadError).toBe('Invalid');
                     });
                 });
             });

@@ -29,27 +29,21 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6',
-                                                               'CampaignService',
+                                                               'CampaignService','$q',
             function                                          ( c6State , cinema6 ,
-                                                                CampaignService ) {
-                this.beforeModel = function() {
+                                                                CampaignService , $q ) {
+                this.afterModel = function() {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
                         org = user.org.id;
 
-                    cinema6.db.findAll('advertiser', {org: org})
-                        .then(function(advertisers) {
-                            cState.hasAdvertisers = !!advertisers.length;
-                        });
-                };
-
-                this.afterModel = function() {
-                    var cState = this;
-
-                    return CampaignService.getOrgs()
-                        .then(function(orgs) {
-                            cState.orgs = orgs;
-                        });
+                    return $q.all({
+                        orgs: CampaignService.getOrgs(),
+                        advertisers: cinema6.db.findAll('advertiser', {org: org})
+                    }).then(function(data) {
+                        cState.orgs = data.orgs;
+                        cState.advertisers = data.advertisers;
+                    });
                 };
 
                 this.enter = function() {
@@ -344,7 +338,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.initWithModel = function(model) {
                 this.model = model;
-                this.hasAdvertisers = cState.cParent.hasAdvertisers;
+                this.hasAdvertisers = !!cState.cParent.advertisers.length;
                 this.params = cState.params;
                 this.searchText = this.params.search;
 
@@ -485,16 +479,8 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:NewCampaign', ['cinema6','c6State','CampaignService',
             function                                    ( cinema6 , c6State , CampaignService ) {
                 this.beforeModel = function() {
-                    var cState = this,
-                        user = c6State.get('Selfie').cModel,
-                        org = user.org.id;
-
-                    this.user = user;
-
-                    return cinema6.db.findAll('advertiser', {org: org})
-                        .then(function(advertisers) {
-                            cState.advertiser = advertisers[0];
-                        });
+                    this.user = c6State.get('Selfie').cModel;
+                    this.advertiser = this.cParent.advertisers[0];
                 };
 
                 this.model = function() {
@@ -1284,8 +1270,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignSponsorCtrl.uploadError = false;
             }
 
-            function handleUploadError() {
-                SelfieCampaignSponsorCtrl.uploadError = true;
+            function handleUploadError(err) {
+                SelfieCampaignSponsorCtrl.uploadError = err;
             }
 
             // we need to build an array of objects for the dropdown,

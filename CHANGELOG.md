@@ -5,6 +5,9 @@
   * [FEATURE]: Display lifetime date range on stats page
   * [FIX]: When copying a campaign only copy the payment method if the
     user is the campaign creator
+  * [FIX]: Fix for an issue where the user's advertisers were fetched
+    more often than necessary
+  * [FEATURE]: Update error messages when uploading files or from URL
 
 ## v1.36.1 (February 17, 2016)
 * *[v1.36.1.rc1]*

@@ -451,7 +451,7 @@
                 describe('uploadFromFile(file)', function() {
                     var splashImage,
                         uploadDeferred, splashImageWrapper,
-                        result, success, notify;
+                        result, success, failure, notify;
 
                     beforeEach(function() {
                         splashImage = {};
@@ -467,13 +467,14 @@
                         spyOn(FileService, 'open')
                             .and.returnValue(splashImageWrapper);
 
-                        success = jasmine.createSpy('set success');
-                        notify = jasmine.createSpy('set notify');
+                        success = jasmine.createSpy('uploadFromFile success');
+                        failure = jasmine.createSpy('uploadFromFile failure');
+                        notify = jasmine.createSpy('uploadFromFile notify');
 
                         $rootScope.$apply(function() {
                             result = CollateralService.uploadFromFile(splashImage);
 
-                            result.then(success, null, notify);
+                            result.then(success, failure, notify);
                         });
                     });
 
@@ -538,6 +539,76 @@
                             expect(success).toHaveBeenCalledWith('collateral/e2e-org/ce114e4501d2f4e2dcea3e17b546f339.splash.jpg');
                         });
                     });
+
+                    describe('when upload fails', function() {
+                        describe('400', function() {
+                            it('should reject with error message', function() {
+                                $rootScope.$apply(function() {
+                                    uploadDeferred.reject({
+                                        status: 400,
+                                        data: [
+                                            {
+                                                error: 'Bad!'
+                                            }
+                                        ]
+                                    });
+                                });
+
+                                expect(failure).toHaveBeenCalledWith('Invalid file. Please use jpg, jpeg, gif or png file.');
+                            });
+                        });
+
+                        describe('413', function() {
+                            it('should reject with error message', function() {
+                                $rootScope.$apply(function() {
+                                    uploadDeferred.reject({
+                                        status: 413,
+                                        data: [
+                                            {
+                                                error: 'Bad!'
+                                            }
+                                        ]
+                                    });
+                                });
+
+                                expect(failure).toHaveBeenCalledWith('File is too big. Please upload file under 2MB.');
+                            });
+                        });
+
+                        describe('415', function() {
+                            it('should reject with error message', function() {
+                                $rootScope.$apply(function() {
+                                    uploadDeferred.reject({
+                                        status: 415,
+                                        data: [
+                                            {
+                                                error: 'Bad!'
+                                            }
+                                        ]
+                                    });
+                                });
+
+                                expect(failure).toHaveBeenCalledWith('Invalid file type. Please use jpg, jpeg, gif or png file.');
+                            });
+                        });
+
+                        describe('500', function() {
+                            it('should reject with error message', function() {
+                                $rootScope.$apply(function() {
+                                    uploadDeferred.reject({
+                                        status: 500,
+                                        data: [
+                                            {
+                                                error: 'Bad!'
+                                            }
+                                        ]
+                                    });
+                                });
+
+                                expect(failure).toHaveBeenCalledWith('Error uploading file.');
+                            });
+                        });
+                    });
                 });
 
                 describe('uploadFromUri(uri)', function() {
@@ -553,6 +624,90 @@
                         $httpBackend.flush();
 
                         expect(success).toHaveBeenCalledWith('collateral/userFiles/ce114e4501d2f4e2dcea3e17b546f339.jpg');
+                    });
+
+                    describe('when upload fails', function() {
+                        var success, failure;
+
+                        beforeEach(function() {
+                            success = jasmine.createSpy('uri success');
+                            failure = jasmine.createSpy('uri failure');
+                        });
+
+                        describe('400', function() {
+                            it('should reject with error message', function() {
+                                $httpBackend.expectPOST('/api/collateral/uri', { uri: 'http://foo.com/bar.jpg' })
+                                    .respond(400, [{ error: 'Bad'}]);
+
+                                CollateralService.uploadFromUri('http://foo.com/bar.jpg')
+                                    .then(success, failure);
+
+                                $httpBackend.flush();
+
+                                expect(failure).toHaveBeenCalledWith('Invalid file. Please use jpg, jpeg, gif or png file.');
+                                expect(success).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('408', function() {
+                            it('should reject with error message', function() {
+                                $httpBackend.expectPOST('/api/collateral/uri', { uri: 'http://foo.com/bar.jpg' })
+                                    .respond(408, [{ error: 'Bad'}]);
+
+                                CollateralService.uploadFromUri('http://foo.com/bar.jpg')
+                                    .then(success, failure);
+
+                                $httpBackend.flush();
+
+                                expect(failure).toHaveBeenCalledWith('The request timed out. Please try again.');
+                                expect(success).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('413', function() {
+                            it('should reject with error message', function() {
+                                $httpBackend.expectPOST('/api/collateral/uri', { uri: 'http://foo.com/bar.jpg' })
+                                    .respond(413, [{ error: 'Bad'}]);
+
+                                CollateralService.uploadFromUri('http://foo.com/bar.jpg')
+                                    .then(success, failure);
+
+                                $httpBackend.flush();
+
+                                expect(failure).toHaveBeenCalledWith('File is too big. Please upload file under 2MB.');
+                                expect(success).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('415', function() {
+                            it('should reject with error message', function() {
+                                $httpBackend.expectPOST('/api/collateral/uri', { uri: 'http://foo.com/bar.jpg' })
+                                    .respond(415, [{ error: 'Bad'}]);
+
+                                CollateralService.uploadFromUri('http://foo.com/bar.jpg')
+                                    .then(success, failure);
+
+                                $httpBackend.flush();
+
+                                expect(failure).toHaveBeenCalledWith('Invalid file type. Please use jpg, jpeg, gif or png file.');
+                                expect(success).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('500', function() {
+                            it('should reject with error message', function() {
+                                $httpBackend.expectPOST('/api/collateral/uri', { uri: 'http://foo.com/bar.jpg' })
+                                    .respond(500, [{ error: 'Bad'}]);
+
+                                CollateralService.uploadFromUri('http://foo.com/bar.jpg')
+                                    .then(success, failure);
+
+                                $httpBackend.flush();
+
+                                expect(failure).toHaveBeenCalledWith('Error uploading file.');
+                                expect(success).not.toHaveBeenCalled();
+                            });
+                        });
                     });
                 });
 

@@ -35,35 +35,39 @@ define(['app'], function(appModule) {
                     },
                     company: 'My Company, Inc.'
                 };
+
+                card = {
+                    data: {
+                        autoadvance: false,
+                        autoplay: true
+                    },
+                    params: {
+                        ad: true,
+                        action: null
+                    }
+                };
+
+                campaign = {
+                    id: 'cam-c3fd97889f4fb9',
+                    name: null,
+                    cards: [card],
+                    advertiserDisplatName: selfieState.cModel.company
+                };
+
+                advertisers = [
+                    {
+                        id: 'a-123'
+                    },
+                    {
+                        id: 'a-999'
+                    }
+                ];
+
                 newCampaignState = c6State.get('Selfie:NewCampaign');
+                newCampaignState.cParent = {
+                    advertisers: advertisers
+                };
             });
-
-            card = {
-                data: {
-                    autoadvance: false,
-                    autoplay: true
-                },
-                params: {
-                    ad: true,
-                    action: null
-                }
-            };
-
-            campaign = {
-                id: 'cam-c3fd97889f4fb9',
-                name: null,
-                cards: [card],
-                advertiserDisplatName: selfieState.cModel.company
-            };
-
-            advertisers = [
-                {
-                    id: 'a-123'
-                },
-                {
-                    id: 'a-999'
-                }
-            ];
         });
 
         it('should exist', function() {
@@ -71,50 +75,16 @@ define(['app'], function(appModule) {
         });
 
         describe('beforeModel()', function() {
-            var success, failure, deferred;
-
             beforeEach(function() {
-                success = jasmine.createSpy('success()');
-                failure = jasmine.createSpy('failure()');
-                deferred = $q.defer();
-
-                spyOn(cinema6.db, 'findAll').and.returnValue(deferred.promise);
-
-                $rootScope.$apply(function() {
-                    newCampaignState.beforeModel().then(success, failure);
-                });
+                newCampaignState.beforeModel();
             });
 
             it('should add the Selfie user to the state', function() {
                 expect(newCampaignState.user).toEqual(selfieState.cModel);
             });
 
-            it('should find the advertisers by Org', function() {
-                expect(cinema6.db.findAll).toHaveBeenCalledWith('advertiser', { org: selfieState.cModel.org.id });
-            });
-
-            describe('when the advertisers are found', function() {
-                it('should put the first advertiser on the state', function() {
-                    expect(success).not.toHaveBeenCalled();
-
-                    $rootScope.$apply(function() {
-                        deferred.resolve(advertisers);
-                    });
-
-                    expect(success).toHaveBeenCalled();
-                    expect(newCampaignState.advertiser).toEqual(advertisers[0]);
-                });
-            });
-
-            describe('if the advertiser request fails', function() {
-                it('should put the first advertiser on the state', function() {
-                    $rootScope.$apply(function() {
-                        deferred.reject('Not Found');
-                    });
-
-                    expect(success).not.toHaveBeenCalled();
-                    expect(failure).toHaveBeenCalled();
-                });
+            it('should add the first advertiser from parent state', function() {
+                expect(newCampaignState.advertiser).toEqual(advertisers[0]);
             });
         });
 

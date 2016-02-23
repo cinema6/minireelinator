@@ -417,9 +417,34 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return result;
                     }
 
+                    function handleError(err) {
+                        var message;
+
+                        switch (err.status) {
+                        case 400:
+                            message = 'Invalid file. Please use jpg, jpeg, gif or png file.';
+                            break;
+                        case 408:
+                            message = 'The request timed out. Please try again.';
+                            break;
+                        case 413:
+                            message = 'File is too big. Please upload file under 2MB.';
+                            break;
+                        case 415:
+                            message = 'Invalid file type. Please use jpg, jpeg, gif or png file.';
+                            break;
+                        case 500:
+                            message = 'Error uploading file.';
+                            break;
+                        }
+
+                        return $q.reject(message);
+                    }
+
                     this.uploadFromUri = function(uri) {
                         return $http.post('/api/collateral/uri', { uri: uri })
-                            .then(returnPath);
+                            .then(returnPath)
+                            .catch(handleError);
                     };
 
                     this.uploadFromFile = function(file) {
@@ -434,7 +459,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         file = FileService.open(file);
 
                         promise = FileService.upload('/api/collateral/files', [ file ])
-                            .then(returnPath, null, updateProgress);
+                            .then(returnPath, handleError, updateProgress);
 
                         return promise;
                     };
