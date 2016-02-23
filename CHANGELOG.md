@@ -8,6 +8,10 @@
   * [FIX]: Fix for an issue where the user's advertisers were fetched
     more often than necessary
   * [FEATURE]: Update error messages when uploading files or from URL
+  * [FEATURE]: Add dynamic pricing information in UI for when targeting
+    categories have variable costs
+  * [FIX]: Don't show lifetime date range on stats page if start date is
+    in the future
 
 ## v1.36.1 (February 17, 2016)
 * *[v1.36.1.rc1]*
