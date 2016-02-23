@@ -35,7 +35,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.afterModel = function() {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
-                        org = user.org.id;;
+                        org = user.org.id;
 
                     return $q.all({
                         orgs: CampaignService.getOrgs(),

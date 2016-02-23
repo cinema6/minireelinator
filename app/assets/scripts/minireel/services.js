@@ -418,15 +418,24 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     }
 
                     function handleError(err) {
-                        var data = err.data,
-                            message;
+                        var message;
 
-                        if (isArray(data)) {
-                            message = data[0].error;
-                        } else if (isObject(data)) {
-                            message = data.error;
-                        } else {
-                            message = data;
+                        switch (err.status) {
+                        case 400:
+                            message = 'Invalid file. Please use jpg, jpeg, gif or png file.';
+                            break;
+                        case 408:
+                            message = 'The request timed out. Please try again.';
+                            break;
+                        case 413:
+                            message = 'File is too big. Please upload file under 2MB.';
+                            break;
+                        case 415:
+                            message = 'Invalid file type. Please use jpg, jpeg, gif or png file.';
+                            break;
+                        case 500:
+                            message = 'Error uploading file.';
+                            break;
                         }
 
                         return $q.reject(message);
