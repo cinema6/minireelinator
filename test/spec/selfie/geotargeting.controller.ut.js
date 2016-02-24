@@ -12,7 +12,8 @@ define(['app'], function(appModule) {
 
         var campaign,
             schema,
-            validation;
+            validation,
+            costData;
 
         function compileCtrl() {
             $scope.$apply(function() {
@@ -31,6 +32,17 @@ define(['app'], function(appModule) {
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 CampaignService = $injector.get('CampaignService');
+
+                costData = {
+                    categories: {
+                        areEqual: true,
+                        geo: 0.1,
+                        demo: 0.1,
+                        interests: 0.1
+                    }
+                };
+
+                spyOn(CampaignService, 'getTargetingCost').and.returnValue(costData);
 
                 campaign = {
                     targeting: {
@@ -102,6 +114,11 @@ define(['app'], function(appModule) {
 
         it('should exist', function() {
             expect(SelfieGeotargetingCtrl).toEqual(jasmine.any(Object));
+        });
+
+        it('should get the targeting cost data', function() {
+            expect(CampaignService.getTargetingCost).toHaveBeenCalled();
+            expect(SelfieGeotargetingCtrl.cost).toBe(costData);
         });
 
         describe('properties', function() {

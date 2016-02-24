@@ -95,11 +95,14 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieSignUpController', ['AccountService','c6State',
-        function                              ( AccountService , c6State ) {
+        .controller('SelfieSignUpController', ['AccountService','c6State','cState',
+        function                              ( AccountService , c6State , cState ) {
             var SelfieSignUpCtrl = this;
 
-            this.errors = {};
+            this.formOnly = (/Form/).test(cState.cName);
+            this.errors = {
+                show: false
+            };
 
             this.submit = function() {
                 var requiredProps = [
@@ -109,7 +112,12 @@ function( angular , c6State  ) {
                         return SelfieSignUpCtrl.errors[prop];
                     });
 
-                if (requiredProps.length) { return; }
+                if (requiredProps.length) {
+                    SelfieSignUpCtrl.errors.show = true;
+                    return;
+                }
+
+                SelfieSignUpCtrl.errors.show = false;
 
                 AccountService.signUp(this.model)
                     .then(function(user) {

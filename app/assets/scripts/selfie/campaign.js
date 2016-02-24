@@ -945,6 +945,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.isCreator = cState.isCreator;
                 this.user = cState.user;
                 this.paymentOptional = cState.paymentOptional;
+                this.targetingCost = CampaignService.getTargetingCost(this.schema);
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
@@ -2344,6 +2345,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                         if (startDate) {
                             startDate = new Date(startDate);
+                            startDate = startDate < today ? startDate : null;
                         }
 
                         endDate = (endDate && new Date(endDate)) || new Date();

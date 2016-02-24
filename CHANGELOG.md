@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.37.0 (February 24, 2016)
 * *[v1.37.0.rc1]*
   * [FEATURE]: Add "Awaiting Approval" campaign list view
   * [FEATURE]: Display lifetime date range on stats page
@@ -8,6 +9,16 @@
   * [FIX]: Fix for an issue where the user's advertisers were fetched
     more often than necessary
   * [FEATURE]: Update error messages when uploading files or from URL
+  * [FEATURE]: Add dynamic pricing information in UI for when targeting
+    categories have variable costs
+  * [FIX]: Don't show lifetime date range on stats page if start date is
+    in the future
+  * [FEATURE]: Show error message below "submit" button when required
+    fields are empty
+  * [FIX]: Only show password error when user leaves the field
+  * [FEATURE]: Add url route that displays only the sign up form without
+    the surrounding branding and images
+* *[/v1.37.0.rc1]*
 
 ## v1.36.1 (February 17, 2016)
 * *[v1.36.1.rc1]*

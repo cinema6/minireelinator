@@ -3,17 +3,21 @@ define(['app', 'version'], function(appModule, version) {
 
     describe('AppController', function() {
         var $rootScope,
+            _$rootScope_,
             $controller,
             $scope,
             AppCtrl,
-            CSSLoadingService;
+            CSSLoadingService,
+            c6State;
 
         function initCtrl(appName) {
-            $scope = $rootScope.$new();
+            $rootScope = {};
+            $scope = _$rootScope_.$new();
             $scope.$apply(function() {
                 AppCtrl = $controller('AppController', {
-                    $scope: $scope,
-                    cState: { name: appName }
+                    cState: { name: appName },
+                    c6State: c6State,
+                    $rootScope: $rootScope
                 });
             });
         }
@@ -22,11 +26,15 @@ define(['app', 'version'], function(appModule, version) {
             module(appModule.name);
 
             inject(function($injector) {
-                $rootScope = $injector.get('$rootScope');
+                _$rootScope_ = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 CSSLoadingService = $injector.get('CSSLoadingService');
 
                 spyOn(CSSLoadingService, 'load');
+
+                c6State = {
+                    current: 'Selfie:State:Name'
+                };
 
                 initCtrl('Portal');
             });
@@ -34,6 +42,14 @@ define(['app', 'version'], function(appModule, version) {
 
         it('should exist', function() {
             expect(AppCtrl).toEqual(jasmine.any(Object));
+        });
+
+        it('should have a computed property with current c6State name', function() {
+            expect($rootScope.currentState).toEqual('Selfie:State:Name');
+
+            c6State.current = 'Selfie:New:State';
+
+            expect($rootScope.currentState).toEqual('Selfie:New:State');
         });
 
         describe('loading app-specific CSS files', function() {

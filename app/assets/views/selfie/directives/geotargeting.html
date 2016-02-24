@@ -1,8 +1,8 @@
 <h1 class="formSection__title">
     <span class="formSection__titleText tk--hdr">Location</span>
-    <!--<span class="tk--fineprint">
-        <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of ${{SelfieGeotargetingCtrl.pricePerGeo}} per 1000 video plays.
-    </span>-->
+    <span ng-show="!SelfieGeotargetingCtrl.cost.categories.areEqual" class="tk--fineprint">
+        <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of ${{SelfieGeotargetingCtrl.cost.categories.geo}} per <span class="hint--bottom hint--item" data-hint="Video has been watched for at least 3 seconds">video play</span>
+    </span>
 </h1>
 <div class="form__items">
 
