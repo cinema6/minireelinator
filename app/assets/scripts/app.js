@@ -1250,7 +1250,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 this.state('Selfie:Login');
                 this.route('/pass/forgot', 'Selfie:ForgotPassword');
                 this.route('/pass/reset', 'Selfie:ResetPassword');
-                this.route('/signup', 'Selfie:SignUp');
+                this.route('/signup', 'Selfie:SignUp', 'Selfie:SignUp:Full');
+                this.route('/signup/form', 'Selfie:SignUp', 'Selfie:SignUp:Form');
                 this.route('/signup/success', 'Selfie:SignUpSuccess');
                 this.route('/confirm', 'Selfie:ConfirmAccount');
 
@@ -1263,8 +1264,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             });
         }])
 
-        .controller('AppController', ['CSSLoadingService','cState',
-        function                     ( CSSLoadingService , cState ) {
+        .controller('AppController', ['CSSLoadingService','cState','c6State','$rootScope',
+        function                     ( CSSLoadingService , cState , c6State , $rootScope ) {
             var appStyles = {
                 Portal: [
                     'styles/c6main.css',
@@ -1281,6 +1282,14 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     'styles/selfie/css/hint.min.css'
                 ]
             };
+
+            Object.defineProperties($rootScope, {
+                currentState: {
+                    get: function() {
+                        return c6State.current;
+                    }
+                }
+            });
 
             CSSLoadingService.load(appStyles[cState.name]);
 

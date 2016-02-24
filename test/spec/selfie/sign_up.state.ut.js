@@ -1,95 +1,97 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('Selfie:SignUp State', function() {
-        var c6State,
-            $rootScope,
-            $q,
-            $location,
-            SettingsService,
-            signUp;
+    ['Selfie:SignUp:Full', 'Selfie:SignUp:Form'].forEach(function(stateName) {
+        describe('Selfie:SignUp State', function() {
+            var c6State,
+                $rootScope,
+                $q,
+                $location,
+                SettingsService,
+                signUp;
 
-        beforeEach(function() {
-            module(appModule.name);
+            beforeEach(function() {
+                module(appModule.name);
 
-            inject(function($injector) {
-                $rootScope = $injector.get('$rootScope');
-                c6State = $injector.get('c6State');
-                $q = $injector.get('$q');
-                $location = $injector.get('$location');
-                SettingsService = $injector.get('SettingsService');
+                inject(function($injector) {
+                    $rootScope = $injector.get('$rootScope');
+                    c6State = $injector.get('c6State');
+                    $q = $injector.get('$q');
+                    $location = $injector.get('$location');
+                    SettingsService = $injector.get('SettingsService');
 
-                spyOn($location, 'search').and.returnValue({});
-                spyOn(SettingsService, 'register');
-                spyOn(SettingsService, 'getReadOnly').and.returnValue({});
+                    spyOn($location, 'search').and.returnValue({});
+                    spyOn(SettingsService, 'register');
+                    spyOn(SettingsService, 'getReadOnly').and.returnValue({});
+                });
+
+                signUp = c6State.get(stateName);
             });
 
-            signUp = c6State.get('Selfie:SignUp');
-        });
+            it('should exist', function() {
+                expect(signUp).toEqual(jasmine.any(Object));
+            });
 
-        it('should exist', function() {
-            expect(signUp).toEqual(jasmine.any(Object));
-        });
+            describe('beforeModel()', function() {
+                describe('when there is a ref=code query param', function() {
+                    it('should register the code with the SettingsService', function() {
+                        $location.search.and.returnValue({ ref: 'testcode' });
 
-        describe('beforeModel()', function() {
-            describe('when there is a ref=code query param', function() {
-                it('should register the code with the SettingsService', function() {
-                    $location.search.and.returnValue({ ref: 'testcode' });
+                        signUp.beforeModel();
 
-                    signUp.beforeModel();
+                        expect(SettingsService.register).toHaveBeenCalledWith('Selfie::referral', { referral: 'testcode' }, {
+                            localSync: 'testcode',
+                            validateLocal: jasmine.any(Function)
+                        });
+                    });
+                });
 
-                    expect(SettingsService.register).toHaveBeenCalledWith('Selfie::referral', { referral: 'testcode' }, {
-                        localSync: 'testcode',
-                        validateLocal: jasmine.any(Function)
+                describe('when there is no ref=code query param', function() {
+                    it('should register the code with the SettingsService', function() {
+                        $location.search.and.returnValue({});
+
+                        signUp.beforeModel();
+
+                        expect(SettingsService.register).toHaveBeenCalledWith('Selfie::referral', { referral: undefined }, {
+                            localSync: true,
+                            validateLocal: jasmine.any(Function)
+                        });
                     });
                 });
             });
 
-            describe('when there is no ref=code query param', function() {
-                it('should register the code with the SettingsService', function() {
-                    $location.search.and.returnValue({});
+            describe('model()', function() {
+                describe('there is a referral code', function() {
+                    it('should add it to the model', function() {
+                        SettingsService.getReadOnly.and.returnValue({ referral: 'testcode' });
 
-                    signUp.beforeModel();
+                        var result = signUp.model();
 
-                    expect(SettingsService.register).toHaveBeenCalledWith('Selfie::referral', { referral: undefined }, {
-                        localSync: true,
-                        validateLocal: jasmine.any(Function)
+                        expect(result).toEqual({
+                            email: '',
+                            password: '',
+                            company: '',
+                            firstName: '',
+                            lastName: '',
+                            referralCode: 'testcode'
+                        });
                     });
                 });
-            });
-        });
 
-        describe('model()', function() {
-            describe('there is a referral code', function() {
-                it('should add it to the model', function() {
-                    SettingsService.getReadOnly.and.returnValue({ referral: 'testcode' });
+                describe('there is not a referral code', function() {
+                    it('should leave the referralCode undefined', function() {
+                        SettingsService.getReadOnly.and.returnValue({});
 
-                    var result = signUp.model();
+                        var result = signUp.model();
 
-                    expect(result).toEqual({
-                        email: '',
-                        password: '',
-                        company: '',
-                        firstName: '',
-                        lastName: '',
-                        referralCode: 'testcode'
-                    });
-                });
-            });
-
-            describe('there is not a referral code', function() {
-                it('should leave the referralCode undefined', function() {
-                    SettingsService.getReadOnly.and.returnValue({});
-
-                    var result = signUp.model();
-
-                    expect(result).toEqual({
-                        email: '',
-                        password: '',
-                        company: '',
-                        firstName: '',
-                        lastName: '',
-                        referralCode: undefined
+                        expect(result).toEqual({
+                            email: '',
+                            password: '',
+                            company: '',
+                            firstName: '',
+                            lastName: '',
+                            referralCode: undefined
+                        });
                     });
                 });
             });

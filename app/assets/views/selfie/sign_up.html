@@ -1,4 +1,4 @@
-<header class="signup__header grid">
+<header class="signup__header grid" ng-if="!SelfieSignUpCtrl.formOnly">
     <div class="signup__gridHolder grid grid--middle">
         <div class="grid__item one-quarter">
             <span class="rc__logo"></span><span class="ir">Reelcontent</span></h1>
@@ -14,7 +14,7 @@
     </div>
 </header>
 <div class="signup__gridHolder" c6-alias="SelfieSignUpCtrl.model as user">
-    <div class="grid one-whole">
+    <div class="grid one-whole" ng-if="!SelfieSignUpCtrl.formOnly">
         <div class="grid__item grid--center">
             <h1 class="signup__headline tk--hdr">Video Ads Made Easy</h1>
             <h2 class="tk--hdr signup__tagline">Reelcontent. Real Results.</h2>
@@ -112,8 +112,8 @@
                                 </p>
                             </div>
                         </fieldset>
-                        <fieldset blur-validate="c6-password" ng-class="{ 'ui--hasError': showError && (SelfieSignUpCtrl.errors.password || signup['c6-password'].$error.pattern || signup['c6-password'].$error.minlength) }" class="form__item">
-                            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="password" id="c6-password" name="c6-password" ng-minlength="8" ng-pattern="/\d/" ng-model="user.password" ng-blur="showError = true">
+                        <fieldset blur-validate="c6-password" ng-class="{ 'ui--hasError': SelfieSignUpCtrl.errors.show && (SelfieSignUpCtrl.errors.password || signup['c6-password'].$error.pattern || signup['c6-password'].$error.minlength) }" class="form__item">
+                            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="password" id="c6-password" name="c6-password" ng-minlength="8" ng-pattern="/\d/" ng-model="user.password" ng-blur="SelfieSignUpCtrl.errors.show = true">
                             <label class="form__label" for="c6-password">
                                 <i class="fa fa-times ui--error"></i>
                                 Password*
@@ -136,9 +136,9 @@
                         <div ng-if="SelfieSignUpCtrl.message" class="alertMessage alert__failure">
                             <span>{{SelfieSignUpCtrl.message}}</span>
                         </div>
-					<div class="subActions__box text--center">
-		                <p class="subAction">Existing user? <a c6-sref="Selfie:Login">Login now</a></p>
-		            </div>
+                    <div class="subActions__box text--center" ng-if="!SelfieSignUpCtrl.formOnly">
+                        <p class="subAction">Existing user? <a c6-sref="Selfie:Login">Login now</a></p>
+                    </div>
                     <div class="subActions__box text--center">
                         <div class="signup__secured">
                             <span class="signup__secured--icon"><i class="fa fa-shield"></i></span>
@@ -149,7 +149,7 @@
                 </div>
             </div>
         </div><!--
-        --><div class="grid__item one-half">
+        --><div class="grid__item one-half" ng-if="!SelfieSignUpCtrl.formOnly">
             <section class="productFeatures border--left">
                 <div class="productFeatures__placement">
                     <span class="placement__img"><img src="styles/selfie/img/about_video_card.png" /> </span>
@@ -165,7 +165,7 @@
         </div>
     </div>
 </div>
-<footer class="signup__footer">
+<footer class="signup__footer" ng-if="!SelfieSignUpCtrl.formOnly">
     <div class="signup__gridHolder">
         <ul class="customer__links">
             <li><span class="microsoft-logo"></span></li>
@@ -173,7 +173,6 @@
             <li><span class="oldnavy-logo"></span></li>
             <li><span class="wistia-logo"></span></li>
             <li><span class="aus-tourism-logo"></span></li>
-            
         </ul>
     </div>
 </footer>

@@ -5,12 +5,23 @@ define(['app'], function(appModule) {
         var $rootScope,
             $controller,
             c6State,
+            cState,
             AccountService,
             $q,
             $scope,
             SelfieSignUpCtrl;
 
         var user;
+
+        function initCtrl(stateName) {
+            cState.cName = stateName;
+
+            $scope = $rootScope.$new();
+            $scope.$apply(function() {
+                SelfieSignUpCtrl = $controller('SelfieSignUpController', { cState: cState });
+                SelfieSignUpCtrl.model = user;
+            });
+        }
 
         beforeEach(function() {
             module(appModule.name);
@@ -23,6 +34,8 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
             });
 
+            cState = {};
+
             user = {
                 firstName: '',
                 lastName: '',
@@ -31,15 +44,19 @@ define(['app'], function(appModule) {
                 password: ''
             };
 
-            $scope = $rootScope.$new();
-            $scope.$apply(function() {
-                SelfieSignUpCtrl = $controller('SelfieSignUpController');
-                SelfieSignUpCtrl.model = user;
-            });
+            initCtrl('Selfie:SignUp:Full');
         });
 
         it('should exist', function() {
             expect(SelfieSignUpCtrl).toEqual(jasmine.any(Object));
+        });
+
+        it('should set the formOnly flag', function() {
+            expect(SelfieSignUpCtrl.formOnly).toBe(false);
+
+            initCtrl('Selfie:SignUp:Form');
+
+            expect(SelfieSignUpCtrl.formOnly).toBe(true);
         });
 
         describe('methods', function() {
@@ -79,12 +96,13 @@ define(['app'], function(appModule) {
 
                     it('should set the error property', function() {
                         expect(SelfieSignUpCtrl.errors).toEqual({
+                            show: true,
                             firstName: true,
                             lastName: false,
                             company: true,
                             email: false,
                             password: true
-                        })
+                        });
                     });
 
                     it('should not submit to backend', function() {
@@ -106,6 +124,15 @@ define(['app'], function(appModule) {
 
                         $scope.$apply(function() {
                             SelfieSignUpCtrl.submit();
+                        });
+
+                        expect(SelfieSignUpCtrl.errors).toEqual({
+                            show: false,
+                            firstName: false,
+                            lastName: false,
+                            company: false,
+                            email: false,
+                            password: false
                         });
 
                         expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUpSuccess', [user]);
