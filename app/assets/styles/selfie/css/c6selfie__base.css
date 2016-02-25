@@ -480,6 +480,16 @@ fa,
             background-color:#ffeaea; color:#dc4141;
             border:1px solid #ffcbcb;
         }*/
+        .btn--link {
+            color: #49B8B9;
+            font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 300;
+        }
+        .btn--link:hover,
+        .btn--link:focus {
+            color: #0E7D81;
+        }        
         .btn--small, .btn--small:focus {
             font-size:1em;
             padding:0.5rem 1rem 0.375rem;
@@ -5668,3 +5678,45 @@ div.tree-multiselect span.remove-selected {
 .modalBody__group .ui__connector:before {
     background: none;
 }
+/*  ================================================
+    External landing page sign up styles
+    ================================================ */
+    body.bgClear {
+        background: transparent;
+        min-width: initial;
+    }
+    .bgClear .one-half {
+        width: 100%;
+    }
+    .bgClear .one-whole {
+        width: 100%;
+        margin-left: 0;
+    }
+    .bgClear .signup__gridHolder {
+        width:70%;
+        padding: 0;
+        min-width: initial;
+        max-width: initial;
+    }
+    .bgClear .ui--hasError .fa.ui--error {
+        display: none;
+    }
+    .bgClear .signup__pagetitle {
+        text-align: center;
+        padding-left: 0;
+        margin-left: -24px;
+    }
+    .bgClear .signup__gridHolder .form--narrow {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    @media screen and (max-width: 480px) {
+        .form__textBox:focus ~ .form__label, .form__fillCheck--filled ~ .form__label {
+            -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0);
+            opacity: 0;
+            text-align: right;
+            left: 0;
+        }
+    }
