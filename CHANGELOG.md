@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## v1.37.0 (February 24, 2016)
+* *[v1.37.0.rc2]*
+  * [DESIGN]: Added styles for sign up form for landing pages
+
 * *[v1.37.0.rc1]*
   * [FEATURE]: Add "Awaiting Approval" campaign list view
   * [FEATURE]: Display lifetime date range on stats page
