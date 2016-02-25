@@ -24,6 +24,15 @@
                             'browserstack.tunnel': true
                         }
                     }
+                },
+                phantomjs: {
+                    config: {
+                        capabilities: {
+                            browserName: 'phantomjs',
+                            'phantomjs.binary.path': require('phantomjs').path,
+                            'phantomjs.ghostdriver.cli.args': ['--loglevel=DEBUG']
+                        }
+                    }
                 }
             },
             config: {
@@ -35,8 +44,7 @@
                     name: '<%= package.name %>',
                 },
                 specs: [
-                    'test/e2e/setup.js',
-                    'test/e2e/common/**/*.e2e.js'
+                    'test/e2e/html-inspect.js'
                 ]
             }
         },
@@ -106,6 +114,11 @@
                     browserName: 'iPhone',
                     device: 'iPhone 5S'
                 }
+            }
+        },
+        phantomjs: {
+            config: {
+                
             }
         }
     };

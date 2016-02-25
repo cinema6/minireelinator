@@ -106,6 +106,8 @@ module.exports = function(grunt) {
             grunt.task.run('watch:e2e:' + (browser || ''));
         }
     );
+    
+    grunt.registerTask('test:htmlinspect', 'validate html', 'protractor:phantomjs:phantomjs');
 
     /*********************************************************************************************
      *
