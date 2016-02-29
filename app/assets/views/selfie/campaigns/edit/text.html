@@ -53,9 +53,9 @@
             </fieldset>
 
             <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignTextCtrl.actionLabel !== 'Custom' && SelfieCampaignCtrl.validation.show }">
-                <!--<input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">-->
-                <select c6-select-box data-options="SelfieCampaignTextCtrl.actionLabelOptions" ng-options="option for option in SelfieCampaignTextCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaText"  ng-trim="false" ng-model="SelfieCampaignTextCtrl.actionLabel" ng-change="SelfieCampaignTextCtrl.updateActionLabel()"></select><!-- TO DO: big time selector customization -->
-                <label class="form__label" for="c6-video-ctaText">
+                <!--<input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPresetText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">-->
+                <select c6-select-box data-options="SelfieCampaignTextCtrl.actionLabelOptions" ng-options="option for option in SelfieCampaignTextCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="SelfieCampaignTextCtrl.actionLabel" ng-change="SelfieCampaignTextCtrl.updateActionLabel()"></select><!-- TO DO: big time selector customization -->
+                <label class="form__label" for="c6-video-ctaPresetText">
                     <i class="fa fa-times ui--error"></i>
                     Call To Action Button <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxCallToActionLength - card.params.action.label.length}}</span>
                 </label>
@@ -71,8 +71,8 @@
                 </div>
             </fieldset>
             <fieldset class="form__item form__item--stackedInput" ng-show="SelfieCampaignTextCtrl.actionLabel === 'Custom'" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignCtrl.validation.show }">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">
-                <label class="form__label" for="c6-video-ctaText">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaCustomText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">
+                <label class="form__label" for="c6-video-ctaCustomText">
                     <i class="fa fa-times ui--error"></i>
                     Custom Button Text <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxCallToActionLength - card.params.action.label.length}}</span>
                 </label>
@@ -88,8 +88,8 @@
                 </div>
             </fieldset>
             <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && SelfieCampaignCtrl.validation.show }">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignTextCtrl.actionLink" ng-focus="SelfieCampaignTextCtrl.bindLinkToWebsite = false" ng-blur="SelfieCampaignTextCtrl.updateActionLink(SelfieCampaignTextCtrl.actionLink)">
-                <label class="form__label" for="c6-video-ctaText">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="SelfieCampaignTextCtrl.actionLink" ng-focus="SelfieCampaignTextCtrl.bindLinkToWebsite = false" ng-blur="SelfieCampaignTextCtrl.updateActionLink(SelfieCampaignTextCtrl.actionLink)">
+                <label class="form__label" for="c6-video-ctaUrl">
                     <i class="fa fa-times ui--error"></i>
                     Call To Action URL <span class="text--small"> (required) </span>
                 </label>
