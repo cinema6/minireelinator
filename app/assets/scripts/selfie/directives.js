@@ -348,14 +348,16 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                         var now = new Date(),
                             minDate = scope.minDate && new Date(scope.minDate);
 
-                        if (scope.minDate === undefined) { return 0; }
+                        if (!scope.allowPast) {
+                            if (!scope.minDate) { return 0; }
 
-                        if (!scope.allowPast && minDate && minDate < now) {
-                            minDate = pad(now.getMonth() + 1) +
-                                '/' + pad(now.getDate()) +
-                                '/' + now.getFullYear();
+                            if (minDate && minDate < now) {
+                                minDate = pad(now.getMonth() + 1) +
+                                    '/' + pad(now.getDate()) +
+                                    '/' + now.getFullYear();
 
-                            return minDate;
+                                return minDate;
+                            }
                         }
 
                         return scope.minDate;
