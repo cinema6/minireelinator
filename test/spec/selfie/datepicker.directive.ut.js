@@ -107,7 +107,7 @@ define(['app','angular'], function(appModule, angular) {
 
                     beforeShow();
 
-                    expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', 0);
+                    expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', undefined);
                     expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', null);
 
                     $scope.minDate = laterDate;
