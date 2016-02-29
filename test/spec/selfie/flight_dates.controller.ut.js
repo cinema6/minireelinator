@@ -6,6 +6,12 @@ define(['app'], function(appModule) {
         return (norm < 10 ? '0' : '') + norm;
     }
 
+    function offsetDate(offset) {
+        var date = new Date();
+        date.setDate(date.getDate() + offset);
+        return pad(date.getMonth()+1) + '/' + pad(date.getDate()) + '/' + date.getFullYear();
+    }
+
     describe('SelfieFlightDatesController', function() {
         var $rootScope,
             $scope,
@@ -19,8 +25,7 @@ define(['app'], function(appModule) {
             evenLaterDate,
             earlierDate,
             today,
-            tomorrow,
-            now;
+            tomorrow;
 
         function compileCtrl() {
             $scope = $rootScope.$new();
@@ -57,12 +62,11 @@ define(['app'], function(appModule) {
 
             compileCtrl();
 
-            now = new Date();
-            today = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + now.getFullYear();
-            tomorrow = pad(now.getMonth() + 1) + '/' + pad(now.getDate() + 1) + '/' + now.getFullYear();
-            earlierDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() - 1);
-            laterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 1);
-            evenLaterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 2);
+            today = offsetDate(0);
+            tomorrow = offsetDate(1);
+            earlierDate = offsetDate(-300);
+            laterDate = offsetDate(30);
+            evenLaterDate = offsetDate(300);
         });
 
         it('should exist', function() {
