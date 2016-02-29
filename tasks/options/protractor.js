@@ -44,7 +44,7 @@
                     name: '<%= package.name %>',
                 },
                 specs: [
-                    'test/e2e/html-inspect.js'
+                    'test/e2e/selfie/**/*.e2e.js'
                 ]
             }
         },
