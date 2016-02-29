@@ -1,6 +1,13 @@
 # MiniReelinator
 
-## v1.37.0 (February 25, 2016)
+## v1.37.0 (February 29, 2016)
+* *[v1.37.0.rc3]*
+  * [FIX]: Fix duplicate input IDs on new campaign page
+  * [FIX]: Fix for an issue where datepicker's minimum date wasn't
+    being properly respected
+  * [DEV]: Fix faulty date-based unit test
+* *[/v1.37.0.rc3]*
+
 * *[v1.37.0.rc2]*
   * [DESIGN]: Added styles for sign up form for landing pages
   * [FIX]: Fix the link to sign up on login page
