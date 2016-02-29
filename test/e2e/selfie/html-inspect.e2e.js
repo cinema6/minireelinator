@@ -1,7 +1,6 @@
 'use strict';
 
-var fs = require('fs');
-var request = require('request');
+var utils = require('../../helpers/html-inspect-utils.js');
 
 var HOST = 'http://localhost:9000';
 var WIDTH = 1024;
@@ -10,73 +9,6 @@ var E2E_CAMP = 'c-b76ecf45af71cd';
 var E2E_PAY = 'pay-a3fbcb1775823a';
 
 describe('the html', function() {
-    function gotoURL(url) {
-        return browser.get(url).then(function() {
-            return browser.executeAsyncScript(function(done) {
-                var script = document.createElement('script');
-                script.onload = function() {
-                    done();
-                };
-                script.setAttribute('src', 'https://cdnjs.cloudflare.com/ajax/libs/html-inspector/0.8.2/html-inspector.js');
-                var body = document.getElementsByTagName('body')[0];
-                body.appendChild(script);
-            });
-        }).then(function() {
-            return browser.waitForAngular();
-        });
-    }
-    
-    function login() {
-        return new protractor.promise.Promise(function(resolve, reject) {
-            request.post({
-                url: HOST + '/api/auth/login',
-                json: {
-                    email: 'selfie@cinema6.com',
-                    password: 'password'
-                }
-            }, function(error) {
-                if(error) {
-                    reject();
-                } else {
-                    resolve();
-                }
-            });
-        });
-    }
-    
-    function logout() {
-        return new protractor.promise.Promise(function(resolve, reject) {
-            request.post(HOST + '/api/auth/logout', function(error) {
-                if(error) {
-                    reject();
-                } else {
-                    resolve();
-                }
-            });
-        });
-    }
-    
-    function screenshot(filePath) {
-        return browser.sleep(5000).then(function() {
-            return browser.takeScreenshot();
-        }).then(function(data) {
-            var buffer = new Buffer(data, 'base64');
-            fs.writeFile(filePath, buffer);
-        });
-    }
-    
-    function inspectHTML() {
-        return browser.executeAsyncScript(function(done) {
-            window.HTMLInspector.inspect({
-                useRules: [
-                    'duplicate-ids'
-                ],
-                onComplete: function(errors) {
-                    done(errors);
-                }
-            });
-        });
-    }
     
     beforeEach(function() {
         browser.driver.manage().window().setSize(WIDTH, HEIGHT);
@@ -84,15 +16,21 @@ describe('the html', function() {
     
     describe('the login page', function() {
         beforeEach(function(done) {
-            logout().then(function() {
-                return gotoURL(HOST + '/');
-            }).then(function(){
-                return screenshot('login');
+            utils.logout(HOST).then(function() {
+                return utils.preparePage(HOST + '/');
+            }).then(function() {
+                return browser.sleep(1000);
             }).then(done, done.fail);
         });
         
         it('should be valid HTML', function(done) {
-            inspectHTML().then(function(errors) {
+            utils.inspectHTML().then(function(errors) {
+                errors.forEach(function(error) {
+                    console.log({
+                        rule: error.rule,
+                        message: error.message
+                    });
+                });
                 expect(errors.length).toBe(0);
             }).then(done, done.fail);
         });
@@ -118,15 +56,21 @@ describe('the html', function() {
     ].forEach(function(route) {
         describe('authenticaed route ' + route, function() {
             beforeEach(function(done) {
-                login().then(function() {
-                    return gotoURL(HOST + route);
+                utils.login(HOST).then(function() {
+                    return utils.preparePage(HOST + route);
                 }).then(function() {
                     return browser.sleep(1000);
                 }).then(done, done.fail);
             });
             
             it('should be valid HTML', function(done) {
-                inspectHTML().then(function(errors) {
+                utils.inspectHTML().then(function(errors) {
+                    errors.forEach(function(error) {
+                        console.log({
+                            rule: error.rule,
+                            message: error.message
+                        });
+                    });
                     expect(errors.length).toBe(0);
                 }).then(done, done.fail);
             });
