@@ -1135,7 +1135,7 @@ fa,
     .mainNav__group {
         position: fixed;
         top:0; bottom:0; left:0;
-        z-index:1;
+        z-index:100;
         background:#2e3134;
         width:4em;
     }
@@ -1400,6 +1400,7 @@ fa,
             min-height:3.5em;
             background: #fff;
             padding:0 1em;
+            min-width: 1024px;
         }
 
             .mainHeader__breadcrumbs {
@@ -1567,6 +1568,7 @@ fa,
                 padding:0 1.5em; margin:0 1.5em;
                 list-style:none;
                 position:relative;
+                min-width: 1024px;
             }
 
             .sortBar__btn,
@@ -2050,6 +2052,7 @@ fa,
             width:100%; height:0.125em;
             position: absolute;
             bottom:100%; left:0;
+            min-width: 1024px;
         }
 
 
@@ -2356,7 +2359,7 @@ fa,
                     line-height:1rem;
                     display: block;
                     padding:0.1875rem 0 0.3125rem 0.25rem;
-                    word-break: break-all;
+                    overflow: hidden;
                 }
 
 
