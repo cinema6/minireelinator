@@ -24,10 +24,20 @@
                             'browserstack.tunnel': true
                         }
                     }
+                },
+                phantomjs: {
+                    config: {
+                        capabilities: {
+                            browserName: 'phantomjs',
+                            'phantomjs.binary.path': require('phantomjs').path,
+                            'phantomjs.ghostdriver.cli.args': ['--loglevel=DEBUG']
+                        }
+                    }
                 }
             },
             config: {
                 seleniumArgs: ['-browserTimeout=60'],
+                framework: 'jasmine2',
                 jasmineNodeOpts: {
                     defaultTimeoutInterval: 45000
                 },
@@ -35,9 +45,16 @@
                     name: '<%= package.name %>',
                 },
                 specs: [
-                    'test/e2e/setup.js',
-                    'test/e2e/common/**/*.e2e.js'
-                ]
+                    'test/e2e/selfie/**/*.e2e.js'
+                ],
+                onPrepare: function() {
+                    var jasmineReporters = require('jasmine-reporters');
+                    jasmine.getEnv().addReporter(new jasmineReporters.JUnitXmlReporter({
+                        consolidateAll: true,
+                        savePath: 'reports',
+                        filePrefix: 'e2e.xml'
+                    }));
+                }
             }
         },
         chrome: {
@@ -106,6 +123,11 @@
                     browserName: 'iPhone',
                     device: 'iPhone 5S'
                 }
+            }
+        },
+        phantomjs: {
+            config: {
+                
             }
         }
     };

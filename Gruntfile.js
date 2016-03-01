@@ -106,6 +106,21 @@ module.exports = function(grunt) {
             grunt.task.run('watch:e2e:' + (browser || ''));
         }
     );
+    
+    grunt.registerTask('test:htmlinspect:selfie', 'validate html', function() {
+        var secure = grunt.option('secure');
+
+        grunt.config.set('connect.options.protocol', secure ? 'https' : 'http');
+
+        [
+            'configureProxies:app',
+            'connect:app',
+            'updatewebdriver',
+            'protractor:phantomjs:phantomjs'
+        ].forEach(function(task) {
+            grunt.task.run(task);
+        });
+    });
 
     /*********************************************************************************************
      *
