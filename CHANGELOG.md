@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.38.0.rc1]*
+  * [DEV]: Added grunt task for inspecting and validating HTML
   * [FIX]: Fix for an issue where "Cancel Changes" button does not
     take user back to manage campaign view
   * [DESIGN]: Fix for an issue where column headers and footers looked
