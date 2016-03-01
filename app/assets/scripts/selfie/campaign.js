@@ -2512,7 +2512,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     updatedCampaign: updatedCampaign,
                     previewCard: (updateRequest) ? copy(updatedCampaign.cards[0]) : null,
                     rejectionReason: '',
-                    error: null
+                    error: null,
+                    hasDuration: !!updatedCampaign.cards[0].data.duration
                 });
             };
 

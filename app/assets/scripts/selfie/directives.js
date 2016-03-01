@@ -1618,7 +1618,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             var CARD_EDITABLE_FIELDS = ['title', 'note', 'links.*', 'shareLinks.*'];
             var CARD_APPROVAL_FIELDS = [
                 'id', 'type', 'title', 'note', 'thumb',
-                'data\\.(service|videoid)', 'collateral\\.logo',
+                'data\\.(service|videoid|duration)', 'collateral\\.logo',
                 'links.*', 'shareLinks.*', 'params\\.action.*',
                 'campaign\\.(startDate|endDate)'
             ];

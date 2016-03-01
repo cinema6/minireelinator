@@ -14,6 +14,10 @@
                     <p ng-if="!Ctrl.showApproval" class="formSection__introText">There are no updates waiting to be approved.</p>
 
                     <div ng-if="Ctrl.showApproval">
+                        <p ng-if="!Ctrl.hasDuration" class="grid--left" style="color:red">
+                            <b>A duration is required:</b>
+                            <input type="number" ng-model="Ctrl.updatedCampaign.cards[0].data.duration" class="form__textBox" style="width:12%">
+                        </p>
                         <p ng-if="!Ctrl.updatedCampaign.paymentMethod" class="grid__item grid--center"><b>There is no payment method for the proposed campaign.</b></p>
                         <selfie-campaign-updates-summary campaign="Ctrl.campaign" updated-campaign="Ctrl.updatedCampaign"></selfie-campaign-updates-summary>
                         <div class="grid__item grid--center">
@@ -28,9 +32,10 @@
                             </div>
                             <br>
                             <div class="action__btnGroup ui__btnHolder">
-                                <button ng-click="Ctrl.approveCampaign()" class="action__btn action__btn--big">Approve</button>
+                                <button ng-click="Ctrl.approveCampaign()" ng-disabled="!Ctrl.updatedCampaign.cards[0].data.duration" ng-class="{'btn--disabled' : !Ctrl.updatedCampaign.cards[0].data.duration }" class="action__btn action__btn--big">Approve</button>
                                 <button ng-click="Ctrl.rejectCampaign()" class="action__btn action__btn--big">Reject</button>
                             </div>
+                            <p ng-if="!Ctrl.updatedCampaign.cards[0].data.duration" class="grid--center alertMessage alert__failure"><b>A duration is required.</b></p>
                             </div>
                         </div>
                     </div>
