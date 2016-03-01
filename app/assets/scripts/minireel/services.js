@@ -2375,7 +2375,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 // instagramDataTemplate: this is the base template for all
                 // instagram cards.
                 instagramDataTemplate = {
-                    id: copy(null)
+                    id: copy(null),
+                    duration: copy()
                 };
 
                 // videoDataTemplate: this is the base template for all
@@ -3137,7 +3138,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         autoplay: copy(),
                         autoadvance: copy(),
                         controls: copy(),
-                        skip: skipValue()
+                        skip: skipValue(),
+                        duration: copy()
                     }
                 };
 

@@ -58,6 +58,10 @@ define(['app'], function(appModule) {
                             campaign: {
                                 startDate: 'updated start date',
                                 endDate: 'updated end date'
+                            },
+                            data: {
+                                duration: 30,
+                                bad: 'property'
                             }
                         }
                     ],
@@ -152,6 +156,12 @@ define(['app'], function(appModule) {
                         originalValue: 'original end date',
                         updatedValue: 'updated end date',
                         title: 'Card.campaign.endDate',
+                        editable: false
+                    },
+                    {
+                        originalValue: undefined,
+                        updatedValue: 30,
+                        title: 'Card.data.duration',
                         editable: false
                     }
                 ];

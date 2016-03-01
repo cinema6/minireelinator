@@ -210,6 +210,19 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieManageCampaignAdminCtrl.rejectionReason).toBe('');
                         expect(SelfieManageCampaignAdminCtrl.error).toBe(null);
                     });
+
+                    describe('hasDuration', function() {
+                        it('should be true if card has duration', function() {
+                            expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(false);
+
+                            updateRequest.data.cards[0].data.duration = 30;
+                            card.data.duration = undefined;
+
+                            compileCtrl(cState, {});
+
+                            expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(true);
+                        });
+                    });
                 });
 
                 describe('when there is no updateRequest', function() {
@@ -225,6 +238,18 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toEqual(campaign);
                         expect(SelfieManageCampaignAdminCtrl.previewCard).toBe(null);
                         expect(SelfieManageCampaignAdminCtrl.rejectionReason).toBe('');
+                    });
+
+                    describe('hasDuration', function() {
+                        it('should be true if card has duration', function() {
+                            expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(false);
+
+                            card.data.duration = 30;
+
+                            compileCtrl(cState, {});
+
+                            expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(true);
+                        });
                     });
                 });
             });
