@@ -7,32 +7,36 @@ var WIDTH = 1024;
 var HEIGHT = 768;
 var E2E_CAMP = 'c-b76ecf45af71cd';
 var E2E_PAY = 'pay-a3fbcb1775823a';
+var WAIT_TIME = 1000;
 
 describe('the html', function() {
-    
-    beforeEach(function() {
+
+    function expectValidHTML(spec, done) {
+        utils.inspectHTML().then(function(errors) {
+            if(errors.length > 0) {
+                done.fail(JSON.stringify(errors.map(function(error) {
+                    return {
+                        rule: error.rule,
+                        message: error.message
+                    };
+                })));
+            }
+        }).then(done, done.fail);
+    }
+
+    beforeAll(function() {
         browser.driver.manage().window().setSize(WIDTH, HEIGHT);
     });
     
     describe('the login page', function() {
         beforeEach(function(done) {
             utils.logout(HOST).then(function() {
-                return utils.preparePage(HOST + '/');
-            }).then(function() {
-                return browser.sleep(1000);
+                return utils.preparePage(HOST + '/', WAIT_TIME);
             }).then(done, done.fail);
         });
         
         it('should be valid HTML', function(done) {
-            utils.inspectHTML().then(function(errors) {
-                errors.forEach(function(error) {
-                    console.log({
-                        rule: error.rule,
-                        message: error.message
-                    });
-                });
-                expect(errors.length).toBe(0);
-            }).then(done, done.fail);
+            expectValidHTML(this, done);
         });
     });
     
@@ -57,22 +61,12 @@ describe('the html', function() {
         describe('authenticaed route ' + route, function() {
             beforeEach(function(done) {
                 utils.login(HOST).then(function() {
-                    return utils.preparePage(HOST + route);
-                }).then(function() {
-                    return browser.sleep(1000);
+                    return utils.preparePage(HOST + route, WAIT_TIME);
                 }).then(done, done.fail);
             });
             
             it('should be valid HTML', function(done) {
-                utils.inspectHTML().then(function(errors) {
-                    errors.forEach(function(error) {
-                        console.log({
-                            rule: error.rule,
-                            message: error.message
-                        });
-                    });
-                    expect(errors.length).toBe(0);
-                }).then(done, done.fail);
+                expectValidHTML(this, done);
             });
         });
     });

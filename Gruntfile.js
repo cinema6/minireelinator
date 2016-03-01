@@ -107,7 +107,20 @@ module.exports = function(grunt) {
         }
     );
     
-    grunt.registerTask('test:htmlinspect', 'validate html', 'protractor:phantomjs:phantomjs');
+    grunt.registerTask('test:htmlinspect:selfie', 'validate html', function() {
+        var secure = grunt.option('secure');
+
+        grunt.config.set('connect.options.protocol', secure ? 'https' : 'http');
+
+        [
+            'configureProxies:app',
+            'connect:app',
+            'updatewebdriver',
+            'protractor:phantomjs:phantomjs'
+        ].forEach(function(task) {
+            grunt.task.run(task);
+        });
+    });
 
     /*********************************************************************************************
      *

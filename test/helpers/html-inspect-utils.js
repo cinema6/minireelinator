@@ -8,8 +8,12 @@ var fs = require('fs');
 var request = require('request');
 
 module.exports = {
-    preparePage: function(url) {
+    preparePage: function(url, waitTime) {
         return browser.get(url).then(function() {
+            return browser.waitForAngular();
+        }).then(function() {
+            return browser.sleep(waitTime);
+        }).then(function() {
             return browser.executeAsyncScript(function(done) {
                 var script = document.createElement('script');
                 script.onload = function() {
@@ -19,8 +23,6 @@ module.exports = {
                 var body = document.getElementsByTagName('body')[0];
                 body.appendChild(script);
             });
-        }).then(function() {
-            return browser.waitForAngular();
         });
     },
     login: function(host) {
@@ -31,9 +33,9 @@ module.exports = {
                     email: AUTH_EMAIL,
                     password: AUTH_PASSWORD
                 }
-            }, function(error) {
-                if(error) {
-                    reject();
+            }, function(error, response) {
+                if(error || response.statusCode !== 200) {
+                    reject(error || response.statusCode);
                 } else {
                     resolve();
                 }
@@ -42,9 +44,9 @@ module.exports = {
     },
     logout: function(host) {
         return new protractor.promise.Promise(function(resolve, reject) {
-            request.post(host + AUTH_ENDPOINT + '/logout', function(error) {
-                if(error) {
-                    reject();
+            request.post(host + AUTH_ENDPOINT + '/logout', function(error, response) {
+                if(error || response.statusCode !== 204) {
+                    reject(error || response.statusCode);
                 } else {
                     resolve();
                 }

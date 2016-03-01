@@ -7,12 +7,9 @@ module.exports = function(grunt) {
         var options = this.options({
                 envs: {},
                 config: {},
-                configFile: 'protractor.conf.json',
+                configFile: 'protractor.conf.js',
                 tmpConfig: true
             }),
-            configJSON = {
-                config: null
-            },
             done = this.async(),
             config, masterConfig, envConfig, envObj, protractor;
 
@@ -47,9 +44,18 @@ module.exports = function(grunt) {
             return grunt.config.process(result);
         }.call(this));
 
-        configJSON.config = config;
-
-        grunt.file.write(options.configFile, JSON.stringify(configJSON, null, '    '));
+        var fileContents = '\'use strict\';\n' +
+            '\n' +
+            'module.exports = {\n' +
+            '   config: {\n' +
+            Object.keys(config).map(function(key) {
+                var value = config[key];
+                var stringified = (value instanceof Function) ? value.toString() : JSON.stringify(value);
+                return '        ' + key + ': ' + stringified;
+            }).join(',\n') + '\n' +
+            '   }\n' +
+            '};\n'
+        grunt.file.write(options.configFile, fileContents);
         grunt.log.ok('Wrote protractor config to ' + options.configFile);
 
         protractor = spawn('./node_modules/protractor/bin/protractor', [options.configFile], {

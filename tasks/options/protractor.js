@@ -37,6 +37,7 @@
             },
             config: {
                 seleniumArgs: ['-browserTimeout=60'],
+                framework: 'jasmine2',
                 jasmineNodeOpts: {
                     defaultTimeoutInterval: 45000
                 },
@@ -45,7 +46,15 @@
                 },
                 specs: [
                     'test/e2e/selfie/**/*.e2e.js'
-                ]
+                ],
+                onPrepare: function() {
+                    var jasmineReporters = require('jasmine-reporters');
+                    jasmine.getEnv().addReporter(new jasmineReporters.JUnitXmlReporter({
+                        consolidateAll: true,
+                        savePath: 'reports',
+                        filePrefix: 'e2e.xml'
+                    }));
+                }
             }
         },
         chrome: {
