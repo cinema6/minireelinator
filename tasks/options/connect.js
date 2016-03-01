@@ -2,7 +2,9 @@
     'use strict';
 
     var grunt = require('grunt'),
-        selfieServer = /selfie/.test(grunt.cli.tasks[0]);
+        selfieServer = /selfie/.test(grunt.cli.tasks[0]),
+        verbosityOpt = grunt.option('verbosity'),
+        verbosity = (verbosityOpt === undefined) ? Infinity : verbosityOpt;
 
     module.exports = {
         options: {
@@ -49,7 +51,8 @@
                             '/api/expgroup': 'mocks/expgroup/main.js',
                             '/api/payments': 'mocks/payment/main.js',
                             '/api/analytics':'mocks/analytic/main.js',
-                            '/api/collateral':'mocks/collateral/main.js'
+                            '/api/collateral':'mocks/collateral/main.js',
+                            '@verbosity': verbosity
                         }),
                         require('grunt-connect-proxy/lib/utils').proxyRequest,
                         require('connect-livereload')({
