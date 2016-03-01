@@ -2375,7 +2375,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 // instagramDataTemplate: this is the base template for all
                 // instagram cards.
                 instagramDataTemplate = {
-                    id: copy(null)
+                    id: copy(null),
+                    duration: copy()
                 };
 
                 // videoDataTemplate: this is the base template for all
@@ -2450,7 +2451,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     partnerid: copy(null),
                     start: trimmer(),
                     end: trimmer(),
-                    moat: copy(null)
+                    moat: copy(null),
+                    duration: copy()
                 };
 
                 // dataTemplates: configuration for the "data" section of
@@ -2950,7 +2952,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         date: instagramCardInfo(),
                         caption: instagramCardInfo(),
                         comments: instagramCardInfo(),
-                        user: instagramCardInfo()
+                        user: instagramCardInfo(),
+                        duration: copy()
                     },
                     youtube: {
                         hideSource: hideSourceValue(),
@@ -2965,7 +2968,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     vimeo: {
                         hideSource: hideSourceValue(),
@@ -2977,7 +2981,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     dailymotion: {
                         hideSource: hideSourceValue(),
@@ -2991,7 +2996,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     adUnit: {
                         hideSource: hideSourceValue(),
@@ -3006,7 +3012,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return (fromJson(data.videoid) || {}).vpaid;
                         },
                         thumbs: value(null),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     vine: {
                         hideSource: hideSourceValue(),
@@ -3017,7 +3024,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     vzaar: {
                         hideSource: hideSourceValue(),
@@ -3028,7 +3036,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     wistia: {
                         hideSource: hideSourceValue(),
@@ -3039,7 +3048,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     jwplayer: {
                         hideSource: hideSourceValue(),
@@ -3050,7 +3060,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     vidyard: {
                         hideSource: hideSourceValue(),
@@ -3061,7 +3072,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     htmlvideo: {
                         hideSource: hideSourceValue(),
@@ -3081,7 +3093,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     brightcove: {
                         hideSource: hideSourceValue(),
@@ -3095,7 +3108,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         embedid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     kaltura: {
                         hideSource: hideSourceValue(),
@@ -3108,7 +3122,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         playerid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
-                        moat: copy(null)
+                        moat: copy(null),
+                        duration: copy()
                     },
                     ad: {
                         autoplay: copy(true),
@@ -3123,7 +3138,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         autoplay: copy(),
                         autoadvance: copy(),
                         controls: copy(),
-                        skip: skipValue()
+                        skip: skipValue(),
+                        duration: copy()
                     }
                 };
 

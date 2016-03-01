@@ -1,5 +1,14 @@
 # MiniReelinator
 
+* *[v1.38.0.rc1]*
+  * [FIX]: Fix for an issue where "Cancel Changes" button does not
+    take user back to manage campaign view
+  * [DESIGN]: Fix for an issue where column headers and footers looked
+    broken at small window size
+  * [FEATURE]: Require admins to enter a duration before approving a
+    a campaign in the unlikely event that the backend is unable to
+    determine the duration
+
 ## v1.37.0 (February 29, 2016)
 * *[v1.37.0.rc3]*
   * [FIX]: Fix duplicate input IDs on new campaign page

@@ -183,7 +183,8 @@
                                 thumbs: {
                                     small: 'images.vine.com/video/erUbKHDX6Ug/small.jpg',
                                     large: 'images.vine.com/video/erUbKHDX6Ug/large.jpg'
-                                }
+                                },
+                                duration: 6
                             },
                         },
                         instagram: {
@@ -216,6 +217,7 @@
                                     followers: '1027481',
                                     following: '3'
                                 },
+                                duration: -1
                             },
                             placementId: null,
                             templateUrl: null,
@@ -266,7 +268,8 @@
                                 thumbs: {
                                     small: 'images.vzaar.com/video/1380051/small.jpg',
                                     large: 'images.vzaar.com/video/1380051/large.jpg'
-                                }
+                                },
+                                duration: 25
                             }
                         },
                         wistia: {
@@ -299,7 +302,8 @@
                                 thumbs: {
                                     small: 'images.wistia.com/video/9iqvphjp4u/small.jpg',
                                     large: 'images.wistia.com/video/9iqvphjp4u/large.jpg'
-                                }
+                                },
+                                duration: 45
                             }
                         },
                         jwplayer: {
@@ -332,7 +336,8 @@
                                 thumbs: {
                                     small: 'images.jwplayer.com/video/iGznZrKK-n5DiyUyn/small.jpg',
                                     large: 'images.jwplayer.com/video/iGznZrKK-n5DiyUyn/large.jpg'
-                                }
+                                },
+                                duration: 50
                             }
                         },
                         vidyard: {
@@ -365,7 +370,8 @@
                                 thumbs: {
                                     small: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/small.jpg',
                                     large: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/large.jpg'
-                                }
+                                },
+                                duration: 52
                             }
                         },
                         instagramVideo: {
@@ -397,7 +403,8 @@
                                 thumbs: {
                                     small: 'images.instagram.com/-zNcg8AtYy/small.jpg',
                                     large: 'images.instagram.com/-zNcg8AtYy/large.jpg'
-                                }
+                                },
+                                duration: 22
                             }
                         },
                         brightcove: {
@@ -433,7 +440,8 @@
                                 thumbs: {
                                     small: 'images.brightcove.com/video/4655415742001/small.jpg',
                                     large: 'images.brightcove.com/video/4655415742001/large.jpg'
-                                }
+                                },
+                                duration: 48
                             }
                         },
                         kaltura: {
@@ -468,7 +476,8 @@
                                 thumbs: {
                                     small: 'images.kaltura.com/video/1_dsup2iqd/small.jpg',
                                     large: 'images.kaltura.com/video/1_dsup2iqd/large.jpg'
-                                }
+                                },
+                                duration: 68
                             }
                         }
                     }
@@ -679,7 +688,8 @@
                                         campaign: 'Turtle Campaign',
                                         advertiser: 'Turtles, Inc.',
                                         creative: 'turtle_power'
-                                    }
+                                    },
+                                    duration: 58
                                 }
                             },
                             {
@@ -718,7 +728,8 @@
                                     thumbs: {
                                         small: 'images.vimeo.com/video/48hfrei49/small.jpg',
                                         large: 'images.vimeo.com/video/48hfrei49/large.jpg'
-                                    }
+                                    },
+                                    duration: 78
                                 }
                             },
                             {
@@ -771,7 +782,8 @@
                                     thumbs: {
                                         small: 'images.dailymotion.com/video/vfu85f5/small.jpg',
                                         large: 'images.dailymotion.com/video/vfu85f5/large.jpg'
-                                    }
+                                    },
+                                    duration: 89
                                 }
                             },
                             {
@@ -835,7 +847,8 @@
                                     thumbs: {
                                         small: 'images.youtube.com/video/fn4378r4d/small.jpg',
                                         large: 'images.youtube.com/video/fn4378r4d/large.jpg'
-                                    }
+                                    },
+                                    duration: 46
                                 }
                             },
                             {
@@ -996,7 +1009,8 @@
                                         campaign: 'Turtle Campaign',
                                         advertiser: 'Turtles, Inc.',
                                         creative: 'turtle_power'
-                                    }
+                                    },
+                                    duration: 30
                                 }
                             },
                             (function() {
@@ -1030,7 +1044,8 @@
                                         thumbs: {
                                             small: 'images.yahoo.com/video/teen-tries-drain-pond-lost-221030513/small.jpg',
                                             large: 'images.yahoo.com/video/teen-tries-drain-pond-lost-221030513/large.jpg'
-                                        }
+                                        },
+                                        duration: 76
                                     }
                                 };
 
@@ -1069,7 +1084,8 @@
                                         thumbs: {
                                             small: 'images.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876/small.jpg',
                                             large: 'images.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876/large.jpg'
-                                        }
+                                        },
+                                        duration: 37
                                     }
                                 };
 
@@ -1107,7 +1123,8 @@
                                         thumbs: {
                                             small: 'images.rumble.com/video/v2z8ro-willie-perfoming-at-school-talent-show/small.jpg',
                                             large: 'images.rumble.com/video/v2z8ro-willie-perfoming-at-school-talent-show/large.jpg'
-                                        }
+                                        },
+                                        duration: 28
                                     }
                                 };
 
@@ -1371,7 +1388,8 @@
                                     embedid: null,
                                     start: null,
                                     end: null,
-                                    moat: null
+                                    moat: null,
+                                    duration: undefined
                                 }
                             });
 
@@ -2078,7 +2096,8 @@
                                     embedid: null,
                         	        start: null,
                         	        end: null,
-                        	        moat: null
+                        	        moat: null,
+                                    duration: 6
                         	    },
                         	    id: 'rc-1ac904b814c8d6a20fea',
                         	    type: 'video',
@@ -2116,7 +2135,8 @@
                                 ad: false,
                                 view: 'instagram',
                                 data: {
-                                    id: '5YN6a0tOc-'
+                                    id: '5YN6a0tOc-',
+                                    duration: -1
                                 },
                                 placementId: null,
                                 templateUrl: null,
@@ -2152,7 +2172,8 @@
                                     embedid: null,
                         	        start: null,
                         	        end: null,
-                        	        moat: null
+                        	        moat: null,
+                                    duration: 25
                         	    },
                         	    id: 'rc-16acda0e8302116df64d',
                         	    type: 'video',
@@ -2196,7 +2217,8 @@
                                     embedid: null,
                         	        start: null,
                         	        end: null,
-                        	        moat: null
+                        	        moat: null,
+                                    duration: 45
                         	    },
                         	    id: 'rc-5c404f4aedc7',
                         	    type: 'video',
@@ -2240,7 +2262,8 @@
                                     embedid: null,
                         	        start: null,
                         	        end: null,
-                        	        moat: null
+                        	        moat: null,
+                                    duration: 50
                         	    },
                         	    id: 'rc-6f4aebc424f3',
                         	    type: 'video',
@@ -2284,7 +2307,8 @@
                                     embedid: null,
                         	        start: null,
                         	        end: null,
-                        	        moat: null
+                        	        moat: null,
+                                    duration: 52
                         	    },
                         	    id: 'rc-e2218c73ff11',
                         	    type: 'video',
@@ -2328,7 +2352,8 @@
                                     embedid: null,
                         	        start: null,
                         	        end: null,
-                        	        moat: null
+                        	        moat: null,
+                                    duration: 22
                         	    },
                         	    id: 'rc-e3149227e70468',
                         	    type: 'video',
@@ -2372,7 +2397,8 @@
                                     embedid: 'default',
                         	        start: null,
                         	        end: null,
-                        	        moat: null
+                        	        moat: null,
+                                    duration: 48
                         	    },
                         	    id: 'rc-d6ec871ceb105e',
                         	    type: 'video',
@@ -2416,7 +2442,8 @@
                                     embedid: null,
                         	        start: null,
                         	        end: null,
-                        	        moat: null
+                        	        moat: null,
+                                    duration: 68
                         	    },
                         	    id: 'rc-3739123c133da1',
                         	    type: 'video',
@@ -2486,7 +2513,8 @@
                                         campaign: 'Turtle Campaign',
                                         advertiser: 'Turtles, Inc.',
                                         creative: 'turtle_power'
-                                    }
+                                    },
+                                    duration: 58
                                 }
                             });
 
@@ -2528,7 +2556,8 @@
                                     embedid: null,
                                     start: null,
                                     end: null,
-                                    moat: null
+                                    moat: null,
+                                    duration: 78
                                 }
                             });
 
@@ -2570,7 +2599,8 @@
                                     embedid: null,
                                     start: undefined,
                                     end: undefined,
-                                    moat: null
+                                    moat: null,
+                                    duration: 89
                                 }
                             });
 
@@ -2635,7 +2665,8 @@
                                     embedid: null,
                                     start: 0,
                                     end: 40,
-                                    moat: null
+                                    moat: null,
+                                    duration: 46
                                 }
                             });
 
@@ -2684,7 +2715,8 @@
                                         campaign: 'Turtle Campaign',
                                         advertiser: 'Turtles, Inc.',
                                         creative: 'turtle_power'
-                                    }
+                                    },
+                                    duration: 30
                                 }
                             });
                         });
