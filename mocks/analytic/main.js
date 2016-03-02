@@ -43,6 +43,10 @@ module.exports = function(http) {
                     endDate: request.query.endDate || null,
                     impressions: randomNum(400, 500),
                     views: randomNum(300, 400),
+                    quartile1: randomNum(250, 300),
+                    quartile2: randomNum(200, 250),
+                    quartile3: randomNum(150, 200),
+                    quartile4: randomNum(50, 150),
                     totalSpend: randomNum(60, 100) + 0.4200,
                     linkClicks: {
                         facebook: randomNum(2, 30),

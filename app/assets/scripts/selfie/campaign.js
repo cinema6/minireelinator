@@ -2382,6 +2382,11 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             };
 
+            this.duration = {
+                actual: card.data.duration,
+                custom: card.data.duration
+            };
+
             this.initWithModel = function(model) {
                 this._stats = model;
             };

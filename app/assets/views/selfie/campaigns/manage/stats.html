@@ -112,6 +112,123 @@
             </div>
         </div><!--.grid__item .one-whole--><!--.grid__item .three-quarters-->
     </div>
+
+    <!-- QUARTILES! -->
+    <div class="grid quartiles">
+        <h1 class="tk--hdr stats__hdr stats__quartiles">
+            <span class="hint--top hint--text-wrap" data-hint="See how long viewers watched your ad.">View Quartiles</span>
+        </h1>
+
+        <div class="grid__item two-fifths interactions__group">
+            <div class="grid">
+                <div class="grid__item one-whole">
+                    <div class="stats__row stats__sub-hdr">
+                        <h3 class="stats__label">Duration</h3>
+                        <h3 class="stats__rowData">Percentage</h3>
+                        <h3 class="stats__rowData">Views</h3>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">25%</h3>
+                        <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile1 / stats.views) * 100 | number:2}}%</h2>
+                        <h2 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">0%</h2>
+                        <h2 class="stats__rowData stats__rowViews">{{stats.quartile1}}</h2>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">50%</h3>
+                        <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile2 / stats.views) * 100 | number:2}}%</h2>
+                        <h2 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">0%</h2>
+                        <h2 class="stats__rowData stats__rowViews">{{stats.quartile2}}</h2>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">75%</h3>
+                        <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile3 / stats.views) * 100 | number:2}}%</h2>
+                        <h2 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">0%</h2>
+                        <h2 class="stats__rowData stats__rowViews">{{stats.quartile3}}</h2>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">100%</h3>
+                        <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile4 / stats.views) * 100 | number:2}}%</h2>
+                        <h2 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">0%</h2>
+                        <h2 class="stats__rowData stats__rowViews">{{stats.quartile4}}</h2>
+                    </div>
+                </div><!--
+                --><div class="grid__item one-whole">
+                    <h1 class="tk--hdr stats__hdr--tool">View Calculator</h1>
+
+                    <div class="stats__vidCalc">
+                        <p>See how many people would see your whole video if it was shorter.</p>
+
+                        <form action="" method="get" class="vidCalc__slider">
+                            <input parse-as-int range-slider ng-model="SelfieManageCampaignStatsCtrl.duration.custom" type="range" name="seconds" min="10" max="{{SelfieManageCampaignStatsCtrl.duration.actual}}" default-value="{{SelfieManageCampaignStatsCtrl.duration.actual}}" class="slider__time">
+                        </form>
+
+                        <div class="slider__scale">
+                            <span class="slider__range slider__range--min">10s</span>
+
+                            <form action="" method="get" class="slider__range slider__range--input">
+                                <fieldset class="form__item form__center form__item--miniInput">
+                                    <input class="form__textBox form__textBox--units form__fillCheck" type="number" ng-model="SelfieManageCampaignStatsCtrl.duration.custom" min="10" max="{{SelfieManageCampaignStatsCtrl.duration.actual}}">
+                                    <label class="slider-label">
+                                        <i class="fa fa-times ui--error">Seconds</i> 
+                                    </label>
+                                    <div class="form__errorBox">
+                                        <p class="form__errorMsg">
+                                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                        </p>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                            <span class="slider__range slider__range--max">{{SelfieManageCampaignStatsCtrl.duration.actual}}s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--
+        --><div class="grid__item three-fifths">
+            <div class="grid">
+                <div class="grid__item one-whole">
+                    <div quartile-bar-graph stats="stats" duration="SelfieManageCampaignStatsCtrl.duration" class="chart__group">
+                        <canvas id="bar__quartile" height="427px" width="763px" class="chart"></canvas>
+
+                        <div class="chart__label">
+                            <div class="grid">
+                                <div class="grid__item one-quarter">
+                                    <div class="chart__labelBox">
+                                        <p class="chart__labelItem chart__labelItem--quartile">25%</p>
+                                        <span class="chart__labelItem chart__labelItem--sec">{{SelfieManageCampaignStatsCtrl.duration.actual * 0.25 | number:0}}s</span><!--
+                                        --><span class="chart__labelItem chart__labelItem--secCalc">{{SelfieManageCampaignStatsCtrl.duration.custom * 0.25 | number:0}}s</span>
+                                    </div>
+                                </div><!--
+                                --><div class="grid__item one-quarter">
+                                    <div class="chart__labelBox">
+                                        <p class="chart__labelItem chart__labelItem--quartile">50%</p>
+                                        <span class="chart__labelItem chart__labelItem--sec">{{SelfieManageCampaignStatsCtrl.duration.actual * 0.5 | number:0}}s</span><!--
+                                        --><span class="chart__labelItem chart__labelItem--secCalc">{{SelfieManageCampaignStatsCtrl.duration.custom * 0.5 | number:0}}s</span>
+                                    </div>
+                                </div><!--
+                                --><div class="grid__item one-quarter">
+                                    <div class="chart__labelBox">
+                                        <p class="chart__labelItem chart__labelItem--quartile">75%</p>
+                                        <span class="chart__labelItem chart__labelItem--sec">{{SelfieManageCampaignStatsCtrl.duration.actual * 0.75 | number:0}}s</span><!--
+                                        --><span class="chart__labelItem chart__labelItem--secCalc">{{SelfieManageCampaignStatsCtrl.duration.custom * 0.75 | number:0}}s</span>
+                                    </div>
+                                </div><!--
+                                --><div class="grid__item one-quarter">
+                                    <div class="chart__labelBox">
+                                        <p class="chart__labelItem chart__labelItem--quartile">100%</p>
+                                        <span class="chart__labelItem chart__labelItem--sec">{{SelfieManageCampaignStatsCtrl.duration.actual}}s</span><!--
+                                        --><span class="chart__labelItem chart__labelItem--secCalc">{{SelfieManageCampaignStatsCtrl.duration.custom}}s</span>
+                                    </div>
+                                </div>
+                            </div><!-- .grid -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="grid grid--center">
         <!--<div class="grid__item one-whole grid--center" ng-if="SelfieManageCampaignCtrl.stats[0].summary">
             <h1 class="tk--hdr text--center">Interactions</h1>
