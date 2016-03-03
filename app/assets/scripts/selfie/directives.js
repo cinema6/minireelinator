@@ -472,15 +472,15 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 var i;
 
                 for (i = 0; i <= duration; i++) {
-                    if (i < first) {
+                    if (i <= first) {
                         data.push(
                             Math.round(views - (i * (diff0to1 / qSecs)))
                         );
-                    } else if (i < second) {
+                    } else if (i <= second) {
                         data.push(
                             Math.round(q1 - ((i - first) * (diff1to2 / qSecs)))
                         );
-                    } else if (i < third) {
+                    } else if (i <= third) {
                         data.push(
                             Math.round(q2 - ((i - second) * (diff2to3 / qSecs)))
                         );
@@ -529,7 +529,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                                 scaleSteps : 10,
                                 scaleStepWidth : 10,
                                 scaleStartValue : 0
-                            };
+                            },
+                            realData = [
+                                getPercentage(stats.quartile1, views),
+                                getPercentage(stats.quartile2, views),
+                                getPercentage(stats.quartile3, views),
+                                getPercentage(stats.quartile4, views)
+                            ];
 
                         // set actualData in directive scope
                         _actualData = calculateCompleteViewData(stats, duration.actual);
@@ -540,17 +546,14 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                                 {
                                     fillColor: 'rgba(17, 157, 164, 0.75)',
                                     strokeColor: 'rgba(17, 157, 164, 1)',
-                                    data: [
-                                        getPercentage(stats.quartile1, views),
-                                        getPercentage(stats.quartile2, views),
-                                        getPercentage(stats.quartile3, views),
-                                        getPercentage(stats.quartile4, views)
-                                    ]
+                                    data: realData
                                 },
                                 {
                                     fillColor: 'rgba(0, 0, 0, 0.1)',
                                     strokeColor: 'rgba(0, 0, 0, 0.25)',
-                                    data: getCalculatedData(views, duration.custom, _actualData)
+                                    data: duration.actual !== duration.custom ?
+                                        getCalculatedData(views, duration.custom, _actualData) :
+                                        realData
                                 }
                             ]
                         }, options);

@@ -52,7 +52,10 @@ define(['app'], function(appModule) {
 
             card = {
                 id: 'rc-123',
-                campaign: {}
+                campaign: {},
+                data: {
+                    duration: 30
+                }
             };
 
             campaign = {
@@ -588,6 +591,15 @@ define(['app'], function(appModule) {
                             start: null,
                             end: null
                         }
+                    });
+                });
+            });
+
+            describe('duration', function() {
+                it('should be an object with the cards duration', function() {
+                    expect(SelfieManageCampaignStatsCtrl.duration).toEqual({
+                        actual: 30,
+                        custom: 30
                     });
                 });
             });
