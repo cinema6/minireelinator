@@ -45,68 +45,52 @@
             <div class="grid">
                 <div class="grid__item one-fifth">
                     <div class="statsChart__infoBox">
-                        <h3 class="stats__icon"><i class="fa fa-play"></i></h3>
-                        <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">{{stats.views | number:0}}</h1>
-                        <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">0</h1>
-                        <h3 class="stats__label">Views</h3>
-                        <div class="helpBox helpBox--center">
-                            <div class="helpText">
-                                Number of times video was played.
-                            </div>
-                        </div>
+                        <span class="hint--top hint--text-wrap" data-hint="Number of times video was played.">
+                            <h3 class="stats__icon"><i class="fa fa-play"></i></h3>
+                            <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">{{stats.views | number:0}}</h1>
+                            <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">0</h1>
+                            <h3 class="stats__label">Views</h3>
+                        </span>
                     </div>
                 </div><!--
                 --><div class="grid__item one-fifth">
-                    <div class="statsChart__infoBox">
-                        <h3 class="stats__icon"><i class="fa fa-usd"></i></h3>
-                        <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">${{stats.totalSpend / stats.views | number:2}}</h1>
-                        <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">$0</h1>
-                        <h3 class="stats__label">Average CPV</h3>
-                        <div class="helpBox helpBox--center">
-                            <div class="helpText">
-                                Your total cost divided by total views
-                            </div>
-                        </div>
+                    <div class="statsChart__infoBox stats__quartiles stats__spend">
+                        <span class="hint--top hint--text-wrap" data-hint="Your total cost divided by total views.">
+                            <h3 class="stats__icon"><i class="fa fa-usd"></i></h3>
+                            <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">${{stats.totalSpend / stats.views | number:2}}</h1>
+                            <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">$0</h1>
+                            <h3 class="stats__label">Average CPV</h3>
+                        </span>
                     </div>
                 </div><!--
                 --><div class="grid__item one-fifth">
-                    <div class="statsChart__infoBox">
-                        <h3 class="stats__icon"><i class="fa fa-credit-card"></i></h3>
-                        <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">${{stats.totalSpend | number:2}}</h1>
-                        <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">$0</h1>
-                        <h3 class="stats__label">Total Cost</h3>
-
-                        <div class="helpBox helpBox--center">
-                            <div class="helpText">
-                                This is how much you have spent
-                            </div>
-                        </div>
+                    <div class="statsChart__infoBox stats__spend">
+                        <span class="hint--top hint--text-wrap" data-hint="This is how much you have spent.">
+                            <h3 class="stats__icon"><i class="fa fa-credit-card"></i></h3>
+                            <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">${{stats.totalSpend | number:2}}</h1>
+                            <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">$0</h1>
+                            <h3 class="stats__label">Total Cost</h3>
+                        </span>
                     </div>
                 </div><!--
                 --><div class="grid__item one-fifth">
-                    <div class="statsChart__infoBox">
-                        <h3 class="stats__icon"><i class="fa fa-comments-o"></i></h3>
-                        <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">{{SelfieManageCampaignStatsCtrl.totalInteractions}}</h1>
-                        <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">0</h1>
-                        <h3 class="stats__label">Total Interactions</h3>
-                        <div class="helpBox helpBox--center">
-                            <div class="helpText">
-                                This is how many times users interacted with links on your ad
-                            </div>
-                        </div>
+                    <div class="statsChart__infoBox stats__clicks">
+                        <span class="hint--top hint--text-wrap" data-hint="This is how many times users interacted with links on your ad.">
+                            <h3 class="stats__icon"><i class="fa fa-comments-o"></i></h3>
+                            <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">{{SelfieManageCampaignStatsCtrl.totalInteractions}}</h1>
+                            <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">0</h1>
+                            <h3 class="stats__label">Total Interactions</h3>
+                        </span>
                     </div>
                 </div><!--
                 --><div class="grid__item one-fifth">
-                    <div class="statsChart__infoBox">
-                        <h3 class="stats__icon"><i class="fa fa-percent"></i></h3>
-                        <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">{{(SelfieManageCampaignStatsCtrl.totalInteractions / stats.views) * 100 | number:2}}%</h1>
-                        <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">0%</h1>
-                        <h3 class="stats__label">Interaction Rate</h3>
-                        <div class="helpBox helpBox--center">
-                            <div class="helpText">
-                                Your total clicks divided by total views
-                            </div>
-                        </div>
+                    <div class="statsChart__infoBox stats__clicks">
+                        <span class="hint--top hint--text-wrap" data-hint="Your total clicks divided by total views.">
+                            <h3 class="stats__icon"><i class="fa percent"></i></h3>
+                            <h1 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">{{(SelfieManageCampaignStatsCtrl.totalInteractions / stats.views) * 100 | number:2}}%</h1>
+                            <h1 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__infoNumber tk--hdr">0%</h1>
+                            <h3 class="stats__label">Interaction Rate</h3>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -229,8 +213,249 @@
         </div>
     </div>
 
-    <div class="grid grid--center">
-        <!--<div class="grid__item one-whole grid--center" ng-if="SelfieManageCampaignCtrl.stats[0].summary">
+    <div class="grid linksSummary">
+        <div class="grid__item one-whole">
+            <h1 class="tk--hdr stats__hdr stats__linksSummary"><span class="hint--top hint--text-wrap" data-hint="Total count of interactions with your website, share, and social links. Click-through rate (CTR) is the ratio of users who click on a specific link to the number of total users who view your ad.">Engagement</span></h1>
+            <div class="stats__row stats__sub-hdr">
+                <h3 class="stats__label">Type</h3>
+                <h3 class="stats__rowData stats__rowGraph">Graph</h3>
+                <h3 class="stats__rowData">CTR</h3>
+
+                <h3 class="stats__rowData">Clicks</h3>
+            </div>
+            <div class="stats__row">
+                <div class="stats__column stats__columnGraph">
+                    <div percentage-width="{{(stats.linkClicks.action / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                </div>
+                <h3 class="stats__label">Call to Action</h3>
+                <span ng-if="!stats.linkClicks.action || !SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                </span>
+                <span ng-if="stats.linkClicks.action && SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.action / stats.views) * 100 | number:2}}%</h2>
+                    <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.action}}</h2>
+                </span>
+            </div>
+            <div class="stats__row">
+                <div class="stats__column stats__columnGraph">
+                    <div percentage-width="{{(stats.linkClicks.website / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                </div>
+                <h3 class="stats__label">Website</h3>
+
+                <span ng-if="!stats.linkClicks.website || !SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                </span>
+                <span ng-if="stats.linkClicks.website && SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.website / stats.views) * 100 | number:2}}%</h2>
+                    <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.website}}</h2>
+                </span>
+            </div>
+
+            <div ng-class="{'stats__row--open': showShareStats, 'stats__row--closed': !showShareStats}" class="stats__row stats__row--share">
+                <div class="stats__column stats__columnGraph">
+                    <div percentage-width="{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                </div>
+                <button ng-click="showShareStats = !showShareStats" class="accordion__btn">
+                    <i class="fa fa-chevron-right"></i>
+                    <i class="fa fa-chevron-down"></i>
+                    <h3 class="stats__label stats__label--total">Share Total</h3>
+                </button>
+
+                <span ng-if="!SelfieManageCampaignStatsCtrl.totalShares || !SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                </span>
+
+                <span ng-if="SelfieManageCampaignStatsCtrl.totalShares && SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2}}%</h2>
+                    <h2 class="stats__rowData stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalShares}}</h2>
+                </span>
+
+
+                <div class="stats__subTable">
+                    <div class="stats__row stats__sub-hdr">
+                        <h3 class="stats__label">Type</h3>
+                        <h3 class="stats__rowData stats__rowGraph">Graph</h3>
+                        <h3 class="stats__rowData">Share Rate</h3>
+
+                        <h3 class="stats__rowData">Clicks</h3>
+                    </div>
+                    <div class="stats__row stats__row--facebook">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.shareClicks.facebook / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-facebook"></i>
+                        <h3 class="stats__label">Facebook</h3>
+                        <span ng-if="!stats.shareClicks.facebook || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.facebook && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.facebook / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.facebook}}</h2>
+                        </span>
+                    </div>
+                    <div class="stats__row stats__row--twitter">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.shareClicks.twitter / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-twitter"></i>
+                        <h3 class="stats__label">Twitter</h3>
+                        <span ng-if="!stats.shareClicks.twitter || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.twitter && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.twitter / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.twitter}}</h2>
+                        </span>
+
+                    </div>
+                    <div class="stats__row stats__row--pinterest">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.shareClicks.pinterest / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-pinterest-p"></i>
+                        <h3 class="stats__label">Pinterest</h3>
+                        <span ng-if="!stats.shareClicks.pinterest || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.pinterest && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.pinterest / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.pinterest}}</h2>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+
+            <div ng-class="{'stats__row--open': showSocialStats, 'stats__row--closed': !showSocialStats}" class="stats__row stats__row--social">
+                <div class="stats__column stats__columnGraph">
+                    <div percentage-width="{{(SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar" style="width:52%;"></div>
+                </div>
+                <button ng-click="showSocialStats = !showSocialStats" class="accordion__btn">
+                    <i class="fa fa-chevron-right"></i>
+                    <i class="fa fa-chevron-down"></i>
+                    <h3 class="stats__label stats__label--total">Social Total</h3>
+                </button>
+
+                <span ng-if="!SelfieManageCampaignStatsCtrl.totalSocialClicks || !SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                </span>
+
+                <span ng-if="SelfieManageCampaignStatsCtrl.totalSocialClicks && SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2}}%</h2>
+                    <h2 class="stats__rowData stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalSocialClicks}}</h2>
+                </span>
+
+                <div class="stats__subTable">
+                    <div class="stats__row stats__sub-hdr">
+                        <h3 class="stats__label">Type</h3>
+                        <h3 class="stats__rowData stats__rowGraph">Graph</h3>
+                        <h3 class="stats__rowData">CTR</h3>
+                        <h3 class="stats__rowData">Clicks</h3>
+                    </div>
+                    <div class="stats__row stats__row--facebook">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.linkClicks.facebook / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-facebook"></i>
+                        <h3 class="stats__label">Facebook</h3>
+                        <span ng-if="!stats.linkClicks.facebook || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowClicks">--</h2>
+                            <h2 class="stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.linkClicks.facebook && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.facebook / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.facebook}}</h2>
+                        </span>
+                    </div>
+                    <div class="stats__row stats__row--twitter">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.linkClicks.twitter / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-twitter"></i>
+                        <h3 class="stats__label">Twitter</h3>
+                        <span ng-if="!stats.linkClicks.twitter || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.linkClicks.twitter && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.twitter / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.twitter}}</h2>
+                        </span>
+                    </div>
+                    <div class="stats__row stats__row--instagram">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.linkClicks.instagram / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-instagram"></i>
+                        <h3 class="stats__label">Instagram</h3>
+                        <span ng-if="!stats.linkClicks.instagram || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.linkClicks.instagram && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.instagram / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.instagram}}</h2>
+                        </span>
+                    </div>
+                    <div class="stats__row stats__row--youtube">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.linkClicks.youtube / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-youtube-play"></i>
+                        <h3 class="stats__label">YouTube</h3>
+                        <span ng-if="!stats.linkClicks.youtube || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.linkClicks.youtube && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.youtube / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.youtube}}</h2>
+                        </span>
+                    </div>
+                    <div class="stats__row stats__row--vimeo">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.linkClicks.vimeo / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-vimeo"></i>
+                        <h3 class="stats__label">Vimeo</h3>
+                        <span ng-if="!stats.linkClicks.vimeo || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.linkClicks.vimeo && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.vimeo / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.vimeo}}</h2>
+                        </span>
+                    </div>
+                    <div class="stats__row stats__row--pinterest">
+                        <div class="stats__column stats__columnGraph">
+                            <div percentage-width="{{(stats.linkClicks.pinterest / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-pinterest-p"></i>
+                        <h3 class="stats__label">Pinterest</h3>
+                        <span ng-if="!stats.linkClicks.pinterest || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.linkClicks.pinterest && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.pinterest / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.pinterest}}</h2>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div><!-- .grid__item .one-whole -->
+    </div><!-- .grid -->
+
+    <!--<div class="grid grid--center">
+        <div class="grid__item one-whole grid--center" ng-if="SelfieManageCampaignCtrl.stats[0].summary">
             <h1 class="tk--hdr text--center">Interactions</h1>
             <div class="helpBox helpBox--center">
                 <div class="formhelpText">
@@ -246,166 +471,6 @@
                 --><!--<div class="grid__item one-quarter">
                     <div id="js-legend"></div>
                 </div>
-            </div>
-        </div>--><!--
-        --><div class="grid__item one-half interactions__group">
-            <div class="grid">
-                <div class="grid__item one-whole">
-                    <h1 class="tk--hdr stats__hdr">Website Interactions</h1>
-                    <div class="helpBox helpBox--center">
-                        <div class="formhelpText">
-                            Clicks to your main Call to Action/ Button and/or logo and sponsored links.
-                        </div>
-                    </div>
-                    <div class="stats__row">
-                        <h3 class="stats__label">Call to Action</h3>
-                        <span ng-if="!stats.linkClicks.action || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">--</h2>
-                            <h2 class="stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="stats.linkClicks.action && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">{{stats.linkClicks.action}}<span ng-if="!stats.linkClicks.action">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.linkClicks.action / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
-                        </span>
-                    </div>
-                    <div class="stats__row">
-                        <h3 class="stats__label">Website</h3>
-                        <span ng-if="!stats.linkClicks.website || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">--</h2>
-                            <h2 class="stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="stats.linkClicks.website && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">{{stats.linkClicks.website}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.linkClicks.website / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
-                        </span>
-                    </div>
-                </div><!--
-                --><div class="grid__item one-whole">
-                    <h1 class="tk--hdr stats__hdr">Share</h1>
-                    <div class="helpBox helpBox--center">
-                        <div class="formhelpText">
-                            Social share count of your "social" link on the video card.
-                        </div>
-                    </div>
-                    <div class="stats__row">
-                        <h3 class="stats__label">Facebook</h3>
-                        <span ng-if="!stats.shareClicks.facebook || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">--</h2>
-                            <h2 class="stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="stats.shareClicks.facebook && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">{{stats.shareClicks.facebook}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.shareClicks.facebook / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
-                        </span>
-                    </div>
-                    <div class="stats__row">
-                        <h3 class="stats__label">Twitter</h3>
-                        <span ng-if="!stats.shareClicks.twitter || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">--</h2>
-                            <h2 class="stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="stats.shareClicks.twitter && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">{{stats.shareClicks.twitter}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.shareClicks.twitter / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
-                        </span>
-                    </div>
-                    <div class="stats__row">
-                        <h3 class="stats__label">Pinterest</h3>
-                        <span ng-if="!stats.shareClicks.pinterest || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">--</h2>
-                            <h2 class="stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="stats.shareClicks.pinterest && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">{{stats.shareClicks.pinterest}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.shareClicks.pinterest / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
-                        </span>
-                    </div>
-                    <div class="stats__row">
-                        <h3 class="stats__label">Share Total</h3>
-                        <span ng-if="!SelfieManageCampaignStatsCtrl.totalShares || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">--</h2>
-                            <h2 class="stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="SelfieManageCampaignStatsCtrl.totalShares && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalShares}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div><!--
-        --><div class="grid__item one-half interactions__group">
-            <h1 class="tk--hdr stats__hdr">Social Interactions</h1>
-            <div class="helpBox helpBox--center">
-                <div class="formhelpText">
-                    Count of users visiting your social profiles provided on the video card.
-                </div>
-            </div>
-            <div class="stats__row">
-                <h3 class="stats__label">Facebook</h3>
-                <span ng-if="!stats.linkClicks.facebook || !SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">--</h2>
-                    <h2 class="stats__rowClicks">--</h2>
-                </span>
-                <span ng-if="stats.linkClicks.facebook && SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">{{stats.linkClicks.facebook}}<span ng-if="!stats.linkClicks.facebook">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.facebook / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
-                </span>
-            </div>
-            <div class="stats__row">
-                <h3 class="stats__label">Twitter</h3>
-                <span ng-if="!stats.linkClicks.twitter || !SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">--</h2>
-                    <h2 class="stats__rowClicks">--</h2>
-                </span>
-                <span ng-if="stats.linkClicks.twitter && SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">{{stats.linkClicks.twitter}}<span ng-if="!stats.linkClicks.twitter">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.twitter / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
-                </span>
-            </div>
-            <div class="stats__row">
-                <h3 class="stats__label">YouTube</h3>
-                <span ng-if="!stats.linkClicks.youtube || !SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">--</h2>
-                    <h2 class="stats__rowClicks">--</h2>
-                </span>
-                <span ng-if="stats.linkClicks.youtube && SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">{{stats.linkClicks.youtube}}<span ng-if="!stats.linkClicks.youtube">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.youtube / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
-                </span>
-            </div>
-            <div class="stats__row">
-                <h3 class="stats__label">Pinterest</h3>
-                <span ng-if="!stats.linkClicks.pinterest || !SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">--</h2>
-                    <h2 class="stats__rowClicks">--</h2>
-                </span>
-                <span ng-if="stats.linkClicks.pinterest && SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">{{stats.linkClicks.pinterest}}<span ng-if="!stats.linkClicks.pinterest">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.pinterest / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
-                </span>
-            </div>
-            <div class="stats__row">
-                <h3 class="stats__label">Instagram</h3>
-                <span ng-if="!stats.linkClicks.instagram || !SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">--</h2>
-                    <h2 class="stats__rowClicks">--</h2>
-                </span>
-                <span ng-if="stats.linkClicks.instagram && SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">{{stats.linkClicks.instagram}}<span ng-if="!stats.linkClicks.instagram">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.instagram / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
-                </span>
-            </div>
-            <div class="stats__row">
-                <h3 class="stats__label">Social Total</h3>
-                <span ng-if="!SelfieManageCampaignStatsCtrl.totalSocialClicks || !SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">--</h2>
-                    <h2 class="stats__rowClicks">--</h2>
-                </span>
-                <span ng-if="SelfieManageCampaignStatsCtrl.totalSocialClicks && SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalSocialClicks}}<span ng-if="!SelfieManageCampaignStatsCtrl.totalSocialClicks">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
-                </span>
             </div>
         </div>
     </div><!--.grid .grid--center-->
