@@ -225,7 +225,7 @@
             </div>
             <div class="stats__row">
                 <div class="stats__column stats__columnGraph">
-                    <div percentage-width="{{(stats.linkClicks.action / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                    <div ng-style="{'width': ((stats.linkClicks.action / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                 </div>
                 <h3 class="stats__label">Call to Action</h3>
                 <span ng-if="!stats.linkClicks.action || !SelfieManageCampaignStatsCtrl.hasViews">
@@ -239,7 +239,7 @@
             </div>
             <div class="stats__row">
                 <div class="stats__column stats__columnGraph">
-                    <div percentage-width="{{(stats.linkClicks.website / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                    <div ng-style="{'width': ((stats.linkClicks.website / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                 </div>
                 <h3 class="stats__label">Website</h3>
 
@@ -253,9 +253,33 @@
                 </span>
             </div>
 
-            <div ng-class="{'stats__row--open': showShareStats, 'stats__row--closed': !showShareStats}" class="stats__row stats__row--share">
+            <div ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__row">
                 <div class="stats__column stats__columnGraph">
-                    <div percentage-width="{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                    <div class="stats__columnGraph--bar"></div>
+                </div>
+                <h3 class="stats__label">Share Total</h3>
+
+                <span>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                </span>
+            </div>
+
+            <div ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__row">
+                <div class="stats__column stats__columnGraph">
+                    <div class="stats__columnGraph--bar"></div>
+                </div>
+                <h3 class="stats__label">Social Total</h3>
+
+                <span>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                </span>
+            </div>
+
+            <div ng-if="SelfieManageCampaignStatsCtrl.hasViews" ng-class="{'stats__row--open': showShareStats, 'stats__row--closed': !showShareStats}" class="stats__row stats__row--share">
+                <div class="stats__column stats__columnGraph">
+                    <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                 </div>
                 <button ng-click="showShareStats = !showShareStats" class="accordion__btn">
                     <i class="fa fa-chevron-right"></i>
@@ -284,7 +308,7 @@
                     </div>
                     <div class="stats__row stats__row--facebook">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.shareClicks.facebook / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.shareClicks.facebook / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-facebook"></i>
                         <h3 class="stats__label">Facebook</h3>
@@ -299,7 +323,7 @@
                     </div>
                     <div class="stats__row stats__row--twitter">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.shareClicks.twitter / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.shareClicks.twitter / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-twitter"></i>
                         <h3 class="stats__label">Twitter</h3>
@@ -315,7 +339,7 @@
                     </div>
                     <div class="stats__row stats__row--pinterest">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.shareClicks.pinterest / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.shareClicks.pinterest / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-pinterest-p"></i>
                         <h3 class="stats__label">Pinterest</h3>
@@ -332,9 +356,9 @@
                 </div>
             </div>
 
-            <div ng-class="{'stats__row--open': showSocialStats, 'stats__row--closed': !showSocialStats}" class="stats__row stats__row--social">
+            <div ng-if="SelfieManageCampaignStatsCtrl.hasViews" ng-class="{'stats__row--open': showSocialStats, 'stats__row--closed': !showSocialStats}" class="stats__row stats__row--social">
                 <div class="stats__column stats__columnGraph">
-                    <div percentage-width="{{(SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                    <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                 </div>
                 <button ng-click="showSocialStats = !showSocialStats" class="accordion__btn">
                     <i class="fa fa-chevron-right"></i>
@@ -361,7 +385,7 @@
                     </div>
                     <div class="stats__row stats__row--facebook">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.linkClicks.facebook / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.linkClicks.facebook / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-facebook"></i>
                         <h3 class="stats__label">Facebook</h3>
@@ -376,7 +400,7 @@
                     </div>
                     <div class="stats__row stats__row--twitter">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.linkClicks.twitter / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.linkClicks.twitter / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-twitter"></i>
                         <h3 class="stats__label">Twitter</h3>
@@ -391,7 +415,7 @@
                     </div>
                     <div class="stats__row stats__row--instagram">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.linkClicks.instagram / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.linkClicks.instagram / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-instagram"></i>
                         <h3 class="stats__label">Instagram</h3>
@@ -406,7 +430,7 @@
                     </div>
                     <div class="stats__row stats__row--youtube">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.linkClicks.youtube / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.linkClicks.youtube / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-youtube-play"></i>
                         <h3 class="stats__label">YouTube</h3>
@@ -421,7 +445,7 @@
                     </div>
                     <div class="stats__row stats__row--vimeo">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.linkClicks.vimeo / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.linkClicks.vimeo / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-vimeo"></i>
                         <h3 class="stats__label">Vimeo</h3>
@@ -436,7 +460,7 @@
                     </div>
                     <div class="stats__row stats__row--pinterest">
                         <div class="stats__column stats__columnGraph">
-                            <div percentage-width="{{(stats.linkClicks.pinterest / stats.views) * 100 | number:2}}" class="stats__columnGraph--bar"></div>
+                            <div ng-style="{'width': ((stats.linkClicks.pinterest / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                         </div>
                         <i class="fa fa-pinterest-p"></i>
                         <h3 class="stats__label">Pinterest</h3>

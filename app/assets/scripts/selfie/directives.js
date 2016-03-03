@@ -433,17 +433,6 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
-        .directive('percentageWidth', [function() {
-            return {
-                restrict: 'A',
-                link: function(scope, $element, attrs) {
-                    attrs.$observe('percentageWidth', function(value) {
-                        $element.width(value + '%');
-                    });
-                }
-            };
-        }])
-
         .directive('quartileBarGraph', ['Chart','$timeout','c6Debounce',
         function                       ( Chart , $timeout , c6Debounce ) {
             function getPercentage(num, total) {
