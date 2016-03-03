@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.38.0 (March 3, 2016)
 * *[v1.38.0.rc1]*
   * [DEV]: Added grunt task for inspecting and validating HTML
   * [FIX]: Fix for an issue where "Cancel Changes" button does not
@@ -9,6 +10,9 @@
   * [FEATURE]: Require admins to enter a duration before approving a
     a campaign in the unlikely event that the backend is unable to
     determine the duration
+  * [FEATURE]: Add quartile data and "view calculator" to Stats page
+  * [FEATURE]: Update engagement data display with graphs
+* *[/v1.38.0.rc1]*
 
 ## v1.37.0 (February 29, 2016)
 * *[v1.37.0.rc3]*

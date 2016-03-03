@@ -408,6 +408,184 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
+        .directive('parseAsInt', [function() {
+            return {
+                restrict: 'A',
+                require: 'ngModel',
+                link: function(scope, $element, attrs, ngModel) {
+                    ngModel.$parsers.push(function(value) {
+                        return parseInt(value);
+                    });
+                }
+            };
+        }])
+
+        .directive('rangeSlider', ['$timeout',function($timeout) {
+            return {
+                restrict: 'A',
+                require: 'ngModel',
+                link: function(scope, $element, attrs, ngModel) {
+                    // this fixes an angular bug
+                    $timeout(function() {
+                        $element.val(ngModel.$viewValue);
+                    });
+                }
+            };
+        }])
+
+        .directive('quartileBarGraph', ['Chart','$timeout','c6Debounce',
+        function                       ( Chart , $timeout , c6Debounce ) {
+            function getPercentage(num, total) {
+                return !total ? 0 : Math.round(((num / total) * 100));
+            }
+
+            function calculateCompleteViewData(stats, duration) {
+                var data = [];
+
+                var views = stats.views,
+                    q1 = stats.quartile1,
+                    q2 = stats.quartile2,
+                    q3 = stats.quartile3,
+                    q4 = stats.quartile4;
+
+                var diff0to1 = views - q1,
+                    diff1to2 = q1 - q2,
+                    diff2to3 = q2 - q3,
+                    diff3to4 = q3 - q4;
+
+                var qSecs = Math.round(duration * 0.25),
+                    first = Math.round(duration * 0.25),
+                    second = Math.round(duration * 0.5),
+                    third = Math.round(duration * 0.75);
+
+                var i;
+
+                for (i = 0; i <= duration; i++) {
+                    if (i <= first) {
+                        data.push(
+                            Math.round(views - (i * (diff0to1 / qSecs)))
+                        );
+                    } else if (i <= second) {
+                        data.push(
+                            Math.round(q1 - ((i - first) * (diff1to2 / qSecs)))
+                        );
+                    } else if (i <= third) {
+                        data.push(
+                            Math.round(q2 - ((i - second) * (diff2to3 / qSecs)))
+                        );
+                    } else {
+                        data.push(
+                            Math.round(q3 - ((i - third) * (diff3to4 / qSecs)))
+                        );
+                    }
+                }
+
+                return data;
+            }
+
+            function getCalculatedData(views, duration, data) {
+                var first = Math.round(duration * 0.25),
+                    second = Math.round(duration * 0.5),
+                    third = Math.round(duration * 0.75);
+
+                var newData = [
+                    getPercentage(data[first], views),
+                    getPercentage(data[second], views),
+                    getPercentage(data[third], views),
+                    getPercentage(data[duration], views)
+                ];
+
+                return newData;
+            }
+
+            return {
+                restrict: 'A',
+                scope: {
+                    stats: '=',
+                    duration: '='
+                },
+                link: function(scope, $element) {
+                    var _barGraph, _actualData;
+
+                    function initGraph() {
+                        // only called when stats change
+                        var canvas = $element.find('canvas')[0].getContext('2d'),
+                            duration = scope.duration,
+                            stats = scope.stats,
+                            views = stats.views,
+                            options = {
+                                scaleOverride : true,
+                                scaleSteps : 10,
+                                scaleStepWidth : 10,
+                                scaleStartValue : 0
+                            },
+                            realData = [
+                                getPercentage(stats.quartile1, views),
+                                getPercentage(stats.quartile2, views),
+                                getPercentage(stats.quartile3, views),
+                                getPercentage(stats.quartile4, views)
+                            ];
+
+                        // set actualData in directive scope
+                        _actualData = calculateCompleteViewData(stats, duration.actual);
+
+                        _barGraph = new Chart(canvas).barSkinny({
+                            labels : ['','','',''],
+                            datasets : [
+                                {
+                                    fillColor: 'rgba(17, 157, 164, 0.75)',
+                                    strokeColor: 'rgba(17, 157, 164, 1)',
+                                    data: realData
+                                },
+                                {
+                                    fillColor: 'rgba(0, 0, 0, 0.1)',
+                                    strokeColor: 'rgba(0, 0, 0, 0.25)',
+                                    data: duration.actual !== duration.custom ?
+                                        getCalculatedData(views, duration.custom, _actualData) :
+                                        realData
+                                }
+                            ]
+                        }, options);
+                    }
+
+                    var updateGraph = c6Debounce(function(args) {
+                        if (args[0] === args[1]) { return; }
+
+                        // only called when duration changes
+                        var views = scope.stats.views,
+                            duration = scope.duration.custom,
+                            newData = getCalculatedData(views, duration, _actualData);
+
+                        _barGraph.datasets[1].bars[0].value = newData[0];
+                        _barGraph.datasets[1].bars[1].value = newData[1];
+                        _barGraph.datasets[1].bars[2].value = newData[2];
+                        _barGraph.datasets[1].bars[3].value = newData[3];
+
+                        _barGraph.update();
+                    }, 500);
+
+                    Chart.types.Bar.extend({
+                        name: 'barSkinny',
+                        draw: function() {
+                            this.options.barValueSpacing = this.chart.width / 20;
+                            Chart.types.Bar.prototype.draw.apply(this, arguments);
+                        }
+                    });
+
+                    scope.$watch('duration', updateGraph, true);
+
+                    scope.$watch('stats', function() {
+                        if (_barGraph) {
+                            _barGraph.destroy();
+                            initGraph();
+                        }
+                    });
+
+                    $timeout(initGraph);
+                }
+            };
+        }])
+
         .directive('interactionsPiechart', ['$timeout','$filter','Chart',
         function                           ( $timeout , $filter , Chart ) {
             return {
