@@ -212,7 +212,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
 
                     describe('hasDuration', function() {
-                        it('should be true if card has duration', function() {
+                        it('should be true if card has duration and is not -1', function() {
+                            expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(false);
+
+                            updateRequest.data.cards[0].data.duration = -1;
+                            card.data.duration = undefined;
+
+                            compileCtrl(cState, {});
+
                             expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(false);
 
                             updateRequest.data.cards[0].data.duration = 30;
@@ -242,6 +249,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     describe('hasDuration', function() {
                         it('should be true if card has duration', function() {
+                            expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(false);
+
+                            card.data.duration = -1;
+
+                            compileCtrl(cState, {});
+
                             expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(false);
 
                             card.data.duration = 30;

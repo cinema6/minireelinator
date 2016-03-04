@@ -166,12 +166,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     scaleOverride : true,
                     scaleSteps : 10,
                     scaleStepWidth : 10,
-                    scaleStartValue : 0
+                    scaleStartValue : 0,
+                    showTooltips: true
                 });
             });
 
             describe('when views are 0', function() {
-                it('should render an empty graph', function() {
+                it('should render a default graph', function() {
                     $scope.stats = {
                         impressions: 1656,
                         views: 0,
@@ -195,19 +196,108 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             {
                                 fillColor: 'rgba(17, 157, 164, 0.75)',
                                 strokeColor: 'rgba(17, 157, 164, 1)',
-                                data: [0, 0, 0, 0]
+                                data: [80, 60, 40, 20]
                             },
                             {
                                 fillColor: 'rgba(0, 0, 0, 0.1)',
                                 strokeColor: 'rgba(0, 0, 0, 0.25)',
-                                data: [0, 0, 0, 0]
+                                data: [80, 60, 40, 20]
                             }
                         ]
                     }, {
                         scaleOverride : true,
                         scaleSteps : 10,
                         scaleStepWidth : 10,
-                        scaleStartValue : 0
+                        scaleStartValue : 0,
+                        showTooltips: false
+                    });
+                });
+            });
+
+            describe('when there is no duration', function() {
+                it('should render a default graph', function() {
+                    $scope.duration.actual = -1;
+                    $scope.stats = {
+                        impressions: 1656,
+                        views: 1000,
+                        quartile1: 900,
+                        quartile2: 800,
+                        quartile3: 300,
+                        quartile4: 200,
+                        totalSpend: '0',
+                        linkClicks: {},
+                        shareClicks: {}
+                    };
+
+                    compileDirective();
+
+                    $timeout.flush();
+
+                    expect(Chart).toHaveBeenCalledWith($canvas);
+                    expect(barSkinny).toHaveBeenCalledWith({
+                        labels : ['','','',''],
+                        datasets: [
+                            {
+                                fillColor: 'rgba(17, 157, 164, 0.75)',
+                                strokeColor: 'rgba(17, 157, 164, 1)',
+                                data: [80, 60, 40, 20]
+                            },
+                            {
+                                fillColor: 'rgba(0, 0, 0, 0.1)',
+                                strokeColor: 'rgba(0, 0, 0, 0.25)',
+                                data: [80, 60, 40, 20]
+                            }
+                        ]
+                    }, {
+                        scaleOverride : true,
+                        scaleSteps : 10,
+                        scaleStepWidth : 10,
+                        scaleStartValue : 0,
+                        showTooltips: false
+                    });
+                });
+            });
+
+            describe('when duration is -1', function() {
+                it('should render a default graph', function() {
+                    $scope.duration.actual = undefined;
+                    $scope.stats = {
+                        impressions: 1656,
+                        views: 1000,
+                        quartile1: 900,
+                        quartile2: 800,
+                        quartile3: 300,
+                        quartile4: 200,
+                        totalSpend: '0',
+                        linkClicks: {},
+                        shareClicks: {}
+                    };
+
+                    compileDirective();
+
+                    $timeout.flush();
+
+                    expect(Chart).toHaveBeenCalledWith($canvas);
+                    expect(barSkinny).toHaveBeenCalledWith({
+                        labels : ['','','',''],
+                        datasets: [
+                            {
+                                fillColor: 'rgba(17, 157, 164, 0.75)',
+                                strokeColor: 'rgba(17, 157, 164, 1)',
+                                data: [80, 60, 40, 20]
+                            },
+                            {
+                                fillColor: 'rgba(0, 0, 0, 0.1)',
+                                strokeColor: 'rgba(0, 0, 0, 0.25)',
+                                data: [80, 60, 40, 20]
+                            }
+                        ]
+                    }, {
+                        scaleOverride : true,
+                        scaleSteps : 10,
+                        scaleStepWidth : 10,
+                        scaleStartValue : 0,
+                        showTooltips: false
                     });
                 });
             });
@@ -227,6 +317,57 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             quartile3: 300,
                             quartile4: 200,
                             totalSpend: '0',
+                            linkClicks: {},
+                            shareClicks: {}
+                        };
+                    });
+
+                    expect(Chart).not.toHaveBeenCalled();
+                    expect(barSkinny).not.toHaveBeenCalled();
+                    expect(_barSkinny.destroy).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('when the duration is not set or is -1', function() {
+                it('should do nothing', function() {
+                    compileDirective();
+
+                    $timeout.flush();
+
+                    Chart.calls.reset();
+                    barSkinny.calls.reset();
+
+                    $scope.duration.actual = -1;
+
+                    $scope.$apply(function() {
+                        $scope.stats = {
+                            impressions: 1656,
+                            views: 1000,
+                            quartile1: 900,
+                            quartile2: 800,
+                            quartile3: 300,
+                            quartile4: 200,
+                            totalSpend: '0',
+                            linkClicks: {},
+                            shareClicks: {}
+                        };
+                    });
+
+                    expect(Chart).not.toHaveBeenCalled();
+                    expect(barSkinny).not.toHaveBeenCalled();
+                    expect(_barSkinny.destroy).not.toHaveBeenCalled();
+
+                    $scope.duration.actual = undefined;
+
+                    $scope.$apply(function() {
+                        $scope.stats = {
+                            impressions: 165600,
+                            views: 100000,
+                            quartile1: 90000,
+                            quartile2: 8000,
+                            quartile3: 3000,
+                            quartile4: 2000,
+                            totalSpend: '1000',
                             linkClicks: {},
                             shareClicks: {}
                         };
@@ -299,7 +440,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             scaleOverride : true,
                             scaleSteps : 10,
                             scaleStepWidth : 10,
-                            scaleStartValue : 0
+                            scaleStartValue : 0,
+                            showTooltips: true
                         });
                     });
                 });
@@ -366,7 +508,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             scaleOverride : true,
                             scaleSteps : 10,
                             scaleStepWidth : 10,
-                            scaleStartValue : 0
+                            scaleStartValue : 0,
+                            showTooltips: true
                         });
                     });
                 });

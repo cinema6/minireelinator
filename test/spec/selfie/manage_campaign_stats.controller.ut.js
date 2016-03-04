@@ -105,6 +105,28 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('hasViews', function() {
+
+            });
+
+            describe('hasDuration', function() {
+                it('should be true if set and not -1', function() {
+                    expect(SelfieManageCampaignStatsCtrl.hasDuration).toBe(true);
+
+                    SelfieManageCampaignStatsCtrl.duration.actual = undefined;
+
+                    expect(SelfieManageCampaignStatsCtrl.hasDuration).toBe(false);
+
+                    SelfieManageCampaignStatsCtrl.duration.actual = -1;
+
+                    expect(SelfieManageCampaignStatsCtrl.hasDuration).toBe(false);
+
+                    SelfieManageCampaignStatsCtrl.duration.actual = 133;
+
+                    expect(SelfieManageCampaignStatsCtrl.hasDuration).toBe(true);
+                });
+            });
+
             describe('selectedRange', function() {
                 it('should be the range option that is selected or default to custom range', function() {
                     spyOn(CampaignService, 'getAnalytics').and.returnValue($q.defer().promise);

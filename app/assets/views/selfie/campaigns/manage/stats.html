@@ -105,7 +105,7 @@
 
         <div class="grid__item two-fifths interactions__group">
             <div class="grid">
-                <div class="grid__item one-whole">
+                <div class="grid__item one-whole" ng-switch="SelfieManageCampaignStatsCtrl.hasDuration && SelfieManageCampaignStatsCtrl.hasViews">
                     <div class="stats__row stats__sub-hdr">
                         <h3 class="stats__label">Duration</h3>
                         <h3 class="stats__rowData">Percentage</h3>
@@ -113,37 +113,57 @@
                     </div>
                     <div class="stats__row">
                         <h3 class="stats__label">25%</h3>
-                        <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile1 / stats.views) * 100 | number:1}}%</h2>
-                        <h2 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">0%</h2>
-                        <h2 class="stats__rowData stats__rowViews">{{stats.quartile1}}</h2>
+                        <span ng-switch-when="false">
+                            <h2 class="stats__rowData stats__rowViews">--</h2>
+                            <h2 class="stats__rowData stats__rowViews">--</h2>
+                        </span>
+                        <span ng-switch-when="true">
+                            <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile1 / stats.views) * 100 | number:1}}%</h2>
+                            <h2 class="stats__rowData stats__rowViews">{{stats.quartile1}}</h2>
+                        </span>
                     </div>
                     <div class="stats__row">
                         <h3 class="stats__label">50%</h3>
-                        <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile2 / stats.views) * 100 | number:1}}%</h2>
-                        <h2 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">0%</h2>
-                        <h2 class="stats__rowData stats__rowViews">{{stats.quartile2}}</h2>
+                        <span ng-switch-when="false">
+                            <h2 class="stats__rowData stats__rowViews">--</h2>
+                            <h2 class="stats__rowData stats__rowViews">--</h2>
+                        </span>
+                        <span ng-switch-when="true">
+                            <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile2 / stats.views) * 100 | number:1}}%</h2>
+                            <h2 class="stats__rowData stats__rowViews">{{stats.quartile2}}</h2>
+                        </span>
                     </div>
                     <div class="stats__row">
                         <h3 class="stats__label">75%</h3>
-                        <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile3 / stats.views) * 100 | number:1}}%</h2>
-                        <h2 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">0%</h2>
-                        <h2 class="stats__rowData stats__rowViews">{{stats.quartile3}}</h2>
+                        <span ng-switch-when="false">
+                            <h2 class="stats__rowData stats__rowViews">--</h2>
+                            <h2 class="stats__rowData stats__rowViews">--</h2>
+                        </span>
+                        <span ng-switch-when="true">
+                            <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile3 / stats.views) * 100 | number:1}}%</h2>
+                            <h2 class="stats__rowData stats__rowViews">{{stats.quartile3}}</h2>
+                        </span>
                     </div>
                     <div class="stats__row">
                         <h3 class="stats__label">100%</h3>
-                        <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile4 / stats.views) * 100 | number:1}}%</h2>
-                        <h2 ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">0%</h2>
-                        <h2 class="stats__rowData stats__rowViews">{{stats.quartile4}}</h2>
+                        <span ng-switch-when="false">
+                            <h2 class="stats__rowData stats__rowViews">--</h2>
+                            <h2 class="stats__rowData stats__rowViews">--</h2>
+                        </span>
+                        <span ng-switch-when="true">
+                            <h2 ng-if="SelfieManageCampaignStatsCtrl.hasViews" class="stats__rowData stats__rowViews">{{(stats.quartile4 / stats.views) * 100 | number:1}}%</h2>
+                            <h2 class="stats__rowData stats__rowViews">{{stats.quartile4}}</h2>
+                        </span>
                     </div>
                 </div><!--
                 --><div class="grid__item one-whole">
                     <h1 class="tk--hdr stats__hdr--tool">View Calculator</h1>
 
-                    <div class="stats__vidCalc">
+                    <div ng-class="{'stats__vidCalc--noData': !SelfieManageCampaignStatsCtrl.hasDuration || !SelfieManageCampaignStatsCtrl.hasViews}" class="stats__vidCalc">
                         <p>See how many people would see your whole video if it was shorter.</p>
 
                         <form action="" method="get" class="vidCalc__slider">
-                            <input parse-as-int range-slider ng-model="SelfieManageCampaignStatsCtrl.duration.custom" type="range" name="seconds" min="10" max="{{SelfieManageCampaignStatsCtrl.duration.actual}}" default-value="{{SelfieManageCampaignStatsCtrl.duration.actual}}" class="slider__time">
+                            <input parse-as-int range-slider ng-model="SelfieManageCampaignStatsCtrl.duration.custom" type="range" name="seconds" min="10" max="{{SelfieManageCampaignStatsCtrl.duration.actual}}" default-value="{{SelfieManageCampaignStatsCtrl.duration.actual}}" ng-disabled="!SelfieManageCampaignStatsCtrl.hasDuration || !SelfieManageCampaignStatsCtrl.hasViews" class="slider__time">
                         </form>
 
                         <div class="slider__scale">
@@ -151,7 +171,7 @@
 
                             <form action="" method="get" class="slider__range slider__range--input">
                                 <fieldset class="form__item form__center form__item--miniInput">
-                                    <input class="form__textBox form__textBox--units form__fillCheck" type="number" ng-model="SelfieManageCampaignStatsCtrl.duration.custom" min="10" max="{{SelfieManageCampaignStatsCtrl.duration.actual}}">
+                                    <input class="form__textBox form__textBox--units form__fillCheck" type="number" ng-model="SelfieManageCampaignStatsCtrl.duration.custom" min="10" max="{{SelfieManageCampaignStatsCtrl.duration.actual}}" ng-disabled="!SelfieManageCampaignStatsCtrl.hasDuration || !SelfieManageCampaignStatsCtrl.hasViews">
                                     <label class="slider-label">
                                         <i class="fa fa-times ui--error">Seconds</i> 
                                     </label>
@@ -163,7 +183,8 @@
                                 </fieldset>
                             </form>
 
-                            <span class="slider__range slider__range--max">{{SelfieManageCampaignStatsCtrl.duration.actual}}s</span>
+                            <span ng-if="SelfieManageCampaignStatsCtrl.hasDuration" class="slider__range slider__range--max">{{SelfieManageCampaignStatsCtrl.duration.actual}}s</span>
+                            <span ng-if="!SelfieManageCampaignStatsCtrl.hasDuration" class="slider__range slider__range--max">30s</span>
                         </div>
                     </div>
                 </div>
@@ -172,7 +193,7 @@
         --><div class="grid__item three-fifths">
             <div class="grid">
                 <div class="grid__item one-whole">
-                    <div quartile-bar-graph stats="stats" duration="SelfieManageCampaignStatsCtrl.duration" class="chart__group">
+                    <div quartile-bar-graph stats="stats" duration="SelfieManageCampaignStatsCtrl.duration" ng-class="{'chart__group--noData': !SelfieManageCampaignStatsCtrl.hasDuration || !SelfieManageCampaignStatsCtrl.hasViews }" class="chart__group">
                         <canvas id="bar__quartile" height="427px" width="763px" class="chart"></canvas>
 
                         <div class="chart__label">
@@ -253,7 +274,7 @@
                 </span>
             </div>
 
-            <div ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__row">
+            <!-- <div ng-if="!SelfieManageCampaignStatsCtrl.hasViews" class="stats__row">
                 <div class="stats__column stats__columnGraph">
                     <div class="stats__columnGraph--bar"></div>
                 </div>
@@ -275,9 +296,9 @@
                     <h2 class="stats__rowData stats__rowClicks">--</h2>
                     <h2 class="stats__rowData stats__rowClicks">--</h2>
                 </span>
-            </div>
+            </div> -->
 
-            <div ng-if="SelfieManageCampaignStatsCtrl.hasViews" ng-class="{'stats__row--open': showShareStats, 'stats__row--closed': !showShareStats}" class="stats__row stats__row--share">
+            <div ng-class="{'stats__row--open': showShareStats, 'stats__row--closed': !showShareStats, 'stats__row--noData': !SelfieManageCampaignStatsCtrl.hasViews }" class="stats__row stats__row--share">
                 <div class="stats__column stats__columnGraph">
                     <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                 </div>
@@ -356,7 +377,7 @@
                 </div>
             </div>
 
-            <div ng-if="SelfieManageCampaignStatsCtrl.hasViews" ng-class="{'stats__row--open': showSocialStats, 'stats__row--closed': !showSocialStats}" class="stats__row stats__row--social">
+            <div ng-class="{'stats__row--open': showSocialStats, 'stats__row--closed': !showSocialStats, 'stats__row--noData': !SelfieManageCampaignStatsCtrl.hasViews }" class="stats__row stats__row--social">
                 <div class="stats__column stats__columnGraph">
                     <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                 </div>

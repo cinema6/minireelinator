@@ -32,10 +32,10 @@
                             </div>
                             <br>
                             <div class="action__btnGroup ui__btnHolder">
-                                <button ng-click="Ctrl.approveCampaign()" ng-disabled="!Ctrl.updatedCampaign.cards[0].data.duration" ng-class="{'btn--disabled' : !Ctrl.updatedCampaign.cards[0].data.duration }" class="action__btn action__btn--big">Approve</button>
+                                <button ng-click="Ctrl.approveCampaign()" ng-disabled="!Ctrl.updatedCampaign.cards[0].data.duration || Ctrl.updatedCampaign.cards[0].data.duration === -1" ng-class="{'btn--disabled' : !Ctrl.updatedCampaign.cards[0].data.duration || Ctrl.updatedCampaign.cards[0].data.duration === -1 }" class="action__btn action__btn--big">Approve</button>
                                 <button ng-click="Ctrl.rejectCampaign()" class="action__btn action__btn--big">Reject</button>
                             </div>
-                            <p ng-if="!Ctrl.updatedCampaign.cards[0].data.duration" class="grid--center alertMessage alert__failure"><b>A duration is required.</b></p>
+                            <p ng-if="!Ctrl.updatedCampaign.cards[0].data.duration || Ctrl.updatedCampaign.cards[0].data.duration === -1" class="grid--center alertMessage alert__failure"><b>A duration is required.</b></p>
                             </div>
                         </div>
                     </div>
