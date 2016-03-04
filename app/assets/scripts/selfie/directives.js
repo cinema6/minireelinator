@@ -542,7 +542,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                                 {
                                     fillColor: 'rgba(0, 0, 0, 0.1)',
                                     strokeColor: 'rgba(0, 0, 0, 0.25)',
-                                    data: duration.actual !== duration.custom ?
+                                    data: duration.actual !== duration.custom && hasData ?
                                         getCalculatedData(views, duration.custom, _actualData) :
                                         realData
                                 }
