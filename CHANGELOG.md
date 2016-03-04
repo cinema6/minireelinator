@@ -1,6 +1,6 @@
 # MiniReelinator
 
-## v1.38.0 (March 3, 2016)
+## v1.38.0 (March 4, 2016)
 * *[v1.38.0.rc1]*
   * [DEV]: Added grunt task for inspecting and validating HTML
   * [FIX]: Fix for an issue where "Cancel Changes" button does not
@@ -12,6 +12,8 @@
     determine the duration
   * [FEATURE]: Add quartile data and "view calculator" to Stats page
   * [FEATURE]: Update engagement data display with graphs
+  * [FIX]: Ensure that a lack of duration or views does not break the
+    quartile graph and view calculator on the stats page
 * *[/v1.38.0.rc1]*
 
 ## v1.37.0 (February 29, 2016)
