@@ -2277,6 +2277,11 @@ function( angular , c6State  , PaginatedListState                    ,
                         return !!this.stats.views;
                     }
                 },
+                hasDuration: {
+                    get: function() {
+                        return !!this.duration.actual && this.duration.actual !== -1;
+                    }
+                },
                 selectedRange: {
                     get: function() {
                         return this.rangeOptions.filter(function(option) {
@@ -2518,7 +2523,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     previewCard: (updateRequest) ? copy(updatedCampaign.cards[0]) : null,
                     rejectionReason: '',
                     error: null,
-                    hasDuration: !!updatedCampaign.cards[0].data.duration
+                    hasDuration: !!updatedCampaign.cards[0].data.duration &&
+                        updatedCampaign.cards[0].data.duration !== -1
                 });
             };
 
