@@ -204,9 +204,9 @@ fa,
     .logo--center {
         margin: 0 auto 1em auto;
     }
-    @media 
-    (-webkit-min-device-pixel-ratio: 2), 
-    (min-resolution: 192dpi) { 
+    @media
+    (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 192dpi) {
         .rc__logo--square {
             background: url('../img/rc-logo-square-2x.png') no-repeat;
             background-size: 64px;
@@ -489,7 +489,7 @@ fa,
         .btn--link:hover,
         .btn--link:focus {
             color: #0E7D81;
-        }        
+        }
         .btn--small, .btn--small:focus {
             font-size:1em;
             padding:0.5rem 1rem 0.375rem;
@@ -1651,7 +1651,7 @@ fa,
                 color: #4AB8BA;
             }
 
-    /*  stats page classes        
+    /*  stats page classes
         ================================================ */
 
         .statsChart__infoBox {
@@ -1741,7 +1741,7 @@ fa,
             padding:0.125em 0 0.125em 1.5rem;
             position:relative;
             cursor: default;
-        } 
+        }
             .stats__hdr--title {
                 margin: 0;
                 font-weight: 400;
@@ -1765,7 +1765,7 @@ fa,
 
                 .stats__rowClicks {
                     float:right;
-                    margin:-0.5rem 1.5rem 0 0;                    
+                    margin:-0.5rem 1.5rem 0 0;
                     font-weight:400;
                     color:#119DA4;
                     min-width: 3em;
@@ -1864,7 +1864,7 @@ fa,
             }
 
         .helpBox--center {
-            left:5%; 
+            left:5%;
             right:5%;
             max-width:30rem;
             margin:1em 0 0 1.5em;
@@ -2379,7 +2379,7 @@ fa,
 
                 .campaign__item:hover .campaign__name, .campaign__item:hover .campaign__previewLink {
                     color:#119DA4;
-                }                
+                }
                 .campaign__item:hover .campaign__name:hover {
                     color:#0E7D81;
                 }
@@ -2883,7 +2883,7 @@ fa,
             .form__label .form__counter {
                 display: none;
             }
-            .form__item--stackedInput .form__textBox:focus ~ .form__label .form__counter { 
+            .form__item--stackedInput .form__textBox:focus ~ .form__label .form__counter {
                 display: block;
             }
             .form__item--bigInput:first-child {
@@ -3318,7 +3318,7 @@ fa,
         width: 100%;
         text-align: left;
         font-size: 1.125em;
-    }        
+    }
         .inputItems__group .inputItem {
             display: inline-block;
             margin-top: 3px;
@@ -4087,7 +4087,7 @@ fa,
                 background-color: #0E7D81;
                 color: #fff;
             }
-            
+
         .dateRange .dateRange__selected {
             display: block;
             font-weight: normal;
@@ -4988,7 +4988,7 @@ div.tree-multiselect span.section-name {
         }
             .timeline__selectOption input[type=radio]:focus {
                 vertical-align: middle;
-                height: 1.5em;                
+                height: 1.5em;
             }
         .timeline__selectOption label {
             cursor: pointer;
@@ -5060,7 +5060,7 @@ div.tree-multiselect span.section-name {
                 padding: 0;
             }
         /*.ui-datepicker-calendar td:hover {
-            
+
         }*/
             .ui-datepicker-calendar td a {
                 display: block;
@@ -5116,10 +5116,10 @@ div.tree-multiselect span.section-name {
                 outline: 0;
                 background: #ffffff;
             }
-        .campaignWrap .formSection__number { 
+        .campaignWrap .formSection__number {
             border: 0;
         }
-        .campaignWrap .select2-container--default .select2-selection--single, 
+        .campaignWrap .select2-container--default .select2-selection--single,
         .campaignWrap .select2-container--default .select2-selection--multiple {
             border: 1px solid #ddd;
             -webkit-box-shadow: none;
@@ -5200,7 +5200,7 @@ div.tree-multiselect span.section-name {
         .campaignWrap .ui__tab {
             background: #eee;
         }
-        .campaignWrap .ui__tab--active, 
+        .campaignWrap .ui__tab--active,
         .campaignWrap .ui__tab--active:focus {
             background: #fff;
         }
@@ -5323,7 +5323,7 @@ div.tree-multiselect span.section-name {
     background: #fff;
     padding: 0.5em 1.5em 0.5em 1.375em;
     border:1px solid #ddd;
-    border-left: 2px solid #9c9c9c;    
+    border-left: 2px solid #9c9c9c;
     margin: 0 0 -1px 0;
     display: block;
     color: #5c5c5c;
@@ -5528,7 +5528,7 @@ div.tree-multiselect span.section-name {
 .select2 + .form__label {
     top: 0.375em;
 }
-.modalPayment__group .select2-container--default .select2-selection--single, 
+.modalPayment__group .select2-container--default .select2-selection--single,
 .modalPayment__group .select2-container--default .select2-selection--multiple {
     border: 0;
     border: 1px solid #ddd;
@@ -5584,8 +5584,8 @@ div.tree-multiselect span.section-name {
 .select2-container--default .select2-results__option[aria-selected=true]:hover {
     color: #fff;
 }
-.ui--active ~ .select2-container--default .select2-selection--single, 
-.ui--active ~ .select2-container--default.select2-container--open.select2-container--below .select2-selection--multiple, 
+.ui--active ~ .select2-container--default .select2-selection--single,
+.ui--active ~ .select2-container--default.select2-container--open.select2-container--below .select2-selection--multiple,
 .select2-container--default.select2-container--focus .select2-selection--multiple {
     background: #f5f5f5;
     border: 1px solid #49B8B9;
@@ -5786,7 +5786,7 @@ div.tree-multiselect span.remove-selected {
 
             .statsChart__infoBox.stats__spend .fa {
                 background:#4FC184;
-                border-color:#4FC184; 
+                border-color:#4FC184;
             }
 
             .statsChart__infoBox.stats__spend .stats__infoNumber {
@@ -5795,7 +5795,7 @@ div.tree-multiselect span.remove-selected {
 
             .statsChart__infoBox.stats__clicks .fa {
                 background:#A83F7F;
-                border-color:#A83F7F; 
+                border-color:#A83F7F;
             }
 
                 .fa.percent:before {
@@ -6028,6 +6028,16 @@ div.tree-multiselect span.remove-selected {
                             color: #5c5c5c;
                         }
 
+                        /*  no data     */
+                        .stats__row--noData .stats__subTable:after {
+                            content:"No Data Available";
+                            font-style: italic;
+                        }
+                        .stats__row--noData .stats__subTable .stats__row {
+                            display:none;
+                        }
+                        /*  no data     */
+
 
         /*  Stats EPS Section Classes
             ================================================ */
@@ -6185,6 +6195,18 @@ div.tree-multiselect span.remove-selected {
                       background: #E2E2E2;
                     }
 
+                    /*  no data     */
+                    .stats__vidCalc--noData .slider__time::-webkit-slider-thumb {
+                        background: #eee;
+                    }
+                    .stats__vidCalc--noData .slider__time::-moz-range-thumb {
+                        background: #eee;
+                    }
+                    .stats__vidCalc--noData .slider__time::-ms-thumb {
+                        background: #eee;
+                    }
+                    /*  no data     */
+
 
 
             /*  Stats Form Classes
@@ -6218,6 +6240,30 @@ div.tree-multiselect span.remove-selected {
                 height: 100%!important;
                 max-height:427px!important;
             }
+
+            /*  no data     */
+            .chart__group--noData {
+                position:relative;
+            }
+
+            .chart__group--noData .chart,
+            .chart__group--noData .chart__label {
+                -webkit-filter: grayscale(0.55) blur(2px);
+                opacity:0.25;
+            }
+            .chart__group--noData:after {
+                content: "No Data Available";
+                font-family: "Roboto Condensed", arial, sans-serif;
+                font-style: italic;
+                font-size: 2em;
+                color: #5c5c5c;
+                position: absolute;
+                top: 2em;
+                left: 22%;
+                width: 56%;
+                text-align: center;
+            }
+            /*  no data     */
 
 
             /*  Stats Custom Chart Labeling Classes

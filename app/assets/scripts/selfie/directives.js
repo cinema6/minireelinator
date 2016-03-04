@@ -513,18 +513,20 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                             duration = scope.duration,
                             stats = scope.stats,
                             views = stats.views,
+                            hasData = !!duration.actual && duration.actual !== -1 && !!views,
                             options = {
                                 scaleOverride : true,
                                 scaleSteps : 10,
                                 scaleStepWidth : 10,
-                                scaleStartValue : 0
+                                scaleStartValue : 0,
+                                showTooltips: hasData,
                             },
-                            realData = [
+                            realData = hasData ? [
                                 getPercentage(stats.quartile1, views),
                                 getPercentage(stats.quartile2, views),
                                 getPercentage(stats.quartile3, views),
                                 getPercentage(stats.quartile4, views)
-                            ];
+                            ] : [80, 60, 40, 20];
 
                         // set actualData in directive scope
                         _actualData = calculateCompleteViewData(stats, duration.actual);
@@ -575,7 +577,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     scope.$watch('duration', updateGraph, true);
 
                     scope.$watch('stats', function() {
-                        if (_barGraph) {
+                        if (_barGraph && scope.duration.actual && scope.duration.actual !== -1) {
                             _barGraph.destroy();
                             initGraph();
                         }
