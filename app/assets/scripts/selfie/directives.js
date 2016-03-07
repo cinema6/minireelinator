@@ -535,7 +535,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                         _actualData = calculateCompleteViewData(stats, duration.actual);
 
                         _barGraph = new Chart(canvas).barSkinny({
-                            labels : ['', '', '', ''],
+                            labels : ['','','',''],
                             datasets : [
                                 {
                                     label: 'Actual',
