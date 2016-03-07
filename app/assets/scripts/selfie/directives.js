@@ -520,6 +520,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                                 scaleStepWidth : 10,
                                 scaleStartValue : 0,
                                 showTooltips: hasData,
+                                tooltipTitleFontSize: 0,
+                                scaleLabel: '<%= value + "%" %>',
+                                multiTooltipTemplate: '<%= datasetLabel %>: <%= value + "%" %>'
                             },
                             realData = hasData ? [
                                 getPercentage(stats.quartile1, views),
@@ -535,11 +538,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                             labels : ['','','',''],
                             datasets : [
                                 {
+                                    label: 'Actual',
                                     fillColor: 'rgba(17, 157, 164, 0.75)',
                                     strokeColor: 'rgba(17, 157, 164, 1)',
                                     data: realData
                                 },
                                 {
+                                    label: 'Estimated',
                                     fillColor: 'rgba(0, 0, 0, 0.1)',
                                     strokeColor: 'rgba(0, 0, 0, 0.25)',
                                     data: duration.actual !== duration.custom && hasData ?

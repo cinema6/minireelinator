@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.38.0.rc2]*
+  * [FIX]: Fix hover tooltip on quartile bar graph
+  * [FIX]: Add "%" units to y-axis on quartile bar graph
+
 ## v1.38.0 (March 4, 2016)
 * *[v1.38.0.rc1]*
   * [DEV]: Added grunt task for inspecting and validating HTML
