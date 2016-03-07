@@ -520,6 +520,12 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                                 scaleStepWidth : 10,
                                 scaleStartValue : 0,
                                 showTooltips: hasData,
+                                scaleLabel: '<%= value + "%" %>',
+                                multiTooltipTemplate: function(data) {
+                                    console.log(data);
+                                    return data.datasetLabel + ': ' + data.value + '%';
+                                }
+                                // multiTooltipTemplate: '<%= datasetLabel %>: <%= value + "%" %>'
                             },
                             realData = hasData ? [
                                 getPercentage(stats.quartile1, views),
@@ -532,14 +538,16 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                         _actualData = calculateCompleteViewData(stats, duration.actual);
 
                         _barGraph = new Chart(canvas).barSkinny({
-                            labels : ['','','',''],
+                            labels : ['Q1', 'Q2', 'Q3', 'Q4'],
                             datasets : [
                                 {
+                                    label: 'Actual',
                                     fillColor: 'rgba(17, 157, 164, 0.75)',
                                     strokeColor: 'rgba(17, 157, 164, 1)',
                                     data: realData
                                 },
                                 {
+                                    label: 'Estimated',
                                     fillColor: 'rgba(0, 0, 0, 0.1)',
                                     strokeColor: 'rgba(0, 0, 0, 0.25)',
                                     data: duration.actual !== duration.custom && hasData ?
@@ -568,6 +576,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
                     Chart.types.Bar.extend({
                         name: 'barSkinny',
+                        initialize: function(data) {
+                            Chart.types.Bar.prototype.initialize.apply(this, arguments);
+                            var xLabels = this.scale.xLabels;
+                            xLabels.forEach(function(item, i) {
+                                xLabels[i] = '';
+                            });
+                        },
                         draw: function() {
                             this.options.barValueSpacing = this.chart.width / 20;
                             Chart.types.Bar.prototype.draw.apply(this, arguments);
