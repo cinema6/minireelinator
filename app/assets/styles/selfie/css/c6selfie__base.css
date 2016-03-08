@@ -3962,7 +3962,7 @@ fa,
             display:block;
             position:absolute;
             top:0.875em;
-            right:5.25em;
+            right:0;
             color:#5c5c5c;
             font-weight:bold;
         }
@@ -5729,7 +5729,7 @@ div.tree-multiselect span.remove-selected {
 
 
 
-/* JESS STATS CSS */
+/* JESS STATS CSS OVERRIDES*/
 
 /*  ================================================
     Stats Page Overrides
@@ -5741,12 +5741,16 @@ div.tree-multiselect span.remove-selected {
             font-family: 'Source Sans Pro',Arial,Helvetica,sans-serif;
         }
 
+        [data-hint]:after {
+            white-space:initial!important;
+            min-width:10rem!important;
+        }
+
         .hint--text-wrap:after {
-            line-height: 1.25;
+            line-height: 1.25!important;
             text-align: left;
-            white-space: initial;
-            min-width: 8rem;
             display: block;
+            height:auto;
         }
 
         @media screen and (max-width: 78em) {
@@ -5767,6 +5771,8 @@ div.tree-multiselect span.remove-selected {
             .tabContent__header {
                 margin:0;
                 padding: 0;
+                position:relative;
+                width:100%;
             }
 
                 .tabContent__subtitle {
@@ -6226,19 +6232,19 @@ div.tree-multiselect span.remove-selected {
         /*  Stats Chart Classes
         ================================================ */
         .chart__group {
-            padding: 1rem 0 0 0;
             background:#fff;
             margin:1.5rem 0 0;
-            padding:1rem;
+            padding:2rem 1rem 2.5rem 2.5rem;
             width:100%;
             height:auto;
             border: 1px solid #ddd;
+            position:relative;
         }
 
             .chart {
                 width:100%!important;
                 height: 100%!important;
-                max-height:427px!important;
+                max-height:395px!important;
             }
 
             /*  no data     */
@@ -6247,7 +6253,10 @@ div.tree-multiselect span.remove-selected {
             }
 
             .chart__group--noData .chart,
-            .chart__group--noData .chart__label {
+            .chart__group--noData .chart__label,
+            .chart__group--noData .chart__label--x,
+            .chart__group--noData .chart__label--y,
+            .chart__group--noData .chart__key {
                 -webkit-filter: grayscale(0.55) blur(2px);
                 opacity:0.25;
             }
@@ -6269,7 +6278,7 @@ div.tree-multiselect span.remove-selected {
             /*  Stats Custom Chart Labeling Classes
             ================================================ */
             .chart__label {
-                margin:-1.375rem 0 0 3%;
+                margin:-1.375rem 0 0 5.5%;
             }
 
                 .chart__label .grid {
@@ -6314,3 +6323,73 @@ div.tree-multiselect span.remove-selected {
                                 border-top: 2px solid rgba(0, 0, 0, 0.25);
                                 padding-top: 0.5rem;
                             }
+
+            .chart__label--x,
+            .chart__label--y {
+                color:#5c5c5c;
+                font-family::"Open Sans";
+                font-size:1em;
+                font-style: italic;
+                position:absolute;
+                width:20%;
+                text-align:center;
+            }            
+
+            .chart__label--x {
+                left:44%;
+            }
+
+            .chart__label--y {
+                left:-7%;
+                bottom:55%;
+                transform:rotate(-90deg);
+                word-spacing:0.25em;
+            }
+            
+            .chart__key {
+                position: absolute;
+                top: 0.5em;
+                right: 0.5em;
+                background:rgba(255,255,255,0.95);
+                border: 2px solid #eee;
+                padding:0.25em 0.5em 0.25em 0;
+            }
+
+                .chart__key--bar1,
+                .chart__key--bar2 {
+                    float:left;
+                }
+
+                .chart__key--bar1 {
+                    margin:0 1.5em 0 0;
+                }
+
+                    .chart__key--bar1 div,
+                    .chart__key--bar2 div {
+                        vertical-align: top;
+                    }
+
+                        .chart__key--bar1 div,
+                        .chart__key--bar2 div {
+                            width: 1em;
+                            height: 1em;
+                            margin: 0.25em 0.5em;
+                            display: inline-block;
+                        }
+
+                        .chart__key--bar1 div {
+                            background: rgba(17, 157, 164, 0.75);
+                            border:1px solid rgba(17, 157, 164, 1);
+                        }
+
+                        .chart__key--bar2 div {
+                            background: rgba(0, 0, 0, 0.1);
+                            border:1px solid rgba(0, 0, 0, 0.25);
+                        }
+
+                        .chart__key--bar1 span,
+                        .chart__key--bar2 span {
+                            color:#5c5c5c;
+                            font-family:"Roboto Condensed";
+                        }
+
