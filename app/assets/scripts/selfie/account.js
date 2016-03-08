@@ -13,6 +13,7 @@ function( angular , c6State  ) {
                 this.controllerAs = 'LoginCtrl';
 
                 this.queryParams = {
+                    redirectTo: '&',
                     reason: '&'
                 };
 
