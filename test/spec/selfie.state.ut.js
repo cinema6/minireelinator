@@ -4,6 +4,7 @@ define(['app'], function(appModule) {
     describe('Selfie State', function() {
         var $rootScope,
             $q,
+            $location,
             c6State,
             cinema6,
             AuthService,
@@ -18,6 +19,7 @@ define(['app'], function(appModule) {
                 cinema6 = $injector.get('cinema6');
                 AuthService = $injector.get('AuthService');
                 $q = $injector.get('$q');
+                $location = $injector.get('$location');
             });
 
             selfie = c6State.get('Selfie');
@@ -60,6 +62,7 @@ define(['app'], function(appModule) {
                 beforeEach(function() {
                     AuthService.checkStatus.and.returnValue($q.reject('BLEGH'));
                     spyOn(c6State, 'goTo');
+                    spyOn($location, 'path').and.returnValue('/campaigns');
                     $rootScope.$apply(function() {
                         selfie.model().then(success, failure);
                     });
@@ -70,7 +73,7 @@ define(['app'], function(appModule) {
                 });
 
                 it('should transition to the login state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, null, true);
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {redirectTo: '/campaigns'}, true);
                 });
             });
         });

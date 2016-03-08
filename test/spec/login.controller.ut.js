@@ -6,6 +6,7 @@ define(['login', 'app'], function(loginModule, appModule) {
             $scope,
             $controller,
             $q,
+            $location,
             c6State,
             AuthService,
             LoginCtrl,
@@ -38,9 +39,16 @@ define(['login', 'app'], function(loginModule, appModule) {
 
                 ApplicationState = c6State.get('Application');
 
+                $location = {
+                    path: jasmine.createSpy('$location.path()').and.callFake(function() {
+                        return this;
+                    }),
+                    replace: jasmine.createSpy('$location.replace()').and.returnValue($location)
+                };
+
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
-                    LoginCtrl = $controller('LoginController', { $scope: $scope });
+                    LoginCtrl = $controller('LoginController', { $scope: $scope, $location: $location });
                     LoginCtrl.model = model;
                 });
             });
@@ -147,39 +155,97 @@ define(['login', 'app'], function(loginModule, appModule) {
                             spyOn(c6State, 'goTo').and.returnValue($q.when({}));
                         });
 
-                        describe('when Application name is Selfie', function() {
-                            beforeEach(function() {
-                                ApplicationState.name = 'Selfie';
+                        describe('when there is a redirectTo path', function() {
+                            it('should use the $location service to redirect', function() {
+                                LoginCtrl.redirectTo = '/campaigns/cam-123/admin';
 
                                 $scope.$apply(function() {
                                     loginDeferred.resolve(user);
                                 });
-                            });
 
-                            it('should resolve the promise', function() {
-                                expect(success).toHaveBeenCalledWith(user);
-                            });
-
-                            it('should go to Selfie state', function() {
-                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie', [user]);
+                                expect($location.path).toHaveBeenCalledWith(LoginCtrl.redirectTo);
+                                expect($location.replace).toHaveBeenCalled();
+                                expect(c6State.goTo).not.toHaveBeenCalled();
                             });
                         });
 
-                        describe('when Application name is Portal', function() {
-                            beforeEach(function() {
-                                ApplicationState.name = 'Portal';
+                        describe('when the redirectTo path is "/"', function() {
+                            describe('when Application name is Selfie', function() {
+                                beforeEach(function() {
+                                    LoginCtrl.redirectTo = '/';
 
-                                $scope.$apply(function() {
-                                    loginDeferred.resolve(user);
+                                    ApplicationState.name = 'Selfie';
+
+                                    $scope.$apply(function() {
+                                        loginDeferred.resolve(user);
+                                    });
+                                });
+
+                                it('should resolve the promise', function() {
+                                    expect(success).toHaveBeenCalledWith(user);
+                                });
+
+                                it('should go to Selfie state', function() {
+                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie', [user], {}, true);
                                 });
                             });
 
-                            it('should resolve the promise', function() {
-                                expect(success).toHaveBeenCalledWith(user);
+                            describe('when Application name is Portal', function() {
+                                beforeEach(function() {
+                                    LoginCtrl.redirectTo = '/';
+
+                                    ApplicationState.name = 'Portal';
+
+                                    $scope.$apply(function() {
+                                        loginDeferred.resolve(user);
+                                    });
+                                });
+
+                                it('should resolve the promise', function() {
+                                    expect(success).toHaveBeenCalledWith(user);
+                                });
+
+                                it('should go to the portal', function() {
+                                    expect(c6State.goTo).toHaveBeenCalledWith('Portal', [user], {}, true);
+                                });
+                            });
+                        });
+
+                        describe('when there is not a redirectTo path', function() {
+                            describe('when Application name is Selfie', function() {
+                                beforeEach(function() {
+                                    ApplicationState.name = 'Selfie';
+
+                                    $scope.$apply(function() {
+                                        loginDeferred.resolve(user);
+                                    });
+                                });
+
+                                it('should resolve the promise', function() {
+                                    expect(success).toHaveBeenCalledWith(user);
+                                });
+
+                                it('should go to Selfie state', function() {
+                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie', [user], {}, true);
+                                });
                             });
 
-                            it('should go to the portal', function() {
-                                expect(c6State.goTo).toHaveBeenCalledWith('Portal', [user]);
+                            describe('when Application name is Portal', function() {
+                                beforeEach(function() {
+                                    ApplicationState.name = 'Portal';
+
+                                    $scope.$apply(function() {
+                                        loginDeferred.resolve(user);
+                                    });
+                                });
+
+                                it('should resolve the promise', function() {
+                                    expect(success).toHaveBeenCalledWith(user);
+                                });
+
+                                it('should go to the portal', function() {
+                                    expect(c6State.goTo).toHaveBeenCalledWith('Portal', [user], {}, true);
+                                });
                             });
                         });
                     });

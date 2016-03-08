@@ -25,6 +25,7 @@ define(['app'], function(appModule) {
 
         it('should bind the "reason" query param', function() {
             expect(login.queryParams).toEqual({
+                redirectTo: '&',
                 reason: '&'
             });
         });

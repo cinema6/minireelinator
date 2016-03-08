@@ -19,11 +19,13 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('LoginController', ['$q','AuthService','c6State',
-        function                       ( $q , AuthService , c6State ) {
-            var ApplicationState = c6State.get('Application');
+        .controller('LoginController', ['$q','AuthService','c6State','$location',
+        function                       ( $q , AuthService , c6State , $location ) {
+            var ApplicationState = c6State.get('Application'),
+                LoginCtrl = this;
 
             this.error = null;
+            this.redirectTo = null;
 
             this.submit = function() {
                 var self = this;
@@ -41,7 +43,13 @@ function( angular , c6State  ) {
                 }
 
                 function goToApp(user) {
-                    c6State.goTo(ApplicationState.name, [user]);
+                    var path = LoginCtrl.redirectTo;
+
+                    if (path && path !== '/') {
+                        $location.path(path).replace();
+                    } else {
+                        c6State.goTo(ApplicationState.name, [user], {}, true);
+                    }
 
                     return user;
                 }
