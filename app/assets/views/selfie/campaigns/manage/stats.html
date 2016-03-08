@@ -112,7 +112,7 @@
                         <h3 class="stats__rowData">Views</h3>
                     </div>
                     <div class="stats__row">
-                        <h3 class="stats__label">25%</h3>
+                        <h3 class="stats__label">Quartile 1</h3>
                         <span ng-switch-when="false">
                             <h2 class="stats__rowData stats__rowViews">--</h2>
                             <h2 class="stats__rowData stats__rowViews">--</h2>
@@ -123,7 +123,7 @@
                         </span>
                     </div>
                     <div class="stats__row">
-                        <h3 class="stats__label">50%</h3>
+                        <h3 class="stats__label">Quartile 2</h3>
                         <span ng-switch-when="false">
                             <h2 class="stats__rowData stats__rowViews">--</h2>
                             <h2 class="stats__rowData stats__rowViews">--</h2>
@@ -134,7 +134,7 @@
                         </span>
                     </div>
                     <div class="stats__row">
-                        <h3 class="stats__label">75%</h3>
+                        <h3 class="stats__label">Quartile 3</h3>
                         <span ng-switch-when="false">
                             <h2 class="stats__rowData stats__rowViews">--</h2>
                             <h2 class="stats__rowData stats__rowViews">--</h2>
@@ -145,7 +145,7 @@
                         </span>
                     </div>
                     <div class="stats__row">
-                        <h3 class="stats__label">100%</h3>
+                        <h3 class="stats__label">Quartile 4</h3>
                         <span ng-switch-when="false">
                             <h2 class="stats__rowData stats__rowViews">--</h2>
                             <h2 class="stats__rowData stats__rowViews">--</h2>
@@ -200,33 +200,43 @@
                             <div class="grid">
                                 <div class="grid__item one-quarter">
                                     <div class="chart__labelBox">
-                                        <p class="chart__labelItem chart__labelItem--quartile">25%</p>
+                                        <p class="chart__labelItem chart__labelItem--quartile">Quartile 1</p>
                                         <span class="chart__labelItem chart__labelItem--sec">{{SelfieManageCampaignStatsCtrl.duration.actual * 0.25 | number:0}}s</span><!--
                                         --><span class="chart__labelItem chart__labelItem--secCalc">{{SelfieManageCampaignStatsCtrl.duration.custom * 0.25 | number:0}}s</span>
                                     </div>
                                 </div><!--
                                 --><div class="grid__item one-quarter">
                                     <div class="chart__labelBox">
-                                        <p class="chart__labelItem chart__labelItem--quartile">50%</p>
+                                        <p class="chart__labelItem chart__labelItem--quartile">Quartile 2</p>
                                         <span class="chart__labelItem chart__labelItem--sec">{{SelfieManageCampaignStatsCtrl.duration.actual * 0.5 | number:0}}s</span><!--
                                         --><span class="chart__labelItem chart__labelItem--secCalc">{{SelfieManageCampaignStatsCtrl.duration.custom * 0.5 | number:0}}s</span>
                                     </div>
                                 </div><!--
                                 --><div class="grid__item one-quarter">
                                     <div class="chart__labelBox">
-                                        <p class="chart__labelItem chart__labelItem--quartile">75%</p>
+                                        <p class="chart__labelItem chart__labelItem--quartile">Quartile 3</p>
                                         <span class="chart__labelItem chart__labelItem--sec">{{SelfieManageCampaignStatsCtrl.duration.actual * 0.75 | number:0}}s</span><!--
                                         --><span class="chart__labelItem chart__labelItem--secCalc">{{SelfieManageCampaignStatsCtrl.duration.custom * 0.75 | number:0}}s</span>
                                     </div>
                                 </div><!--
                                 --><div class="grid__item one-quarter">
                                     <div class="chart__labelBox">
-                                        <p class="chart__labelItem chart__labelItem--quartile">100%</p>
+                                        <p class="chart__labelItem chart__labelItem--quartile">Quartile 4</p>
                                         <span class="chart__labelItem chart__labelItem--sec">{{SelfieManageCampaignStatsCtrl.duration.actual}}s</span><!--
                                         --><span class="chart__labelItem chart__labelItem--secCalc">{{SelfieManageCampaignStatsCtrl.duration.custom}}s</span>
                                     </div>
                                 </div>
                             </div><!-- .grid -->
+                        </div>
+                        <span class="chart__label--x">Duration (Time)</span>
+                        <span class="chart__label--y">&#37; of Views</span>
+                        <div class="chart__key">
+                            <div class="chart__key--bar1">
+                                <div></div><span>Actual Views</span>
+                            </div>
+                            <div class="chart__key--bar2">
+                                <div></div><span>Calculated Views</span>
+                            </div>
                         </div>
                     </div>
                 </div>
