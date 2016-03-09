@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.39.0.rc1]*
+  * [DESIGN]: Updated the navigation on sign up and sign up confirmation 
+    to match new site
+
 ## v1.38.0 (March 8, 2016)
 * *[v1.38.0.rc2]*
   * [FIX]: Date range dropdown aligned correctly in grid
