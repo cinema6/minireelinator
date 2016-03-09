@@ -1,6 +1,16 @@
 # MiniReelinator
 
-## v1.38.0 (March 4, 2016)
+## v1.38.0 (March 8, 2016)
+* *[v1.38.0.rc2]*
+  * [FIX]: Date range dropdown aligned correctly in grid
+  * [FEATURE]: key and x/y axis labels added to quartiles chart in stats
+  * [FIX]: hint.css updated to v2.0.0 - 2016-01-25
+  * [FIX]: Fix hover tooltip on quartile bar graph
+  * [FIX]: Add "%" units to y-axis on quartile bar graph
+  * [FIX]: When authentication is required to access a url ensure that
+    the user is redirected to that page once logged in
+* *[/v1.38.0.rc2]*
+
 * *[v1.38.0.rc1]*
   * [DEV]: Added grunt task for inspecting and validating HTML
   * [FIX]: Fix for an issue where "Cancel Changes" button does not

@@ -5,8 +5,8 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
     return angular.module('c6.app.selfie', [c6State.name, c6uilib.name, account.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie', ['$q','cinema6','c6State','AuthService',
-            function                        ( $q , cinema6 , c6State , AuthService ) {
+            c6StateProvider.state('Selfie', ['$q','cinema6','c6State','AuthService','$location',
+            function                        ( $q , cinema6 , c6State , AuthService , $location ) {
                 this.templateUrl = 'views/selfie.html';
                 this.controller = 'SelfieController';
                 this.controllerAs = 'SelfieCtrl';
@@ -14,7 +14,9 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
                 this.model = function() {
                     return AuthService.checkStatus()
                         .catch(function redirect(reason) {
-                            c6State.goTo('Selfie:Login', null, null, true);
+                            c6State.goTo('Selfie:Login', null, {
+                                redirectTo: $location.path()
+                            }, true);
                             return $q.reject(reason);
                         });
                 };
