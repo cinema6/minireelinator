@@ -6392,4 +6392,49 @@ div.tree-multiselect span.remove-selected {
                             color:#5c5c5c;
                             font-family:"Roboto Condensed";
                         }
-
+/*  ================================================
+    Sign up form - Landing Page Styles
+    ================================================ */
+    body.bgClear .form__helpBox--right {
+                left:20%; right:20%;
+                margin:1em 0 0 0;
+            }
+                body.bgClear .form__helpBox--right {
+                    margin: 1em 0 0 0;
+                    width: auto;
+                }
+                body.bgClear .form__textBox:focus ~ .form__helpBox--right,
+                body.bgClear .ui--active ~ .form__helpBox--right {
+                    top:100%;
+                    left: 0;
+                    right: 0;
+                    bottom: auto;
+                }
+                @media screen and (min-width: 768px) {
+                    body.bgClear .form__textBox:focus ~ .form__helpBox--right,
+                    body.bgClear .ui--active ~ .form__helpBox--right {
+                        top:100%;
+                        left: 20%;
+                        right: 20%;
+                        bottom: auto;
+                    }    
+                }
+                body.bgClear .form__helpBox--right:after,
+                body.bgClear .form__helpBox--right:before {
+                        left: 50%;
+                        transform: rotate(90deg);
+                        top: -22px;
+                }
+                body.bgClear .form__helpBox:before {
+                    border-width: 11px;
+                }
+                body.bgClear .form__helpBox:after {                        
+                    border-width: 8px;
+                }
+                body.bgClear .form__helpBox--right:before {
+                    top: -11px;
+                }
+                body.bgClear .form__helpBox--right:after {
+                    top: -8px;
+                    left: calc(50% - -3px);
+                }
