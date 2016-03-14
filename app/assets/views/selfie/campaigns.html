@@ -116,12 +116,16 @@
         <!-- empty campaign list message -->
         <li class="campaign__item--empty text--center" ng-if="!campaigns.length">
             <i class="fa fa-file-video-o huge--icon"></i>
-            <h2 class="tk--hdr">You don't have any campaigns!</h2>
-            <h1 class="tk--hdr" ng-if="SelfieCampaignsCtrl.hasAdvertisers">Let's get you started...</h1>
-            <div>
-
-            <button ng-if="SelfieCampaignsCtrl.hasAdvertisers" c6-sref="Selfie:NewCampaign" c6-params="{}" class="action__btn action__btn--small"><i class="fa fa-plus"></i> Create A Campaign</button><br>
-            <!-- <a href="support.html">Need Help?</a> --> <!-- replace this link with actual support link -->
+            <div ng-if="SelfieCampaignsCtrl.hasCampaigns">
+                <h2 class="tk--hdr">No matching campaigns found.</h2>
+            </div>
+            <div ng-if="!SelfieCampaignsCtrl.hasCampaigns">
+                <h2 class="tk--hdr">You don't have any campaigns!</h2>
+                <h1 class="tk--hdr" ng-if="SelfieCampaignsCtrl.hasAdvertisers">Let's get you started...</h1>
+                <div>
+                    <button ng-if="SelfieCampaignsCtrl.hasAdvertisers" c6-sref="Selfie:NewCampaign" c6-params="{}" class="action__btn action__btn--small"><i class="fa fa-plus"></i> Create A Campaign</button><br>
+                    <!-- <a href="support.html">Need Help?</a> --> <!-- replace this link with actual support link -->
+                </div>
             </div>
         </li>
         <!-- empty campaign list message ends -->

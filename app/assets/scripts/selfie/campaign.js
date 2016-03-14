@@ -32,10 +32,14 @@ function( angular , c6State  , PaginatedListState                    ,
                                                                'CampaignService','$q',
             function                                          ( c6State , cinema6 ,
                                                                 CampaignService , $q ) {
+
+
                 this.afterModel = function() {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
                         org = user.org.id;
+
+                    this.hasCampaigns = this.cParent.hasCampaigns;
 
                     return $q.all({
                         orgs: CampaignService.getOrgs(),
@@ -146,6 +150,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     var user = c6State.get('Selfie').cModel;
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
+                    this.hasCampaigns = this.cParent.hasCampaigns;
                 };
             }]);
         }])
@@ -341,6 +346,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.hasAdvertisers = !!cState.cParent.advertisers.length;
                 this.params = cState.params;
                 this.searchText = this.params.search;
+                this.hasCampaigns = cState.hasCampaigns;
 
                 updateModelData();
                 model.on('PaginatedListHasUpdated', updateModelData);

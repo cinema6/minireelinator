@@ -50,6 +50,16 @@ define(['app'], function(appModule) {
                     selfieCampaignDashboard.afterModel();
                 });
 
+                it('should pass the hasCampaigns flag from the cParent state', function() {
+                    expect(selfieCampaignDashboard.hasCampaigns).toBeFalsy();
+
+                    selfieCampaignDashboard.cParent.hasCampaigns = true;
+
+                    selfieCampaignDashboard.afterModel();
+
+                    expect(selfieCampaignDashboard.hasCampaigns).toBe(true);
+                });
+
                 it('should fetch all orgs', function() {
                     expect(CampaignService.getOrgs).toHaveBeenCalled();
                 });
