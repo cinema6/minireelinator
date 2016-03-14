@@ -83,11 +83,15 @@ module.exports = function(grunt) {
 
     grunt.registerTask('test:e2e', 'run e2e tests on specified browser', function(browser, env) {
         var protractorTask;
+        var secure = grunt.option('secure');
+
+        grunt.config.set('connect.options.protocol', secure ? 'https' : 'http');
 
         env = env || settings.defaultE2EEnv;
         protractorTask = 'protractor:' + ((browser === 'all') ? '' : browser) + ':' + (env);
 
-        grunt.task.run('connect:sandbox');
+        // grunt.task.run('configureProxies:app');
+        grunt.task.run('connect:app');
         if (env === 'saucelabs') {
             grunt.task.run('sauceconnect:e2e');
         } else if (env === 'browserstack') {
