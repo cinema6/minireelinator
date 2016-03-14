@@ -32,8 +32,6 @@ function( angular , c6State  , PaginatedListState                    ,
                                                                'CampaignService','$q',
             function                                          ( c6State , cinema6 ,
                                                                 CampaignService , $q ) {
-
-
                 this.afterModel = function() {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
