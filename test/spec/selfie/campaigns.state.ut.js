@@ -579,12 +579,16 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             });
 
             describe('afterModel()', function() {
-                it('should add the isAdmin flag to the state', function() {
-                    var selfieState = c6State.get('Selfie');
+                var selfieState;
+
+                beforeEach(function() {
+                    selfieState = c6State.get('Selfie');
                     selfieState.cModel = {
                         entitlements: {}
                     };
+                });
 
+                it('should add the isAdmin flag to the state', function() {
                     campaigns.afterModel();
                     expect(campaigns.isAdmin).toBe(false);
 
@@ -592,6 +596,20 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
                     campaigns.afterModel();
                     expect(campaigns.isAdmin).toBe(true);
+                });
+
+                it('should pass the hasCampaigns flag from the cParent state', function() {
+                    campaigns.cParent.hasCampaigns = false;
+
+                    campaigns.afterModel();
+
+                    expect(campaigns.hasCampaigns).toBe(false);
+
+                    campaigns.cParent.hasCampaigns = true;
+
+                    campaigns.afterModel();
+
+                    expect(campaigns.hasCampaigns).toBe(true);
                 });
             });
         });

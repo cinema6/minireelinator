@@ -37,6 +37,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         user = c6State.get('Selfie').cModel,
                         org = user.org.id;
 
+                    this.hasCampaigns = this.cParent.hasCampaigns;
+
                     return $q.all({
                         orgs: CampaignService.getOrgs(),
                         advertisers: cinema6.db.findAll('advertiser', {org: org})
@@ -146,6 +148,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     var user = c6State.get('Selfie').cModel;
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
+                    this.hasCampaigns = this.cParent.hasCampaigns;
                 };
             }]);
         }])
@@ -341,6 +344,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.hasAdvertisers = !!cState.cParent.advertisers.length;
                 this.params = cState.params;
                 this.searchText = this.params.search;
+                this.hasCampaigns = cState.hasCampaigns;
 
                 updateModelData();
                 model.on('PaginatedListHasUpdated', updateModelData);

@@ -390,6 +390,20 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     expect(SelfieCampaignsCtrl.searchText).toEqual(campaigns.params.search);
                 });
 
+                it('should add the hasCampaigns flag from the cState', function() {
+                    campaigns.hasCampaigns = false;
+
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.hasCampaigns).toBe(false);
+
+                    campaigns.hasCampaigns = true;
+
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.hasCampaigns).toBe(true);
+                });
+
                 it('should add the filters to the Ctrl', function() {
                     SelfieCampaignsCtrl.filter = 'active,completed,outOfBudget';
                     SelfieCampaignsCtrl.initWithModel(model);
