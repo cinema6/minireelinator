@@ -1,0 +1,19 @@
+<style>
+    input {
+        display: block;
+    }
+    textarea {
+        display: block;
+    }
+</style>
+
+<h2>Container</h2>
+
+{{SelfieContainerCtrl.heading}}
+
+<input type="text" ng-model="SelfieContainerCtrl.container.label">
+<input type="text" ng-model="SelfieContainerCtrl.container.name" ng-disabled="SelfieContainerCtrl.hasName">
+<textarea name="mraid" id="" cols="30" rows="10" ng-model="SelfieContainerCtrl.mraid"></textarea>
+<textarea name="vpaid" id="" cols="30" rows="10" ng-model="SelfieContainerCtrl.vpaid"></textarea>
+
+<button ng-click="SelfieContainerCtrl.save()">SAVE</button>

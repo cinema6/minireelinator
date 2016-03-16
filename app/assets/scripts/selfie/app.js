@@ -1,5 +1,7 @@
-define( ['angular','c6_state','./services','./directives','./campaign','c6_defines'],
-function( angular , c6State  , services   , directives   , campaign   , c6Defines  ) {
+define( ['angular','c6_state','./services','./directives','./campaign','c6_defines',
+         './containers'],
+function( angular , c6State  , services   , directives   , campaign   , c6Defines  ,
+          containers   ) {
     /* jshint -W106 */
     'use strict';
 
@@ -7,7 +9,8 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
         c6State.name,
         services.name,
         campaign.name,
-        directives.name
+        directives.name,
+        containers.name
     ])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -114,6 +117,13 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                         this.route('/edit/:id', 'Selfie:Account:Payment:Edit');
                     });
                     this.route('/payment/history', 'Selfie:Account:Payment:History');
+                });
+
+                this.route('/containers', 'Selfie:Containers', function() {
+                    this.state('Selfie:Containers:List');
+
+                    this.route('/new', 'Selfie:New:Container');
+                    this.route('/edit/:id', 'Selfie:Edit:Container');
                 });
             });
         }])

@@ -1,0 +1,5 @@
+<ul>
+    <li ng-repeat="container in SelfieContainersCtrl.model track by container.id">
+        <a c6-sref="Selfie:Edit:Container" c6-models="[container]" c6-params="{}">{{container.label}} - {{container.name}}</a>
+    </li>
+</ul>

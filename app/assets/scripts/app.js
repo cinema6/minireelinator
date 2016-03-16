@@ -1021,6 +1021,49 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }, this);
             }]);
 
+            $provide.constant('ContainerAdapter', ['config','$http','$q',
+            function                              ( config , $http , $q ) {
+                function url(end) {
+                    return config.apiBase + '/containers' + (end || '');
+                }
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'));
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('/' + id))
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url(), data)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, container) {
+                    return $http.delete(url('/' + container.id))
+                        .then(value(null));
+                };
+
+                this.update = function(type, container) {
+                    return $http.put(url('/' + container.id), container)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+            }]);
+
             $provide.constant('CWRXAdapter', ['config','$injector',
             function                         ( config , $injector ) {
                 var self = this,
@@ -1044,13 +1087,13 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter',
-                 'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
-                 'PaymentMethodAdapter', 'UpdateRequestAdapter',
+                 'VoteAdapter','OrgAdapter','UserAdapter','CategoryAdapter',
+                 'AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
+                 'PaymentMethodAdapter','UpdateRequestAdapter','ContainerAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter ,
-                  CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
-                  PaymentMethodAdapter, UpdateRequestAdapter ) {
+                  VoteAdapter , OrgAdapter , UserAdapter , CategoryAdapter ,
+                  AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
+                  PaymentMethodAdapter , UpdateRequestAdapter , ContainerAdapter ) {
 
             [
                 ContentAdapter,
@@ -1063,7 +1106,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 SelfieCampaignAdapter,
                 PaymentMethodAdapter,
                 AdvertiserAdapter,
-                UpdateRequestAdapter
+                UpdateRequestAdapter,
+                ContainerAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
@@ -1081,7 +1125,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 campaign: CampaignAdapter,
                 selfieCampaign: SelfieCampaignAdapter,
                 paymentMethod: PaymentMethodAdapter,
-                updateRequest: UpdateRequestAdapter
+                updateRequest: UpdateRequestAdapter,
+                container: ContainerAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);
