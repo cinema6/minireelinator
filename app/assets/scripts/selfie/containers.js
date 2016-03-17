@@ -84,82 +84,65 @@ define(['angular','c6_state'], function(angular, c6State) {
             }]);
         }])
 
-        .controller('SelfieContainerController', ['cState',
-        function                                 ( cState ) {
-            function removeSpaces(str) {
-                if (!str) { return str; }
-                return str.replace(/^\s*/, '');
-            }
+        .controller('SelfieContainerController', ['cState','c6State',
+        function                                 ( cState , c6State ) {
+            var Ctrl = this,
+                App = c6State.get('Selfie:App'),
+                placementSchema = App.cModel.data.placement;
 
-            function addQuotes(str) {
-                return '"' + str + '"';
-            }
+            this.mraid = {
+                alreadyInUI: ['network','uuid','hostApp','prebuffer'],
+                addedParams: [],
+                show: false
+            };
 
-            function convertToText(data, joiner) {
-                var result = '';
-
-                forEach(data, function(value, prop) {
-                    if (prop === 'container') { return; }
-
-                    var val = !isArray(value) ?
-                        addQuotes(value) :
-                        '[' + value.map(function(item) {
-                            return addQuotes(item);
-                        }).join(',') + ']';
-
-                    result += prop + joiner + val + '\n';
-                });
-
-                return result;
-            }
-
-            function convertToModel(text) {
-                if (!text) { return; }
-
-                var lines = text.split('\n');
-
-                return lines.reduce(function(result, line) {
-                    if (!line) { return result; }
-
-                    var hasEqualSign = (/=/).test(line),
-                        splitLine = line.split(hasEqualSign ? '=' : ':'),
-                        prop = splitLine[0],
-                        value = removeSpaces(splitLine[1]);
-
-                    if (prop === 'container') { return result; }
-
-                    try {
-                        result[prop] = JSON.parse(value);
-                    }
-                    catch(e) {
-                        if (value.charAt(0) === '[' && value.charAt(value.length-1) === ']') {
-                            value = value.replace(/[\[\]]/g, '').split(',').map(removeSpaces);
-                        }
-                        result[prop] = value;
-                    }
-
-                    return result;
-                }, {});
-            }
+            this.vpaid = {
+                alreadyInUI: ['network','uuid'],
+                addedParams: [],
+                show: false
+            };
 
             this.initWithModel = function(model) {
                 this.container = model.pojoify();
 
                 this.hasName = !!this.container.name;
-                this.mraid = convertToText(this.container.defaultTagParams.mraid, ': ');
-                this.vpaid = convertToText(this.container.defaultTagParams.vpaid, '=');
+                this.mraid.show = Object.keys(this.container.defaultTagParams.mraid).length > 1;
+                this.vpaid.show = Object.keys(this.container.defaultTagParams.vpaid).length > 1;
+
+                this.mraid.availableParams = placementSchema.params
+                    .reduce(function(result, param, key) {
+                        if (param.editable && Ctrl.mraid.alreadyInUI.indexOf(param.name) < 0) {
+                            result.push(param);
+                        }
+                        return result;
+                    }, []);
+
+                this.mraid.defaults = this.container.defaultTagParams.mraid;
+                this.vpaid.defaults = this.container.defaultTagParams.vpaid;
+
+                this.mraid.defaults.clickUrls = (this.mraid.defaults.clickUrls || ['']).map(function(url) {
+                    return {
+                        value: url
+                    };
+                });
 
                 this.heading = cState.heading;
             };
 
+            this.addParam = function(type, param) {
+                if (param.type === 'Array') {
+                    this[type].defaults[param.name] = this[type].defaults[param.name] || [];
+                    this[type].defaults[param.name].push({label: param.label, value: null});
+                }
+
+                if (this[type].addedParams.indexOf(param) < 0 && param.name !== 'clickUrls') {
+                    this[type].addedParams.push(param);
+                }
+
+                console.log(param);
+            };
+
             this.save = function() {
-                // convertToModel(this.mraid);
-                console.log(convertToModel(this.mraid));
-                console.log(convertToModel(this.vpaid));
-
-                extend(this.container.defaultTagParams.mraid, convertToModel(this.mraid));
-                extend(this.container.defaultTagParams.vpaid, convertToModel(this.vpaid));
-
                 cState.saveContainer(this.container);
             };
         }])

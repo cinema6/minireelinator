@@ -12,7 +12,7 @@
             "clickUrls": [
                 "{{CLICK_URL}}"
             ],
-            "uud": "{{USER_ID}}",
+            "uuid": "{{USER_ID}}",
             "prebuffer": true
         },
         "vpaid": {

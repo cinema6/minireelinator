@@ -5,6 +5,9 @@
     textarea {
         display: block;
     }
+    .pageHolder {
+        margin: 0 0 0 5em;
+    }
 </style>
 
 <h2>Container</h2>
@@ -13,7 +16,70 @@
 
 <input type="text" ng-model="SelfieContainerCtrl.container.label">
 <input type="text" ng-model="SelfieContainerCtrl.container.name" ng-disabled="SelfieContainerCtrl.hasName">
-<textarea name="mraid" id="" cols="30" rows="10" ng-model="SelfieContainerCtrl.mraid"></textarea>
-<textarea name="vpaid" id="" cols="30" rows="10" ng-model="SelfieContainerCtrl.vpaid"></textarea>
+
+<br>
+
+<input type="checkbox" name="mraid" ng-model="SelfieContainerCtrl.mraid.show">MRAID
+<input type="checkbox" name="vpaid" ng-model="SelfieContainerCtrl.vpaid.show">VPAID
+
+<br>
+
+<div ng-show="SelfieContainerCtrl.mraid.show">
+    <h2>MRAID Parameters</h2>
+
+    <br>
+
+    Network: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.network">
+    UUID: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.uuid">
+    Host App: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.hostApp">
+    Prebuffer: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.prebuffer">
+
+    <span ng-repeat="clickUrl in SelfieContainerCtrl.mraid.defaults.clickUrls">
+        Click URL: <input type="text" ng-model="clickUrl.value">
+    </span>
+
+    <br>
+
+    <span ng-repeat="param in SelfieContainerCtrl.mraid.addedParams">
+        <span ng-if="param.type === 'Boolean'">
+            {{param.label}}: <select name="{{param.name}}" id="" ng-model="param.value" ng-options="bool for bool in ['Yes','No']"></select>
+        </span>
+
+        <span ng-if="param.type === 'String'">
+            {{param.label}}: <input type="text" ng-model="param.value">
+        </span>
+
+        <span ng-if="param.type === 'Number'">
+            {{param.label}}: <input type="number" ng-model="param.value">
+        </span>
+
+        <span ng-if="param.type === 'Array'">
+            <span ng-repeat="arrParam in SelfieContainerCtrl.mraid.defaults[param.name]">
+                {{arrParam.label}}: <input type="text" ng-model="arrParam.value">
+            </span>
+        </span>
+    </span>
+
+    <select name="addParam" id="" ng-model="addMraidParam" ng-options="param.label for param in SelfieContainerCtrl.mraid.availableParams"></select>
+    <button ng-click="SelfieContainerCtrl.addParam('mraid', addMraidParam)">ADD</button>
+</div>
+
+<br>
+
+<div ng-show="SelfieContainerCtrl.vpaid.show">
+    <h2>VPAID Parameters</h2>
+
+    <br>
+
+    Network: <input type="text" ng-model="SelfieContainerCtrl.vpaid.network">
+    UUID: <input type="text" ng-model="SelfieContainerCtrl.vpaid.uuid">
+
+    <br>
+
+    <select name="addParam" id="" ng-model="addVpaidParam" ng-options="param.label for param in SelfieContainerCtrl.availableParams"></select>
+    <button ng-click="SelfieContainerCtrl.addParam('vpaid', addVpaidParam)">ADD</button>
+</div>
+
+<br>
 
 <button ng-click="SelfieContainerCtrl.save()">SAVE</button>
