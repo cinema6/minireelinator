@@ -14,8 +14,11 @@
 
 {{SelfieContainerCtrl.heading}}
 
-<input type="text" ng-model="SelfieContainerCtrl.container.label">
-<input type="text" ng-model="SelfieContainerCtrl.container.name" ng-disabled="SelfieContainerCtrl.hasName">
+<br>
+<br>
+
+Name: <input type="text" ng-model="SelfieContainerCtrl.container.label">
+Container Name: <input type="text" ng-model="SelfieContainerCtrl.container.name" ng-disabled="SelfieContainerCtrl.hasName">
 
 <br>
 
@@ -26,8 +29,6 @@
 
 <div ng-show="SelfieContainerCtrl.mraid.show">
     <h2>MRAID Parameters</h2>
-
-    <br>
 
     Network: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.network">
     UUID: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.uuid">
@@ -54,13 +55,17 @@
         </span>
 
         <span ng-if="param.type === 'Array'">
-            <span ng-repeat="arrParam in SelfieContainerCtrl.mraid.defaults[param.name]">
+            <span ng-repeat="arrParam in param.value">
                 {{arrParam.label}}: <input type="text" ng-model="arrParam.value">
             </span>
+
+            <!-- <span ng-repeat="arrParam in SelfieContainerCtrl.mraid.defaults[param.name]">
+                {{arrParam.label}}: <input type="text" ng-model="arrParam.value">
+            </span> -->
         </span>
     </span>
 
-    <select name="addParam" id="" ng-model="addMraidParam" ng-options="param.label for param in SelfieContainerCtrl.mraid.availableParams"></select>
+    <select name="addMraidParam" id="" ng-model="addMraidParam" ng-options="param.label for param in SelfieContainerCtrl.mraid.availableParams"></select>
     <button ng-click="SelfieContainerCtrl.addParam('mraid', addMraidParam)">ADD</button>
 </div>
 
@@ -69,14 +74,12 @@
 <div ng-show="SelfieContainerCtrl.vpaid.show">
     <h2>VPAID Parameters</h2>
 
-    <br>
-
-    Network: <input type="text" ng-model="SelfieContainerCtrl.vpaid.network">
-    UUID: <input type="text" ng-model="SelfieContainerCtrl.vpaid.uuid">
+    Network: <input type="text" ng-model="SelfieContainerCtrl.vpaid.defaults.network">
+    UUID: <input type="text" ng-model="SelfieContainerCtrl.vpaid.defaults.uuid">
 
     <br>
 
-    <select name="addParam" id="" ng-model="addVpaidParam" ng-options="param.label for param in SelfieContainerCtrl.availableParams"></select>
+    <select name="addVpaidParam" id="" ng-model="addVpaidParam" ng-options="param.label for param in SelfieContainerCtrl.vpaid.availableParams"></select>
     <button ng-click="SelfieContainerCtrl.addParam('vpaid', addVpaidParam)">ADD</button>
 </div>
 

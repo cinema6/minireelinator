@@ -90,60 +90,175 @@ define(['angular','c6_state'], function(angular, c6State) {
                 App = c6State.get('Selfie:App'),
                 placementSchema = App.cModel.data.placement;
 
-            this.mraid = {
-                alreadyInUI: ['network','uuid','hostApp','prebuffer'],
-                addedParams: [],
-                show: false
-            };
-
-            this.vpaid = {
-                alreadyInUI: ['network','uuid'],
-                addedParams: [],
-                show: false
-            };
-
             this.initWithModel = function(model) {
-                this.container = model.pojoify();
+                var container = model.pojoify(),
+                    params = container.defaultTagParams,
+                    mraidUI = ['network','uuid','hostApp','prebuffer','clickUrls'],
+                    vpaidUI = ['network','uuid'];
 
-                this.hasName = !!this.container.name;
-                this.mraid.show = Object.keys(this.container.defaultTagParams.mraid).length > 1;
-                this.vpaid.show = Object.keys(this.container.defaultTagParams.vpaid).length > 1;
-
-                this.mraid.availableParams = placementSchema.params
+                this.mraid = placementSchema.params
                     .reduce(function(result, param, key) {
-                        if (param.editable && Ctrl.mraid.alreadyInUI.indexOf(param.name) < 0) {
-                            result.push(param);
+                        if (param.editable && (mraidUI.indexOf(param.name) < 0 || param.type === 'Array')) {
+                            result.availableParams.push({
+                                name: param.name,
+                                label: param.label,
+                                type: param.type,
+                                value: param.default || param.type !== 'Array' ? null : []
+                            });
                         }
+
+                        if (params.mraid[param.name] || param.default || mraidUI.indexOf(param.name) > -1) {
+                            result.defaults[param.name] = param.type !== 'Array' ?
+                                (params.mraid[param.name] || param.default) :
+                                (params.mraid[param.name] || param.default || ['']).map(function(value) {
+                                    return {
+                                        label: param.label,
+                                        value: value
+                                    };
+                                });
+
+                            if (param.editable && mraidUI.indexOf(param.name) < 0) {
+                                result.addedParams.push({
+                                    name: param.name,
+                                    label: param.label,
+                                    type: param.type,
+                                    value: param.type !== 'Array' ?
+                                        (params.mraid[param.name] || param.default) :
+                                        (params.mraid[param.name] || param.default).map(function(value) {
+                                            return {
+                                                label: param.label,
+                                                value: value
+                                            };
+                                        })
+                                });
+                            }
+                        }
+
                         return result;
-                    }, []);
+                    }, {
+                        availableParams: [],
+                        addedParams: [],
+                        defaults: {},
+                        show: Object.keys(params.mraid).length > 1
+                    });
 
-                this.mraid.defaults = this.container.defaultTagParams.mraid;
-                this.vpaid.defaults = this.container.defaultTagParams.vpaid;
+                this.vpaid = placementSchema.params
+                    .reduce(function(result, param, key) {
+                        if (param.editable && (vpaidUI.indexOf(param.name) < 0 || param.type === 'Array')) {
+                            result.availableParams.push({
+                                name: param.name,
+                                label: param.label,
+                                type: param.type,
+                                value: param.default || param.type !== 'Array' ? null : []
+                            });
+                        }
 
-                this.mraid.defaults.clickUrls = (this.mraid.defaults.clickUrls || ['']).map(function(url) {
-                    return {
-                        value: url
-                    };
-                });
+                        if (params.vpaid[param.name] || param.default || vpaidUI.indexOf(param.name) > -1) {
+                            result.defaults[param.name] = param.type !== 'Array' ?
+                                (params.vpaid[param.name] || param.default) :
+                                (params.vpaid[param.name] || param.default || ['']).map(function(value) {
+                                    return {
+                                        label: param.label,
+                                        value: value
+                                    };
+                                });
 
+                            if (param.editable && vpaidUI.indexOf(param.name) < 0) {
+                                result.addedParams.push({
+                                    name: param.name,
+                                    label: param.label,
+                                    type: param.type,
+                                    value: param.type !== 'Array' ?
+                                        (params.vpaid[param.name] || param.default) :
+                                        (params.vpaid[param.name] || param.default).map(function(value) {
+                                            return {
+                                                label: param.label,
+                                                value: value
+                                            };
+                                        })
+                                });
+                            }
+                        }
+
+                        return result;
+                    }, {
+                        availableParams: [],
+                        addedParams: [],
+                        defaults: {},
+                        show: Object.keys(params.vpaid).length > 1
+                    });
+
+                console.log(this.mraid);
+                console.log(this.vpaid);
+
+                this.container = model.pojoify();
+                this.hasName = !!this.container.name;
                 this.heading = cState.heading;
             };
 
             this.addParam = function(type, param) {
+                if (!param) { return; }
+
                 if (param.type === 'Array') {
-                    this[type].defaults[param.name] = this[type].defaults[param.name] || [];
-                    this[type].defaults[param.name].push({label: param.label, value: null});
+                    param.value.push({
+                        label: param.label,
+                        value: null
+                    });
                 }
 
-                if (this[type].addedParams.indexOf(param) < 0 && param.name !== 'clickUrls') {
+                if (this[type].addedParams.indexOf(param) < 0) {
                     this[type].addedParams.push(param);
                 }
-
-                console.log(param);
             };
 
             this.save = function() {
-                cState.saveContainer(this.container);
+                var defaultTagParams = this.container.defaultTagParams;
+
+                console.log(this.container);
+
+                forEach(this.mraid.defaults, function(param, key) {
+                    defaultTagParams.mraid[key] = param;
+                });
+
+                this.mraid.addedParams.forEach(function(param) {
+                    if (param.type === 'Array') {
+                        defaultTagParams.mraid[param.name] = param.value.reduce(function(result, par) {
+                            if (par.value) {
+                                result.push(par.value);
+                            }
+                            return result;
+                        }, []);
+                    } if (param.type === 'Boolean') {
+                        defaultTagParams.mraid[param.name] = param.value === 'Yes';
+                    } else {
+                        defaultTagParams.mraid[param.name] = param.value;
+                    }
+                });
+
+                forEach(this.vpaid.defaults, function(param, key) {
+                    defaultTagParams.vpaid[key] = param;
+                });
+
+                this.vpaid.addedParams.forEach(function(param) {
+                    if (param.type === 'Array') {
+                        defaultTagParams.vpaid[param.name] = param.value.reduce(function(result, par) {
+                            if (par.value) {
+                                result.push(par.value);
+                            }
+                            return result;
+                        }, []);
+                    } else if (param.type === 'Boolean') {
+                        defaultTagParams.vpaid[param.name] = param.value === 'Yes';
+                    } else {
+                        defaultTagParams.vpaid[param.name] = param.value;
+                    }
+                });
+
+                console.log(this.container);
+
+                console.log(this.mraid);
+                console.log(this.vpaid);
+                // cState.saveContainer(this.container);
             };
         }])
 
