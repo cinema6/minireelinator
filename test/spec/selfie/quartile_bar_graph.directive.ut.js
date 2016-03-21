@@ -152,11 +152,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     labels : ['','','',''],
                     datasets: [
                         {
+                            label: 'Actual',
                             fillColor: 'rgba(17, 157, 164, 0.75)',
                             strokeColor: 'rgba(17, 157, 164, 1)',
                             data: [90, 80, 30, 20]
                         },
                         {
+                            label: 'Estimated',
                             fillColor: 'rgba(0, 0, 0, 0.1)',
                             strokeColor: 'rgba(0, 0, 0, 0.25)',
                             data: [90, 80, 30, 20]
@@ -167,7 +169,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     scaleSteps : 10,
                     scaleStepWidth : 10,
                     scaleStartValue : 0,
-                    showTooltips: true
+                    showTooltips: true,
+                    tooltipTitleFontSize: 0,
+                    scaleLabel: '<%= value + "%" %>',
+                    multiTooltipTemplate: '<%= datasetLabel %>: <%= value + "%" %>'
                 });
             });
 
@@ -194,11 +199,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         labels : ['','','',''],
                         datasets: [
                             {
+                                label: 'Actual',
                                 fillColor: 'rgba(17, 157, 164, 0.75)',
                                 strokeColor: 'rgba(17, 157, 164, 1)',
                                 data: [80, 60, 40, 20]
                             },
                             {
+                                label: 'Estimated',
                                 fillColor: 'rgba(0, 0, 0, 0.1)',
                                 strokeColor: 'rgba(0, 0, 0, 0.25)',
                                 data: [80, 60, 40, 20]
@@ -209,7 +216,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         scaleSteps : 10,
                         scaleStepWidth : 10,
                         scaleStartValue : 0,
-                        showTooltips: false
+                        showTooltips: false,
+                        tooltipTitleFontSize: 0,
+                        scaleLabel: '<%= value + "%" %>',
+                        multiTooltipTemplate: '<%= datasetLabel %>: <%= value + "%" %>'
                     });
                 });
             });
@@ -238,11 +248,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         labels : ['','','',''],
                         datasets: [
                             {
+                                label: 'Actual',
                                 fillColor: 'rgba(17, 157, 164, 0.75)',
                                 strokeColor: 'rgba(17, 157, 164, 1)',
                                 data: [80, 60, 40, 20]
                             },
                             {
+                                label: 'Estimated',
                                 fillColor: 'rgba(0, 0, 0, 0.1)',
                                 strokeColor: 'rgba(0, 0, 0, 0.25)',
                                 data: [80, 60, 40, 20]
@@ -253,7 +265,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         scaleSteps : 10,
                         scaleStepWidth : 10,
                         scaleStartValue : 0,
-                        showTooltips: false
+                        showTooltips: false,
+                        tooltipTitleFontSize: 0,
+                        scaleLabel: '<%= value + "%" %>',
+                        multiTooltipTemplate: '<%= datasetLabel %>: <%= value + "%" %>'
                     });
                 });
             });
@@ -282,11 +297,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         labels : ['','','',''],
                         datasets: [
                             {
+                                label: 'Actual',
                                 fillColor: 'rgba(17, 157, 164, 0.75)',
                                 strokeColor: 'rgba(17, 157, 164, 1)',
                                 data: [80, 60, 40, 20]
                             },
                             {
+                                label: 'Estimated',
                                 fillColor: 'rgba(0, 0, 0, 0.1)',
                                 strokeColor: 'rgba(0, 0, 0, 0.25)',
                                 data: [80, 60, 40, 20]
@@ -297,7 +314,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         scaleSteps : 10,
                         scaleStepWidth : 10,
                         scaleStartValue : 0,
-                        showTooltips: false
+                        showTooltips: false,
+                        tooltipTitleFontSize: 0,
+                        scaleLabel: '<%= value + "%" %>',
+                        multiTooltipTemplate: '<%= datasetLabel %>: <%= value + "%" %>'
                     });
                 });
             });
@@ -426,11 +446,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             labels : ['','','',''],
                             datasets: [
                                 {
+                                    label: 'Actual',
                                     fillColor: 'rgba(17, 157, 164, 0.75)',
                                     strokeColor: 'rgba(17, 157, 164, 1)',
                                     data: [98, 72, 51, 19]
                                 },
                                 {
+                                    label: 'Estimated',
                                     fillColor: 'rgba(0, 0, 0, 0.1)',
                                     strokeColor: 'rgba(0, 0, 0, 0.25)',
                                     data: [98, 72, 51, 19]
@@ -441,7 +463,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             scaleSteps : 10,
                             scaleStepWidth : 10,
                             scaleStartValue : 0,
-                            showTooltips: true
+                            showTooltips: true,
+                            tooltipTitleFontSize: 0,
+                            scaleLabel: '<%= value + "%" %>',
+                            multiTooltipTemplate: '<%= datasetLabel %>: <%= value + "%" %>'
                         });
                     });
                 });
@@ -494,11 +519,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             labels : ['','','',''],
                             datasets: [
                                 {
+                                    label: 'Actual',
                                     fillColor: 'rgba(17, 157, 164, 0.75)',
                                     strokeColor: 'rgba(17, 157, 164, 1)',
                                     data: [98, 72, 51, 19]
                                 },
                                 {
+                                    label: 'Estimated',
                                     fillColor: 'rgba(0, 0, 0, 0.1)',
                                     strokeColor: 'rgba(0, 0, 0, 0.25)',
                                     data: [99, 98, 84, 72]
@@ -509,7 +536,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             scaleSteps : 10,
                             scaleStepWidth : 10,
                             scaleStartValue : 0,
-                            showTooltips: true
+                            showTooltips: true,
+                            tooltipTitleFontSize: 0,
+                            scaleLabel: '<%= value + "%" %>',
+                            multiTooltipTemplate: '<%= datasetLabel %>: <%= value + "%" %>'
                         });
                     });
                 });
