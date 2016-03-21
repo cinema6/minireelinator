@@ -103,7 +103,7 @@ module.exports = function(http) {
         container.defaultTagParams.vpaid.container = container.name;
         container.defaultTagParams.mraid.container = container.name;
 
-        grunt.file.write(objectPath('containers', id), JSON.stringify(user, null, '    '));
+        grunt.file.write(objectPath('containers', id), JSON.stringify(container, null, '    '));
 
         this.respond(201, extend(container, { id: id }));
     });

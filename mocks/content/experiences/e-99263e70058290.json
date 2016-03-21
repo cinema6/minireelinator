@@ -24,6 +24,12 @@
           "editable": false
         },
         {
+          "name": "container",
+          "label": "Container Name",
+          "type": "String",
+          "editable": false
+        },
+        {
           "name": "branding",
           "label": "Branding",
           "type": "String",
@@ -44,6 +50,12 @@
         {
           "name": "network",
           "label": "Network",
+          "type": "String",
+          "editable": true
+        },
+        {
+          "name": "uuid",
+          "label": "UUID",
           "type": "String",
           "editable": true
         },

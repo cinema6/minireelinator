@@ -1,5 +1,5 @@
 <style>
-    input {
+    input, select {
         display: block;
     }
     textarea {
@@ -30,16 +30,14 @@ Container Name: <input type="text" ng-model="SelfieContainerCtrl.container.name"
 <div ng-show="SelfieContainerCtrl.mraid.show">
     <h2>MRAID Parameters</h2>
 
-    Network: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.network">
-    UUID: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.uuid">
-    Host App: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.hostApp">
-    Prebuffer: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.prebuffer">
+    Network: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.network.value">
+    UUID: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.uuid.value">
+    Host App: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.hostApp.value">
+    Prebuffer: <select name="prebuffer" id="" ng-model="SelfieContainerCtrl.mraid.defaults.prebuffer.value" ng-options="bool for bool in ['Yes','No']"></select>
 
-    <span ng-repeat="clickUrl in SelfieContainerCtrl.mraid.defaults.clickUrls">
+    <span ng-repeat="clickUrl in SelfieContainerCtrl.mraid.defaults.clickUrls.value">
         Click URL: <input type="text" ng-model="clickUrl.value">
     </span>
-
-    <br>
 
     <span ng-repeat="param in SelfieContainerCtrl.mraid.addedParams">
         <span ng-if="param.type === 'Boolean'">
@@ -65,6 +63,8 @@ Container Name: <input type="text" ng-model="SelfieContainerCtrl.container.name"
         </span>
     </span>
 
+    <br>
+
     <select name="addMraidParam" id="" ng-model="addMraidParam" ng-options="param.label for param in SelfieContainerCtrl.mraid.availableParams"></select>
     <button ng-click="SelfieContainerCtrl.addParam('mraid', addMraidParam)">ADD</button>
 </div>
@@ -74,8 +74,28 @@ Container Name: <input type="text" ng-model="SelfieContainerCtrl.container.name"
 <div ng-show="SelfieContainerCtrl.vpaid.show">
     <h2>VPAID Parameters</h2>
 
-    Network: <input type="text" ng-model="SelfieContainerCtrl.vpaid.defaults.network">
-    UUID: <input type="text" ng-model="SelfieContainerCtrl.vpaid.defaults.uuid">
+    Network: <input type="text" ng-model="SelfieContainerCtrl.vpaid.defaults.network.value">
+    UUID: <input type="text" ng-model="SelfieContainerCtrl.vpaid.defaults.uuid.value">
+
+    <span ng-repeat="param in SelfieContainerCtrl.vpaid.addedParams">
+        <span ng-if="param.type === 'Boolean'">
+            {{param.label}}: <select name="{{param.name}}" id="" ng-model="param.value" ng-options="bool for bool in ['Yes','No']"></select>
+        </span>
+
+        <span ng-if="param.type === 'String'">
+            {{param.label}}: <input type="text" ng-model="param.value">
+        </span>
+
+        <span ng-if="param.type === 'Number'">
+            {{param.label}}: <input type="number" ng-model="param.value">
+        </span>
+
+        <span ng-if="param.type === 'Array'">
+            <span ng-repeat="arrParam in param.value">
+                {{arrParam.label}}: <input type="text" ng-model="arrParam.value">
+            </span>
+        </span>
+    </span>
 
     <br>
 
@@ -85,4 +105,4 @@ Container Name: <input type="text" ng-model="SelfieContainerCtrl.container.name"
 
 <br>
 
-<button ng-click="SelfieContainerCtrl.save()">SAVE</button>
+<button ng-click="SelfieContainerCtrl.save()" ng-disabled="!SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label">SAVE</button>
