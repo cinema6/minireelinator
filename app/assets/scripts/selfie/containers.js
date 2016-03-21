@@ -111,7 +111,8 @@ define(['angular','c6_state'], function(angular, c6State) {
                     name: param.name,
                     label: param.label,
                     type: param.type,
-                    value: _val
+                    options: param.options,
+                    value: _val,
                 };
             }
 
@@ -128,7 +129,8 @@ define(['angular','c6_state'], function(angular, c6State) {
                             return result;
                         }, override ? [] : (target[param.name] || []));
                     } else if (param.type === 'Boolean') {
-                        target[param.name] = param.value === 'Yes';
+                        target[param.name] = param.value !== undefined ?
+                            param.value === 'Yes' : param.value;
                     } else {
                         target[param.name] = param.value;
                     }
@@ -162,6 +164,7 @@ define(['angular','c6_state'], function(angular, c6State) {
                             name: param.name,
                             label: param.label,
                             type: param.type,
+                            options: param.options,
                             value: param.default || param.type !== 'Array' ? null : []
                         });
                     }

@@ -45,7 +45,9 @@ Container Name: <input type="text" ng-model="SelfieContainerCtrl.container.name"
         </span>
 
         <span ng-if="param.type === 'String'">
-            {{param.label}}: <input type="text" ng-model="param.value">
+            {{param.label}}:
+            <input ng-if="!param.options" type="text" ng-model="param.value">
+            <select ng-if="param.options" name="{{param.name}}" id="" ng-model="param.value" ng-options="option for option in param.options"></select>
         </span>
 
         <span ng-if="param.type === 'Number'">
@@ -56,10 +58,6 @@ Container Name: <input type="text" ng-model="SelfieContainerCtrl.container.name"
             <span ng-repeat="arrParam in param.value">
                 {{arrParam.label}}: <input type="text" ng-model="arrParam.value">
             </span>
-
-            <!-- <span ng-repeat="arrParam in SelfieContainerCtrl.mraid.defaults[param.name]">
-                {{arrParam.label}}: <input type="text" ng-model="arrParam.value">
-            </span> -->
         </span>
     </span>
 

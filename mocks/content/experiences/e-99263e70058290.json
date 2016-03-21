@@ -39,7 +39,8 @@
           "name": "mobileType",
           "label": "Mobile Type",
           "type": "String",
-          "editable": true
+          "editable": true,
+          "options": ["mobile","swipe"]
         },
         {
           "name": "hostApp",
@@ -97,9 +98,10 @@
         },
         {
           "name": "type",
-          "label": "Tag Type",
+          "label": "Player Type",
           "type": "String",
-          "editable": true
+          "editable": true,
+          "options": ["desktop-card","mobile","light"]
         },
         {
           "name": "autoLaunch",
@@ -153,7 +155,8 @@
           "name": "forceOrientation",
           "label": "Orientation Lock",
           "type": "String",
-          "editable": true
+          "editable": true,
+          "options": ["landscape","portrait","none"]
         }
       ]
     }
