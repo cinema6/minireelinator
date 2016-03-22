@@ -6,6 +6,7 @@
   * [DESIGN]: Updated hint placement on landing page sign up form
   * [FIX]: When there are no campaigns in the list due to filtering or
     searching, show "No matching campaigns" instead of "Let's get you started"
+  * [DESIGN]: Added styles for placement pages
 
 ## v1.38.0 (March 8, 2016)
 * *[v1.38.0.rc2]*
