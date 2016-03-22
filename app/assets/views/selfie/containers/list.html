@@ -1,5 +1,72 @@
-<ul>
-    <li ng-repeat="container in SelfieContainersCtrl.model track by container.id">
-        <a c6-sref="Selfie:Edit:Container" c6-models="[container]" c6-params="{}">{{container.label}} - {{container.name}}</a>
-    </li>
-</ul>
+<div class="pageHeader__group">
+    <div class="mainHeader__group">
+        <h1 class="mainHeader__breadcrumbs tk--hdr">
+            <a href="settings.html">DSPs</a>
+        </h1>
+    </div><!--.mainHeader__group-->
+    <div class="pageHeader__actions">
+            <button c6-sref="Selfie:New:Container" title="New Campaign" class="action__btn action__btn--small" type="button">
+               <i class="fa fa-plus"></i> New DSP
+            </button>
+    </div>
+</div><!--.pageHeader__group-->
+
+<div class="grid grid--center">
+    <div class="grid__item">
+        <header class="settingsContent__header">
+            <h2 class="settingsContent__title tk--hdr">DSPs</h2>
+            <span class="settingsContent__subtitle">Add/Edit DSPs</span>
+        </header>
+    </div>
+</div>
+
+<div class="settingsContent__gridHolder manageDSP__group">
+    <div class="grid grid--center">
+        <div class="grid__item one-whole">
+            <div class="sortBar__group">
+                <ul class="sortBar__list clearfix">
+                    <li class="sortBar__item column__DSPName">
+                        <button class="sortBar__btn sortBar__btn--asc" type="button">DSP</button>
+                    </li>
+                    <li class="sortBar__item column__tagTypes">
+                        <button class="sortBar__btn" type="button">Container Name</button>
+                    </li>
+                    <li class="sortBar__item column__actionOptions">
+                        <button class="sortBar__btn" type="button">Actions</button>
+                    </li>
+                </ul><!--.sortBar__list-->
+            </div><!--.sortBar__group-->
+            <ul class="dspList">
+                <li ng-repeat="container in SelfieContainersCtrl.model track by container.id" class="dspList__item clearfix">
+                    <div class="dspList__column column__DSPName">
+                        <span class="dspList__item--text tk--hdr"><a c6-sref="Selfie:Edit:Container" c6-models="[container]" c6-params="{}">{{container.label}}</a></span>
+                    </div><!--.column__DSPName-->
+
+                    <div class="dspList__column column__tagTypes">
+                        <span class="dspList__item--text tk--hdr">{{container.name}}</span>
+                    </div><!--.column__tagTypes-->
+
+                   <div class="dspList__column column__actionOptions">
+                        <div class="actionOptions__menu">
+                            <ul class="action__row">
+                                <!-- Right aligned menu on top of button  -->
+                                <li class="action__row--item">
+                                    <nav class="action__dropdown">
+                                        <ul>
+                                          <li><button><i class="fa fa-ellipsis-v"></i><span class="ir">Menu</span></button>
+                                            <ul>
+                                              <li><button ng-click="SelfieContainersCtrl.edit(container)">Edit</button></li>
+                                              <li><button ng-click="SelfieContainersCtrl.delete(container)">Delete</button></li>
+                                            </ul>
+                                          </li>
+                                        </ul>
+                                    </nav>
+                                </li>
+                            </ul>
+                        </div>
+                    </div><!--.column__actionOptions-->
+                </li><!--.dspList__item-->
+            </ul>
+        </div>
+    </div>
+</div><!-- .settingsContent__gridHolder -->

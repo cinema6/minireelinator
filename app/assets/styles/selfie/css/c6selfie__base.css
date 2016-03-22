@@ -5884,7 +5884,7 @@ div.tree-multiselect span.remove-selected {
         display: inline-block;
         float: right;
         text-align: right;
-        right: -80px;
+        right: -40px;
         position: absolute;
     }
     .form__item--clone .btns--inline button i.fa {

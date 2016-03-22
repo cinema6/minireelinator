@@ -1,106 +1,406 @@
-<style>
-    input, select {
-        display: block;
-    }
-    textarea {
-        display: block;
-    }
-    .pageHolder {
-        margin: 0 0 0 5em;
-    }
-</style>
+<div class="pageHeader__group">
+    <div class="mainHeader__group">
+        <h1 class="mainHeader__breadcrumbs tk--hdr">
+            <a c6-sref="Selfie:Containers">Back to DSPs</a> / <span ng-if="!SelfieContainerCtrl.container.id">Add New DSP</span><span ng-if="!!SelfieContainerCtrl.container.id">Edit DSP</span>
+        </h1>
+    </div><!--.mainHeader__group-->
+    <div ng-if="!!SelfieContainerCtrl.container.id" class="pageHeader__actions">
+        <!-- Show "delete" on "Edit DSP" screen -->
+        <button ng-click="SelfieContainerCtrl.delete()" title="Delete Container" class="action__btn action__btn--small" type="button">
+           <i class="fa fa-trash-o"></i> Delete
+        </button>
+    </div>
+</div><!--.pageHeader__group-->
 
-<h2>Container</h2>
-
-{{SelfieContainerCtrl.heading}}
-
-<br>
-<br>
-
-Name: <input type="text" ng-model="SelfieContainerCtrl.container.label">
-Container Name: <input type="text" ng-model="SelfieContainerCtrl.container.name" ng-disabled="SelfieContainerCtrl.hasName">
-
-<br>
-
-<input type="checkbox" name="mraid" ng-model="SelfieContainerCtrl.mraid.show">MRAID
-<input type="checkbox" name="vpaid" ng-model="SelfieContainerCtrl.vpaid.show">VPAID
-
-<br>
-
-<div ng-show="SelfieContainerCtrl.mraid.show">
-    <h2>MRAID Parameters</h2>
-
-    Network: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.network.value">
-    UUID: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.uuid.value">
-    Host App: <input type="text" ng-model="SelfieContainerCtrl.mraid.defaults.hostApp.value">
-    Prebuffer: <select name="prebuffer" id="" ng-model="SelfieContainerCtrl.mraid.defaults.prebuffer.value" ng-options="bool for bool in ['Yes','No']"></select>
-
-    <span ng-repeat="clickUrl in SelfieContainerCtrl.mraid.defaults.clickUrls.value">
-        Click URL: <input type="text" ng-model="clickUrl.value">
-    </span>
-
-    <span ng-repeat="param in SelfieContainerCtrl.mraid.addedParams">
-        <span ng-if="param.type === 'Boolean'">
-            {{param.label}}: <select name="{{param.name}}" id="" ng-model="param.value" ng-options="bool for bool in ['Yes','No']"></select>
-        </span>
-
-        <span ng-if="param.type === 'String'">
-            {{param.label}}:
-            <input ng-if="!param.options" type="text" ng-model="param.value">
-            <select ng-if="param.options" name="{{param.name}}" id="" ng-model="param.value" ng-options="option for option in param.options"></select>
-        </span>
-
-        <span ng-if="param.type === 'Number'">
-            {{param.label}}: <input type="number" ng-model="param.value">
-        </span>
-
-        <span ng-if="param.type === 'Array'">
-            <span ng-repeat="arrParam in param.value">
-                {{arrParam.label}}: <input type="text" ng-model="arrParam.value">
+<div class="grid grid--center">
+    <div class="grid__item">
+        <header class="settingsContent__header">
+            <!-- Show on "Add New DSP" screen -->
+            <span ng-if="!SelfieContainerCtrl.container.id">
+                <h2 class="settingsContent__title tk--hdr">Add New DSP</h2>
+                <span class="settingsContent__subtitle">Add Container defaults for the DSP</span>
             </span>
-        </span>
-    </span>
 
-    <br>
-
-    <select name="addMraidParam" id="" ng-model="addMraidParam" ng-options="param.label for param in SelfieContainerCtrl.mraid.availableParams"></select>
-    <button ng-click="SelfieContainerCtrl.addParam('mraid', addMraidParam)">ADD</button>
+            <!-- Show on "Edit DSP" screen -->
+            <span ng-if="!!SelfieContainerCtrl.container.id">
+                <h2 class="settingsContent__title tk--hdr">Edit</h2>
+                <span class="settingsContent__subtitle">Edit Container defaults for the DSP</span>
+            </span>
+        </header>
+    </div>
 </div>
 
-<br>
+<div class="gridHolder manageDSP__group">
+    <div class="grid grid--center">
+        <div class="grid__item one-half">
+            <div class="form__items form--narrow">
+                <fieldset class="form__item">
+                    <input c6-fill-check ng-model="SelfieContainerCtrl.container.label" class="form__textBox form__fillCheck" type="text" id="c6-container-label">
+                    <label class="form__label" for="c6-container-label">
+                        <i class="fa fa-times ui--error"></i>
+                        Name
+                    </label>
+                    <div class="form__helpBox form__helpBox--right">
+                        <div class="form__helpText">
+                            Enter DSP Name
+                        </div>
+                    </div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Invalid Name
+                        </p>
+                    </div>
+                </fieldset>
+                <fieldset class="form__item" ng-class="{'ui--hasError': !SelfieContainerCtrl.validName }">
+                    <input c6-fill-check ng-model="SelfieContainerCtrl.container.name" ng-disabled="SelfieContainerCtrl.hasName" ng-pattern="/^[\w-]+$/" ng-blur="SelfieContainerCtrl.validateName(SelfieContainerCtrl.container.name)" ng-focus="SelfieContainerCtrl.validName = true" class="form__textBox form__fillCheck" type="text" id="c6-container-name">
+                    <label class="form__label" for="c6-container-name">
+                        <i class="fa fa-times ui--error"></i>
+                        DSP ID*
+                    </label>
+                    <div class="form__helpBox form__helpBox--right">
+                        <div class="form__helpText">
+                            DSP ID must be unique. Letters and numbers only. Case sensitive.
+                        </div>
+                    </div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Invalid ID, must be unique and contain letters and numbers only.
+                        </p>
+                    </div>
+                </fieldset>
+                <fieldset class="form__item">
+                    <div class="tagOptions__check text--center">
+                        <label class="checkbox--inline tagOptions__item"><input ng-model="SelfieContainerCtrl.mraid.show" type="checkbox" class="checkbox__input"> <span class="btn__label faa">MRAID</span></label>
+                        <label class="checkbox--inline tagOptions__item"><input ng-model="SelfieContainerCtrl.vpaid.show" type="checkbox" class="checkbox__input"> <span class="btn__label faa">VPAID</span></label>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <section ng-show="SelfieContainerCtrl.mraid.show" class="formSection__group">
+            <div class="formSection__group--sub">
+                <h1 class="formSection__title">
+                    <span class="formSection__titleText tk--hdr">MRAID</span>
+                </h1>
+                <p class="formSection__introText">MRAID tag prefixes</p>
+            </div>
 
-<div ng-show="SelfieContainerCtrl.vpaid.show">
-    <h2>VPAID Parameters</h2>
+            <div class="grid__item one-half">
+                <div class="form__items form--narrow">
+                    <fieldset class="form__item">
+                        <input c6-fill-check ng-model="SelfieContainerCtrl.mraid.defaults.network.value" class="form__textBox form__fillCheck" type="text" id="c6-mraid-network">
+                        <label class="form__label" for="c6-mraid-network">
+                            <i class="fa fa-times ui--error"></i>
+                            Network
+                        </label>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Invalid Network Name
+                            </p>
+                        </div>
+                    </fieldset>
+                    <fieldset class="form__item">
+                        <input c6-fill-check ng-model="SelfieContainerCtrl.mraid.defaults.hostApp.value" class="form__textBox form__fillCheck" type="text" id="c6-mraid-hostApp">
+                        <label class="form__label" for="c6-mraid-hostApp">
+                            <i class="fa fa-times ui--error"></i>
+                            Host App
+                        </label>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Invalid Host App
+                            </p>
+                        </div>
+                    </fieldset>
+                    <fieldset class="form__item">
+                        <select c6-select-box data-options="['Yes','No']" ng-model="SelfieContainerCtrl.mraid.defaults.prebuffer.value" ng-options="bool for bool in ['Yes','No']" class="form__selectBox form__selectBox--single" id="c6-mraid-prebuffer">
+                            <option value="">No value</option>
+                        </select>
+                        <label class="form__label" for="c6-mraid-prebuffer">
+                            <i class="fa fa-times ui--error"></i>
+                            Prebuffer
+                        </label>
+                        <div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpText">
+                                Should the player attempt to buffer its videos after they are loaded?
+                            </div>
+                        </div>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                            </p>
+                        </div>
+                    </fieldset>
+                    <fieldset ng-repeat="clickUrl in SelfieContainerCtrl.mraid.defaults.clickUrls.value" class="form__item">
+                        <input c6-fill-check ng-model="clickUrl.value" class="form__textBox form__fillCheck" type="text" id="c6-mraid-clickUrl-{{$index}}">
+                        <label class="form__label" for="c6-mraid-clickUrl-{{$index}}">
+                            <i class="fa fa-times ui--error"></i>
+                            Click Pixel
+                        </label>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Invalid Click Pixel
+                            </p>
+                        </div>
+                    </fieldset>
+                    <fieldset class="form__item">
+                        <input c6-fill-check ng-model="SelfieContainerCtrl.mraid.defaults.uuid.value" class="form__textBox form__fillCheck" type="text" id="c6-mraid-userid">
+                        <label class="form__label" for="c6-mraid-userid">
+                            <i class="fa fa-times ui--error"></i>
+                            UUID
+                        </label>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Invalid UUID
+                            </p>
+                        </div>
+                    </fieldset>
 
-    Network: <input type="text" ng-model="SelfieContainerCtrl.vpaid.defaults.network.value">
-    UUID: <input type="text" ng-model="SelfieContainerCtrl.vpaid.defaults.uuid.value">
+                    <!-- ADDED PARAMS-->
+                    <div ng-repeat="param in SelfieContainerCtrl.mraid.addedParams">
+                        <fieldset ng-if="param.type === 'Boolean'" class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <select c6-select-box data-options="['Yes','No']" ng-model="param.value" ng-options="bool for bool in ['Yes','No']" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}">
+                                    <option value="">No value</option>
+                                </select>
+                                <label class="form__label" for="{{param.name}}-{{$index}}">
+                                    <i class="fa fa-times ui--error"></i>
+                                    {{param.label}}
+                                </label>
+                            </div>
+                            <div class="btns--inline">
+                                <button ng-click="SelfieContainerCtrl.removeParam('mraid', param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+                                </p>
+                            </div>
+                        </fieldset>
 
-    <span ng-repeat="param in SelfieContainerCtrl.vpaid.addedParams">
-        <span ng-if="param.type === 'Boolean'">
-            {{param.label}}: <select name="{{param.name}}" id="" ng-model="param.value" ng-options="bool for bool in ['Yes','No']"></select>
-        </span>
+                        <fieldset ng-if="param.type === 'String'" class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <input ng-if="!param.options" ng-model="param.value" c6-fill-check class="form__textBox form__fillCheck" type="text" id="{{param.name}}-{{$index}}">
+                                <select ng-if="param.options" ng-model="param.value" c6-select-box data-options="param.options" ng-options="option for option in param.options" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}">
+                                    <option value="">No value</option>
+                                </select>
+                                <label class="form__label" for="{{param.name}}-{{$index}}">
+                                    <i class="fa fa-times ui--error"></i>
+                                    {{param.label}}
+                                </label>
+                            </div>
+                            <div class="btns--inline">
+                                <button ng-click="SelfieContainerCtrl.removeParam('mraid', param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+                                </p>
+                            </div>
+                        </fieldset>
 
-        <span ng-if="param.type === 'String'">
-            {{param.label}}: <input type="text" ng-model="param.value">
-        </span>
+                        <fieldset ng-if="param.type === 'Number'" class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <input ng-if="!param.options" ng-model="param.value" c6-fill-check class="form__textBox form__fillCheck" type="number" id="{{param.name}}-{{$index}}">
+                                <select ng-if="param.options" ng-model="param.value" c6-select-box data-options="param.options" ng-options="option for option in param.options" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}"></select>
+                                <label class="form__label" for="{{param.name}}-{{$index}}">
+                                    <i class="fa fa-times ui--error"></i>
+                                    {{param.label}}
+                                </label>
+                            </div>
+                            <div class="btns--inline">
+                                <button ng-click="SelfieContainerCtrl.removeParam('mraid', param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+                                </p>
+                            </div>
+                        </fieldset>
 
-        <span ng-if="param.type === 'Number'">
-            {{param.label}}: <input type="number" ng-model="param.value">
-        </span>
+                        <div ng-if="param.type === 'Array'">
+                            <fieldset ng-repeat="arrParam in param.value" class="form__item form__item--clone">
+                                <div class="field--inline">
+                                    <input c6-fill-check ng-model="arrParam.value" class="form__textBox form__fillCheck" type="text" id="{{param.name}}-{{$index}}">
+                                    <label class="form__label" for="{{param.name}}-{{$index}}">
+                                        <i class="fa fa-times ui--error"></i>
+                                        {{arrParam.label}}
+                                    </label>
+                                </div>
+                                <div class="btns--inline">
+                                    <button ng-click="SelfieContainerCtrl.removeParam('mraid', param, arrParam)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Invalid {{arrParam.label}}
+                                    </p>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <!-- END OF ADDED PARAMS -->
 
-        <span ng-if="param.type === 'Array'">
-            <span ng-repeat="arrParam in param.value">
-                {{arrParam.label}}: <input type="text" ng-model="arrParam.value">
-            </span>
-        </span>
-    </span>
+                    <fieldset class="form__item form__item--clone">
+                        <div class="field--inline">
+                            <select c6-select-box ng-model="addMraidParam" data-options="SelfieContainerCtrl.mraid.availableParams" ng-options="param.label for param in SelfieContainerCtrl.mraid.availableParams" class="form__selectBox form__selectBox--single" id="addMraidParam">
+                                <option value="">-- Select --</option>
+                            </select>
+                            <label class="form__label" for="addMraidParam">
+                                <i class="fa fa-times ui--error"></i>
+                                Select Parameter
+                            </label>
+                        </div>
+                        <div class="btns--inline">
+                            <button ng-click="SelfieContainerCtrl.addParam('mraid', addMraidParam)" class="btn--link"><i class="fa fa-plus-circle"></i></button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </section>
 
-    <br>
+        <section ng-show="SelfieContainerCtrl.vpaid.show" class="formSection__group">
+            <div class="formSection__group--sub">
+                <h1 class="formSection__title">
+                    <span class="formSection__titleText tk--hdr">VPAID</span>
+                </h1>
+                <p class="formSection__introText">VPAID tag prefixes</p>
+            </div>
 
-    <select name="addVpaidParam" id="" ng-model="addVpaidParam" ng-options="param.label for param in SelfieContainerCtrl.vpaid.availableParams"></select>
-    <button ng-click="SelfieContainerCtrl.addParam('vpaid', addVpaidParam)">ADD</button>
-</div>
+            <div class="grid__item one-half">
+                <div class="form__items form--narrow">
+                    <fieldset class="form__item">
+                        <input c6-fill-check ng-model="SelfieContainerCtrl.vpaid.defaults.network.value" class="form__textBox form__fillCheck" type="text" id="c6-vpaid-network">
+                        <label class="form__label" for="c6-vpaid-network">
+                            <i class="fa fa-times ui--error"></i>
+                            Network
+                        </label>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Invalid Network Name
+                            </p>
+                        </div>
+                    </fieldset>
+                    <fieldset class="form__item">
+                        <input c6-fill-check ng-model="SelfieContainerCtrl.vpaid.defaults.uuid.value" class="form__textBox form__fillCheck" type="text" id="c6-vpaid-userid">
+                        <label class="form__label" for="c6-vpaid-userid">
+                            <i class="fa fa-times ui--error"></i>
+                            UUID
+                        </label>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Invalid UUID
+                            </p>
+                        </div>
+                    </fieldset>
 
-<br>
+                    <!-- ADDED PARAMS-->
+                    <div ng-repeat="param in SelfieContainerCtrl.vpaid.addedParams">
+                        <fieldset ng-if="param.type === 'Boolean'" class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <select c6-select-box data-options="['Yes','No']" ng-model="param.value" ng-options="bool for bool in ['Yes','No']" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}">
+                                    <option value="">No Value</option>
+                                </select>
+                                <label class="form__label" for="{{param.name}}-{{$index}}">
+                                    <i class="fa fa-times ui--error"></i>
+                                    {{param.label}}
+                                </label>
+                            </div>
+                            <div class="btns--inline">
+                                <button ng-click="SelfieContainerCtrl.removeParam('vpaid', param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+                                </p>
+                            </div>
+                        </fieldset>
 
-<button ng-click="SelfieContainerCtrl.save()" ng-disabled="!SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label">SAVE</button>
+                        <fieldset ng-if="param.type === 'String'" class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <input ng-if="!param.options" ng-model="param.value" c6-fill-check class="form__textBox form__fillCheck" type="text" id="{{param.name}}-{{$index}}">
+                                <select ng-if="param.options" ng-model="param.value" c6-select-box data-options="param.options" ng-options="option for option in param.options" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}">
+                                    <option value="">No value</option>
+                                </select>
+                                <label class="form__label" for="{{param.name}}-{{$index}}">
+                                    <i class="fa fa-times ui--error"></i>
+                                    {{param.label}}
+                                </label>
+                            </div>
+                            <div class="btns--inline">
+                                <button ng-click="SelfieContainerCtrl.removeParam('vpaid', param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+                                </p>
+                            </div>
+                        </fieldset>
+
+                        <fieldset ng-if="param.type === 'Number'" class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <input ng-if="!param.options" ng-model="param.value" c6-fill-check class="form__textBox form__fillCheck" type="number" id="{{param.name}}-{{$index}}">
+                                <select ng-if="param.options" ng-model="param.value" c6-select-box data-options="param.options" ng-options="option for option in param.options" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}">
+                                    <option value="">No value</option>
+                                </select>
+                                <label class="form__label" for="{{param.name}}-{{$index}}">
+                                    <i class="fa fa-times ui--error"></i>
+                                    {{param.label}}
+                                </label>
+                            </div>
+                            <div class="btns--inline">
+                                <button ng-click="SelfieContainerCtrl.removeParam('vpaid', param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+                                </p>
+                            </div>
+                        </fieldset>
+
+                        <div ng-if="param.type === 'Array'">
+                            <fieldset ng-repeat="arrParam in param.value" class="form__item form__item--clone">
+                                <div class="field--inline">
+                                    <input c6-fill-check ng-model="arrParam.value" class="form__textBox form__fillCheck" type="text" id="{{param.name}}-{{$index}}">
+                                    <label class="form__label" for="{{param.name}}-{{$index}}">
+                                        <i class="fa fa-times ui--error"></i>
+                                        {{arrParam.label}}
+                                    </label>
+                                </div>
+                                <div class="btns--inline">
+                                    <button ng-click="SelfieContainerCtrl.removeParam('vpaid', param, arrParam)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Invalid {{arrParam.label}}
+                                    </p>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <!-- END OF ADDED PARAMS -->
+
+                    <fieldset class="form__item form__item--clone">
+                        <div class="field--inline">
+                            <select c6-select-box data-options="SelfieContainerCtrl.vpaid.availableParams" ng-model="addVpaidParam" ng-options="param.label for param in SelfieContainerCtrl.vpaid.availableParams" class="form__selectBox form__selectBox--single" id="addVpaidParam">
+                                <option value="">-- Select --</option>
+                            </select>
+                            <label class="form__label" for="addVpaidParam">
+                                <i class="fa fa-times ui--error"></i>
+                                Select Parameter
+                            </label>
+                        </div>
+                        <div class="btns--inline">
+                            <button ng-click="SelfieContainerCtrl.addParam('vpaid', addVpaidParam)" class="btn--link"><i class="fa fa-plus-circle"></i></button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid__item one-half">
+            <div class="form__items form--narrow">
+                <div class="ui__btnHolder">
+                    <button ng-click="SelfieContainerCtrl.save()" ng-class="{'btn--disabled' : !SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label || !SelfieContainerCtrl.validName }" ng-disabled="!SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label || !SelfieContainerCtrl.validName" class="action__btn action__btn--wide">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- .settingsContent__gridHolder -->

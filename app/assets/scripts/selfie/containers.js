@@ -8,15 +8,9 @@ define(['angular','c6_state'], function(angular, c6State) {
     return angular.module('c6.app.selfie.containers', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Containers', ['cinema6','c6State',
-            function                                   ( cinema6 , c6State ) {
+            c6StateProvider.state('Selfie:Containers', ['c6State',
+            function                                   ( c6State ) {
                 this.templateUrl = 'views/selfie/containers.html';
-                this.controller = 'SelfieContainersController';
-                this.controllerAs = 'SelfieContainersCtrl';
-
-                this.model = function() {
-                    return cinema6.db.findAll('container');
-                };
 
                 this.enter = function() {
                     return c6State.goTo('Selfie:Containers:List');
@@ -24,16 +18,31 @@ define(['angular','c6_state'], function(angular, c6State) {
             }]);
         }])
 
-        .controller('SelfieContainersController', ['cState',
-        function                                  ( cState ) {
-            console.log(cState);
-        }])
-
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Containers:List', [function() {
+            c6StateProvider.state('Selfie:Containers:List', ['cinema6',
+            function                                        ( cinema6 ) {
                 this.templateUrl = 'views/selfie/containers/list.html';
+                this.controller = 'SelfieContainersController';
+                this.controllerAs = 'SelfieContainersCtrl';
+
+                this.model = function() {
+                    return cinema6.db.findAll('container');
+                };
             }]);
+        }])
+
+        .controller('SelfieContainersController', ['c6State',
+        function                                  ( c6State ) {
+            this.delete = function(container) {
+                container.erase().then(function() {
+                    c6State.goTo('Selfie:Containers');
+                });
+            };
+
+            this.edit = function(container) {
+                c6State.goTo('Selfie:Edit:Container', [container], null);
+            };
         }])
 
         .config(['c6StateProvider',
@@ -48,10 +57,7 @@ define(['angular','c6_state'], function(angular, c6State) {
                     return cinema6.db.create('container', {
                         name: null,
                         label: null,
-                        defaultTagParams: {
-                            mraid: {},
-                            vpaid: {}
-                        }
+                        defaultTagParams: {}
                     });
                 };
 
@@ -79,8 +85,8 @@ define(['angular','c6_state'], function(angular, c6State) {
             }]);
         }])
 
-        .controller('SelfieContainerController', ['cState','c6State',
-        function                                 ( cState , c6State ) {
+        .controller('SelfieContainerController', ['cState','c6State','cinema6',
+        function                                 ( cState , c6State , cinema6 ) {
             var App = c6State.get('Selfie:App'),
                 placementSchema = App.cModel.data.placement;
 
@@ -165,7 +171,7 @@ define(['angular','c6_state'], function(angular, c6State) {
                             label: param.label,
                             type: param.type,
                             options: param.options,
-                            value: param.default || param.type !== 'Array' ? null : []
+                            value: param.type !== 'Array' ? param.default : []
                         });
                     }
 
@@ -195,7 +201,7 @@ define(['angular','c6_state'], function(angular, c6State) {
                     availableParams: [],
                     addedParams: [],
                     defaults: {},
-                    show: Object.keys(existingParams).length > 1
+                    show: Object.keys(existingParams).length > 0
                 });
             }
 
@@ -207,6 +213,7 @@ define(['angular','c6_state'], function(angular, c6State) {
                 // from the DB model, if it's an object we recurse
                 forEach(obj, function(prop, key) {
                     if (isObject(prop) && !isArray(prop)) {
+                        target[key] = target[key] || {};
                         return extendContainer(target[key], prop);
                     }
 
@@ -223,8 +230,12 @@ define(['angular','c6_state'], function(angular, c6State) {
             this.initWithModel = function(model) {
                 this._container = model;
                 this.container = model.pojoify();
+                this.container.defaultTagParams.mraid = this.container.defaultTagParams.mraid || {};
+                this.container.defaultTagParams.vpaid = this.container.defaultTagParams.vpaid || {};
+
                 this.hasName = !!model.name;
                 this.heading = cState.heading;
+                this.validName = true;
 
                 // generate an 'mraid' and 'vpaid' object for
                 // binding in the UI, this will contain a
@@ -252,13 +263,45 @@ define(['angular','c6_state'], function(angular, c6State) {
                 if (param.type === 'Array') {
                     param.value.push({
                         label: param.label,
-                        value: null
+                        value: undefined
                     });
                 }
 
                 if (this[type].addedParams.indexOf(param) < 0) {
                     this[type].addedParams.push(param);
                 }
+            };
+
+            this.removeParam = function(type, param, subParam) {
+                if (!param) { return; }
+
+                var index = this[type].addedParams.indexOf(param);
+
+                if (subParam) {
+                    param.value.splice(param.value.indexOf(subParam), 1);
+                }
+
+                if (param.type !== 'Array' || !param.value.length) {
+                    this[type].addedParams.splice(index, 1);
+
+                    param.value = param.type !== 'Array' ? param.default : [];
+                }
+            };
+
+            this.validateName = function(name) {
+                if (!name) { return; }
+
+                var self = this;
+
+                if (!(/^[\w-]+$/).test(name)) {
+                    self.validName = false;
+                    return;
+                }
+
+                cinema6.db.findAll('container', {name: name})
+                    .then(function(containers) {
+                        self.validName = !containers.length;
+                    });
             };
 
             this.save = function() {
@@ -271,8 +314,12 @@ define(['angular','c6_state'], function(angular, c6State) {
                 // and overwrite existing values with current defaults
                 // and then add the other chosen params
                 forEach(defaultTagParams, function(params, key) {
-                    extendParams(params, self[key].defaults, true);
-                    extendParams(params, self[key].addedParams);
+                    if (self[key].show) {
+                        extendParams(params, self[key].defaults, true);
+                        extendParams(params, self[key].addedParams);
+                    } else {
+                        defaultTagParams[key] = undefined;
+                    }
                 });
 
                 // update dbModel with current container data
@@ -280,7 +327,7 @@ define(['angular','c6_state'], function(angular, c6State) {
 
                 // svae the container and go to dashboard
                 dbModel.save().then(function() {
-                    c6State.goTo('Selfie:Containers');
+                    c6State.goTo('Selfie:Containers', null, null);
                 });
             };
         }]);

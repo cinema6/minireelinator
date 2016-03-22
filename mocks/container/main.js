@@ -40,6 +40,11 @@ module.exports = function(http) {
 
                     return !ids || idArray.indexOf(id) > -1;
                 })
+                .filter(function(container) {
+                    var name = request.query.name;
+
+                    return !name || name === container.name;
+                })
                 .map(function(container) {
                     var fields = request.query.fields,
                         fieldsArray = (fields || '').split(',');
@@ -70,6 +75,12 @@ module.exports = function(http) {
                 lastUpdated: (new Date()).toISOString()
             });
 
+        updated.defaultTagParams = updated.defaultTagParams || {};
+
+        Object.keys(updated.defaultTagParams).forEach(function(key) {
+            updated.defaultTagParams[key].container = updated.name;
+        });
+
         grunt.file.write(filePath, JSON.stringify(updated, null, '    '));
 
         this.respond(200, extend(updated, {id: id}));
@@ -98,13 +109,19 @@ module.exports = function(http) {
         }
 
         container.defaultTagParams = container.defaultTagParams || {};
-        container.defaultTagParams.vpaid = container.defaultTagParams.vpaid || {};
-        container.defaultTagParams.mraid = container.defaultTagParams.mraid || {};
-        container.defaultTagParams.vpaid.container = container.name;
-        container.defaultTagParams.mraid.container = container.name;
+
+        Object.keys(container.defaultTagParams).forEach(function(key) {
+            container.defaultTagParams[key].container = container.name;
+        });
 
         grunt.file.write(objectPath('containers', id), JSON.stringify(container, null, '    '));
 
         this.respond(201, extend(container, { id: id }));
+    });
+
+    http.whenDELETE('/api/containers/**', function(request) {
+        grunt.file.delete(objectPath('containers', idFromPath(request.pathname)));
+
+        this.respond(204, '');
     });
 };
