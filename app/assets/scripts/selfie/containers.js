@@ -3,7 +3,8 @@ define(['angular','c6_state'], function(angular, c6State) {
 
     var forEach = angular.forEach,
         isArray = angular.isArray,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        copy = angular.copy;
 
     return angular.module('c6.app.selfie.containers', [c6State.name])
         .config(['c6StateProvider',
@@ -177,8 +178,8 @@ define(['angular','c6_state'], function(angular, c6State) {
                             return result;
                         }, []);
                     } else if (param.type === 'Boolean') {
-                        target[param.name] = param.value !== undefined ?
-                            param.value === 'Yes' : param.value;
+                        target[param.name] = typeof param.value === 'string' ?
+                            param.value === 'Yes' : undefined;
                     } else {
                         target[param.name] = (param.value || undefined);
                     }
@@ -187,7 +188,9 @@ define(['angular','c6_state'], function(angular, c6State) {
                 return target;
             }
 
-            function mergeParams(target, params) {
+            function mergeParams(defaults, params) {
+                var target = copy(defaults);
+
                 forEach(params, function(param) {
                     if (param.type === 'Array') {
                         if (!target[param.name]) {
@@ -333,7 +336,7 @@ define(['angular','c6_state'], function(angular, c6State) {
                     param.value.splice(param.value.indexOf(subParam), 1);
                 }
 
-                if (param.type !== 'Array' || !param.value.length) {
+                if (param.type !== 'Array') {
                     this[type].addedParams.splice(index, 1);
 
                     param.value = param.type !== 'Array' ? param.default : [];

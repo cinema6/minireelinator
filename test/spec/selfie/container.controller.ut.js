@@ -834,20 +834,12 @@ define(['app','angular'], function(appModule, angular) {
 
                             expect(SelfieContainerCtrl.vpaid.addedParams[0].value.length).toBe(1);
                             expect(SelfieContainerCtrl.vpaid.addedParams[0].value[0]).toBe(playPixel2);
-                        });
-                    });
 
-                    describe('when there are no other subParams', function() {
-                        it('should remove the subParam and remove the array param from the addedParams array', function() {
-                            expect(SelfieContainerCtrl.vpaid.addedParams.length).toBe(2);
+                            SelfieContainerCtrl.removeParam('vpaid', playParam, playPixel2);
+
+                            expect(SelfieContainerCtrl.vpaid.addedParams[0].value.length).toBe(0);
+
                             expect(SelfieContainerCtrl.vpaid.addedParams[0]).toBe(playParam);
-                            expect(SelfieContainerCtrl.vpaid.addedParams[0].value.length).toBe(1);
-
-                            SelfieContainerCtrl.removeParam('vpaid', playParam, SelfieContainerCtrl.vpaid.addedParams[0].value[0]);
-
-                            expect(SelfieContainerCtrl.vpaid.addedParams.length).toBe(1);
-                            expect(SelfieContainerCtrl.vpaid.addedParams[0]).toBe(brandingParam);
-                            expect(playParam.value).toEqual([]);
                         });
                     });
                 });
