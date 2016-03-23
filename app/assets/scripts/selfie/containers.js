@@ -45,7 +45,7 @@ define(['angular','c6_state'], function(angular, c6State) {
 
             function showErrorModal(error) {
                 ConfirmDialogService.display({
-                    prompt: 'There was an a problem processing your request: ' + error.data,
+                    prompt: 'There was a problem processing your request: ' + error.data,
                     affirm: 'OK',
 
                     onCancel: function() {
@@ -113,9 +113,9 @@ define(['angular','c6_state'], function(angular, c6State) {
             }]);
         }])
 
-        .controller('SelfieContainerController', ['cState','c6State','cinema6','c6AsyncQueue',
+        .controller('SelfieContainerController', ['c6State','cinema6','c6AsyncQueue',
                                                   'ConfirmDialogService',
-        function                                 ( cState , c6State , cinema6 , c6AsyncQueue ,
+        function                                 ( c6State , cinema6 , c6AsyncQueue ,
                                                    ConfirmDialogService ) {
             var App = c6State.get('Selfie:App'),
                 placementSchema = App.cModel.data.placement,
@@ -123,7 +123,7 @@ define(['angular','c6_state'], function(angular, c6State) {
 
             function showErrorModal(error) {
                 ConfirmDialogService.display({
-                    prompt: 'There was an a problem processing your request: ' + error.data,
+                    prompt: 'There was a problem processing your request: ' + error.data,
                     affirm: 'OK',
 
                     onCancel: function() {
@@ -135,7 +135,7 @@ define(['angular','c6_state'], function(angular, c6State) {
                 });
             }
 
-            function convertParamValueForUI(param, value) {
+            function convertParamForUI(param, value) {
                 // We need to convert the raw values into UI-friendly
                 // objects for binding. Arrays end up in ng-repeats,
                 // Booleans end up as <select> dropdowns, Strings
@@ -167,31 +167,61 @@ define(['angular','c6_state'], function(angular, c6State) {
                 };
             }
 
-            function extendParams(target, params, override) {
-                // We could be extending the target with data from an object
-                // or an array. Regardless, we want to process the params
-                // the same way, so set(param) is used for both
-                function set(param) {
+            function convertParamsForSaving(target, params) {
+                forEach(params, function(param) {
                     if (param.type === 'Array') {
                         target[param.name] = param.value.reduce(function(result, item) {
                             if (item.value) {
                                 result.push(item.value);
                             }
                             return result;
-                        }, override ? [] : (target[param.name] || []));
+                        }, []);
                     } else if (param.type === 'Boolean') {
                         target[param.name] = param.value !== undefined ?
                             param.value === 'Yes' : param.value;
                     } else {
-                        target[param.name] = param.value;
+                        target[param.name] = (param.value || undefined);
                     }
-                }
+                });
 
-                if (isArray(params)) {
-                    params.forEach(set);
-                } else if (isObject(params)) {
-                    forEach(params, set);
-                }
+                return target;
+            }
+
+            function mergeParams(target, params) {
+                forEach(params, function(param) {
+                    if (param.type === 'Array') {
+                        if (!target[param.name]) {
+                            target[param.name] = param;
+                        } else {
+                            target[param.name].value = (target[param.name].value || [])
+                                .concat(param.value);
+                        }
+                    } else {
+                        target[param.name] = param;
+                    }
+                });
+
+                return target;
+            }
+
+            function extendContainer(target, obj) {
+                // when we're ready to save a container we want
+                // to copy over every param that was edited in
+                // the UI. If the property is not set or it's
+                // and array with nothing in it we remove it
+                // from the DB model, if it's an object we recurse
+                forEach(obj, function(prop, key) {
+                    if (isObject(prop) && !isArray(prop)) {
+                        target[key] = target[key] || {};
+                        return extendContainer(target[key], prop);
+                    }
+
+                    if (prop === undefined || (isArray(prop) && !prop.length)) {
+                        delete target[key];
+                    } else {
+                        target[key] = prop;
+                    }
+                });
 
                 return target;
             }
@@ -220,25 +250,25 @@ define(['angular','c6_state'], function(angular, c6State) {
                         });
                     }
 
-                    if (existingParams[param.name] || param.default || inUI) {
+                    if (param.editable && !inUI && existingParams[param.name]) {
+                        // if the param is already defined or has a default value
+                        // but is not already in the UI, then display it as an
+                        // added param under the default params
+                        result.addedParams.push(
+                            convertParamForUI(
+                                param,
+                                existingParams[param.name]
+                            )
+                        );
+                    }
+
+                    if (inUI || (!param.editable && param.default)) {
                         // if the param is already defined or has a default or should
                         // be in the UI, then set it up as a default param in the UI
-                        result.defaults[param.name] = convertParamValueForUI(
+                        result.defaults[param.name] = convertParamForUI(
                             param,
                             existingParams[param.name]
                         );
-
-                        if (param.editable && !inUI) {
-                            // if the param is already defined or has a default value
-                            // but is not already in the UI, then display it as an
-                            // added param under the default params
-                            result.addedParams.push(
-                                convertParamValueForUI(
-                                    param,
-                                    existingParams[param.name]
-                                )
-                            );
-                        }
                     }
 
                     return result;
@@ -248,28 +278,6 @@ define(['angular','c6_state'], function(angular, c6State) {
                     defaults: {},
                     show: Object.keys(existingParams).length > 0
                 });
-            }
-
-            function extendContainer(target, obj) {
-                // when we're ready to save a container we want
-                // to copy over every param that was edited in
-                // the UI. If the property is not set or it's
-                // and array with nothing in it we remove it
-                // from the DB model, if it's an object we recurse
-                forEach(obj, function(prop, key) {
-                    if (isObject(prop) && !isArray(prop)) {
-                        target[key] = target[key] || {};
-                        return extendContainer(target[key], prop);
-                    }
-
-                    if (prop === undefined || (isArray(prop) && !prop.length)) {
-                        delete target[key];
-                    } else {
-                        target[key] = prop;
-                    }
-                });
-
-                return target;
             }
 
             this.initWithModel = function(model) {
@@ -374,12 +382,17 @@ define(['angular','c6_state'], function(angular, c6State) {
                     defaultTagParams = this.container.defaultTagParams;
 
                 // loop through each param object (ie. 'mraid' and 'vpaid')
-                // and overwrite existing values with current defaults
-                // and then add the other chosen params
+                // and overwrite existing values with updated defaults
+                // and added params
                 forEach(defaultTagParams, function(params, key) {
                     if (self[key].show) {
-                        extendParams(params, self[key].defaults, true);
-                        extendParams(params, self[key].addedParams);
+                        convertParamsForSaving(
+                            params,
+                            mergeParams(
+                                self[key].defaults,
+                                self[key].addedParams
+                            )
+                        );
                     } else {
                         defaultTagParams[key] = undefined;
                     }

@@ -25,26 +25,14 @@ define(['app'], function(appModule) {
         });
 
         describe('model(params)', function() {
-            beforeEach(function() {
+            it('should create a new container', function() {
                 spyOn(cinema6.db, 'find');
 
                 selfieContainer.model({
                     id: 'con-111'
                 });
-            });
 
-            it('should create a new container', function() {
                 expect(cinema6.db.find).toHaveBeenCalledWith('container', 'con-111');
-            });
-        });
-
-        describe('afterModel(model)', function() {
-            it('should set the heading', function() {
-                selfieContainer.afterModel({
-                    label: 'My Ad Server'
-                });
-
-                expect(selfieContainer.heading).toEqual('My Ad Server');
             });
         });
     });

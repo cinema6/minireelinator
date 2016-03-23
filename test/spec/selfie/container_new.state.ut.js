@@ -25,29 +25,16 @@ define(['app'], function(appModule) {
         });
 
         describe('model()', function() {
-            beforeEach(function() {
+            it('should create a new container', function() {
                 spyOn(cinema6.db, 'create');
 
                 selfieContainer.model();
-            });
 
-            it('should create a new container', function() {
                 expect(cinema6.db.create).toHaveBeenCalledWith('container', {
                     name: null,
                     label: null,
-                    defaultTagParams: {
-                        mraid: {},
-                        vpaid: {}
-                    }
+                    defaultTagParams: {}
                 });
-            });
-        });
-
-        describe('afterModel()', function() {
-            it('should set the heading', function() {
-                selfieContainer.afterModel();
-
-                expect(selfieContainer.heading).toEqual('Add New DSP');
             });
         });
     });

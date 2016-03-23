@@ -5,8 +5,7 @@ define(['app'], function(appModule) {
         var $rootScope,
             c6State,
             selfieContainers,
-            selfieState,
-            cinema6;
+            selfieState;
 
         beforeEach(function() {
             module(appModule.name);
@@ -14,7 +13,6 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 c6State = $injector.get('c6State');
-                cinema6 = $injector.get('cinema6');
             });
 
             selfieContainers = c6State.get('Selfie:Containers');
@@ -22,18 +20,6 @@ define(['app'], function(appModule) {
 
         it('should exist', function() {
             expect(selfieContainers).toEqual(jasmine.any(Object));
-        });
-
-        describe('model()', function() {
-            beforeEach(function() {
-                spyOn(cinema6.db, 'findAll');
-
-                selfieContainers.model();
-            });
-
-            it('should find all containers', function() {
-                expect(cinema6.db.findAll).toHaveBeenCalledWith('container');
-            });
         });
 
         describe('enter()', function() {
