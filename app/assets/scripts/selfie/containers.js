@@ -169,6 +169,10 @@ define(['angular','c6_state'], function(angular, c6State) {
             }
 
             function convertParamsForSaving(target, params) {
+                // We loop through the edited params and get the values
+                // from the UI bindings. The value properties set up in
+                // convertParamForUI() get converted back to saveable
+                // values and set on the container object
                 forEach(params, function(param) {
                     if (param.type === 'Array') {
                         target[param.name] = param.value.reduce(function(result, item) {
@@ -189,6 +193,9 @@ define(['angular','c6_state'], function(angular, c6State) {
             }
 
             function mergeParams(defaults, params) {
+                // We combine the defaults that are always in the UI
+                // with the params that the user added. Arrays need
+                // to be combined intelligently
                 var target = copy(defaults);
 
                 forEach(params, function(param) {
