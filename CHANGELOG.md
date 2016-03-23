@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.39.0.rc1]*
+  * [FEATURE]: Add DSP management screens
   * [DESIGN]: Updated the navigation on sign up and sign up confirmation
     to match new site
   * [DESIGN]: Updated hint placement on landing page sign up form
