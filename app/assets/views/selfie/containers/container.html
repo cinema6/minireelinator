@@ -6,7 +6,7 @@
     </div><!--.mainHeader__group-->
     <div ng-if="!!SelfieContainerCtrl.container.id" class="pageHeader__actions">
         <!-- Show "delete" on "Edit DSP" screen -->
-        <button ng-click="SelfieContainerCtrl.delete()" title="Delete Container" class="action__btn action__btn--small" type="button">
+        <button ng-click="SelfieContainerCtrl.delete(SelfieContainerCtrl._container)" title="Delete Container" class="action__btn action__btn--small" type="button">
            <i class="fa fa-trash-o"></i> Delete
         </button>
     </div>
@@ -394,11 +394,10 @@
                 </div>
             </div>
         </section>
-
         <div class="grid__item one-half">
             <div class="form__items form--narrow">
                 <div class="ui__btnHolder">
-                    <button ng-click="SelfieContainerCtrl.save()" ng-class="{'btn--disabled' : !SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label || !SelfieContainerCtrl.validName }" ng-disabled="!SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label || !SelfieContainerCtrl.validName" class="action__btn action__btn--wide">Save</button>
+                    <button ng-click="SelfieContainerCtrl.save()" ng-class="{'btn--disabled' : !SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label || !SelfieContainerCtrl.validName, 'btnSpinner__waiting' : SelfieContainerCtrl.pending }" ng-disabled="!SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label || !SelfieContainerCtrl.validName" class="action__btn action__btn--wide">Save</button>
                 </div>
             </div>
         </div>

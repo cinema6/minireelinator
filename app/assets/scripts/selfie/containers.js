@@ -20,23 +20,59 @@ define(['angular','c6_state'], function(angular, c6State) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Containers:List', ['cinema6',
-            function                                        ( cinema6 ) {
+            c6StateProvider.state('Selfie:Containers:List', ['cinema6','SpinnerService',
+            function                                        ( cinema6 , SpinnerService ) {
                 this.templateUrl = 'views/selfie/containers/list.html';
                 this.controller = 'SelfieContainersController';
                 this.controllerAs = 'SelfieContainersCtrl';
 
                 this.model = function() {
-                    return cinema6.db.findAll('container');
+                    SpinnerService.display();
+
+                    return cinema6.db.findAll('container')
+                        .finally(function() {
+                            SpinnerService.close();
+                        });
                 };
             }]);
         }])
 
-        .controller('SelfieContainersController', ['c6State',
-        function                                  ( c6State ) {
+        .controller('SelfieContainersController', ['c6State','c6AsyncQueue',
+                                                   'ConfirmDialogService',
+        function                                  ( c6State , c6AsyncQueue ,
+                                                    ConfirmDialogService ) {
+            var queue = c6AsyncQueue();
+
+            function showErrorModal(error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was an a problem processing your request: ' + error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
+                });
+            }
+
             this.delete = function(container) {
-                container.erase().then(function() {
-                    c6State.goTo('Selfie:Containers');
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to delete this DSP?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        return container.erase().then(function() {
+                            c6State.goTo('Selfie:Containers');
+                        }).catch(showErrorModal);
+                    })
                 });
             };
 
@@ -60,10 +96,6 @@ define(['angular','c6_state'], function(angular, c6State) {
                         defaultTagParams: {}
                     });
                 };
-
-                this.afterModel = function() {
-                    this.heading = 'Add New DSP';
-                };
             }]);
         }])
 
@@ -78,17 +110,30 @@ define(['angular','c6_state'], function(angular, c6State) {
                 this.model = function(params) {
                     return cinema6.db.find('container', params.id);
                 };
-
-                this.afterModel = function(model) {
-                    this.heading = model.label;
-                };
             }]);
         }])
 
-        .controller('SelfieContainerController', ['cState','c6State','cinema6',
-        function                                 ( cState , c6State , cinema6 ) {
+        .controller('SelfieContainerController', ['cState','c6State','cinema6','c6AsyncQueue',
+                                                  'ConfirmDialogService',
+        function                                 ( cState , c6State , cinema6 , c6AsyncQueue ,
+                                                   ConfirmDialogService ) {
             var App = c6State.get('Selfie:App'),
-                placementSchema = App.cModel.data.placement;
+                placementSchema = App.cModel.data.placement,
+                queue = c6AsyncQueue();
+
+            function showErrorModal(error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was an a problem processing your request: ' + error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
+                });
+            }
 
             function convertParamValueForUI(param, value) {
                 // We need to convert the raw values into UI-friendly
@@ -234,7 +279,6 @@ define(['angular','c6_state'], function(angular, c6State) {
                 this.container.defaultTagParams.vpaid = this.container.defaultTagParams.vpaid || {};
 
                 this.hasName = !!model.name;
-                this.heading = cState.heading;
                 this.validName = true;
 
                 // generate an 'mraid' and 'vpaid' object for
@@ -304,7 +348,26 @@ define(['angular','c6_state'], function(angular, c6State) {
                     });
             };
 
-            this.save = function() {
+            this.delete = function(container) {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to delete this DSP?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        return container.erase().then(function() {
+                            c6State.goTo('Selfie:Containers');
+                        }).catch(showErrorModal);
+                    })
+                });
+            };
+
+            this.save = queue.debounce(function() {
                 var self = this,
                     dbModel = this._container,
                     container = this.container,
@@ -325,10 +388,13 @@ define(['angular','c6_state'], function(angular, c6State) {
                 // update dbModel with current container data
                 extendContainer(dbModel, container);
 
-                // svae the container and go to dashboard
+                this.pending = true;
+
+                // save the container and go to dashboard
                 dbModel.save().then(function() {
                     c6State.goTo('Selfie:Containers', null, null);
-                });
-            };
+                }).catch(showErrorModal)
+                .finally(function() { self.pending = false; });
+            }, this);
         }]);
 });

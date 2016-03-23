@@ -2,7 +2,8 @@ module.exports = function(http) {
     'use strict';
 
     var path = require('path'),
-        grunt = require('grunt');
+        grunt = require('grunt'),
+        Q = require('q');
 
     var fn = require('../utils/fn'),
         db = require('../utils/db'),
@@ -20,7 +21,7 @@ module.exports = function(http) {
             filePath = objectPath('containers', id);
 
         try {
-            this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
+            this.respond(200, Q.when(extend(grunt.file.readJSON(filePath), { id: id })).delay(1000));
         } catch(e) {
             this.respond(404, 'Not Found');
         }
@@ -61,7 +62,7 @@ module.exports = function(http) {
                 });
 
         try {
-            this.respond(200, allContainers);
+            this.respond(200, Q.when(allContainers).delay(1500));
         } catch(e) {
             this.respond(404, 'Not Found');
         }
@@ -83,7 +84,7 @@ module.exports = function(http) {
 
         grunt.file.write(filePath, JSON.stringify(updated, null, '    '));
 
-        this.respond(200, extend(updated, {id: id}));
+        this.respond(200, Q.when(extend(updated, {id: id})).delay(1500));
     });
 
     http.whenPOST('/api/containers', function(request) {
@@ -116,12 +117,12 @@ module.exports = function(http) {
 
         grunt.file.write(objectPath('containers', id), JSON.stringify(container, null, '    '));
 
-        this.respond(201, extend(container, { id: id }));
+        this.respond(201, Q.when(extend(container, { id: id })).delay(1500));
     });
 
     http.whenDELETE('/api/containers/**', function(request) {
         grunt.file.delete(objectPath('containers', idFromPath(request.pathname)));
 
-        this.respond(204, '');
+        this.respond(204, Q.when('').delay(1000));
     });
 };
