@@ -1,12 +1,14 @@
 # MiniReelinator
 
 * *[v1.39.0.rc1]*
+  * [FEATURE]: Add DSP management screens
   * [DESIGN]: Updated the navigation on sign up and sign up confirmation
     to match new site
   * [DESIGN]: Updated hint placement on landing page sign up form
   * [FIX]: When there are no campaigns in the list due to filtering or
     searching, show "No matching campaigns" instead of "Let's get you started"
   * [DESIGN]: Added styles for placement pages
+  * [FIX]: Fix missing commas for numbers on stats tab
 
 ## v1.38.0 (March 8, 2016)
 * *[v1.38.0.rc2]*

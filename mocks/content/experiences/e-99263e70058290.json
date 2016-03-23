@@ -13,7 +13,153 @@
       "Sign Up",
       "Watch More",
       "Custom"
-    ]
+    ],
+    "placement": {
+      "params": [
+        {
+          "name": "apiRoot",
+          "label": "API Root",
+          "type": "String",
+          "default": "https://platform.reelcontent.com/",
+          "editable": false
+        },
+        {
+          "name": "container",
+          "label": "Container Name",
+          "type": "String",
+          "editable": false
+        },
+        {
+          "name": "branding",
+          "label": "Branding",
+          "type": "String",
+          "editable": true
+        },
+        {
+          "name": "mobileType",
+          "label": "Mobile Type",
+          "type": "String",
+          "editable": true,
+          "options": ["mobile","swipe"]
+        },
+        {
+          "name": "hostApp",
+          "label": "Host App",
+          "type": "String",
+          "editable": true
+        },
+        {
+          "name": "network",
+          "label": "Network",
+          "type": "String",
+          "editable": true
+        },
+        {
+          "name": "uuid",
+          "label": "UUID",
+          "type": "String",
+          "editable": true
+        },
+        {
+          "name": "clickUrls",
+          "label": "Click Pixel",
+          "type": "Array",
+          "editable": true
+        },
+        {
+          "name": "playUrls",
+          "label": "Play Pixel",
+          "type": "Array",
+          "editable": true
+        },
+        {
+          "name": "countUrls",
+          "label": "Count Pixel",
+          "type": "Array",
+          "editable": true
+        },
+        {
+          "name": "launchUrls",
+          "label": "Launch Pixel",
+          "type": "Array",
+          "editable": true
+        },
+        {
+          "name": "countdown",
+          "label": "Timer",
+          "type": "Number",
+          "editable": true
+        },
+        {
+          "name": "preview",
+          "label": "Preview Mode",
+          "type": "Boolean",
+          "editable": true
+        },
+        {
+          "name": "type",
+          "label": "Player Type",
+          "type": "String",
+          "editable": true,
+          "options": ["desktop-card","mobile","light"]
+        },
+        {
+          "name": "autoLaunch",
+          "label": "Autoplay",
+          "type": "Boolean",
+          "editable": true
+        },
+        {
+          "name": "interstitial",
+          "label": "Interstitial",
+          "type": "Boolean",
+          "editable": false
+        },
+        {
+          "name": "splash",
+          "label": "Splash",
+          "type": "String",
+          "editable": false
+        },
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "String",
+          "editable": false
+        },
+        {
+          "name": "image",
+          "label": "Image",
+          "type": "String",
+          "editable": false
+        },
+        {
+          "name": "preload",
+          "label": "Preload",
+          "type": "Boolean",
+          "editable": false
+        },
+        {
+          "name": "prebuffer",
+          "label": "Prebuffer",
+          "type": "Boolean",
+          "editable": true
+        },
+        {
+          "name": "debug",
+          "label": "Debug",
+          "type": "Number",
+          "editable": false
+        },
+        {
+          "name": "forceOrientation",
+          "label": "Orientation Lock",
+          "type": "String",
+          "editable": true,
+          "options": ["landscape","portrait","none"]
+        }
+      ]
+    }
   },
   "title": "Selfie",
   "created": "2015-06-10T22:04:20.789Z",

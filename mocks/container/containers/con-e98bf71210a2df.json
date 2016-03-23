@@ -1,0 +1,25 @@
+{
+    "status": "active",
+    "created": "2016-03-15T19:45:54.572Z",
+    "lastUpdated": "2016-03-16T20:08:15.623Z",
+    "name": "beeswax",
+    "label": "Beeswax",
+    "defaultTagParams": {
+        "mraid": {
+            "container": "beeswax",
+            "network": "{{INVENTORY_SOURCE}}",
+            "hostApp": "{{APP_BUNDLE}}",
+            "clickUrls": [
+                "{{CLICK_URL}}"
+            ],
+            "uuid": "{{USER_ID}}",
+            "prebuffer": true
+        },
+        "vpaid": {
+            "container": "beeswax",
+            "network": "{{INVENTORY_SOURCE}}",
+            "uuid": "{{USER_ID}}"
+        }
+    },
+    "id": "con-e98bf71210a2df"
+}

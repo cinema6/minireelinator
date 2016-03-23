@@ -1,0 +1,23 @@
+{
+    "status": "active",
+    "created": "2016-03-12T19:45:54.572Z",
+    "lastUpdated": "2016-03-16T20:10:13.232Z",
+    "name": "pocketbmath",
+    "label": "Pocketmath",
+    "defaultTagParams": {
+        "mraid": {
+            "container": "pocketmath",
+            "network": "${exchange}",
+            "hostApp": "${source_id}",
+            "clickUrls": [
+                "${click_url}"
+            ],
+            "prebuffer": true
+        },
+        "vpaid": {
+            "container": "pocketmath",
+            "network": "myapp"
+        }
+    },
+    "id": "con-d916af352b6774"
+}

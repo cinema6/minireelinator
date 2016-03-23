@@ -662,7 +662,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     });
 
                                     it('should show an error modal', function() {
-                                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
+                                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
                                     });
                                 });
                             });
@@ -777,7 +777,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         });
 
                                         it('should show an error modal', function() {
-                                            expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
+                                            expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
                                         });
                                     });
                                 });
@@ -876,7 +876,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                             });
 
                                             it('should show an error modal', function() {
-                                                expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
+                                                expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
                                             });
                                         });
                                     });
@@ -980,7 +980,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
 
                     it('should show an error modal', function() {
-                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
+                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
                     });
 
                     it('should remove pendingCopy flag', function() {
@@ -1029,7 +1029,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             onAffirm();
                         });
 
-                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was an a problem processing your request: Error!');
+                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
                     });
                 });
             });

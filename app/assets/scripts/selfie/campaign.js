@@ -809,7 +809,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function showErrorModal(error) {
                 ConfirmDialogService.display({
-                    prompt: 'There was an a problem processing your request: ' + error.data,
+                    prompt: 'There was a problem processing your request: ' + error.data,
                     affirm: 'OK',
 
                     onCancel: function() {
@@ -1989,7 +1989,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function handleError(error) {
                 ConfirmDialogService.display({
-                    prompt: 'There was an a problem updating your campaign: ' + error.data,
+                    prompt: 'There was a problem updating your campaign: ' + error.data,
                     affirm: 'OK',
 
                     onCancel: function() {
