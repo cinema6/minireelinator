@@ -1,9 +1,7 @@
 define(['angular','c6_state'], function(angular, c6State) {
     'use strict';
 
-    var forEach = angular.forEach,
-        isArray = angular.isArray,
-        isObject = angular.isObject,
+    var extend = angular.extend,
         copy = angular.copy;
 
     return angular.module('c6.app.selfie.containers', [c6State.name])
@@ -115,12 +113,10 @@ define(['angular','c6_state'], function(angular, c6State) {
         }])
 
         .controller('SelfieContainerController', ['c6State','cinema6','c6AsyncQueue',
-                                                  'ConfirmDialogService',
+                                                  'ConfirmDialogService','PlacementService',
         function                                 ( c6State , cinema6 , c6AsyncQueue ,
-                                                   ConfirmDialogService ) {
-            var App = c6State.get('Selfie:App'),
-                placementSchema = App.cModel.data.placement,
-                queue = c6AsyncQueue();
+                                                   ConfirmDialogService , PlacementService ) {
+            var queue = c6AsyncQueue();
 
             function showErrorModal(error) {
                 ConfirmDialogService.display({
@@ -136,191 +132,59 @@ define(['angular','c6_state'], function(angular, c6State) {
                 });
             }
 
-            function convertParamForUI(param, value) {
-                // We need to convert the raw values into UI-friendly
-                // objects for binding. Arrays end up in ng-repeats,
-                // Booleans end up as <select> dropdowns, Strings
-                // and Numbers end up as simple <inputs>
-                var _val;
-
-                if (param.type === 'Array') {
-                    _val = (value || param.default || [''])
-                        .map(function(val) {
-                            return {
-                                label: param.label,
-                                value: val
-                            };
-                        });
-                } else if (param.type === 'Boolean') {
-                    _val = value === undefined ?
-                        param.default :
-                        (!!value ? 'Yes' : 'No');
-                } else {
-                    _val = value || param.default;
-                }
-
+            function generateModel(params, model, ui) {
                 return {
-                    name: param.name,
-                    label: param.label,
-                    type: param.type,
-                    options: param.options,
-                    value: _val,
-                };
-            }
+                    ui: ui,
+                    params: params,
+                    defaults: params.reduce(function(result, param) {
+                            if (ui.indexOf(param.name) > -1) {
+                                result[param.name] = param;
 
-            function convertParamsForSaving(target, params) {
-                // We loop through the edited params and get the values
-                // from the UI bindings. The value properties set up in
-                // convertParamForUI() get converted back to saveable
-                // values and set on the container object
-                forEach(params, function(param) {
-                    if (param.type === 'Array') {
-                        target[param.name] = param.value.reduce(function(result, item) {
-                            if (item.value) {
-                                result.push(item.value);
+                                if (param.type === 'Array' && !param.value.length) {
+                                    param.value.push({
+                                        label: param.label,
+                                        value: ''
+                                    });
+                                }
                             }
                             return result;
-                        }, []);
-                    } else if (param.type === 'Boolean') {
-                        target[param.name] = typeof param.value === 'string' ?
-                            param.value === 'Yes' : undefined;
-                    } else {
-                        target[param.name] = (param.value || undefined);
-                    }
-                });
-
-                return target;
-            }
-
-            function mergeParams(defaults, params) {
-                // We combine the defaults that are always in the UI
-                // with the params that the user added. Arrays need
-                // to be combined intelligently
-                var target = copy(defaults);
-
-                forEach(params, function(param) {
-                    if (param.type === 'Array') {
-                        if (!target[param.name]) {
-                            target[param.name] = param;
-                        } else {
-                            target[param.name].value = (target[param.name].value || [])
-                                .concat(param.value);
-                        }
-                    } else {
-                        target[param.name] = param;
-                    }
-                });
-
-                return target;
-            }
-
-            function extendContainer(target, obj) {
-                // when we're ready to save a container we want
-                // to copy over every param that was edited in
-                // the UI. If the property is not set or it's
-                // and array with nothing in it we remove it
-                // from the DB model, if it's an object we recurse
-                forEach(obj, function(prop, key) {
-                    if (isObject(prop) && !isArray(prop)) {
-                        target[key] = target[key] || {};
-                        return extendContainer(target[key], prop);
-                    }
-
-                    if (prop === undefined || (isArray(prop) && !prop.length)) {
-                        delete target[key];
-                    } else {
-                        target[key] = prop;
-                    }
-                });
-
-                return target;
-            }
-
-            function generateParamModel(schema, existingParams, alreadyInUI) {
-                // This function takes a schema (an array of supported params with config)
-                // and loops through it. If the param is not editable we don't include it
-                // in the UI and we won't overwrite it when saving. However, if that param
-                // has a default value we do want it to get set and copied over when saving.
-                // If it is editable we want it to be included in the dropdown of available
-                // params (unless it should be shown in the UI by default).
-
-                return schema.reduce(function(result, param) {
-                    var inUI = alreadyInUI.indexOf(param.name) > -1;
-
-                    if (param.editable && (!inUI || param.type === 'Array')) {
-                        // if param is editable and is either not in the UI already
-                        // or is an Array (accepts multiple values), make it available
-                        // in the dropdown as an additional option
-                        result.availableParams.push({
-                            name: param.name,
-                            label: param.label,
-                            type: param.type,
-                            options: param.options,
-                            value: param.type !== 'Array' ? param.default : []
-                        });
-                    }
-
-                    if (param.editable && !inUI && existingParams[param.name]) {
-                        // if the param is already defined or has a default value
-                        // but is not already in the UI, then display it as an
-                        // added param under the default params
-                        result.addedParams.push(
-                            convertParamForUI(
-                                param,
-                                existingParams[param.name]
-                            )
-                        );
-                    }
-
-                    if (inUI || (!param.editable && param.default)) {
-                        // if the param is already defined or has a default or should
-                        // be in the UI, then set it up as a default param in the UI
-                        result.defaults[param.name] = convertParamForUI(
-                            param,
-                            existingParams[param.name]
-                        );
-                    }
-
-                    return result;
-                }, {
-                    availableParams: [],
-                    addedParams: [],
-                    defaults: {},
-                    show: Object.keys(existingParams).length > 0
-                });
+                        }, {}),
+                    addedParams: params.filter(function(param) {
+                        return (param.type === 'Array' ? !!param.value.length : !!param.value) &&
+                            param.editable && ui.indexOf(param.name) < 0;
+                    }),
+                    availableParams: params.filter(function(param) {
+                        return (ui.indexOf(param.name) < 0 || param.type === 'Array') &&
+                            param.editable;
+                    }),
+                    show: !!Object.keys(model).length
+                };
             }
 
             this.initWithModel = function(model) {
                 this._container = model;
-                this.container = model.pojoify();
-                this.container.defaultTagParams.mraid = this.container.defaultTagParams.mraid || {};
-                this.container.defaultTagParams.vpaid = this.container.defaultTagParams.vpaid || {};
 
                 this.hasName = !!model.name;
                 this.validName = true;
 
-                // generate an 'mraid' and 'vpaid' object for
-                // binding in the UI, this will contain a
-                // 'defaults' object with params that are
-                // always shown in the UI, an array of
-                // 'availableParams' that can be added via
-                // a dropdown, and an array of 'addedParams'
-                // that contains all non-default params that
-                // have been added to the container
-                this.mraid = generateParamModel(
-                    placementSchema.params,
-                    this.container.defaultTagParams.mraid,
+                this.mraid = generateModel(
+                    PlacementService.convertForUI(model.defaultTagParams.mraid || {}),
+                    model.defaultTagParams.mraid || {},
                     ['network','uuid','hostApp','prebuffer','clickUrls']
                 );
-                this.vpaid = generateParamModel(
-                    placementSchema.params,
-                    this.container.defaultTagParams.vpaid,
+
+                this.vpaid = generateModel(
+                    PlacementService.convertForUI(model.defaultTagParams.vpaid || {}),
+                    model.defaultTagParams.vpaid || {},
                     ['network','uuid']
                 );
             };
 
             this.addParam = function(type, param) {
                 if (!param) { return; }
+
+                var hasBeenAdded = this[type].addedParams.indexOf(param) > -1,
+                    isInUI = this[type].ui.indexOf(param.name) > -1;
 
                 if (param.type === 'Array') {
                     param.value.push({
@@ -329,7 +193,7 @@ define(['angular','c6_state'], function(angular, c6State) {
                     });
                 }
 
-                if (this[type].addedParams.indexOf(param) < 0) {
+                if (!hasBeenAdded && !isInUI) {
                     this[type].addedParams.push(param);
                 }
             };
@@ -387,33 +251,20 @@ define(['angular','c6_state'], function(angular, c6State) {
 
             this.save = queue.debounce(function() {
                 var self = this,
-                    dbModel = this._container,
-                    container = this.container,
-                    defaultTagParams = this.container.defaultTagParams;
+                    dbModel = this._container;
 
-                // loop through each param object (ie. 'mraid' and 'vpaid')
-                // and overwrite existing values with updated defaults
-                // and added params
-                forEach(defaultTagParams, function(params, key) {
+                ['mraid', 'vpaid'].forEach(function(key) {
                     if (self[key].show) {
-                        convertParamsForSaving(
-                            params,
-                            mergeParams(
-                                self[key].defaults,
-                                self[key].addedParams
-                            )
+                        dbModel.defaultTagParams[key] = PlacementService.convertForSave(
+                            self[key].params
                         );
                     } else {
-                        defaultTagParams[key] = undefined;
+                        dbModel.defaultTagParams[key] = undefined;
                     }
                 });
 
-                // update dbModel with current container data
-                extendContainer(dbModel, container);
-
                 this.pending = true;
 
-                // save the container and go to dashboard
                 dbModel.save().then(function() {
                     c6State.goTo('Selfie:Containers', null, null);
                 }).catch(showErrorModal)
@@ -421,34 +272,59 @@ define(['angular','c6_state'], function(angular, c6State) {
             }, this);
         }])
 
-        .service('PlacementService', [function() {
-            this.convertForUI = function(schema, model) {
+        .service('PlacementService', ['c6State',
+        function                     ( c6State ) {
+            this.convertForUI = function(model) {
+                var App = c6State.get('Selfie:App'),
+                    schema = App.cModel.data.placement.params;
+
                 return schema.reduce(function(result, param) {
                     var value = model[param.name],
                         _value;
 
-                    if (value) {
-                        if (param.type === 'Array') {
-                            _value = (value || param.default || [])
-                                .map(function(val) {
-                                    return {
-                                        label: param.label,
-                                        value: val
-                                    };
-                                });
-                        } else if (param.type === 'Boolean') {
-                            _value = value === undefined ?
-                                param.default :
-                                (!!value ? 'Yes' : 'No');
-                        } else {
-                            _value = value || param.default;
-                        }
+                    if (param.type === 'Array') {
+                        _value = (value || param.default || [])
+                            .map(function(val) {
+                                return {
+                                    label: param.label,
+                                    value: val
+                                };
+                            });
+                    } else if (param.type === 'Boolean') {
+                        _value = value === undefined ?
+                            param.default :
+                            (!!value ? 'Yes' : 'No');
+                    } else {
+                        _value = value || param.default;
                     }
 
-                    result.push(extend(copy(param), {value: value}));
+                    result.push(extend(copy(param), {value: _value}));
 
                     return result;
                 }, []);
+            };
+
+            this.convertForSave = function(params) {
+                return params.reduce(function(result, param) {
+                    if (param.type === 'Array') {
+                        result[param.name] = param.value.reduce(function(result, item) {
+                            if (item.value) {
+                                result.push(item.value);
+                            }
+                            return result;
+                        }, []);
+
+                        result[param.name] = !!result[param.name].length ?
+                            result[param.name] : undefined;
+                    } else if (param.type === 'Boolean') {
+                        result[param.name] = typeof param.value === 'string' ?
+                            param.value === 'Yes' : undefined;
+                    } else {
+                        result[param.name] = (param.value || undefined);
+                    }
+
+                    return result;
+                }, {});
             };
         }]);
 });

@@ -1,10 +1,10 @@
 <div class="pageHeader__group">
     <div class="mainHeader__group">
         <h1 class="mainHeader__breadcrumbs tk--hdr">
-            <a c6-sref="Selfie:Containers">Back to DSPs</a> / <span ng-if="!SelfieContainerCtrl.container.id">Add New DSP</span><span ng-if="!!SelfieContainerCtrl.container.id">Edit DSP</span>
+            <a c6-sref="Selfie:Containers">Back to DSPs</a> / <span ng-if="!SelfieContainerCtrl._container.id">Add New DSP</span><span ng-if="!!SelfieContainerCtrl._container.id">Edit DSP</span>
         </h1>
     </div><!--.mainHeader__group-->
-    <div ng-if="!!SelfieContainerCtrl.container.id" class="pageHeader__actions">
+    <div ng-if="!!SelfieContainerCtrl._container.id" class="pageHeader__actions">
         <!-- Show "delete" on "Edit DSP" screen -->
         <button ng-click="SelfieContainerCtrl.delete(SelfieContainerCtrl._container)" title="Delete Container" class="action__btn action__btn--small" type="button">
            <i class="fa fa-trash-o"></i> Delete
@@ -16,13 +16,13 @@
     <div class="grid__item">
         <header class="settingsContent__header">
             <!-- Show on "Add New DSP" screen -->
-            <span ng-if="!SelfieContainerCtrl.container.id">
+            <span ng-if="!SelfieContainerCtrl._container.id">
                 <h2 class="settingsContent__title tk--hdr">Add New DSP</h2>
                 <span class="settingsContent__subtitle">Add Container defaults for the DSP</span>
             </span>
 
             <!-- Show on "Edit DSP" screen -->
-            <span ng-if="!!SelfieContainerCtrl.container.id">
+            <span ng-if="!!SelfieContainerCtrl._container.id">
                 <h2 class="settingsContent__title tk--hdr">Edit</h2>
                 <span class="settingsContent__subtitle">Edit Container defaults for the DSP</span>
             </span>
@@ -35,10 +35,10 @@
         <div class="grid__item one-half">
             <div class="form__items form--narrow">
                 <fieldset class="form__item">
-                    <input c6-fill-check ng-model="SelfieContainerCtrl.container.label" class="form__textBox form__fillCheck" type="text" id="c6-container-label">
+                    <input c6-fill-check ng-model="SelfieContainerCtrl._container.label" class="form__textBox form__fillCheck" type="text" id="c6-container-label">
                     <label class="form__label" for="c6-container-label">
                         <i class="fa fa-times ui--error"></i>
-                        Name
+                        Name*
                     </label>
                     <div class="form__helpBox form__helpBox--right">
                         <div class="form__helpText">
@@ -52,7 +52,7 @@
                     </div>
                 </fieldset>
                 <fieldset class="form__item" ng-class="{'ui--hasError': !SelfieContainerCtrl.validName }">
-                    <input c6-fill-check ng-model="SelfieContainerCtrl.container.name" ng-disabled="SelfieContainerCtrl.hasName" ng-pattern="/^[\w-]+$/" ng-blur="SelfieContainerCtrl.validateName(SelfieContainerCtrl.container.name)" ng-focus="SelfieContainerCtrl.validName = true" class="form__textBox form__fillCheck" type="text" id="c6-container-name">
+                    <input c6-fill-check ng-model="SelfieContainerCtrl._container.name" ng-disabled="SelfieContainerCtrl.hasName" ng-pattern="/^[\w-]+$/" ng-blur="SelfieContainerCtrl.validateName(SelfieContainerCtrl._container.name)" ng-focus="SelfieContainerCtrl.validName = true" class="form__textBox form__fillCheck" type="text" id="c6-container-name">
                     <label class="form__label" for="c6-container-name">
                         <i class="fa fa-times ui--error"></i>
                         DSP ID*
@@ -397,7 +397,7 @@
         <div class="grid__item one-half">
             <div class="form__items form--narrow">
                 <div class="ui__btnHolder">
-                    <button ng-click="SelfieContainerCtrl.save()" ng-class="{'btn--disabled' : !SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label || !SelfieContainerCtrl.validName, 'btnSpinner__waiting' : SelfieContainerCtrl.pending }" ng-disabled="!SelfieContainerCtrl.container.name || !SelfieContainerCtrl.container.label || !SelfieContainerCtrl.validName" class="action__btn action__btn--wide">Save</button>
+                    <button ng-click="SelfieContainerCtrl.save()" ng-class="{'btn--disabled' : !SelfieContainerCtrl._container.name || !SelfieContainerCtrl._container.label || !SelfieContainerCtrl.validName, 'btnSpinner__waiting' : SelfieContainerCtrl.pending }" ng-disabled="!SelfieContainerCtrl._container.name || !SelfieContainerCtrl._container.label || !SelfieContainerCtrl.validName" class="action__btn action__btn--wide">Save</button>
                 </div>
             </div>
         </div>
