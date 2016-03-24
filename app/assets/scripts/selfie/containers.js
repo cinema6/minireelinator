@@ -419,5 +419,36 @@ define(['angular','c6_state'], function(angular, c6State) {
                 }).catch(showErrorModal)
                 .finally(function() { self.pending = false; });
             }, this);
+        }])
+
+        .service('PlacementService', [function() {
+            this.convertForUI = function(schema, model) {
+                return schema.reduce(function(result, param) {
+                    var value = model[param.name],
+                        _value;
+
+                    if (value) {
+                        if (param.type === 'Array') {
+                            _value = (value || param.default || [])
+                                .map(function(val) {
+                                    return {
+                                        label: param.label,
+                                        value: val
+                                    };
+                                });
+                        } else if (param.type === 'Boolean') {
+                            _value = value === undefined ?
+                                param.default :
+                                (!!value ? 'Yes' : 'No');
+                        } else {
+                            _value = value || param.default;
+                        }
+                    }
+
+                    result.push(extend(copy(param), {value: value}));
+
+                    return result;
+                }, []);
+            };
         }]);
 });
