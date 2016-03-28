@@ -207,6 +207,11 @@ define(['app'], function(appModule) {
                     $scope.validation.show = true;
                     expect(SelfieBudgetCtrl.budgetError).toBe(4);
 
+                    campaign.pricing.budget = 500;
+                    campaign.status = 'outOfBudget';
+                    compileCtrl();
+                    expect(SelfieBudgetCtrl.budgetError).toBe(5);
+
                     SelfieBudgetCtrl.budget = 2000;
                     expect(SelfieBudgetCtrl.budgetError).toBe(false);
                 });
@@ -317,6 +322,15 @@ define(['app'], function(appModule) {
                     compileCtrl();
 
                     expect($scope.validation.budget).toBe(true);
+                });
+
+                it('should be false if budget is not valid', function() {
+                    campaign.pricing.budget = 500;
+                    campaign.status = 'outOfBudget';
+
+                    compileCtrl();
+
+                    expect($scope.validation.budget).toBe(false);
                 });
             });
         });

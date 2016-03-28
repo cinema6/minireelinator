@@ -1350,7 +1350,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 }
             });
 
-            validation.budget = this.validBudget;
+            validation.budget = !!this.budget && this.validBudget;
 
             this.setBudget = function() {
                 var Ctrl = SelfieBudgetCtrl,

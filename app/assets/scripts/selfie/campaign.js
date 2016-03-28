@@ -841,7 +841,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     return cState.saveUpdateRequest();
                 }
 
-                campaign = extend((isDraft ? cState._campaign.pojoify() : cState.campaign), {
+                campaign = extend((isDraft ? cState._campaign.pojoify() : copy(cState.campaign)), {
                     status: (/draft|expired|canceled|outOfBudget/).test(status) ? 'active' : status
                 });
 
