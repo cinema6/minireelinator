@@ -1,5 +1,12 @@
 # MiniReelinator
 
+## v1.40.0 (March 28, 2016)
+* *[v1.40.0.rc1]*
+  * [FEATURE]: Allow editing of campaigns regardless of status
+  * [FEATURE]: Ensure budget is increased before reactivating campaigns that
+    were previously Out of Budget
+* *[/v1.40.0.rc1]*
+
 ## v1.39.0 (March 24, 2016)
 * *[v1.39.0.rc1]*
   * [FEATURE]: Add DSP management screens
