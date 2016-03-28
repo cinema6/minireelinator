@@ -266,8 +266,8 @@
                                 videoid: '1380051',
                                 href: 'http://vzaar.tv/1380051',
                                 thumbs: {
-                                    small: 'images.vzaar.com/video/1380051/small.jpg',
-                                    large: 'images.vzaar.com/video/1380051/large.jpg'
+                                    small: 'small.jpg',
+                                    large: 'large.jpg'
                                 },
                                 duration: 25
                             }
@@ -300,8 +300,8 @@
                                 videoid: '9iqvphjp4u',
                                 href: 'https://cinema6.wistia.com/medias/9iqvphjp4u?preview=true',
                                 thumbs: {
-                                    small: 'images.wistia.com/video/9iqvphjp4u/small.jpg',
-                                    large: 'images.wistia.com/video/9iqvphjp4u/large.jpg'
+                                    small: 'small.jpg',
+                                    large: 'large.jpg'
                                 },
                                 duration: 45
                             }
@@ -334,8 +334,8 @@
                                 videoid: 'iGznZrKK-n5DiyUyn',
                                 href: 'https://content.jwplatform.com/previews/iGznZrKK-n5DiyUyn',
                                 thumbs: {
-                                    small: 'images.jwplayer.com/video/iGznZrKK-n5DiyUyn/small.jpg',
-                                    large: 'images.jwplayer.com/video/iGznZrKK-n5DiyUyn/large.jpg'
+                                    small: 'small.jpg',
+                                    large: 'large.jpg'
                                 },
                                 duration: 50
                             }
@@ -476,6 +476,40 @@
                                 thumbs: {
                                     small: 'images.kaltura.com/video/1_dsup2iqd/small.jpg',
                                     large: 'images.kaltura.com/video/1_dsup2iqd/large.jpg'
+                                },
+                                duration: 68
+                            }
+                        },
+                        facebook: {
+                            id: 'rc-b0ccf8ea5753',
+                            type: 'facebook',
+                            title: 'Facebook Card',
+                            note: 'Fantastic Facebook',
+                            source: 'Facebook',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            shareLinks: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'facebook',
+                                videoid: 'https://www.facebook.com/Google/videos/10154011581287838',
+                                href: 'https://www.facebook.com/Google/videos/10154011581287838',
+                                thumbs: {
+                                    small: 'small.jpg',
+                                    large: 'large.jpg'
                                 },
                                 duration: 68
                             }
@@ -681,8 +715,8 @@
                                     modestbranding: 0,
                                     href: 'https://www.youtube.com/watch?v=47tfg8734',
                                     thumbs: {
-                                        small: 'images.youtube.com/video/47tfg8734/small.jpg',
-                                        large: 'images.youtube.com/video/47tfg8734/large.jpg'
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
                                     },
                                     moat: {
                                         campaign: 'Turtle Campaign',
@@ -726,8 +760,8 @@
                                     videoid: '48hfrei49',
                                     href: 'http://vimeo.com/48hfrei49',
                                     thumbs: {
-                                        small: 'images.vimeo.com/video/48hfrei49/small.jpg',
-                                        large: 'images.vimeo.com/video/48hfrei49/large.jpg'
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
                                     },
                                     duration: 78
                                 }
@@ -780,8 +814,8 @@
                                     related: 0,
                                     href: 'http://www.dailymotion.com/video/vfu85f5',
                                     thumbs: {
-                                        small: 'images.dailymotion.com/video/vfu85f5/small.jpg',
-                                        large: 'images.dailymotion.com/video/vfu85f5/large.jpg'
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
                                     },
                                     duration: 89
                                 }
@@ -845,8 +879,8 @@
                                     modestbranding: 0,
                                     href: 'https://www.youtube.com/watch?v=fn4378r4d',
                                     thumbs: {
-                                        small: 'images.youtube.com/video/fn4378r4d/small.jpg',
-                                        large: 'images.youtube.com/video/fn4378r4d/large.jpg'
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
                                     },
                                     duration: 46
                                 }
@@ -1146,6 +1180,7 @@
                             mocks.playerCards.instagramVideo,
                             mocks.playerCards.brightcove,
                             mocks.playerCards.kaltura,
+                            mocks.playerCards.facebook,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -1389,7 +1424,8 @@
                                     start: null,
                                     end: null,
                                     moat: null,
-                                    duration: undefined
+                                    duration: undefined,
+                                    thumbs: undefined
                                 }
                             });
 
@@ -2097,7 +2133,10 @@
                         	        start: null,
                         	        end: null,
                         	        moat: null,
-                                    duration: 6
+                                    duration: 6,
+                                    thumbs: {
+                                        small: 'images.vine.com/video/erUbKHDX6Ug/small.jpg',
+                        	            large: 'images.vine.com/video/erUbKHDX6Ug/large.jpg'                                    }
                         	    },
                         	    id: 'rc-1ac904b814c8d6a20fea',
                         	    type: 'video',
@@ -2173,7 +2212,11 @@
                         	        start: null,
                         	        end: null,
                         	        moat: null,
-                                    duration: 25
+                                    duration: 25,
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
                         	    },
                         	    id: 'rc-16acda0e8302116df64d',
                         	    type: 'video',
@@ -2218,7 +2261,11 @@
                         	        start: null,
                         	        end: null,
                         	        moat: null,
-                                    duration: 45
+                                    duration: 45,
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
                         	    },
                         	    id: 'rc-5c404f4aedc7',
                         	    type: 'video',
@@ -2263,7 +2310,11 @@
                         	        start: null,
                         	        end: null,
                         	        moat: null,
-                                    duration: 50
+                                    duration: 50,
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
                         	    },
                         	    id: 'rc-6f4aebc424f3',
                         	    type: 'video',
@@ -2308,7 +2359,11 @@
                         	        start: null,
                         	        end: null,
                         	        moat: null,
-                                    duration: 52
+                                    duration: 52,
+                                    thumbs: {
+                                        small: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/small.jpg',
+                          	            large: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/large.jpg'
+                                    }
                         	    },
                         	    id: 'rc-e2218c73ff11',
                         	    type: 'video',
@@ -2353,7 +2408,11 @@
                         	        start: null,
                         	        end: null,
                         	        moat: null,
-                                    duration: 22
+                                    duration: 22,
+                                    thumbs: {
+                                        small: 'images.instagram.com/-zNcg8AtYy/small.jpg',
+                        	            large: 'images.instagram.com/-zNcg8AtYy/large.jpg'
+                                    }
                         	    },
                         	    id: 'rc-e3149227e70468',
                         	    type: 'video',
@@ -2379,7 +2438,7 @@
                         	    params: {}
                             });
                         });
-                        
+
                         it('should transpile the brightcove card', function() {
                             expect(deck[18]).toEqual({
                                 data: {
@@ -2398,7 +2457,11 @@
                         	        start: null,
                         	        end: null,
                         	        moat: null,
-                                    duration: 48
+                                    duration: 48,
+                                    thumbs: {
+                                        small: 'images.brightcove.com/video/4655415742001/small.jpg',
+                        	            large: 'images.brightcove.com/video/4655415742001/large.jpg'
+                                    }
                         	    },
                         	    id: 'rc-d6ec871ceb105e',
                         	    type: 'video',
@@ -2424,7 +2487,7 @@
                         	    params: {}
                             });
                         });
-                        
+
                         it('should transpile the kaltura card', function() {
                             expect(deck[19]).toEqual({
                                 data: {
@@ -2443,12 +2506,65 @@
                         	        start: null,
                         	        end: null,
                         	        moat: null,
-                                    duration: 68
+                                    duration: 68,
+                                    thumbs: {
+                                        small: 'images.kaltura.com/video/1_dsup2iqd/small.jpg',
+                        	            large: 'images.kaltura.com/video/1_dsup2iqd/large.jpg'
+                                    }
                         	    },
                         	    id: 'rc-3739123c133da1',
                         	    type: 'video',
                                 title: 'Kaltura Card',
                                 note: 'Krazy Kool Kaltura',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                                shareLinks: {},
+                        	    params: {}
+                            });
+                        });
+
+                        it('should transpile the facebook card', function() {
+                            expect(deck[20]).toEqual({
+                                data: {
+                        	        skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'facebook',
+                                    videoid: 'https://www.facebook.com/Google/videos/10154011581287838',
+                                    hostname: null,
+                                    playerid: null,
+                                    accountid: null,
+                                    partnerid: null,
+                                    embedid: null,
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null,
+                                    duration: 68,
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
+                        	    },
+                        	    id: 'rc-b0ccf8ea5753',
+                        	    type: 'video',
+                                title: 'Facebook Card',
+                                note: 'Fantastic Facebook',
                         	    label: 'Video',
                         	    view: 'video',
                         	    ad: false,
@@ -2514,7 +2630,11 @@
                                         advertiser: 'Turtles, Inc.',
                                         creative: 'turtle_power'
                                     },
-                                    duration: 58
+                                    duration: 58,
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
                                 }
                             });
 
@@ -2557,7 +2677,11 @@
                                     start: null,
                                     end: null,
                                     moat: null,
-                                    duration: 78
+                                    duration: 78,
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
                                 }
                             });
 
@@ -2600,7 +2724,11 @@
                                     start: undefined,
                                     end: undefined,
                                     moat: null,
-                                    duration: 89
+                                    duration: 89,
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
                                 }
                             });
 
@@ -2666,7 +2794,11 @@
                                     start: 0,
                                     end: 40,
                                     moat: null,
-                                    duration: 46
+                                    duration: 46,
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
                                 }
                             });
 
@@ -2716,7 +2848,8 @@
                                         advertiser: 'Turtles, Inc.',
                                         creative: 'turtle_power'
                                     },
-                                    duration: 30
+                                    duration: 30,
+                                    thumbs: undefined
                                 }
                             });
                         });
@@ -3047,7 +3180,7 @@
                                     }
                                 });
                             });
-                            
+
                             spyOn(InstagramService, 'getEmbedInfo').and.callFake(function(id) {
                                 return $q.when({
                                     src: 'https://mock-instagram-cdn/' + id + '.mp4'

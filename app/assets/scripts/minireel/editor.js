@@ -2265,6 +2265,43 @@ VideoCardController           , c6embed) {
             };
         }])
 
+        .directive('facebookPlayer', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    videoid: '@'
+                },
+                link: function(scope, $element) {
+                    function loadPreview(videoid) {
+                        if(!videoid) { return; }
+                        
+                        $element.empty();
+
+                        var fbVideo = angular.element('<div></div>');
+                        fbVideo.addClass('fb-video');
+                        fbVideo.attr('data-href', videoid);
+                        $element.append(fbVideo);
+                        
+                        var script = document.createElement('script');
+                        var src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5';
+                        script.setAttribute('src', src);
+                        script.onload = function() {
+                            window.FB.init({
+                                appId: c6Defines.kFacebookAppId,
+                                version: 'v2.5'
+                            });
+                            window.FB.XFBML.parse($element[0]);
+                        };
+                        $element[0].appendChild(script);
+
+                        $element.addClass('facebookPreview');
+                    }
+                    
+                    scope.$watch('videoid', loadPreview);
+                }
+            };
+        }])
+
         .directive('videoPreview', ['c6UrlMaker','$timeout','VideoService',
         function                   ( c6UrlMaker , $timeout , VideoService ) {
             return {
