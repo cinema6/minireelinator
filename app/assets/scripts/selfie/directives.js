@@ -1265,7 +1265,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 pricing = schema.pricing,
                 budgetMin = pricing.budget.__min,
                 budgetMax = pricing.budget.__max,
-                limitMinPercent = pricing.dailyLimit.__percentMin;
+                limitMinPercent = pricing.dailyLimit.__percentMin,
+                currentBudget = campaign.pricing.budget;
 
             this.budget = campaign.pricing.budget || null;
             this.limit = campaign.pricing.dailyLimit || null;
@@ -1273,7 +1274,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             this.budgetMin = budgetMin;
             this.budgetMax = budgetMax;
 
-            validation.budget = !!this.budget;
+
 
             Object.defineProperties(this, {
                 cpv: {
@@ -1291,12 +1292,16 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 budgetError: {
                     get: function() {
                         var budget = parseFloat(this.budget),
-                            validDecimal = !budget || (/^[0-9]+(\.[0-9]{1,2})?$/).test(budget);
+                            validDecimal = !budget || (/^[0-9]+(\.[0-9]{1,2})?$/).test(budget),
+                            status = campaign.status;
 
                         if (budget < budgetMin) { return 1; }
                         if (budget > budgetMax) { return 2; }
                         if (!validDecimal) { return 3; }
                         if (!budget && validation.show) { return 4; }
+                        if (status === 'outOfBudget' && budget <= currentBudget) {
+                            return 5;
+                        }
 
                         return false;
                     }
@@ -1344,6 +1349,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     }
                 }
             });
+
+            validation.budget = this.validBudget;
 
             this.setBudget = function() {
                 var Ctrl = SelfieBudgetCtrl,
