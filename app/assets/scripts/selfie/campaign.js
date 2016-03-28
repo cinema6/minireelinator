@@ -842,7 +842,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
 
                 campaign = extend((isDraft ? cState._campaign.pojoify() : cState.campaign), {
-                    status: isDraft ? 'active' : status
+                    status: (/draft|expired|canceled|outOfBudget/).test(status) ? 'active' : status
                 });
 
                 return cinema6.db.create('updateRequest', {
@@ -2096,8 +2096,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 },
                 canEdit: {
                     get: function() {
-                        return (/pending|active|paused/).test(this.campaign.status) &&
-                            (!this.updateRequest ||
+                        return (!this.updateRequest ||
                                 (this.updateRequest && this.updateRequest.data &&
                                 this.updateRequest.data.status !== 'canceled'));
                     }
