@@ -213,36 +213,28 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('canEdit', function() {
-                it('should be true if status is pending, active or paused', function() {
-                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.status = 'pending';
+                it('should be true if there is no update request', function() {
+                    SelfieManageCampaignCtrl.updateRequest = undefined;
 
                     expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
-
-                    SelfieManageCampaignCtrl.campaign.status = 'active';
-
-                    expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
-
-                    SelfieManageCampaignCtrl.campaign.status = 'paused';
-
-                    expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
-
-                    SelfieManageCampaignCtrl.campaign.status = 'expired';
-
-                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
                 });
 
-                it('should be true if status is active or paused and has update request that is not canceling', function() {
+                it('should be true if there is an update request with a status that is not canceled', function() {
+                    SelfieManageCampaignCtrl.updateRequest = {
+                        data: {
+                            status: 'active'
+                        }
+                    };
+
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
+                });
+
+                it('should be false there is an update request with a status of canceled', function() {
                     SelfieManageCampaignCtrl.updateRequest = {
                         data: {
                             status: 'canceled'
                         }
                     };
-                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.status = 'active';
-
                     expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
 
                     SelfieManageCampaignCtrl.updateRequest.data.status = 'paused';
