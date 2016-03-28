@@ -11,7 +11,7 @@
     "endDate": "2016-04-24T16:17:09.166Z",
     "budget": {
         "daily": 100,
-        "total": 1000,
+        "total": 1000
     },
     "externalCost": {
         "event": "count",
