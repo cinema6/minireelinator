@@ -132,50 +132,19 @@ define(['angular','c6_state'], function(angular, c6State) {
                 });
             }
 
-            function generateModel(params, model, ui) {
-                return {
-                    ui: ui,
-                    params: params,
-                    defaults: params.reduce(function(result, param) {
-                            if (ui.indexOf(param.name) > -1) {
-                                result[param.name] = param;
-
-                                if (param.type === 'Array' && !param.value.length) {
-                                    param.value.push({
-                                        label: param.label,
-                                        value: ''
-                                    });
-                                }
-                            }
-                            return result;
-                        }, {}),
-                    addedParams: params.filter(function(param) {
-                        return (param.type === 'Array' ? !!param.value.length : !!param.value) &&
-                            param.editable && ui.indexOf(param.name) < 0;
-                    }),
-                    availableParams: params.filter(function(param) {
-                        return (ui.indexOf(param.name) < 0 || param.type === 'Array') &&
-                            param.editable;
-                    }),
-                    show: !!Object.keys(model).length
-                };
-            }
-
             this.initWithModel = function(model) {
                 this._container = model;
 
                 this.hasName = !!model.name;
                 this.validName = true;
 
-                this.mraid = generateModel(
-                    PlacementService.convertForUI(model.defaultTagParams.mraid || {}),
-                    model.defaultTagParams.mraid || {},
+                this.mraid = PlacementService.generateParamsModel(
+                    model.defaultTagParams.mraid,
                     ['network','uuid','hostApp','prebuffer','clickUrls']
                 );
 
-                this.vpaid = generateModel(
-                    PlacementService.convertForUI(model.defaultTagParams.vpaid || {}),
-                    model.defaultTagParams.vpaid || {},
+                this.vpaid = PlacementService.generateParamsModel(
+                    model.defaultTagParams.vpaid,
                     ['network','uuid']
                 );
             };
@@ -236,61 +205,5 @@ define(['angular','c6_state'], function(angular, c6State) {
                 }).catch(showErrorModal)
                 .finally(function() { self.pending = false; });
             }, this);
-        }])
-
-        .service('PlacementService', ['c6State',
-        function                     ( c6State ) {
-            this.convertForUI = function(model) {
-                var App = c6State.get('Selfie:App'),
-                    schema = App.cModel.data.placement.params;
-
-                return schema.reduce(function(result, param) {
-                    var value = model[param.name],
-                        _value;
-
-                    if (param.type === 'Array') {
-                        _value = (value || param.default || [])
-                            .map(function(val) {
-                                return {
-                                    label: param.label,
-                                    value: val
-                                };
-                            });
-                    } else if (param.type === 'Boolean') {
-                        _value = value === undefined ?
-                            param.default :
-                            (!!value ? 'Yes' : 'No');
-                    } else {
-                        _value = value || param.default;
-                    }
-
-                    result.push(extend(copy(param), {value: _value}));
-
-                    return result;
-                }, []);
-            };
-
-            this.convertForSave = function(params) {
-                return params.reduce(function(result, param) {
-                    if (param.type === 'Array') {
-                        result[param.name] = param.value.reduce(function(result, item) {
-                            if (item.value) {
-                                result.push(item.value);
-                            }
-                            return result;
-                        }, []);
-
-                        result[param.name] = !!result[param.name].length ?
-                            result[param.name] : undefined;
-                    } else if (param.type === 'Boolean') {
-                        result[param.name] = typeof param.value === 'string' ?
-                            param.value === 'Yes' : undefined;
-                    } else {
-                        result[param.name] = (param.value || undefined);
-                    }
-
-                    return result;
-                }, {});
-            };
         }]);
 });

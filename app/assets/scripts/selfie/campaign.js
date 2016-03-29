@@ -2606,40 +2606,10 @@ function( angular , c6State  , PaginatedListState                    ,
                                                                  'PlacementService',
         function                                                ( cinema6 , c6State ,
                                                                   PlacementService ) {
-            function generateTagModel(params, ui) {
-                params = PlacementService.convertForUI(params);
-
-                return {
-                    ui: ui,
-                    params: params,
-                    defaults: params.reduce(function(result, param) {
-                        if (ui.indexOf(param.name) > -1) {
-                            result[param.name] = param;
-
-                            if (param.type === 'Array' && !param.value.length) {
-                                param.value.push({
-                                    label: param.label,
-                                    value: ''
-                                });
-                            }
-                        }
-                        return result;
-                    }, {}),
-                    addedParams: params.filter(function(param) {
-                        return (param.type === 'Array' ? !!param.value.length : !!param.value) &&
-                            param.editable && ui.indexOf(param.name) < 0;
-                    }),
-                    availableParams: params.filter(function(param) {
-                        return (ui.indexOf(param.name) < 0 || param.type === 'Array') &&
-                            param.editable;
-                    })
-                };
-            }
-
             function generatePlacementModel(placement, container, ui) {
                 return {
                     tagTypes: (container && Object.keys(container.defaultTagParams)) || [],
-                    tagParams: generateTagModel(placement.tagParams, ui),
+                    tagParams: PlacementService.generateParamsModel(placement.tagParams, ui),
                     container: container,
                     model: placement
                 };
@@ -2667,7 +2637,7 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.setTagType = function(type, placement) {
-                placement.tagParams = generateTagModel(
+                placement.tagParams = PlacementService.generateParamsModel(
                     placement.container.defaultTagParams[type],
                     this.ui
                 );
