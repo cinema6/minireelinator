@@ -1,0 +1,98 @@
+<!-- ADDED PARAMS-->
+<div ng-repeat="param in addedParams">
+    <fieldset ng-if="param.type === 'Boolean'" class="form__item form__item--clone">
+        <div class="field--inline">
+            <select c6-select-box data-options="['Yes','No']" ng-model="param.value" ng-options="bool for bool in ['Yes','No']" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}">
+                <option value="">No value</option>
+            </select>
+            <label class="form__label" for="{{param.name}}-{{$index}}">
+                <i class="fa fa-times ui--error"></i>
+                {{param.label}}
+            </label>
+        </div>
+        <div class="btns--inline">
+            <button ng-click="RcCustomParamsCtrl.removeParam(param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+        </div>
+        <div class="form__errorBox">
+            <p class="form__errorMsg">
+                <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset ng-if="param.type === 'String'" class="form__item form__item--clone">
+        <div class="field--inline">
+            <input ng-if="!param.options" ng-model="param.value" c6-fill-check class="form__textBox form__fillCheck" type="text" id="{{param.name}}-{{$index}}">
+            <select ng-if="param.options" ng-model="param.value" c6-select-box data-options="param.options" ng-options="option for option in param.options" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}">
+                <option value="">No value</option>
+            </select>
+            <label class="form__label" for="{{param.name}}-{{$index}}">
+                <i class="fa fa-times ui--error"></i>
+                {{param.label}}
+            </label>
+        </div>
+        <div class="btns--inline">
+            <button ng-click="RcCustomParamsCtrl.removeParam(param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+        </div>
+        <div class="form__errorBox">
+            <p class="form__errorMsg">
+                <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset ng-if="param.type === 'Number'" class="form__item form__item--clone">
+        <div class="field--inline">
+            <input ng-if="!param.options" ng-model="param.value" c6-fill-check class="form__textBox form__fillCheck" type="number" id="{{param.name}}-{{$index}}">
+            <select ng-if="param.options" ng-model="param.value" c6-select-box data-options="param.options" ng-options="option for option in param.options" class="form__selectBox form__selectBox--single" id="{{param.name}}-{{$index}}"></select>
+            <label class="form__label" for="{{param.name}}-{{$index}}">
+                <i class="fa fa-times ui--error"></i>
+                {{param.label}}
+            </label>
+        </div>
+        <div class="btns--inline">
+            <button ng-click="RcCustomParamsCtrl.removeParam(param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+        </div>
+        <div class="form__errorBox">
+            <p class="form__errorMsg">
+                <i class="fa fa-exclamation-triangle"></i> Invalid {{param.label}}
+            </p>
+        </div>
+    </fieldset>
+
+    <div ng-if="param.type === 'Array'">
+        <fieldset ng-repeat="arrParam in param.value" class="form__item form__item--clone">
+            <div class="field--inline">
+                <input c6-fill-check ng-model="arrParam.value" class="form__textBox form__fillCheck" type="text" id="{{param.name}}-{{$index}}">
+                <label class="form__label" for="{{param.name}}-{{$index}}">
+                    <i class="fa fa-times ui--error"></i>
+                    {{arrParam.label}}
+                </label>
+            </div>
+            <div class="btns--inline">
+                <button ng-click="RcCustomParamsCtrl.removeParam(param, arrParam)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+            </div>
+            <div class="form__errorBox">
+                <p class="form__errorMsg">
+                    <i class="fa fa-exclamation-triangle"></i> Invalid {{arrParam.label}}
+                </p>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<!-- END OF ADDED PARAMS -->
+
+<fieldset class="form__item form__item--clone">
+    <div class="field--inline">
+        <select c6-select-box ng-model="addParam" data-options="availableParams" ng-options="param.label for param in availableParams" class="form__selectBox form__selectBox--single">
+            <option value="">-- Select --</option>
+        </select>
+        <label class="form__label">
+            <i class="fa fa-times ui--error"></i>
+            Select Parameter
+        </label>
+    </div>
+    <div class="btns--inline">
+        <button ng-click="RcCustomParamsCtrl.addParam(addParam)" class="btn--link"><i class="fa fa-plus-circle"></i></button>
+    </div>
+</fieldset>
