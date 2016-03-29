@@ -180,40 +180,6 @@ define(['angular','c6_state'], function(angular, c6State) {
                 );
             };
 
-            this.addParam = function(type, param) {
-                if (!param) { return; }
-
-                var hasBeenAdded = this[type].addedParams.indexOf(param) > -1,
-                    isInUI = this[type].ui.indexOf(param.name) > -1;
-
-                if (param.type === 'Array') {
-                    param.value.push({
-                        label: param.label,
-                        value: undefined
-                    });
-                }
-
-                if (!hasBeenAdded && !isInUI) {
-                    this[type].addedParams.push(param);
-                }
-            };
-
-            this.removeParam = function(type, param, subParam) {
-                if (!param) { return; }
-
-                var index = this[type].addedParams.indexOf(param);
-
-                if (subParam) {
-                    param.value.splice(param.value.indexOf(subParam), 1);
-                }
-
-                if (param.type !== 'Array') {
-                    this[type].addedParams.splice(index, 1);
-
-                    param.value = param.type !== 'Array' ? param.default : [];
-                }
-            };
-
             this.validateName = function(name) {
                 if (!name) { return; }
 
