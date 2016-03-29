@@ -2472,7 +2472,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         return c6State.goTo('Selfie:Manage:Campaign:Manage', null, null, true);
                     }
                 };
-                
+
                 this.saveUpdateRequest = function(changes) {
                     if(changes.data) {
                         this._undecorateInterests(changes.data);
@@ -2482,7 +2482,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
                     return this._updateRequest.save();
                 };
-                
+
                 function getInterests(campaign) {
                     return (campaign && campaign.targeting && campaign.targeting.interests || []);
                 }
@@ -2496,7 +2496,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         );
                     }
                 };
-                
+
                 this._undecorateInterests = function(campaign) {
                     if(campaign.targeting && campaign.targeting.interests) {
                         campaign.targeting.interests = campaign.targeting.interests.map(
@@ -2567,5 +2567,196 @@ function( angular , c6State  , PaginatedListState                    ,
                     self._loadPreview(card);
                 }
             }, true);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Placements', ['c6State','cinema6','$q',
+            function                                                   ( c6State , cinema6 , $q ) {
+                this.templateUrl = 'views/selfie/campaigns/manage/placements.html';
+                this.controller = 'SelfieManageCampaignPlacementsController';
+                this.controllerAs = 'SelfieManageCampaignPlacementsCtrl';
+
+                this.model = function() {
+                    return $q.all({
+                        campaign: this.cParent.campaign,
+                        containers: cinema6.db.findAll('container'),
+                        placements: cinema6.db.findAll('placement', {
+                            'tagParams.campaign': this.cParent.campaign.id
+                        }).then(function(placements) {
+                            if (!placements.length) {
+                                return [
+                                    cinema6.db.create('placement', {
+                                        label: null,
+                                        tagType: null,
+                                        budget: {},
+                                        externalCost: {},
+                                        tagParams: {}
+                                    })
+                                ];
+                            } else {
+                                return placements;
+                            }
+                        })
+                    });
+                };
+            }]);
+        }])
+
+        .controller('SelfieManageCampaignPlacementsController', ['cinema6','c6State',
+                                                                 'PlacementService',
+        function                                                ( cinema6 , c6State ,
+                                                                  PlacementService ) {
+            function generateTagModel(params, ui) {
+                params = PlacementService.convertForUI(params);
+
+                return {
+                    ui: ui,
+                    params: params,
+                    defaults: params.reduce(function(result, param) {
+                        if (ui.indexOf(param.name) > -1) {
+                            result[param.name] = param;
+
+                            if (param.type === 'Array' && !param.value.length) {
+                                param.value.push({
+                                    label: param.label,
+                                    value: ''
+                                });
+                            }
+                        }
+                        return result;
+                    }, {}),
+                    addedParams: params.filter(function(param) {
+                        return (param.type === 'Array' ? !!param.value.length : !!param.value) &&
+                            param.editable && ui.indexOf(param.name) < 0;
+                    }),
+                    availableParams: params.filter(function(param) {
+                        return (ui.indexOf(param.name) < 0 || param.type === 'Array') &&
+                            param.editable;
+                    })
+                };
+            }
+
+            function generatePlacementModel(placement, container, ui) {
+                return {
+                    tagTypes: (container && Object.keys(container.defaultTagParams)) || [],
+                    tagParams: generateTagModel(placement.tagParams, ui),
+                    container: container,
+                    model: placement
+                };
+            }
+
+            this.initWithModel = function(model) {
+                var self = this;
+
+                this.ui = ['autoplay','branding','countdown'];
+                this.campaign = model.campaign;
+                this.containers = model.containers;
+
+                this.placements = model.placements.map(function(placement) {
+                    var container = model.containers.filter(function(container) {
+                        return placement.tagParams.container === container.name;
+                    })[0];
+
+                    return generatePlacementModel(placement, container, self.ui);
+                });
+            };
+
+            this.setContainer = function(placement) {
+                placement.model.tagType = undefined;
+                placement.tagTypes = Object.keys(placement.container.defaultTagParams);
+            };
+
+            this.setTagType = function(type, placement) {
+                placement.tagParams = generateTagModel(
+                    placement.container.defaultTagParams[type],
+                    this.ui
+                );
+            };
+
+            this.addNewPlacement = function() {
+                this.placements.push(generatePlacementModel(cinema6.db.create('placement', {
+                    label: null,
+                    tagType: null,
+                    budget: {},
+                    externalCost: {},
+                    tagParams: {}
+                }), undefined, this.ui));
+            };
+
+            this.save = function(placement) {
+                var placementDBModel = placement.model,
+                    params = placement.tagParams.params;
+
+                placementDBModel.tagParams = PlacementService.convertForSave(params);
+                placementDBModel.tagParams.container = placement.container.name;
+                placementDBModel.tagParams.campaign = this.campaign.id;
+
+                placementDBModel.save()
+                    .then(function(model) {
+                        c6State.goTo('Selfie:Manage:Campaign:Placements:Tag', [model]);
+                    });
+            };
+
+            this.delete = function(placement) {
+                var self = this;
+
+                return placement.model.erase()
+                    .then(function() {
+                        self.placements.splice(self.placements.indexOf(placement), 1);
+
+                        if (self.placements.length === 0) {
+                            self.addNewPlacement();
+                        }
+                    });
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Placements:Tag', [function() {
+                this.templateUrl = 'views/selfie/campaigns/manage/placement_tag.html';
+                this.controller = 'SelfieManageCampaignPlacementTagController';
+                this.controllerAs = 'SelfieManageCampaignPlacementTagCtrl';
+            }]);
+        }])
+
+        .controller('SelfieManageCampaignPlacementTagController', ['c6State',
+        function                                                  ( c6State ) {
+            function generateTag(placement) {
+                if (placement.tagType === 'mraid') {
+                    return [
+                        '<div>',
+                        '    <script>',
+                        '        (function() {',
+                        '            var script = document.createElement("script");',
+                        '            script.src = "https://lib.reelcontent.com/c6e' +
+                        'mbed/v1/c6mraid.min.js";',
+                        '            script.onload = function onload() {',
+                        '                window.c6mraid({',
+                        '                    placement: "' + placement.id + '"',
+                        '                }).done();',
+                        '            };',
+                        '            document.head.appendChild(script);',
+                        '        }());',
+                        '    </script>',
+                        '</div>'
+                    ].join('\n');
+                } else {
+                    return 'https://platform.reelcontent.com/api/public/vast/2.0/tag?placement=' +
+                        placement.id;
+                }
+            }
+
+            this.initWithModel = function(model) {
+                this.placement = {
+                    name: model.tagParams.container,
+                    tag: generateTag(model)
+                };
+            };
+
+            this.close = function() {
+                c6State.goTo('Selfie:Manage:Campaign:Placements');
+            };
         }]);
 });
