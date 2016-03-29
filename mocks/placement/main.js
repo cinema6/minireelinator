@@ -101,12 +101,6 @@ module.exports = function(http) {
                 lastUpdated: (new Date()).toISOString()
             });
 
-        updated.defaultTagParams = updated.defaultTagParams || {};
-
-        Object.keys(updated.defaultTagParams).forEach(function(key) {
-            updated.defaultTagParams[key].placement = updated.name;
-        });
-
         grunt.file.write(filePath, JSON.stringify(updated, null, '    '));
 
         this.respond(200, Q.when(extend(updated, {id: id})).delay(1500));
