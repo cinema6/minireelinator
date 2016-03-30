@@ -2602,10 +2602,14 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignPlacementsController', ['cinema6','c6State',
+        .controller('SelfieManageCampaignPlacementsController', ['cinema6','c6State','c6AsyncQueue',
+                                                                 'ConfirmDialogService',
                                                                  'PlacementService',
-        function                                                ( cinema6 , c6State ,
+        function                                                ( cinema6 , c6State , c6AsyncQueue ,
+                                                                  ConfirmDialogService ,
                                                                   PlacementService ) {
+            var queue = c6AsyncQueue();
+
             function generatePlacementModel(placement, container, ui) {
                 return {
                     tagTypes: (container && Object.keys(container.defaultTagParams)) || [],
@@ -2613,6 +2617,20 @@ function( angular , c6State  , PaginatedListState                    ,
                     container: container,
                     model: placement
                 };
+            }
+
+            function showErrorModal(error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was a problem processing your request: ' + error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
+                });
             }
 
             this.initWithModel = function(model) {
@@ -2631,9 +2649,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
             };
 
-            this.setContainer = function(placement) {
+            this.setContainer = function(placement, container) {
                 placement.model.tagType = undefined;
-                placement.tagTypes = Object.keys(placement.container.defaultTagParams);
+                placement.tagTypes = Object.keys(container.defaultTagParams);
             };
 
             this.setTagType = function(type, placement) {
@@ -2653,8 +2671,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 }), undefined, this.ui));
             };
 
-            this.save = function(placement) {
-                var placementDBModel = placement.model,
+            this.save = queue.debounce(function() {
+                var placement = arguments[0],
+                    placementDBModel = placement.model,
                     params = placement.tagParams.params;
 
                 placementDBModel.tagParams = PlacementService.convertForSave(params);
@@ -2664,20 +2683,33 @@ function( angular , c6State  , PaginatedListState                    ,
                 placementDBModel.save()
                     .then(function(model) {
                         c6State.goTo('Selfie:Manage:Campaign:Placements:Tag', [model]);
-                    });
-            };
+                    }).catch(showErrorModal);
+            }, this);
 
             this.delete = function(placement) {
                 var self = this;
 
-                return placement.model.erase()
-                    .then(function() {
-                        self.placements.splice(self.placements.indexOf(placement), 1);
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to delete this placement?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
 
-                        if (self.placements.length === 0) {
-                            self.addNewPlacement();
-                        }
-                    });
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        return placement.model.erase()
+                            .then(function() {
+                                self.placements.splice(self.placements.indexOf(placement), 1);
+
+                                if (self.placements.length === 0) {
+                                    self.addNewPlacement();
+                                }
+                            }).catch(showErrorModal);
+                    })
+                });
             };
         }])
 

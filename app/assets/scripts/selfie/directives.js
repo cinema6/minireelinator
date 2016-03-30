@@ -1696,7 +1696,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
-        .controller('RcCustomParamsController', ['$scope',function($scope) {
+        .controller('RcCustomParamsController', ['$scope',
+        function                                ( $scope ) {
             this.addParam = function(param) {
                 if (!param) { return; }
 
@@ -1729,7 +1730,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 if (param.type !== 'Array') {
                     addedParams.splice(index, 1);
 
-                    param.value = param.type !== 'Array' ? param.default : [];
+                    if (param.type === 'Boolean') {
+                        param.value = param.default !== undefined ?
+                            (!!param.default ? 'Yes' : 'No') :
+                            undefined;
+                    } else {
+                        param.value = param.default;
+                    }
                 }
             };
         }])

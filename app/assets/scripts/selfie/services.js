@@ -744,14 +744,15 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                                 };
                             });
                     } else if (param.type === 'Boolean') {
+                        value = value === undefined ? param.default : value;
+
                         _value = value === undefined ?
-                            param.default :
-                            (!!value ? 'Yes' : 'No');
+                            value : (!!value ? 'Yes' : 'No');
                     } else {
                         _value = value || param.default;
                     }
 
-                    result.push(extend(copy(param), {value: _value}));
+                    result.push(extend(ngCopy(param), {value: _value}));
 
                     return result;
                 }, []);

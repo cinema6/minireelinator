@@ -14,7 +14,7 @@
                             </h1>
                         </div>
                         <fieldset class="form__item">
-                            <select c6-select-box data-options="SelfieManageCampaignPlacementsCtrl.containers" ng-options="container.label for container in SelfieManageCampaignPlacementsCtrl.containers" ng-model="placement.container" ng-change="SelfieManageCampaignPlacementsCtrl.setContainer(placement)" class="form__selectBox form__selectBox--single" id="c6-placement-dsp">
+                            <select c6-select-box data-options="SelfieManageCampaignPlacementsCtrl.containers" ng-options="container.label for container in SelfieManageCampaignPlacementsCtrl.containers" ng-model="placement.container" ng-change="SelfieManageCampaignPlacementsCtrl.setContainer(placement, placement.container)" class="form__selectBox form__selectBox--single" id="c6-placement-dsp">
                                 <option value="">-- Select --</option>
                             </select>
                             <label class="form__label" for="c6-mraid-prebuffer">

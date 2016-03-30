@@ -1,9 +1,6 @@
 define(['angular','c6_state'], function(angular, c6State) {
     'use strict';
 
-    var extend = angular.extend,
-        copy = angular.copy;
-
     return angular.module('c6.app.selfie.containers', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
