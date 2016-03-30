@@ -36,75 +36,90 @@
                     </div>-->
                     <!-- campaign summary -->
                     <div class="grid__item one-whole campaignSummary__group" c6-alias="SelfieManageCampaignCtrl.summary as summary">
+
                         <div class="grid">
-                            <div class="grid__item campaignItem__list">
-                                <h3 ng-if="SelfieManageCampaignCtrl.showAdminTab" class="tk--hdr">
-                                    Campaign ID: {{campaign.id}}<br>
-                                    Card ID: {{campaign.cards[0].id}}
-                                </h3>
-                                <h3 class="tk--hdr">Campaign Summary</h3>
-                                <div class="campaignItems">
-                                    <ul>
-                                        <li>
-                                            <div class="campaignItem__title">Advertiser</div>
-                                            <div class="campaignItem__label text--small">{{summary.advertiser}}</div>
-                                        </li>
-                                        <li>
-                                            <div class="campaignItem__title">Timeline</div>
-                                            <div class="campaignItem__label text--small">{{summary.duration}}</div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid">
-                            <div class="grid__item">
-                                <h3 class="tk--hdr">Budget</h3>
-                                <div class="campaignSummary__item">
-                                    <div class="grid">
-                                        <div class="grid__item grid--center one-quarter">
-                                            <span class="campaignItem__label">Total Budget </span>
-                                            <span class="campaignItem__title tk--hdr">${{summary.pricing.budget | number:2}}</span>
-                                        </div><!--
-                                        --><div class="grid__item one-quarter grid--center">
-                                            <span class="campaignItem__label">Daily Limit </span>
-                                            <span class="campaignItem__title tk--hdr">${{summary.pricing.dailyLimit | number:2}}</span>
-                                        </div><!--
-                                        --><div class="grid__item one-quarter grid--center grid--right">
-                                            <span class="campaignItem__label">Est. Views </span>
-                                            <span class="campaignItem__title tk--hdr">{{(summary.pricing.budget / summary.pricing.cost) | number:0}}</span>
-                                        </div><!--
-                                        --><div class="grid__item grid--center one-quarter">
-                                            <span class="campaignItem__label ">CPV </span>
-                                            <span class="campaignItem__title tk--hdr">${{summary.pricing.cost | number:2}}</span>
+
+                            
+                            <div class="orderItems">
+                                <ul>
+                                    <li>
+                                        <div class="grid__item two-thirds orderItem__label">
+                                            <h1 class="tk--hdr">Campaign Summary</h1>
                                         </div>
-                                    </div>
-                                </div>
+                                    </li>
+                                    <li>
+                                        <div class="grid__item one-third orderItem__label">Advertiser</div><!--
+                                        --><div class="grid__item two-thirds">
+                                            <div class="orderItem__cost text--right">{{summary.advertiser}}</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                    <div class="grid__item one-third orderItem__label">Timeline</div><!--
+                                    --><div class="grid__item two-thirds">
+                                            <div class="orderItem__cost text--right">{{summary.duration}}</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul>
+                                    <li>
+                                        <div class="grid__item two-thirds orderItem__label">
+                                            <h1 class="tk--hdr">Total Budget</h1>
+                                        </div><!--
+                                        --><div class="grid__item one-third orderItem__label">
+                                            <h1 class="tk--hdr">${{summary.pricing.budget | number:2}}</h1>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="grid__item one-third orderItem__label">Daily Budget</div><!--
+                                        --><div class="grid__item two-thirds">
+                                            <div class="orderItem__label text--right">${{summary.pricing.dailyLimit | number:2}}</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="grid__item one-third orderItem__label">Est. Views</div><!--
+                                        --><div class="grid__item two-thirds">
+                                            <div class="orderItem__label text--right">{{(summary.pricing.budget / summary.pricing.cost) | number:0}}</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="grid__item one-third orderItem__label">CPV</div><!--
+                                        --><div class="grid__item two-thirds">
+                                            <div class="orderItem__label text--right">${{summary.pricing.cost | number:2}}</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul>
+                                    <li>
+                                        <div class="grid__item two-thirds orderItem__label">
+                                            <h1 class="tk--hdr">Targeting</h1>
+                                        </div>
+
+                                    </li>
+                                    <li>
+                                        <div class="grid__item one-third orderItem__label">Interests:</div>
+                                    </li>
+                                    <li class="orderItem__subItem">
+                                        <div class="grid__item orderItem__label">{{summary.interests || 'All'}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="grid__item one-third orderItem__label">Demographics:</div>
+                                    </li>
+                                    <li class="orderItem__subItem">
+                                        <div class="campaignItem__label" ng-repeat="demo in summary.demographics">{{demo.name}}: {{demo.list || 'All'}}</div>
+                                    </li>
+                                    <li>
+                                        <div class="grid__item one-third orderItem__label">Location:</div>
+                                    </li>
+                                    <li class="orderItem__subItem">
+                                        <div class="campaignItem__label" ng-repeat="geo in summary.geo">{{geo.name}}: {{geo.list || 'All'}}</div>
+                                    </li>
+                                </ul>
                             </div>
+
+                            
+                            
                         </div>
-                        <div class="grid">
-                            <div class="grid__item">
-                                <h3 class="tk--hdr">Targeting</h3>
-                                <div class="campaignItem__list">
-                                    <div class="campaignItems">
-                                        <ul>
-                                            <li>
-                                                <div class="campaignItem__title">Interests</div>
-                                                <div class="campaignItem__label text--small">Interests: {{summary.interests || 'All'}}</div>
-                                            </li>
-                                            <li>
-                                                <div class="campaignItem__title">Demographics</div>
-                                                <div class="campaignItem__label text--small" ng-repeat="demo in summary.demographics">{{demo.name}}: {{demo.list || 'All'}}</div>
-                                            </li>
-                                            <li>
-                                                <div class="campaignItem__title">Location</div>
-                                                <div class="campaignItem__label text--small" ng-repeat="geo in summary.geo">{{geo.name}}: {{geo.list || 'All'}}</div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 <!-- campaign summary ends-->
                 </div>
