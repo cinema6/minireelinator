@@ -1,6 +1,6 @@
 # MiniReelinator
 
-* *[v1.40.1.rc1]*
+* *[1.41.0.rc1]*
   * [REFACTOR]: CSS repeats deleted, overrides organized into file flow
   * [FEATURE]: Campaign IDs moved to admin tab, campaign details redesigned, payments redesigned
 
