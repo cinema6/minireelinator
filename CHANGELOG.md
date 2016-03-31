@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.41.0.rc1]*
+  * [FEATURE]: Add Placements tab to Manage Campaign view
+
 ## v1.40.0 (March 28, 2016)
 * *[v1.40.0.rc1]*
   * [FEATURE]: Allow editing of campaigns regardless of status
