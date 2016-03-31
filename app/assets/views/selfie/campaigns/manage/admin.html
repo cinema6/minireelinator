@@ -2,6 +2,10 @@
     <header class="tabContent__header">
         <h2 class="tabContent__title tk--hdr">Campaign Administration</h2>
         <span class="tabContent__subtitle">Here you can perform administrative actions on a campaign.</span>
+        <h3 ng-if="SelfieManageCampaignCtrl.showAdminTab" class="tk--hdr">
+                Campaign ID: {{campaign.id}}<br>
+                Card ID: {{campaign.cards[0].id}}
+        </h3>
     </header>
 
     <div class="tabContent__gridHolder">

@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[1.41.0.rc1]*
+  * [FEATURE]: Campaign IDs moved to admin tab, campaign details redesigned, payments redesigned
+
 ## v1.40.0 (March 28, 2016)
 * *[v1.40.0.rc1]*
   * [FEATURE]: Allow editing of campaigns regardless of status
