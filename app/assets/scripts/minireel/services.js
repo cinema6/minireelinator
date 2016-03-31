@@ -1297,6 +1297,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'https://www.kaltura.com/index.php/extwidget/preview/partner_id/' +
                         data.partnerid + '/uiconf_id/' + data.playerid + '/entry_id/' + id +
                         '/embed/iframe';
+                case 'facebook':
+                    return id;
                 }
             };
 
@@ -1305,13 +1307,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|' +
                             'vine|vzaar\\.tv|wistia|jwplatform|vidyard|instagram|brightcove|' +
-                            'kaltura')
+                            'kaltura|facebook')
                     ) || [])[0],
                     embedService = (text.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|jwplatform|' +
-                            'wistia|vzaar|vidyard|instagram|brightcove|kaltura')
+                            'wistia|vzaar|vidyard|instagram|brightcove|kaltura|facebook')
                     ) || [])[0],
-                    embed = /<iframe|<script/.test(text) ? 'embed' : null,
+                    embed = /<iframe|<script|fb-video/.test(text) ? 'embed' : null,
                     type = !!urlService ? 'url' : embed,
                     parsed = type === 'url' ? parsedUrl : text,
                     data, service,
@@ -1410,6 +1412,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     playerid: dataMatch[2],
                                     id: dataMatch[3]
                                 } : null;
+                            },
+                            facebook: function(url) {
+                                var pathname = (url.pathname.match(/\/.+\/videos\/\d+/) ||
+                                    [null])[0];
+                                var id = null;
+                                if(pathname) {
+                                    id = 'https://www.facebook.com' + pathname;
+                                }
+                                return { id: id };
                             }
                         },
                         embed: {
@@ -1495,6 +1506,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     playerid: playerMatch[1],
                                     id: idMatch[1]
                                 } : null;
+                            },
+                            facebook: function(embed) {
+                                var idMatch = embed.match(
+                                    /"(https?:\/\/(www\.)?facebook\.com\/[^"]+\/videos\/\d+)\/?"/);
+                                return { id: idMatch ? idMatch[1] : null };
                             }
                         }
                     };
@@ -2261,6 +2277,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'htmlvideo':
                         case 'brightcove':
                         case 'kaltura':
+                        case 'facebook':
                             return 'video';
                         default:
                             return card.type || null;
@@ -2452,7 +2469,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     start: trimmer(),
                     end: trimmer(),
                     moat: copy(null),
-                    duration: copy()
+                    duration: copy(),
+                    thumbs: copy()
                 };
 
                 // dataTemplates: configuration for the "data" section of
@@ -2967,7 +2985,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: videoThumbsValue(),
+                        thumbs: copy(),
                         moat: copy(null),
                         duration: copy()
                     },
@@ -2980,7 +2998,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: videoThumbsValue(),
+                        thumbs: copy(),
                         moat: copy(null),
                         duration: copy()
                     },
@@ -2995,7 +3013,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         related: value(0),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: videoThumbsValue(),
+                        thumbs: copy(),
                         moat: copy(null),
                         duration: copy()
                     },
@@ -3035,7 +3053,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         service: copy(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: videoThumbsValue(),
+                        thumbs: copy(),
                         moat: copy(null),
                         duration: copy()
                     },
@@ -3047,7 +3065,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         service: copy(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: videoThumbsValue(),
+                        thumbs: copy(),
                         moat: copy(null),
                         duration: copy()
                     },
@@ -3059,7 +3077,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         service: copy(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: videoThumbsValue(),
+                        thumbs: copy(),
                         moat: copy(null),
                         duration: copy()
                     },
@@ -3122,6 +3140,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         playerid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
+                        moat: copy(null),
+                        duration: copy()
+                    },
+                    facebook: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        href: hrefValue(),
+                        thumbs: copy(),
                         moat: copy(null),
                         duration: copy()
                     },

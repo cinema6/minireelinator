@@ -1,6 +1,7 @@
 # MiniReelinator
 
-* *[1.41.0.rc1]*
+* *[v1.41.0.rc1]*
+  * [FEATURE]: Added ability to create Facebook cards
   * [FEATURE]: Campaign IDs moved to admin tab, campaign details redesigned, payments redesigned
 
 ## v1.40.0 (March 28, 2016)
