@@ -21,7 +21,8 @@
                     "campaign": "Another Campaign",
                     "advertiser": "Great Sponsor",
                     "creative": "Another Campaign"
-                }
+                },
+                "duration": 35
             },
             "type": "youtube",
             "title": "This is the video title",

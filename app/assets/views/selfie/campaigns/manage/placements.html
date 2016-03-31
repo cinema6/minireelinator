@@ -87,7 +87,7 @@
                                 </p>
                             </div>
                         </fieldset>
-                        <fieldset class="form__item">
+                        <fieldset class="form__item" ng-class="{'ui--hasError': !SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration || (placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration) }">
                             <!-- <select class="form__selectBox form__selectBox--single" id="c6-placement-skipTimer">
                                 <option>5 Seconds</option>
                                 <option>10 Seconds</option>
@@ -102,12 +102,13 @@
                             </label>
                             <div class="form__helpBox form__helpBox--right">
                                 <div class="form__helpText">
-                                    Set the length of the Skip Timer. Should be less than or equal to video length.
+                                    Set the length of the Skip Timer. This campaign's video is <strong>{{SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration}} seconds</strong>.
                                 </div>
                             </div>
                             <div class="form__errorBox">
                                 <p class="form__errorMsg">
-                                    <i class="fa fa-exclamation-triangle"></i> Invalid name
+                                    <span ng-if="!SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration"><i class="fa fa-exclamation-triangle"></i> The video for this campaign has no duration</span>
+                                    <span ng-if="(placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration)"><i class="fa fa-exclamation-triangle"></i> Skip timer cannot be longer than video duration ({{placement.tagParams.defaults.countdown.value}} seconds)</span>
                                 </p>
                             </div>
                         </fieldset>
