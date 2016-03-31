@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.40.1.rc1]*
+  * [REFACTOR]: CSS repeats deleted, overrides organized into file flow
+  * [FEATURE]: Campaign IDs moved to admin tab, campaign details redesigned, payments redesigned
+
 ## v1.40.0 (March 28, 2016)
 * *[v1.40.0.rc1]*
   * [FEATURE]: Allow editing of campaigns regardless of status
