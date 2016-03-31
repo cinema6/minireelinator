@@ -67,12 +67,12 @@
                             expect(fromData('vidyard', 'abc-123')).toBe('http://embed.vidyard.com/share/abc-123');
                             expect(fromData('vidyard', 'abc_123')).toBe('http://embed.vidyard.com/share/abc_123');
                         });
-                        
+
                         it('should create an instagram url', function() {
                             expect(fromData('instagram', '-xCZTNtOdo')).toBe('https://instagram.com/p/-xCZTNtOdo');
                             expect(fromData('instagram', '12345')).toBe('https://instagram.com/p/12345');
                         });
-                        
+
                         it('should create a brightcove url', function() {
                             expect(fromData('brightcove', '4655415742001', {
                                 accountid: '4652941506001',
@@ -80,12 +80,16 @@
                                 embedid: 'default'
                             })).toBe('https://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=4655415742001');
                         });
-                        
+
                         it('should create a kaltura url', function() {
                             expect(fromData('kaltura', '1_dsup2iqd', {
                                 playerid: '32784031',
                                 partnerid: '2054981'
                             })).toBe('https://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/32784031/entry_id/1_dsup2iqd/embed/iframe');
+                        });
+
+                        it('should create a facebook url', function() {
+                            expect(fromData('facebook', 'https://www.facebook.com/Google/videos/10154011581287838/')).toBe('https://www.facebook.com/Google/videos/10154011581287838/');
                         });
                     });
 
@@ -251,7 +255,7 @@
                                 data: { }
                             });
                         });
-                        
+
                         it('should parse instagram embed codes', function() {
                             var embedCode = '<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-version="6" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:8px;"> <div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;"> <div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;"></div></div> <p style=" margin:8px 0 0 0; padding:0 4px;"> <a href="https://www.instagram.com/p/-xCZTNtOdo/" style=" color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;" target="_blank">Kipling, Labrador Retriever/Golden Retriever mix (1 y/o), CCI Northeast Regional Center, Medford, NY • Kipling demonstrates conducting a transaction, behaving around other animals, and refusing treats from strangers. @ccicanine</a></p> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;">A photo posted by The Dogist (@thedogist) on <time style=" font-family:Arial,sans-serif; font-size:14px; line-height:17px;" datetime="2015-12-01T22:37:10+00:00">Dec 1, 2015 at 2:37pm PST</time></p></div></blockquote><script async defer src="//platform.instagram.com/en_US/embeds.js"></script>';
                             var expected = {
@@ -289,7 +293,7 @@
                             };
                             expect(fromUrl(embed)).toEqual(expected);
                         });
-                        
+
                         it('should parse a brightcove advanced embed code', function() {
                             var embed = '<video\n  data-video-id="4655415742001"\n  data-account="4652941506001"\n  data-player="default"\n  data-embed="default"\n  class="video-js" controls></video>\n<script src="//players.brightcove.net/4652941506001/default_default/index.min.js"></script>';
                             var expected = {
@@ -303,7 +307,7 @@
                             };
                             expect(fromUrl(embed)).toEqual(expected);
                         });
-                        
+
                         it('should parse a kaltura url', function() {
                             var url = 'http://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/32334692/entry_id/1_dsup2iqd/embed/auto?&flashvars[streamerType]=auto';
                             expect(fromUrl(url)).toEqual({
@@ -355,7 +359,7 @@
                                 }
                             });
                         });
-                        
+
                         it('should parse a kaltura thumbnail embed', function() {
                             var thumbnailEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981"></script>\n' +
                                 '<div id="kaltura_player_1450892865" style="width: 400px; height: 333px;"><a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>\n' +
@@ -383,7 +387,7 @@
                                 }
                             });
                         });
-                        
+
                         it('should parse a kaltura iframe embed', function() {
                             var iframeEmbed = '<iframe src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981?iframeembed=true&playerId=kaltura_player_1450893164&entry_id=1_dsup2iqd&flashvars[streamerType]=auto" width="400" height="333" allowfullscreen webkitallowfullscreen mozAllowFullScreen frameborder="0"><a href="http://corp.kaltura.com/products/video-platform-features">Video Platform</a>' +
                                 '<a href="http://corp.kaltura.com/Products/Features/Video-Management">Video Management</a> \n' +
@@ -398,7 +402,7 @@
                                 }
                             });
                         });
-                        
+
                         it('should parse a kaltura legacy flash embed', function() {
                             var legacyFlashEmbed = '<script src="http://cdnapi.kaltura.com/p/2054981/sp/205498100/embedIframeJs/uiconf_id/32334692/partner_id/2054981"></script>\n' +
                                 '<object id="kaltura_player_1450893338" name="kaltura_player_1450893338" type="application/x-shockwave-flash" allowFullScreen="true" allowNetworking="all" allowScriptAccess="always" height="333" width="400" bgcolor="#000000" data="http://cdnapi.kaltura.com/index.php/kwidget/cache_st/1450893338/wid/_2054981/uiconf_id/32334692/entry_id/1_dsup2iqd">\n' +
@@ -423,6 +427,41 @@
                             });
                         });
 
+                        it('should parse a facebook video url', function() {
+                            expect(fromUrl('https://www.facebook.com/Google/videos/10154011581287838')).toEqual({
+                                service: 'facebook',
+                                id: 'https://www.facebook.com/Google/videos/10154011581287838',
+                                data: { }
+                            });
+                        });
+
+                        it('should parse a facebook embed code', function() {
+                            var embed = '<div id="fb-root"></div><script>(function(d, s, id) {  var js, fjs = d.getElementsByTagName(s)[0];  ' +
+                                'if (d.getElementById(id)) return;  js = d.createElement(s); js.id = id;  js.src = "//connect.faceboo' +
+                                'k.net/en_US/sdk.js#xfbml=1&version=v2.3";  fjs.parentNode.insertBefore(js, fjs);}(document, \'script\'' +
+                                ', \'facebook-jssdk\'));</script><div class="fb-video" data-allowfullscreen="1" data-href="/Google/vide' +
+                                'os/vb.104958162837/10154011581287838/?type=3"><div class="fb-xfbml-parse-ignore"><blockquote cite="h' +
+                                'ttps://www.facebook.com/Google/videos/10154011581287838/"><a href="https://www.facebook.com/Google/v' +
+                                'ideos/10154011581287838/">Dublin Rising</a><p>The Easter Rising of 1916 has defined Irish history. O' +
+                                'ne hundred years on, join Colin Farrell on the streets of Dublin: dublinrising.withgoogle.com</p>Pos' +
+                                'ted by <a href="https://www.facebook.com/Google/">Google</a> on Thursday, March 17, 2016</blockquote' +
+                                '></div></div>';
+                            var embed2 = '<div class="fb-video" data-href="https://www.facebook.com/facebook/videos/10153231379946729/" data-w' +
+                                'idth="500"><div class="fb-xfbml-parse-ignore"><blockquote cite="https://www.facebook.com/facebook/videos/10153231379946729/">' +
+                                '<a href="https://www.facebook.com/facebook/videos/10153231379946729/">How to Share With Just Friends</a><p>How to share with '+
+                                'just friends.</p>Posted by <a href="https://www.facebook.com/facebook/">Facebook</a> on Friday, December 5, 2014</blockquote></div></div>';
+                            expect(fromUrl(embed)).toEqual({
+                                service: 'facebook',
+                                id: 'https://www.facebook.com/Google/videos/10154011581287838',
+                                data: { }
+                            });
+                            expect(fromUrl(embed2)).toEqual({
+                                service: 'facebook',
+                                id: 'https://www.facebook.com/facebook/videos/10153231379946729',
+                                data: { }
+                            });
+                        });
+
                         it('should return null if the url is not valid', function() {
                             expect(fromUrl('apple.com')).toBeNull();
                             expect(fromUrl('84fh439#')).toBeNull();
@@ -436,6 +475,7 @@
                             expect(fromUrl('http://players.brightcove.net/INVALID/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=123')).toBeNull();
                             expect(fromUrl('http://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=INVALID')).toBeNull();
                             expect(fromUrl('http://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/entry_id/1_dsup2iqd/embed/auto?&flashvars[streamerType]=auto')).toBeNull();
+                            expect(fromUrl('https://www.facebook.com/videos/10154011581287838/')).toBeNull();
                         });
                     });
 
