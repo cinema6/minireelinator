@@ -1689,6 +1689,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 controller: 'RcCustomParamsController',
                 controllerAs: 'RcCustomParamsCtrl',
                 scope: {
+                    checked: '=',
+                    checkedText: '@',
                     uiBlacklist: '=',
                     addedParams: '=',
                     availableParams: '='

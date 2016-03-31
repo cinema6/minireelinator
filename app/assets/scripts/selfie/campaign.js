@@ -2590,7 +2590,8 @@ function( angular , c6State  , PaginatedListState                    ,
                                         tagType: null,
                                         budget: {},
                                         externalCost: {},
-                                        tagParams: {}
+                                        tagParams: {},
+                                        showInTag: {}
                                     })
                                 ];
                             } else {
@@ -2724,8 +2725,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieManageCampaignPlacementTagController', ['c6State',
         function                                                  ( c6State ) {
-            function generateTag(placement) {
-                if (placement.tagType === 'mraid') {
+            function generateTag(tagType, params) {
+                if (tagType === 'mraid') {
+                    var paramString = Object.keys(params).map(function(name) {
+                        return '                    ' + name + ': ' + JSON.stringify(params[name]);
+                    });
+
                     return [
                         '<div>',
                         '    <script>',
@@ -2735,7 +2740,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         'mbed/v1/c6mraid.min.js";',
                         '            script.onload = function onload() {',
                         '                window.c6mraid({',
-                        '                    placement: "' + placement.id + '"',
+                        paramString.join(',\n'),
                         '                }).done();',
                         '            };',
                         '            document.head.appendChild(script);',
@@ -2744,15 +2749,29 @@ function( angular , c6State  , PaginatedListState                    ,
                         '</div>'
                     ].join('\n');
                 } else {
-                    return 'https://platform.reelcontent.com/api/public/vast/2.0/tag?placement=' +
-                        placement.id;
+                    return 'https://platform.reelcontent.com/api/public/vast/2.0/tag?' + params;
                 }
             }
 
             this.initWithModel = function(model) {
+                var tagType = model.tagType,
+                    paramsToShow = Object.keys(model.showInTag).reduce(function(result, name) {
+                        var value = model.tagParams[name];
+
+                        if (value === undefined || !model.showInTag[name]) { return result; }
+
+                        if (tagType === 'mraid') {
+                            result[name] = value;
+                        } else {
+                            result += '&' + name + '=' + value;
+                        }
+
+                        return result;
+                    }, (tagType === 'mraid' ? { placement: model.id } : 'placement=' + model.id));
+
                 this.placement = {
                     name: model.tagParams.container,
-                    tag: generateTag(model)
+                    tag: generateTag(model.tagType, paramsToShow)
                 };
             };
 

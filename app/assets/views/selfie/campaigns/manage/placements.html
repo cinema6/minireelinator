@@ -51,43 +51,59 @@
                                 </p>
                             </div>
                         </fieldset>
-                        <fieldset class="form__item">
-                            <select c6-select-box data-options="['Yes','No']" ng-options="bool for bool in ['Yes','No']" ng-model="placement.tagParams.defaults.autoplay.value" class="form__selectBox form__selectBox--single" id="c6-placement-autoplay">
-                                <option value="">No value</option>
-                            </select>
-                            <label class="form__label" for="c6-placement-autoplay">
-                                <i class="fa fa-times ui--error"></i>
-                                Autoplay
-                            </label>
-                            <div class="form__helpBox form__helpBox--right">
-                                <div class="form__helpText">
-                                    Should your video play automatically on load?
+                        <fieldset class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <select c6-select-box data-options="['Yes','No']" ng-options="bool for bool in ['Yes','No']" ng-model="placement.tagParams.defaults.autoplay.value" class="form__selectBox form__selectBox--single" id="c6-placement-autoplay">
+                                    <option value="">No value</option>
+                                </select>
+                                <label class="form__label" for="c6-placement-autoplay">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Autoplay
+                                </label>
+                                <div class="form__helpBox form__helpBox--right">
+                                    <div class="form__helpText">
+                                        Should your video play automatically on load?
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                    </p>
                                 </div>
                             </div>
-                            <div class="form__errorBox">
-                                <p class="form__errorMsg">
-                                    <i class="fa fa-exclamation-triangle"></i> Error message goes here
-                                </p>
+                            <div class="btns--inline" style="right: -110px;top: 6px;">
+                                <span class="checkbox--wrap" style="position:relative;top:-2px;">
+                                    <input type="checkbox" class="checkbox__item" ng-model="placement.model.showInTag.autoplay">
+                                </span>
+                                Show In Tag
                             </div>
                         </fieldset>
-                        <fieldset class="form__item">
-                            <input c6-fill-check ng-model="placement.tagParams.defaults.branding.value" class="form__textBox form__fillCheck" type="text" id="c6-container-branding">
-                            <label class="form__label" for="c6-container-branding">
-                                <i class="fa fa-times ui--error"></i>
-                                Branding
-                            </label>
-                            <div class="form__helpBox form__helpBox--right">
-                                <div class="form__helpText">
-                                    Branding/Domino Template name.
+                        <fieldset class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <input c6-fill-check ng-model="placement.tagParams.defaults.branding.value" class="form__textBox form__fillCheck" type="text" id="c6-container-branding">
+                                <label class="form__label" for="c6-container-branding">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Branding
+                                </label>
+                                <div class="form__helpBox form__helpBox--right">
+                                    <div class="form__helpText">
+                                        Branding/Domino Template name.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Invalid Value
+                                    </p>
                                 </div>
                             </div>
-                            <div class="form__errorBox">
-                                <p class="form__errorMsg">
-                                    <i class="fa fa-exclamation-triangle"></i> Invalid Value
-                                </p>
+                            <div class="btns--inline" style="right: -110px;top: 6px;">
+                                <span class="checkbox--wrap" style="position:relative;top:-2px;">
+                                    <input type="checkbox" class="checkbox__item" ng-model="placement.model.showInTag.branding">
+                                </span>
+                                Show In Tag
                             </div>
                         </fieldset>
-                        <fieldset class="form__item" ng-class="{'ui--hasError': !SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration || (placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration) }">
+                        <fieldset class="form__item form__item--clone" ng-class="{'ui--hasError': !SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration || (placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration) }">
                             <!-- <select class="form__selectBox form__selectBox--single" id="c6-placement-skipTimer">
                                 <option>5 Seconds</option>
                                 <option>10 Seconds</option>
@@ -95,21 +111,29 @@
                                 <option>30 Seconds</option>
                                 <option>Video Length</option>
                             </select> -->
-                            <input c6-fill-check ng-model="placement.tagParams.defaults.countdown.value" class="form__textBox form__fillCheck" type="number" id="c6-container-skipTimer">
-                            <label class="form__label" for="c6-container-skipTimer">
-                                <i class="fa fa-times ui--error"></i>
-                                Skip Timer
-                            </label>
-                            <div class="form__helpBox form__helpBox--right">
-                                <div class="form__helpText">
-                                    Set the length of the Skip Timer. This campaign's video is <strong>{{SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration}} seconds</strong>.
+                            <div class="field--inline">
+                                <input c6-fill-check ng-model="placement.tagParams.defaults.countdown.value" class="form__textBox form__fillCheck" type="number" id="c6-container-skipTimer">
+                                <label class="form__label" for="c6-container-skipTimer">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Skip Timer
+                                </label>
+                                <div class="form__helpBox form__helpBox--right">
+                                    <div class="form__helpText">
+                                        Set the length of the Skip Timer. This campaign's video is <strong>{{SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration}} seconds</strong>.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <span ng-if="!SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration"><i class="fa fa-exclamation-triangle"></i> The video for this campaign has no duration</span>
+                                        <span ng-if="(placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration)"><i class="fa fa-exclamation-triangle"></i> Skip timer cannot be longer than video duration ({{placement.tagParams.defaults.countdown.value}} seconds)</span>
+                                    </p>
                                 </div>
                             </div>
-                            <div class="form__errorBox">
-                                <p class="form__errorMsg">
-                                    <span ng-if="!SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration"><i class="fa fa-exclamation-triangle"></i> The video for this campaign has no duration</span>
-                                    <span ng-if="(placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration)"><i class="fa fa-exclamation-triangle"></i> Skip timer cannot be longer than video duration ({{placement.tagParams.defaults.countdown.value}} seconds)</span>
-                                </p>
+                            <div class="btns--inline" style="right: -110px;top: 6px;">
+                                <span class="checkbox--wrap" style="position:relative;top:-2px;">
+                                    <input type="checkbox" class="checkbox__item" ng-model="placement.model.showInTag.countdown">
+                                </span>
+                                Show In Tag
                             </div>
                         </fieldset>
                         <fieldset class="form__item">
@@ -147,7 +171,7 @@
                             </div>
                         </fieldset>
 
-                        <rc-custom-params added-params="placement.tagParams.addedParams" available-params="placement.tagParams.availableParams" ui-blacklist="placement.tagParams.ui"></rc-custom-params>
+                        <rc-custom-params added-params="placement.tagParams.addedParams" available-params="placement.tagParams.availableParams" ui-blacklist="placement.tagParams.ui" checked="placement.model.showInTag" checked-text="Show In Tag"></rc-custom-params>
 
                         <div class="ui__btnHolder">
                             <button ng-click="SelfieManageCampaignPlacementsCtrl.save(placement)" ng-disabled="!placement.container || !placement.model.tagType" ng-class="{'btn--disabled' : !placement.container.name || !placement.model.tagType, 'btnSpinner__waiting' : placement.pending }" class="action__btn action__btn--wide">Save and Get Tag</button>

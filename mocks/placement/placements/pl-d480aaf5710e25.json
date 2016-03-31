@@ -17,6 +17,7 @@
         "event": "count",
         "cost": 1
     },
+    "showInTag": {},
     "costHistory": [],
     "tagParams": {
         "container": "beeswax",

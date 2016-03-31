@@ -10,8 +10,15 @@
                 {{param.label}}
             </label>
         </div>
-        <div class="btns--inline">
+        <div class="btns--inline" style="right:-140px">
             <button ng-click="RcCustomParamsCtrl.removeParam(param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+
+            <span style="position: relative;top: -3px;">
+                <span class="checkbox--wrap" style="position:relative;top:-1px;">
+                    <input type="checkbox" class="checkbox__item" ng-model="checked[param.name]">
+                </span>
+                {{checkedText}}
+            </span>
         </div>
         <div class="form__errorBox">
             <p class="form__errorMsg">
@@ -31,8 +38,15 @@
                 {{param.label}}
             </label>
         </div>
-        <div class="btns--inline">
+        <div class="btns--inline" style="right:-140px">
             <button ng-click="RcCustomParamsCtrl.removeParam(param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+
+            <span style="position: relative;top: -3px;">
+                <span class="checkbox--wrap" style="position:relative;top:-1px;">
+                    <input type="checkbox" class="checkbox__item" ng-model="checked[param.name]">
+                </span>
+                {{checkedText}}
+            </span>
         </div>
         <div class="form__errorBox">
             <p class="form__errorMsg">
@@ -50,8 +64,15 @@
                 {{param.label}}
             </label>
         </div>
-        <div class="btns--inline">
+        <div class="btns--inline" style="right:-140px">
             <button ng-click="RcCustomParamsCtrl.removeParam(param)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+
+            <span style="position: relative;top: -3px;">
+                <span class="checkbox--wrap" style="position:relative;top:-1px;">
+                    <input type="checkbox" class="checkbox__item" ng-model="checked[param.name]">
+                </span>
+                {{checkedText}}
+            </span>
         </div>
         <div class="form__errorBox">
             <p class="form__errorMsg">
@@ -69,8 +90,15 @@
                     {{arrParam.label}}
                 </label>
             </div>
-            <div class="btns--inline">
+            <div class="btns--inline" style="right:-140px">
                 <button ng-click="RcCustomParamsCtrl.removeParam(param, arrParam)" class="btn--link"><i class="fa fa-times-circle"></i></button>
+
+                <span style="position: relative;top: -3px;">
+                    <span class="checkbox--wrap" style="position:relative;top:-1px;">
+                        <input type="checkbox" class="checkbox__item" ng-model="checked[param.name]">
+                    </span>
+                    {{checkedText}}
+                </span>
             </div>
             <div class="form__errorBox">
                 <p class="form__errorMsg">
