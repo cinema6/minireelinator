@@ -2668,7 +2668,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     tagType: null,
                     budget: {},
                     externalCost: {},
-                    tagParams: {}
+                    tagParams: {},
+                    showInTag: {}
                 }), undefined, this.ui));
             };
 

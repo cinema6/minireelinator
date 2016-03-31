@@ -36,7 +36,8 @@ define(['app'], function(appModule) {
                     tagType: null,
                     budget: {},
                     externalCost: {},
-                    tagParams: {}
+                    tagParams: {},
+                    showInTag: {}
                 };
                 campaign = {
                     id: 'cam-123'
@@ -113,7 +114,8 @@ define(['app'], function(appModule) {
                                 tagType: null,
                                 budget: {},
                                 externalCost: {},
-                                tagParams: {}
+                                tagParams: {},
+                                showInTag: {}
                             });
                         });
 
@@ -153,7 +155,8 @@ define(['app'], function(appModule) {
                                 tagType: null,
                                 budget: {},
                                 externalCost: {},
-                                tagParams: {}
+                                tagParams: {},
+                                showInTag: {}
                             });
                         });
 

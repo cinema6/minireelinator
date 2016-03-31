@@ -119,7 +119,8 @@ define(['app'], function(appModule) {
                             tagType: null,
                             budget: {},
                             externalCost: {},
-                            tagParams: {}
+                            tagParams: {},
+                            showInTag: {}
                         });
 
                         placements.push(newPlacement);
@@ -165,7 +166,8 @@ define(['app'], function(appModule) {
                             tagParams: {
                                 container: 'beeswax',
                                 campaign: 'cam-123'
-                            }
+                            },
+                            showInTag: {}
                         });
 
                         placements.push({
@@ -176,7 +178,8 @@ define(['app'], function(appModule) {
                             tagParams: {
                                 container: 'pocketmath',
                                 campaign: 'cam-123'
-                            }
+                            },
+                            showInTag: {}
                         });
 
                         SelfieManageCampaignPlacementsCtrl.initWithModel({
@@ -285,7 +288,8 @@ define(['app'], function(appModule) {
                         tagType: null,
                         budget: {},
                         externalCost: {},
-                        tagParams: {}
+                        tagParams: {},
+                        showInTag: {}
                     });
 
                     expect(PlacementService.generateParamsModel).toHaveBeenCalledWith(

@@ -40,7 +40,8 @@ define(['app'], function(appModule) {
                             tagType: 'mraid',
                             tagParams: {
                                 container: 'beeswax'
-                            }
+                            },
+                            showInTag: {}
                         });
 
                         expect(SelfieManageCampaignPlacementTagCtrl.placement).toEqual({
@@ -63,6 +64,54 @@ define(['app'], function(appModule) {
                             ].join('\n')
                         });
                     });
+
+                    it('should include params that should be shown in the embed', function() {
+                        SelfieManageCampaignPlacementTagCtrl.initWithModel({
+                            id: 'pl-111',
+                            tagType: 'mraid',
+                            tagParams: {
+                                container: 'beeswax',
+                                clickUrls: ['${click}', '{{CLICK}}'],
+                                countdown: 30,
+                                branding: 'mybrand',
+                                prebuffer: true,
+                                forceOrientation: 'portrait',
+                                network: '${network}',
+                                uuid: 'user'
+                            },
+                            showInTag: {
+                                clickUrls: true,
+                                countdown: true,
+                                prebuffer: true,
+                                network: true,
+                                uuid: false
+                            }
+                        });
+
+                        expect(SelfieManageCampaignPlacementTagCtrl.placement).toEqual({
+                            name: 'beeswax',
+                            tag: [
+                                '<div>',
+                                '    <script>',
+                                '        (function() {',
+                                '            var script = document.createElement("script");',
+                                '            script.src = "https://lib.reelcontent.com/c6embed/v1/c6mraid.min.js";',
+                                '            script.onload = function onload() {',
+                                '                window.c6mraid({',
+                                '                    placement: "pl-111",',
+                                '                    clickUrls: ["${click}","{{CLICK}}"],',
+                                '                    countdown: 30,',
+                                '                    prebuffer: true,',
+                                '                    network: "${network}"',
+                                '                }).done();',
+                                '            };',
+                                '            document.head.appendChild(script);',
+                                '        }());',
+                                '    </script>',
+                                '</div>'
+                            ].join('\n')
+                        });
+                    });
                 });
 
                 describe('when placement type is VPAID', function() {
@@ -72,12 +121,42 @@ define(['app'], function(appModule) {
                             tagType: 'vpaid',
                             tagParams: {
                                 container: 'beeswax'
-                            }
+                            },
+                            showInTag: {}
                         });
 
                         expect(SelfieManageCampaignPlacementTagCtrl.placement).toEqual({
                             name: 'beeswax',
                             tag: 'https://platform.reelcontent.com/api/public/vast/2.0/tag?placement=pl-111'
+                        });
+                    });
+
+                    it('should include query params for params that are set to show', function() {
+                        SelfieManageCampaignPlacementTagCtrl.initWithModel({
+                            id: 'pl-111',
+                            tagType: 'vpaid',
+                            tagParams: {
+                                container: 'beeswax',
+                                clickUrls: ['${click}', '{{CLICK}}'],
+                                countdown: 30,
+                                branding: 'mybrand',
+                                prebuffer: true,
+                                forceOrientation: 'portrait',
+                                network: '${network}',
+                                uuid: 'user'
+                            },
+                            showInTag: {
+                                clickUrls: true,
+                                countdown: true,
+                                prebuffer: true,
+                                network: true,
+                                uuid: false
+                            }
+                        });
+
+                        expect(SelfieManageCampaignPlacementTagCtrl.placement).toEqual({
+                            name: 'beeswax',
+                            tag: 'https://platform.reelcontent.com/api/public/vast/2.0/tag?placement=pl-111&clickUrls=${click},{{CLICK}}&countdown=30&prebuffer=true&network=${network}'
                         });
                     });
                 });
