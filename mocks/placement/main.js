@@ -101,6 +101,10 @@ module.exports = function(http) {
                 lastUpdated: (new Date()).toISOString()
             });
 
+        if (!updated.tagParams.container || !updated.tagParams.campaign || !updated.tagParams.type) {
+            return this.respond(400, 'missing params');
+        }
+
         grunt.file.write(filePath, JSON.stringify(updated, null, '    '));
 
         this.respond(200, Q.when(extend(updated, {id: id})).delay(1500));
@@ -118,8 +122,8 @@ module.exports = function(http) {
                 org: userCache.user.org
             });
 
-        if (!placement.tagParams.container || !placement.tagParams.campaign) {
-            return this.respond(400, 'placement name is required');
+        if (!placement.tagParams.container || !placement.tagParams.campaign || !placement.tagParams.type) {
+            return this.respond(400, 'missing params');
         }
 
         grunt.file.write(objectPath('placements', id), JSON.stringify(placement, null, '    '));
