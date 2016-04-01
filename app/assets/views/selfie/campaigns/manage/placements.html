@@ -1,0 +1,194 @@
+<div class="tabContent targeting__content container">
+    <header class="tabContent__header">
+        <h2 class="tabContent__title tk--hdr">Placement</h2>
+        <span class="tabContent__subtitle">Select ad placement options</span>
+    </header>
+    <div class="tabContent__gridHolder">
+        <div class="grid grid--center">
+            <div class="grid__item one-third">
+                <div class="form__items form--narrow">
+                    <section ng-repeat="placement in SelfieManageCampaignPlacementsCtrl.placements" class="formSection__group formSection__group--sub">
+                        <div class="formSection__group--sub">
+                            <h1 class="formSection__title">
+                                <span class="formSection__titleText tk--hdr">Placement Settings</span>
+                            </h1>
+                        </div>
+                        <fieldset class="form__item">
+                            <select c6-select-box data-options="SelfieManageCampaignPlacementsCtrl.containers" ng-options="container.label for container in SelfieManageCampaignPlacementsCtrl.containers" ng-model="placement.container" ng-change="SelfieManageCampaignPlacementsCtrl.setContainer(placement, placement.container)" class="form__selectBox form__selectBox--single" id="c6-placement-dsp">
+                                <option value="">-- Select --</option>
+                            </select>
+                            <label class="form__label" for="c6-mraid-prebuffer">
+                                <i class="fa fa-times ui--error"></i>
+                                Select a DSP
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Select a DSP where you want to run the placement.
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                </p>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item">
+                            <select c6-select-box data-options="placement.tagTypes" ng-options="type for type in placement.tagTypes" ng-model="placement.model.tagType" ng-change="SelfieManageCampaignPlacementsCtrl.setTagType(placement.model.tagType, placement)" class="form__selectBox form__selectBox--single" id="c6-placement-tagType">
+                                <option value="">-- Select --</option>
+                            </select>
+                            <label class="form__label" for="c6-placement-tagType">
+                                <i class="fa fa-times ui--error"></i>
+                                Placement Type
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Select the type of placement you need to run.
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                </p>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <select c6-select-box data-options="['Yes','No']" ng-options="bool for bool in ['Yes','No']" ng-model="placement.tagParams.defaults.autoplay.value" class="form__selectBox form__selectBox--single" id="c6-placement-autoplay">
+                                    <option value="">No value</option>
+                                </select>
+                                <label class="form__label" for="c6-placement-autoplay">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Autoplay
+                                </label>
+                                <div class="form__helpBox form__helpBox--right">
+                                    <div class="form__helpText">
+                                        Should your video play automatically on load?
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="btns--inline" style="right: -110px;top: 6px;">
+                                <span class="checkbox--wrap" style="position:relative;top:-2px;">
+                                    <input type="checkbox" class="checkbox__item" ng-model="placement.model.showInTag.autoplay">
+                                </span>
+                                Show In Tag
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item form__item--clone">
+                            <div class="field--inline">
+                                <input c6-fill-check ng-model="placement.tagParams.defaults.branding.value" class="form__textBox form__fillCheck" type="text" id="c6-container-branding">
+                                <label class="form__label" for="c6-container-branding">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Branding
+                                </label>
+                                <div class="form__helpBox form__helpBox--right">
+                                    <div class="form__helpText">
+                                        Branding/Domino Template name.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Invalid Value
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="btns--inline" style="right: -110px;top: 6px;">
+                                <span class="checkbox--wrap" style="position:relative;top:-2px;">
+                                    <input type="checkbox" class="checkbox__item" ng-model="placement.model.showInTag.branding">
+                                </span>
+                                Show In Tag
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item form__item--clone" ng-class="{'ui--hasError': !SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration || (placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration) }">
+                            <!-- <select class="form__selectBox form__selectBox--single" id="c6-placement-skipTimer">
+                                <option>5 Seconds</option>
+                                <option>10 Seconds</option>
+                                <option>15 Seconds</option>
+                                <option>30 Seconds</option>
+                                <option>Video Length</option>
+                            </select> -->
+                            <div class="field--inline">
+                                <input c6-fill-check ng-model="placement.tagParams.defaults.countdown.value" class="form__textBox form__fillCheck" type="number" id="c6-container-skipTimer">
+                                <label class="form__label" for="c6-container-skipTimer">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Skip Timer
+                                </label>
+                                <div class="form__helpBox form__helpBox--right">
+                                    <div class="form__helpText">
+                                        Set the length of the Skip Timer. This campaign's video is <strong>{{SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration}} seconds</strong>.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <span ng-if="!SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration"><i class="fa fa-exclamation-triangle"></i> The video for this campaign has no duration</span>
+                                        <span ng-if="(placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration)"><i class="fa fa-exclamation-triangle"></i> Skip timer cannot be longer than video duration ({{placement.tagParams.defaults.countdown.value}} seconds)</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="btns--inline" style="right: -110px;top: 6px;">
+                                <span class="checkbox--wrap" style="position:relative;top:-2px;">
+                                    <input type="checkbox" class="checkbox__item" ng-model="placement.model.showInTag.countdown">
+                                </span>
+                                Show In Tag
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item">
+                            <input c6-fill-check ng-model="placement.model.budget.daily" class="form__textBox form__fillCheck" type="number" id="c6-container-dailyBudget">
+                            <label class="form__label" for="c6-container-dailyBudget">
+                                <i class="fa fa-times ui--error"></i>
+                                Daily Budget
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Enter the daily limit for which you want to run on this DSP.
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid Value
+                                </p>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item">
+                            <input c6-fill-check ng-model="placement.model.budget.total" class="form__textBox form__fillCheck" type="number" id="c6-container-totalBudget">
+                            <label class="form__label" for="c6-container-totalBudget">
+                                <i class="fa fa-times ui--error"></i>
+                                Total Budget
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Enter the Total Budget Limit for which you want to run on this DSP.
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid Value
+                                </p>
+                            </div>
+                        </fieldset>
+
+                        <rc-custom-params added-params="placement.tagParams.addedParams" available-params="placement.tagParams.availableParams" ui-blacklist="placement.tagParams.ui" checked="placement.model.showInTag" checked-text="Show In Tag"></rc-custom-params>
+
+                        <div class="ui__btnHolder">
+                            <button ng-click="SelfieManageCampaignPlacementsCtrl.save(placement)" ng-disabled="!placement.container || !placement.model.tagType" ng-class="{'btn--disabled' : !placement.container.name || !placement.model.tagType, 'btnSpinner__waiting' : placement.pending }" class="action__btn action__btn--wide">Save and Get Tag</button>
+                        </div>
+                        <div class="ui__btnHolder" ng-show="SelfieManageCampaignPlacementsCtrl.placements.length > 1">
+                            <button ng-click="SelfieManageCampaignPlacementsCtrl.delete(placement)" class="action__btn action__btn--wide">Delete Placement</button>
+                        </div>
+                    </section>
+
+                    <hr>
+
+                    <div class="ui__btnHolder" style="padding-top: 15px;">
+                        <button ng-click="SelfieManageCampaignPlacementsCtrl.addNewPlacement()" class="action__btnSecondary action__btn--wide">Add Another Placement</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- .settingsContent__gridHolder -->
+</div>
+<c6-view></c6-view>

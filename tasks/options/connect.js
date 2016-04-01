@@ -53,6 +53,7 @@
                             '/api/analytics':'mocks/analytic/main.js',
                             '/api/collateral':'mocks/collateral/main.js',
                             '/api/containers':'mocks/container/main.js',
+                            '/api/placements':'mocks/placement/main.js',
                             '@verbosity': verbosity
                         }),
                         require('grunt-connect-proxy/lib/utils').proxyRequest,

@@ -1064,6 +1064,49 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
+            $provide.constant('PlacementAdapter', ['config','$http','$q',
+            function                              ( config , $http , $q ) {
+                function url(end) {
+                    return config.apiBase + '/placements' + (end || '');
+                }
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'));
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('/' + id))
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url(), data)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, placement) {
+                    return $http.delete(url('/' + placement.id))
+                        .then(value(null));
+                };
+
+                this.update = function(type, placement) {
+                    return $http.put(url('/' + placement.id), placement)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+            }]);
+
             $provide.constant('CWRXAdapter', ['config','$injector',
             function                         ( config , $injector ) {
                 var self = this,
@@ -1090,10 +1133,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                  'VoteAdapter','OrgAdapter','UserAdapter','CategoryAdapter',
                  'AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
                  'PaymentMethodAdapter','UpdateRequestAdapter','ContainerAdapter',
+                 'PlacementAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
                   VoteAdapter , OrgAdapter , UserAdapter , CategoryAdapter ,
                   AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
-                  PaymentMethodAdapter , UpdateRequestAdapter , ContainerAdapter ) {
+                  PaymentMethodAdapter , UpdateRequestAdapter , ContainerAdapter ,
+                  PlacementAdapter ) {
 
             [
                 ContentAdapter,
@@ -1107,7 +1152,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 PaymentMethodAdapter,
                 AdvertiserAdapter,
                 UpdateRequestAdapter,
-                ContainerAdapter
+                ContainerAdapter,
+                PlacementAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
@@ -1126,7 +1172,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 selfieCampaign: SelfieCampaignAdapter,
                 paymentMethod: PaymentMethodAdapter,
                 updateRequest: UpdateRequestAdapter,
-                container: ContainerAdapter
+                container: ContainerAdapter,
+                placement: PlacementAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);

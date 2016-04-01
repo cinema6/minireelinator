@@ -1,8 +1,12 @@
 # MiniReelinator
 
+## v1.41.0 (April 1, 2016)
 * *[v1.41.0.rc1]*
+  * [FEATURE]: Add Placements tab to Manage Campaign view
   * [FEATURE]: Added ability to create Facebook cards
-  * [FEATURE]: Campaign IDs moved to admin tab, campaign details redesigned, payments redesigned
+  * [FEATURE]: Campaign IDs moved to admin tab, campaign details redesigned,
+    payments redesigned
+* *[/v1.41.0.rc1]*
 
 ## v1.40.0 (March 28, 2016)
 * *[v1.40.0.rc1]*

@@ -69,6 +69,15 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                                             'Selfie:Manage:Campaign:Admin',
                                             'Selfie:All:Manage:Campaign:Admin'
                                         );
+                                        this.route('/placements',
+                                            'Selfie:Manage:Campaign:Placements',
+                                            'Selfie:All:Manage:Campaign:Placements',
+                                            function() {
+                                                this.state(
+                                                    'Selfie:Manage:Campaign:Placements:Tag',
+                                                    'Selfie:All:Manage:Campaign:Placements:Tag'
+                                                );
+                                            });
                                     });
                             });
                     });
@@ -103,6 +112,15 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                                             'Selfie:Manage:Campaign:Admin',
                                             'Selfie:Pending:Manage:Campaign:Admin'
                                         );
+                                        this.route('/placements',
+                                            'Selfie:Manage:Campaign:Placements',
+                                            'Selfie:Pending:Manage:Campaign:Placements',
+                                            function() {
+                                                this.state(
+                                                    'Selfie:Manage:Campaign:Placements:Tag',
+                                                    'Selfie:Pending:Manage:Campaign:Placements:Tag'
+                                                );
+                                            });
                                     });
                             });
                     });

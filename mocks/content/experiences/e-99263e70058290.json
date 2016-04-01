@@ -30,6 +30,24 @@
           "editable": false
         },
         {
+          "name": "campaign",
+          "label": "Campaign ID",
+          "type": "String",
+          "editable": false
+        },
+        {
+          "name": "experience",
+          "label": "Experience ID",
+          "type": "String",
+          "editable": false
+        },
+        {
+          "name": "card",
+          "label": "Card ID",
+          "type": "String",
+          "editable": false
+        },
+        {
           "name": "branding",
           "label": "Branding",
           "type": "String",
@@ -105,6 +123,11 @@
         },
         {
           "name": "autoLaunch",
+          "label": "Auto Launch",
+          "type": "Boolean",
+          "editable": true
+        },{
+          "name": "autoplay",
           "label": "Autoplay",
           "type": "Boolean",
           "editable": true
@@ -144,6 +167,12 @@
           "label": "Prebuffer",
           "type": "Boolean",
           "editable": true
+        },
+        {
+          "name": "pageUrl",
+          "label": "Page URL",
+          "type": "String",
+          "editable": false
         },
         {
           "name": "debug",

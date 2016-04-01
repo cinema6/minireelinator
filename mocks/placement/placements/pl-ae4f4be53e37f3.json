@@ -1,0 +1,51 @@
+{
+    "id": "pl-ae4f4be53e37f3",
+    "status": "active",
+    "created": "2016-03-24T16:17:09.166Z",
+    "lastUpdated": "2016-03-24T16:17:09.166Z",
+    "user": "u-82b0123da9678c",
+    "org": "o-a6fd7298acb6fa",
+    "label": "My Placement",
+    "tagType": "mraid",
+    "startDate": "2016-03-24T16:17:09.166Z",
+    "endDate": "2016-04-24T16:17:09.166Z",
+    "budget": {
+        "daily": 50,
+        "total": 500
+    },
+    "externalCost": {
+        "event": "count",
+        "cost": 1
+    },
+    "showInTag": {},
+    "costHistory": [],
+    "tagParams": {
+        "container": "beeswax",
+        "campaign": "c-b76ecf45af71cd",
+        "experience": "",
+        "card": "",
+        "branding": "",
+        "pageUrl": "",
+        "mobileType": "mobile",
+        "hostApp": "",
+        "network": "",
+        "clickUrls": [],
+        "playUrls": [],
+        "countUrls": [],
+        "launchUrls": [],
+        "countdown": 30,
+        "preview": true,
+        "apiRoot": "",
+        "type": "",
+        "autoplay": true,
+        "autoLaunch": true,
+        "interstitial": true,
+        "splash": "",
+        "title": "",
+        "image": "",
+        "preload": true,
+        "prebuffer": true,
+        "debug": 0,
+        "forceOrientation": ""
+    }
+}

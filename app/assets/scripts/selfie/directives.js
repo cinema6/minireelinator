@@ -1682,6 +1682,67 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
+        .directive('rcCustomParams', [function() {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/custom_params.html',
+                controller: 'RcCustomParamsController',
+                controllerAs: 'RcCustomParamsCtrl',
+                scope: {
+                    checked: '=',
+                    checkedText: '@',
+                    uiBlacklist: '=',
+                    addedParams: '=',
+                    availableParams: '='
+                }
+            };
+        }])
+
+        .controller('RcCustomParamsController', ['$scope',
+        function                                ( $scope ) {
+            this.addParam = function(param) {
+                if (!param) { return; }
+
+                var addedParams = $scope.addedParams,
+                    hasBeenAdded = addedParams.indexOf(param) > -1,
+                    isInUI = $scope.uiBlacklist.indexOf(param.name) > -1;
+
+                if (param.type === 'Array') {
+                    param.value.push({
+                        label: param.label,
+                        value: undefined
+                    });
+                }
+
+                if (!hasBeenAdded && !isInUI) {
+                    addedParams.push(param);
+                }
+            };
+
+            this.removeParam = function(param, subParam) {
+                if (!param) { return; }
+
+                var addedParams = $scope.addedParams,
+                    index = addedParams.indexOf(param);
+
+                if (subParam) {
+                    param.value.splice(param.value.indexOf(subParam), 1);
+                }
+
+                if (param.type !== 'Array') {
+                    addedParams.splice(index, 1);
+
+                    if (param.type === 'Boolean') {
+                        param.value = param.default !== undefined ?
+                            (!!param.default ? 'Yes' : 'No') :
+                            undefined;
+                    } else {
+                        param.value = param.default;
+                    }
+                }
+            };
+        }])
+
         .filter('videoService', [function() {
             return function(service) {
                 switch (service) {
