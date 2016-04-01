@@ -742,7 +742,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
 
                     return campaignExtend(this._campaign, this.campaign).save()
-                        .then(function() {
+                        .then(function(savedCampaign) {
                             var intercomData = {
                                     campaignId: master.id,
                                     campaignName: master.name || null,
@@ -759,6 +759,7 @@ function( angular , c6State  , PaginatedListState                    ,
                                 cState.intercomData = intercomData;
                             }
 
+                            campaignExtend(cState.campaign, savedCampaign.pojoify());
                             return cState.campaign;
                         });
                 };
@@ -1107,7 +1108,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     label,
                     actionType,
                     data.videoid,
-                    data.service,
+                    data.service
                 ];
             }, watchForPreview);
         }])

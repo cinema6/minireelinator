@@ -815,6 +815,23 @@ define(['app'], function(appModule) {
                         expect(campaignState._campaign.targeting.demographics.age).toEqual([]);
                     });
 
+                    it('should update properties on the campaign that were added by the server on save', function() {
+                        campaignState._campaign.cards[0].data.thumbs = {
+                            small: 'small.jpg',
+                            large: 'large.jpg'
+                        };
+                        campaignState._campaign.save.and.returnValue($q.when(campaignState._campaign));
+
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign().then(success, failure);
+                        });
+
+                        expect(campaignState.campaign.cards[0].data.thumbs).toEqual({
+                            small: 'small.jpg',
+                            large: 'large.jpg'
+                        });
+                    });
+
                     describe('intercom tracking', function() {
                         describe('when campaign is new', function() {
                             it('should send a "createCampaign" event with metadata', function() {
