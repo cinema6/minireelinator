@@ -22,6 +22,7 @@
     "tagParams": {
         "container": "beeswax",
         "campaign": "c-6867456c3a33f4",
+        "type": "desktop-card",
         "experience": "",
         "card": "",
         "branding": "",
@@ -36,7 +37,6 @@
         "countdown": 30,
         "preview": true,
         "apiRoot": "",
-        "type": "",
         "autoplay": true,
         "autoLaunch": true,
         "interstitial": true,

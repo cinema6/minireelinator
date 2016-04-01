@@ -2637,7 +2637,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 var self = this;
 
-                this.ui = ['autoplay','branding','countdown'];
+                this.ui = ['type','autoplay','branding','countdown'];
                 this.campaign = model.campaign;
                 this.containers = model.containers;
 

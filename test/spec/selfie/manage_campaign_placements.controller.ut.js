@@ -133,7 +133,7 @@ define(['app'], function(appModule) {
                     });
 
                     it('should set ui array', function() {
-                        expect(SelfieManageCampaignPlacementsCtrl.ui).toEqual(['autoplay','branding','countdown']);
+                        expect(SelfieManageCampaignPlacementsCtrl.ui).toEqual(['type','autoplay','branding','countdown']);
                     });
 
                     it('should set campaign', function() {
@@ -190,7 +190,7 @@ define(['app'], function(appModule) {
                     });
 
                     it('should set ui array', function() {
-                        expect(SelfieManageCampaignPlacementsCtrl.ui).toEqual(['autoplay','branding','countdown']);
+                        expect(SelfieManageCampaignPlacementsCtrl.ui).toEqual(['type','autoplay','branding','countdown']);
                     });
 
                     it('should set campaign', function() {

@@ -19,7 +19,7 @@
                             </select>
                             <label class="form__label" for="c6-mraid-prebuffer">
                                 <i class="fa fa-times ui--error"></i>
-                                Select a DSP
+                                Select a DSP*
                             </label>
                             <div class="form__helpBox form__helpBox--right">
                                 <div class="form__helpText">
@@ -38,11 +38,30 @@
                             </select>
                             <label class="form__label" for="c6-placement-tagType">
                                 <i class="fa fa-times ui--error"></i>
-                                Placement Type
+                                Placement Type*
                             </label>
                             <div class="form__helpBox form__helpBox--right">
                                 <div class="form__helpText">
                                     Select the type of placement you need to run.
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                </p>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item">
+                            <select c6-select-box data-options="placement.tagParams.defaults.type.options" ng-options="type for type in placement.tagParams.defaults.type.options" ng-model="placement.tagParams.defaults.type.value" class="form__selectBox form__selectBox--single" id="c6-placement-playerType">
+                                <option value="">-- Select --</option>
+                            </select>
+                            <label class="form__label" for="c6-placement-playerType">
+                                <i class="fa fa-times ui--error"></i>
+                                Player Type*
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Select the player type to use.
                                 </div>
                             </div>
                             <div class="form__errorBox">
@@ -174,7 +193,7 @@
                         <rc-custom-params added-params="placement.tagParams.addedParams" available-params="placement.tagParams.availableParams" ui-blacklist="placement.tagParams.ui" checked="placement.model.showInTag" checked-text="Show In Tag"></rc-custom-params>
 
                         <div class="ui__btnHolder">
-                            <button ng-click="SelfieManageCampaignPlacementsCtrl.save(placement)" ng-disabled="!placement.container || !placement.model.tagType" ng-class="{'btn--disabled' : !placement.container.name || !placement.model.tagType, 'btnSpinner__waiting' : placement.pending }" class="action__btn action__btn--wide">Save and Get Tag</button>
+                            <button ng-click="SelfieManageCampaignPlacementsCtrl.save(placement)" ng-disabled="!placement.container || !placement.model.tagType || !placement.tagParams.defaults.type.value" ng-class="{'btn--disabled' : !placement.container.name || !placement.model.tagType || !placement.tagParams.defaults.type.value, 'btnSpinner__waiting' : placement.pending }" class="action__btn action__btn--wide">Save and Get Tag</button>
                         </div>
                         <div class="ui__btnHolder" ng-show="SelfieManageCampaignPlacementsCtrl.placements.length > 1">
                             <button ng-click="SelfieManageCampaignPlacementsCtrl.delete(placement)" class="action__btn action__btn--wide">Delete Placement</button>
