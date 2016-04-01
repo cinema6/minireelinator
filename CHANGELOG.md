@@ -1,9 +1,11 @@
 # MiniReelinator
 
-* *[v1.41.1.rc1]*
-  * [FIX]: Add Player Type to Placement UI and make it required
-
 ## v1.41.0 (April 1, 2016)
+* *[v1.41.1.rc2]*
+  * [FIX]: Fix for an issue where Facebook card thumbnails would not be visible when editing a draft campaign
+  * [FIX]: Add Player Type to Placement UI and make it required
+* *[/v1.41.1.rc2]*
+
 * *[v1.41.0.rc1]*
   * [FEATURE]: Add Placements tab to Manage Campaign view
   * [FEATURE]: Added ability to create Facebook cards
