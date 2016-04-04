@@ -30,7 +30,8 @@
                 "thumbs": {
                     "small": "//img.youtube.com/vi/UF0EEYNtU64/2.jpg",
                     "large": "//img.youtube.com/vi/UF0EEYNtU64/0.jpg"
-                }
+                },
+                "duration": 60
             },
             "links": {
                 "Website": "http://www.cottonusa.org/",

@@ -35,7 +35,9 @@ define(['app'], function(appModule) {
                     label: null,
                     tagType: null,
                     budget: {},
-                    externalCost: {},
+                    externalCost: {
+                        event: 'view'
+                    },
                     tagParams: {},
                     showInTag: {}
                 };
@@ -113,7 +115,9 @@ define(['app'], function(appModule) {
                                 label: null,
                                 tagType: null,
                                 budget: {},
-                                externalCost: {},
+                                externalCost: {
+                                    event: 'view'
+                                },
                                 tagParams: {},
                                 showInTag: {}
                             });
@@ -154,7 +158,9 @@ define(['app'], function(appModule) {
                                 label: null,
                                 tagType: null,
                                 budget: {},
-                                externalCost: {},
+                                externalCost: {
+                                    event: 'view'
+                                },
                                 tagParams: {},
                                 showInTag: {}
                             });

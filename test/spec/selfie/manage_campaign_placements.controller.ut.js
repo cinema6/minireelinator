@@ -118,7 +118,9 @@ define(['app'], function(appModule) {
                             label: null,
                             tagType: null,
                             budget: {},
-                            externalCost: {},
+                            externalCost: {
+                                event: 'view'
+                            },
                             tagParams: {},
                             showInTag: {}
                         });
@@ -145,7 +147,10 @@ define(['app'], function(appModule) {
                     });
 
                     it('should generate a placement model for the UI', function() {
-                        expect(PlacementService.generateParamsModel).toHaveBeenCalledWith(newPlacement.tagParams, SelfieManageCampaignPlacementsCtrl.ui);
+                        expect(PlacementService.generateParamsModel).toHaveBeenCalledWith(
+                            newPlacement.tagParams,
+                            SelfieManageCampaignPlacementsCtrl.ui
+                        );
                         expect(SelfieManageCampaignPlacementsCtrl.placements.length).toBe(1);
                         expect(SelfieManageCampaignPlacementsCtrl.placements[0]).toEqual({
                             tagTypes: [],
@@ -202,8 +207,14 @@ define(['app'], function(appModule) {
                     });
 
                     it('should generate placement models for the UI', function() {
-                        expect(PlacementService.generateParamsModel).toHaveBeenCalledWith(placements[0].tagParams, SelfieManageCampaignPlacementsCtrl.ui);
-                        expect(PlacementService.generateParamsModel).toHaveBeenCalledWith(placements[1].tagParams, SelfieManageCampaignPlacementsCtrl.ui);
+                        expect(PlacementService.generateParamsModel).toHaveBeenCalledWith(
+                            placements[0].tagParams,
+                            SelfieManageCampaignPlacementsCtrl.ui
+                        );
+                        expect(PlacementService.generateParamsModel).toHaveBeenCalledWith(
+                            placements[1].tagParams,
+                            SelfieManageCampaignPlacementsCtrl.ui
+                        );
 
                         expect(SelfieManageCampaignPlacementsCtrl.placements.length).toBe(2);
 
@@ -321,7 +332,10 @@ define(['app'], function(appModule) {
                             availableParams: []
                         },
                         container: containers[0],
-                        model: cinema6.db.create('placement', {})
+                        model: cinema6.db.create('placement', {
+                            tagParams: {},
+                            externalCost: {}
+                        })
                     };
 
                     spyOn(placement.model, 'save').and.returnValue(saveDeferred.promise);
@@ -342,6 +356,10 @@ define(['app'], function(appModule) {
                 it('should set the container and campaign params', function() {
                     expect(placement.model.tagParams.container).toEqual(containers[0].name);
                     expect(placement.model.tagParams.campaign).toEqual(campaign.id);
+                });
+
+                it('should set the externalCost event property', function() {
+                    expect(placement.model.externalCost.event).toEqual('view');
                 });
 
                 it('should save the model', function() {

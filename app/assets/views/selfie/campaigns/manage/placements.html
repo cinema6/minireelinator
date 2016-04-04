@@ -14,10 +14,10 @@
                             </h1>
                         </div>
                         <fieldset class="form__item">
-                            <select c6-select-box data-options="SelfieManageCampaignPlacementsCtrl.containers" ng-options="container.label for container in SelfieManageCampaignPlacementsCtrl.containers" ng-model="placement.container" ng-change="SelfieManageCampaignPlacementsCtrl.setContainer(placement, placement.container)" class="form__selectBox form__selectBox--single" id="c6-placement-dsp">
+                            <select c6-select-box data-options="SelfieManageCampaignPlacementsCtrl.containers" ng-options="container.label for container in SelfieManageCampaignPlacementsCtrl.containers" ng-model="placement.container" ng-change="SelfieManageCampaignPlacementsCtrl.setContainer(placement, placement.container)" class="form__selectBox form__selectBox--single" id="c6-placement-dsp-{{$index}}">
                                 <option value="">-- Select --</option>
                             </select>
-                            <label class="form__label" for="c6-mraid-prebuffer">
+                            <label class="form__label" for="c6-placement-dsp-{{$index}}">
                                 <i class="fa fa-times ui--error"></i>
                                 Select a DSP*
                             </label>
@@ -33,10 +33,10 @@
                             </div>
                         </fieldset>
                         <fieldset class="form__item">
-                            <select c6-select-box data-options="placement.tagTypes" ng-options="type for type in placement.tagTypes" ng-model="placement.model.tagType" ng-change="SelfieManageCampaignPlacementsCtrl.setTagType(placement.model.tagType, placement)" class="form__selectBox form__selectBox--single" id="c6-placement-tagType">
+                            <select c6-select-box data-options="placement.tagTypes" ng-options="type for type in placement.tagTypes" ng-model="placement.model.tagType" ng-change="SelfieManageCampaignPlacementsCtrl.setTagType(placement.model.tagType, placement)" class="form__selectBox form__selectBox--single" id="c6-placement-tagType-{{$index}}">
                                 <option value="">-- Select --</option>
                             </select>
-                            <label class="form__label" for="c6-placement-tagType">
+                            <label class="form__label" for="c6-placement-tagType-{{$index}}">
                                 <i class="fa fa-times ui--error"></i>
                                 Placement Type*
                             </label>
@@ -52,10 +52,10 @@
                             </div>
                         </fieldset>
                         <fieldset class="form__item">
-                            <select c6-select-box data-options="placement.tagParams.defaults.type.options" ng-options="type for type in placement.tagParams.defaults.type.options" ng-model="placement.tagParams.defaults.type.value" class="form__selectBox form__selectBox--single" id="c6-placement-playerType">
+                            <select c6-select-box data-options="placement.tagParams.defaults.type.options" ng-options="type for type in placement.tagParams.defaults.type.options" ng-model="placement.tagParams.defaults.type.value" class="form__selectBox form__selectBox--single" id="c6-placement-playerType-{{$index}}">
                                 <option value="">-- Select --</option>
                             </select>
-                            <label class="form__label" for="c6-placement-playerType">
+                            <label class="form__label" for="c6-placement-playerType-{{$index}}">
                                 <i class="fa fa-times ui--error"></i>
                                 Player Type*
                             </label>
@@ -72,10 +72,10 @@
                         </fieldset>
                         <fieldset class="form__item form__item--clone">
                             <div class="field--inline">
-                                <select c6-select-box data-options="['Yes','No']" ng-options="bool for bool in ['Yes','No']" ng-model="placement.tagParams.defaults.autoplay.value" class="form__selectBox form__selectBox--single" id="c6-placement-autoplay">
+                                <select c6-select-box data-options="['Yes','No']" ng-options="bool for bool in ['Yes','No']" ng-model="placement.tagParams.defaults.autoplay.value" class="form__selectBox form__selectBox--single" id="c6-placement-autoplay-{{$index}}">
                                     <option value="">No value</option>
                                 </select>
-                                <label class="form__label" for="c6-placement-autoplay">
+                                <label class="form__label" for="c6-placement-autoplay-{{$index}}">
                                     <i class="fa fa-times ui--error"></i>
                                     Autoplay
                                 </label>
@@ -99,8 +99,8 @@
                         </fieldset>
                         <fieldset class="form__item form__item--clone">
                             <div class="field--inline">
-                                <input c6-fill-check ng-model="placement.tagParams.defaults.branding.value" class="form__textBox form__fillCheck" type="text" id="c6-container-branding">
-                                <label class="form__label" for="c6-container-branding">
+                                <input c6-fill-check ng-model="placement.tagParams.defaults.branding.value" class="form__textBox form__fillCheck" type="text" id="c6-placement-branding-{{$index}}">
+                                <label class="form__label" for="c6-placement-branding-{{$index}}">
                                     <i class="fa fa-times ui--error"></i>
                                     Branding
                                 </label>
@@ -131,8 +131,8 @@
                                 <option>Video Length</option>
                             </select> -->
                             <div class="field--inline">
-                                <input c6-fill-check ng-model="placement.tagParams.defaults.countdown.value" class="form__textBox form__fillCheck" type="number" id="c6-container-skipTimer">
-                                <label class="form__label" for="c6-container-skipTimer">
+                                <input c6-fill-check ng-model="placement.tagParams.defaults.countdown.value" class="form__textBox form__fillCheck" type="number" id="c6-placement-skipTimer-{{$index}}">
+                                <label class="form__label" for="c6-placement-skipTimer-{{$index}}">
                                     <i class="fa fa-times ui--error"></i>
                                     Skip Timer
                                 </label>
@@ -144,7 +144,7 @@
                                 <div class="form__errorBox">
                                     <p class="form__errorMsg">
                                         <span ng-if="!SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration"><i class="fa fa-exclamation-triangle"></i> The video for this campaign has no duration</span>
-                                        <span ng-if="(placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration)"><i class="fa fa-exclamation-triangle"></i> Skip timer cannot be longer than video duration ({{placement.tagParams.defaults.countdown.value}} seconds)</span>
+                                        <span ng-if="(placement.tagParams.defaults.countdown.value > SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration)"><i class="fa fa-exclamation-triangle"></i> Skip timer cannot be longer than video duration ({{SelfieManageCampaignPlacementsCtrl.campaign.cards[0].data.duration}} seconds)</span>
                                     </p>
                                 </div>
                             </div>
@@ -156,8 +156,8 @@
                             </div>
                         </fieldset>
                         <fieldset class="form__item">
-                            <input c6-fill-check ng-model="placement.model.budget.daily" class="form__textBox form__fillCheck" type="number" id="c6-container-dailyBudget">
-                            <label class="form__label" for="c6-container-dailyBudget">
+                            <input c6-fill-check ng-model="placement.model.budget.daily" class="form__textBox form__fillCheck" type="number" id="c6-placement-dailyBudget-{{$index}}">
+                            <label class="form__label" for="c6-placement-dailyBudget-{{$index}}">
                                 <i class="fa fa-times ui--error"></i>
                                 Daily Budget
                             </label>
@@ -173,14 +173,31 @@
                             </div>
                         </fieldset>
                         <fieldset class="form__item">
-                            <input c6-fill-check ng-model="placement.model.budget.total" class="form__textBox form__fillCheck" type="number" id="c6-container-totalBudget">
-                            <label class="form__label" for="c6-container-totalBudget">
+                            <input c6-fill-check ng-model="placement.model.budget.total" class="form__textBox form__fillCheck" type="number" id="c6-placement-totalBudget-{{$index}}">
+                            <label class="form__label" for="c6-placement-totalBudget-{{$index}}">
                                 <i class="fa fa-times ui--error"></i>
                                 Total Budget
                             </label>
                             <div class="form__helpBox form__helpBox--right">
                                 <div class="form__helpText">
                                     Enter the Total Budget Limit for which you want to run on this DSP.
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Invalid Value
+                                </p>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item">
+                            <input c6-fill-check ng-model="placement.model.externalCost.cost" class="form__textBox form__fillCheck" type="number" id="c6-placement-cpv-{{$index}}">
+                            <label class="form__label" for="c6-placement-cpv-{{$index}}">
+                                <i class="fa fa-times ui--error"></i>
+                                CPV
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Enter our cost per view.
                                 </div>
                             </div>
                             <div class="form__errorBox">

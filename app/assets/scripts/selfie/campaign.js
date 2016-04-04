@@ -1,7 +1,7 @@
 define( ['angular','c6_state','../minireel/mixins/PaginatedListState',
-         '../minireel/mixins/PaginatedListController'],
+         '../minireel/mixins/PaginatedListController','c6_defines'],
 function( angular , c6State  , PaginatedListState                    ,
-          PaginatedListController                    ) {
+          PaginatedListController                    , c6Defines  ) {
     /* jshint -W106 */
     'use strict';
 
@@ -2590,7 +2590,9 @@ function( angular , c6State  , PaginatedListState                    ,
                                         label: null,
                                         tagType: null,
                                         budget: {},
-                                        externalCost: {},
+                                        externalCost: {
+                                            event: 'view'
+                                        },
                                         tagParams: {},
                                         showInTag: {}
                                     })
@@ -2682,6 +2684,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 placementDBModel.tagParams = PlacementService.convertForSave(params);
                 placementDBModel.tagParams.container = placement.container.name;
                 placementDBModel.tagParams.campaign = this.campaign.id;
+                placementDBModel.externalCost.event = 'view';
 
                 placementDBModel.save()
                     .then(function(model) {
@@ -2751,7 +2754,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         '</div>'
                     ].join('\n');
                 } else {
-                    return 'https://platform.reelcontent.com/api/public/vast/2.0/tag?' + params;
+                    return c6Defines.kPlatformHome + 'api/public/vast/2.0/tag?' + params;
                 }
             }
 

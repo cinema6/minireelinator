@@ -1,4 +1,4 @@
-define(['app'], function(appModule) {
+define(['app','c6_defines'], function(appModule, c6Defines) {
     'use strict';
 
     describe('SelfieManageCampaignPlacementTagController', function() {
@@ -12,6 +12,8 @@ define(['app'], function(appModule) {
 
         beforeEach(function() {
             module(appModule.name);
+
+            c6Defines.kPlatformHome = 'https://platform-staging.reelcontent.com/';
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -127,7 +129,7 @@ define(['app'], function(appModule) {
 
                         expect(SelfieManageCampaignPlacementTagCtrl.placement).toEqual({
                             name: 'beeswax',
-                            tag: 'https://platform.reelcontent.com/api/public/vast/2.0/tag?placement=pl-111'
+                            tag: c6Defines.kPlatformHome + 'api/public/vast/2.0/tag?placement=pl-111'
                         });
                     });
 
@@ -156,7 +158,7 @@ define(['app'], function(appModule) {
 
                         expect(SelfieManageCampaignPlacementTagCtrl.placement).toEqual({
                             name: 'beeswax',
-                            tag: 'https://platform.reelcontent.com/api/public/vast/2.0/tag?placement=pl-111&clickUrls=${click},{{CLICK}}&countdown=30&prebuffer=true&network=${network}'
+                            tag: c6Defines.kPlatformHome + 'api/public/vast/2.0/tag?placement=pl-111&clickUrls=${click},{{CLICK}}&countdown=30&prebuffer=true&network=${network}'
                         });
                     });
                 });
