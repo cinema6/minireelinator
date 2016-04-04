@@ -1,10 +1,18 @@
 # MiniReelinator
 
 ## v1.41.0 (April 1, 2016)
-* *[v1.41.1.rc2]*
-  * [FIX]: Fix for an issue where Facebook card thumbnails would not be visible when editing a draft campaign
+* *[v1.41.0.rc3]*
+  * [FIX]: Fix for an issue where the error message for placement skip timer
+    displayed the wrong info
+  * [FIX]: Fix for an issue where the placement VPAID url always used
+    https://platform.reelcontent.com instead of staging-platform.reelcontent
+  * [FIX]: Add an input for placement CPV
+
+* *[v1.41.0.rc2]*
+  * [FIX]: Fix for an issue where Facebook card thumbnails would not be
+    visible when editing a draft campaign
   * [FIX]: Add Player Type to Placement UI and make it required
-* *[/v1.41.1.rc2]*
+* *[/v1.41.0.rc2]*
 
 * *[v1.41.0.rc1]*
   * [FEATURE]: Add Placements tab to Manage Campaign view
