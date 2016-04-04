@@ -28,9 +28,14 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                                     'Selfie:New:Campaign:Website'
                                 );
                                 this.state(
-                                    'Selfie:Campaign:Payment:New',
-                                    'Selfie:New:Campaign:Payment:New'
-                                );
+                                    'Selfie:Campaign:Fund',
+                                    'Selfie:New:Campaign:Fund',
+                                    function() {
+                                        this.state(
+                                            'Selfie:Campaign:Fund:Confirm',
+                                            'Selfie:New:Campaign:Fund:Confirm'
+                                        );
+                                    });
                             });
                         });
                         this.route('/edit/:campaignId', 'Selfie:EditCampaign', function() {
@@ -40,9 +45,14 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                                     'Selfie:Edit:Campaign:Website'
                                 );
                                 this.state(
-                                    'Selfie:Campaign:Payment:New',
-                                    'Selfie:Edit:Campaign:Payment:New'
-                                );
+                                    'Selfie:Campaign:Fund',
+                                    'Selfie:Edit:Campaign:Fund',
+                                    function() {
+                                        this.state(
+                                            'Selfie:Campaign:Fund:Confirm',
+                                            'Selfie:Edit:Campaign:Fund:Confirm'
+                                        );
+                                    });
                             });
                         });
                         this.route('/manage/:campaignId',
@@ -56,10 +66,6 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                                         this.route('/manage',
                                             'Selfie:Manage:Campaign:Manage',
                                             'Selfie:All:Manage:Campaign:Manage'
-                                        );
-                                        this.route('/payment',
-                                            'Selfie:Manage:Campaign:Payment',
-                                            'Selfie:All:Manage:Campaign:Payment'
                                         );
                                         this.route('/stats',
                                             'Selfie:Manage:Campaign:Stats',

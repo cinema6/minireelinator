@@ -1,15 +1,8 @@
 <div class="grid__item one-half">
     <section class="formSection__group" id="section_8">
 
-        <h1 class="formSection__title">
-            <span class="formSection__number">
-                <span class="formSection__numberText">8</span>
-            </span>
-            <span class="formSection__titleText tk--hdr">Submit Your Ad</span>
-        </h1>
-        <p class="formSection__introText">Please review your campaign before submission. You will receive a notification email when the campaign becomes active.</p>
         <div class="ui__btnHolder two-thirds item--center">
-            <button class="action__btn action__btn--wide action__btn--big" ng-click="SelfieCampaignCtrl.submit()">Review and Submit</button>
+            <button class="action__btn action__btn--wide action__btn--big" ng-click="SelfieCampaignCtrl.submit()">Continue</button>
 
             <div style="margin-bottom:20px;" ng-if="SelfieCampaignCtrl.validation.show && (!SelfieCampaignCtrl.validation.sections.section1 || !SelfieCampaignCtrl.validation.sections.section2 || !SelfieCampaignCtrl.validation.sections.section3 || !SelfieCampaignCtrl.validation.sections.section4 || !SelfieCampaignCtrl.validation.sections.section5 || !SelfieCampaignCtrl.validation.sections.section6 || !SelfieCampaignCtrl.validation.sections.section7 || !SelfieCampaignCtrl.validation.sections.section8)" class="alertMessage alert__failure">
                 <span class="formSection__introText">Please fill in the required information</span>

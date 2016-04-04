@@ -1493,7 +1493,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             return {
                 restrict: 'E',
                 scope: {
-                    campaign: '=',
+                    chosenMethod: '=',
                     methods: '='
                 },
                 templateUrl: 'views/selfie/directives/payment_methods.html',
@@ -1504,26 +1504,12 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
         .controller('SelfiePaymentMethodsController', ['$scope',
         function                                      ( $scope ) {
-            var campaign = $scope.campaign,
-                methods = $scope.methods,
-                SelfiePaymentMethodsCtrl = this;
-
-            function getPrimaryMethod() {
-                return methods.filter(function(method) {
-                    return !!method.default;
-                })[0];
-            }
-
-            function getMethodById(token) {
-                return methods.filter(function(method) {
-                    return token === method.token;
-                })[0];
-            }
+            var methods = $scope.methods;
 
             Object.defineProperties(this, {
                 methods: {
                     get: function() {
-                        var current = SelfiePaymentMethodsCtrl.currentMethod || {};
+                        var current = $scope.chosenMethod || {};
 
                         return (methods || []).filter(function(method) {
                             return method.token !== current.token;
@@ -1532,17 +1518,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 }
             });
 
-            this.currentMethod = methods.filter(function(method) {
-                return campaign.paymentMethod === method.token;
-            })[0] || getPrimaryMethod();
-
-            if (!campaign.paymentMethod && this.currentMethod) {
-                campaign.paymentMethod = this.currentMethod.token;
-            }
-
-            this.setCurrentMethod = function(method) {
-                this.currentMethod = method;
-                campaign.paymentMethod = method.token;
+            this.setChosenMethod = function(method) {
+                $scope.chosenMethod = method;
                 this.showDropdown = false;
             };
 
@@ -1551,14 +1528,6 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
                 this.showDropdown = !this.showDropdown;
             };
-
-            $scope.$watch(function() {
-                return campaign.paymentMethod;
-            }, function(newToken, oldToken) {
-                if (newToken === oldToken) { return; }
-
-                SelfiePaymentMethodsCtrl.setCurrentMethod(getMethodById(newToken));
-            });
         }])
 
         .directive('selfieLoginDialog', ['SelfieLoginDialogService',

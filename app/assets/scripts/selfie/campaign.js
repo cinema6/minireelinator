@@ -623,7 +623,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         this.campaign.user === SelfieState.cModel.id;
 
                     this.user = this.cParent.user;
-                    this.paymentOptional = !!SelfieState.cModel.entitlements.paymentOptional;
                 };
 
                 this.model = function() {
@@ -631,10 +630,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     return $q.all({
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
-                        logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id),
-                        paymentMethods: cinema6.db.findAll('paymentMethod', {
-                            org: this.campaign.org || SelfieState.cModel.org.id
-                        })
+                        logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id)
                     }).catch(function() {
                         c6State.goTo('Selfie:CampaignDashboard');
                         return $q.reject();
@@ -644,15 +640,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
                 };
 
-                this.afterModel = function(model) {
-                    var cState = this,
-                        primaryPaymentMethod = model.paymentMethods
-                            .filter(function(method) {
-                                return method.default;
-                            })[0] || {};
-
-                    this.campaign.paymentMethod = this.campaign.paymentMethod ||
-                        primaryPaymentMethod.token;
+                this.afterModel = function() {
+                    var cState = this;
 
                     return CampaignService.getSchema()
                         .then(function(schema) {
@@ -929,10 +918,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             section4: !!card.title && !!card.links.Action &&
                                 !!card.params.action.label,
                             section5: this.radius,
-                            section6: this.budget && this.dailyLimit,
-                            section7: !!campaign.paymentMethod ||
-                                !!SelfieCampaignCtrl.paymentOptional,
-                            section8: true
+                            section6: this.budget && this.dailyLimit
                         };
                     }
                 }
@@ -941,7 +927,6 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.logos = model.logos;
                 this.categories = model.categories;
-                this.paymentMethods = model.paymentMethods;
 
                 this.card = cState.card;
                 this.campaign = cState.campaign;
@@ -949,7 +934,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.schema = cState.schema;
                 this.isCreator = cState.isCreator;
                 this.user = cState.user;
-                this.paymentOptional = cState.paymentOptional;
                 this.targetingCost = CampaignService.getTargetingCost(this.schema);
 
                 this._proxyCard = copy(this.card);
@@ -999,6 +983,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         }
                     });
                 }
+
+                return c6State.goTo('Selfie:Campaign:Fund');
 
                 SelfieCampaignSummaryService.display({
                     campaign: this.campaign,
@@ -1069,7 +1055,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 return [
                     campaign.pricing,
                     campaign.targeting,
-                    campaign.paymentMethod,
                     card.campaign.endDate,
                     card.campaign.startDate
                 ];
@@ -1784,13 +1769,43 @@ function( angular , c6State  , PaginatedListState                    ,
 
         }])
 
-        .controller('SelfieCampaignPaymentController', ['PaymentService','$scope','cinema6',
-                                                        'ConfirmDialogService',
-        function                                       ( PaymentService , $scope , cinema6 ,
-                                                         ConfirmDialogService ) {
-            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                methods = SelfieCampaignCtrl.paymentMethods,
-                campaign = SelfieCampaignCtrl.campaign;
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Campaign:Fund', ['cinema6','c6State','$q',
+                                                           'PaymentService',
+            function                                      ( cinema6 , c6State , $q ,
+                                                            PaymentService ) {
+                var SelfieState = c6State.get('Selfie');
+
+                this.templateUrl = 'views/selfie/campaigns/edit/fund.html';
+                this.controller = 'SelfieCampaignFundController';
+                this.controllerAs = 'SelfieCampaignFundCtrl';
+
+                this.model = function() {
+                    // need to fetch all payment methods
+                    // need to get account balance
+                    // if campaign is not a draft need to check if new budget
+                    // is more than current budget, in which case they need to add funds
+
+                    var campaign = this.cParent.campaign;
+
+                    return $q.all({
+                        paymentMethods: cinema6.db.findAll('paymentMethod', {
+                            org: campaign.org || SelfieState.cModel.org.id
+                        }),
+                        token: PaymentService.getToken(),
+                        campaign: campaign,
+                        newMethod: cinema6.db.create('paymentMethod', {})
+                    });
+                };
+            }]);
+        }])
+
+        .controller('SelfieCampaignFundController', ['cinema6','cState','c6State',
+                                                     'ConfirmDialogService',
+        function                                    ( cinema6 , cState , c6State ,
+                                                      ConfirmDialogService ) {
+            var self = this;
 
             function handleError(error) {
                 ConfirmDialogService.display({
@@ -1806,76 +1821,34 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
             }
 
-            this.paypalSuccess = function(method) {
-                var newMethod = cinema6.db.create('paymentMethod', {
-                    paymentMethodNonce: method.nonce
-                });
-
-                newMethod.save()
-                    .then(function(method) {
-                        methods.unshift(method);
-                        campaign.paymentMethod = method.token;
-                    }, handleError);
-            };
-        }])
-
-        .config(['c6StateProvider',
-        function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaign:Payment:New', ['cinema6','PaymentService',
-            function                                             ( cinema6 , PaymentService ) {
-                var SelfieCampaignPaymentNewState = this;
-
-                this.templateUrl = 'views/selfie/campaigns/edit/payment_new.html';
-                this.controller = 'SelfieCampaignPaymentNewController';
-                this.controllerAs = 'SelfieCampaignPaymentNewCtrl';
-
-                this.model = function() {
-                    return cinema6.db.create('paymentMethod', {
-                        paymentMethodNonce: null,
-                        cardholderName: null,
-                        makeDefault: false
-                    });
-                };
-
-                this.afterModel = function() {
-                    return PaymentService.getToken()
-                        .then(function(token) {
-                            SelfieCampaignPaymentNewState.token = token;
-                        });
-                };
-            }]);
-        }])
-
-        .controller('SelfieCampaignPaymentNewController', ['c6State','cinema6','cState','$scope',
-        function                                          ( c6State , cinema6 , cState , $scope ) {
-            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                paymentMethods = SelfieCampaignCtrl.paymentMethods,
-                campaign = SelfieCampaignCtrl.campaign;
-
             this.initWithModel = function(model) {
-                this.model = model;
-                this.token = cState.token;
-                SelfieCampaignCtrl.pendingCreditCard = false;
+                this.paymentMethods = model.paymentMethods;
+                this.newMethod = model.newMethod;
+                this.campaign = model.campaign;
+                this.token = model.token;
+
+                this.type = 'creditcard';
+                this.paymentMethod = model.paymentMethods.filter(function(method) {
+                    return !!method.default;
+                })[0];
             };
 
             this.success = function(method) {
-                extend(this.model, {
+                extend(this.newMethod, {
                     cardholderName: method.cardholderName,
-                    paymentMethodNonce: method.nonce,
-                    makeDefault: method.makeDefault
+                    paymentMethodNonce: method.nonce
                 });
 
-                return this.model.save()
+                this.newMethod.save()
                     .then(function(method) {
-                        paymentMethods.unshift(method);
-                        campaign.paymentMethod = method.token;
-
-                        return c6State.goTo('Selfie:Campaign');
-                    });
+                        self.paymentMethods.unshift(method);
+                        self.paymentMethod = method;
+                        // now set this method to be the selected option
+                    }, handleError);
             };
 
             this.cancel = function() {
-                return c6State.goTo('Selfie:Campaign');
+                c6State.goTo(cState.cParent.cName);
             };
         }])
 
@@ -1927,13 +1900,10 @@ function( angular , c6State  , PaginatedListState                    ,
                         null;
 
                     return $q.all({
-                        paymentMethods: cinema6.db.findAll('paymentMethod', {
-                            org: this.campaign.org
-                        }),
-                        updateRequest:  updateRequest ?
-                            cinema6.db.find('updateRequest', updateRequest) :
-                            null,
                         advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId)
+                        updateRequest: updateRequest ?
+                            cinema6.db.find('updateRequest', updateRequest) :
+                            null
                     });
                 };
 
@@ -2020,15 +1990,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     campaign.status = statusFor(action);
                 }
 
-                if (action === 'paymentMethod') {
-                    // the payment method can be auto-approved
-                    // but to do this it must be the only property
-                    // included in the body of the campaign
-                    campaign = {
-                        paymentMethod: campaign.paymentMethod
-                    };
-                }
-
                 if (updateRequest) {
                     // if we have an existing updateRequest then
                     // update the data and save()
@@ -2091,8 +2052,7 @@ function( angular , c6State  , PaginatedListState                    ,
             Object.defineProperties(this, {
                 canSubmit: {
                     get: function() {
-                        return !equals(this.campaign, this._proxyCampaign) &&
-                            !!this.campaign.paymentMethod;
+                        return !equals(this.campaign, this._proxyCampaign);
                     }
                 },
                 canEdit: {
@@ -2127,7 +2087,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.user = cState.user;
 
                 this.categories = model.categories;
-                this.paymentMethods = model.paymentMethods;
                 this.updateRequest = model.updateRequest;
                 this.advertiser = model.advertiser;
 
@@ -2164,20 +2123,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             }, this);
 
-            this.updatePaymentMethod = queue.debounce(function() {
-                SelfieManageCampaignCtrl.paymentStatus = null;
-
-                if (this.canSubmit) {
-                    return submitUpdate('paymentMethod')
-                        .then(function() {
-                            SelfieManageCampaignCtrl.paymentStatus = 'success';
-                        })
-                        .catch(function() {
-                            SelfieManageCampaignCtrl.paymentStatus = 'failed';
-                        });
-                }
-            }, this);
-
             this.copy = queue.debounce(function() {
                 SelfieManageCampaignCtrl.pendingCopy = true;
 
@@ -2201,13 +2146,6 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign:Manage', [function() {
                 this.templateUrl = 'views/selfie/campaigns/manage/manage.html';
-            }]);
-        }])
-
-        .config(['c6StateProvider',
-        function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign:Payment', [function() {
-                this.templateUrl = 'views/selfie/campaigns/manage/payment.html';
             }]);
         }])
 

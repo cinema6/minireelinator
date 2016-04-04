@@ -1,3 +1,35 @@
-<div>
-	<braintree-credit-card client-token="{{SelfieAccountPaymentNewCtrl.token}}" method="SelfieAccountPaymentNewCtrl.model" on-success="SelfieAccountPaymentNewCtrl.success(method)" on-cancel="SelfieAccountPaymentNewCtrl.cancel()"></braintree-credit-card>
+<div class="modal__overlay"></div>
+<div class="gridHolder modal__group modalPayment__group">
+
+    <div class="grid grid--center">
+        <button class="modal__closeBtn btnInvis" ng-click="SelfieAccountPaymentNewCtrl.cancel()"><span class="ir">Close</span>
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                L18,1.5L16.5,0z"/>
+            </svg>
+        </button>
+        <section class="grid__item two-thirds">
+
+            <header class="text--center">
+                <h1 class="tk--hdr modal__title">Add a credit card</h1>
+                <p class="tk--copy modal__copy">Your campaign would use the primary payment method provided in the account settings unless you choose to use a different option.</p>
+            </header>
+
+            <braintree-credit-card client-token="{{SelfieAccountPaymentNewCtrl.token}}" method="SelfieAccountPaymentNewCtrl.model" on-success="SelfieAccountPaymentNewCtrl.success(method)" on-cancel="SelfieAccountPaymentNewCtrl.cancel()"></braintree-credit-card>
+
+        </section><!--.grid__item .five-sixths-->
+            <div class="payment__seals grid__item one-whole" ng-show="ready">
+                <div class="payment__sealItem braintree--seal">
+                    <span class="payment__itemText"> Secure payments by</span>
+                    <a href="https://www.braintreegateway.com/merchants/hrmsqg32vjw32sjz/verified" target="_blank">
+                      <img src="https://s3.amazonaws.com/braintree-badges/braintree-badge-light.png" width="164px" height ="44px" border="0"/>
+                    </a>
+                </div>
+                <div class="payment__sealItem paypal--seal">
+                    <!-- PayPal Logo --><table border="0" cellpadding="10" cellspacing="0" align="center"><tr><td align="center"></td></tr><tr><td align="center"><a href="https://www.braintreegateway.com/merchants/hrmsqg32vjw32sjz/verified" target="_blank"><img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" border="0" alt="PayPal Logo"></a></td></tr></table><!-- PayPal Logo -->
+                </div>
+            </div>
+    </div><!--.grid grid--center-->
+
 </div>
