@@ -7,6 +7,7 @@ var WIDTH = 1024;
 var HEIGHT = 768;
 var E2E_CAMP = 'c-b76ecf45af71cd';
 var E2E_PAY = 'pay-a3fbcb1775823a';
+var E2E_CONT = 'con-e98bf71210a2df';
 var WAIT_TIME = 1000;
 
 describe('the html', function() {
@@ -49,6 +50,10 @@ describe('the html', function() {
         '/#/apps/selfie/campaigns/manage/' + E2E_CAMP + '/payment',
         '/#/apps/selfie/campaigns/manage/' + E2E_CAMP + '/stats',
         '/#/apps/selfie/campaigns/manage/' + E2E_CAMP + '/admin',
+        '/#/apps/selfie/campaigns/manage/' + E2E_CAMP + '/placements',
+        '/#/apps/selfie/containers',
+        '/#/apps/selfie/containers/new',
+        '/#/apps/selfie/containers/edit/' + E2E_CONT,
         '/#/apps/selfie/account/overview',
         '/#/apps/selfie/account/email',
         '/#/apps/selfie/account/details',
