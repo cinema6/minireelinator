@@ -1,12 +1,13 @@
 # MiniReelinator
 
-## v1.41.0 (April 1, 2016)
+## v1.41.0 (April 4, 2016)
 * *[v1.41.0.rc3]*
   * [FIX]: Fix for an issue where the error message for placement skip timer
     displayed the wrong info
   * [FIX]: Fix for an issue where the placement VPAID url always used
     https://platform.reelcontent.com instead of staging-platform.reelcontent
   * [FIX]: Add an input for placement CPV
+* *[/v1.41.0.rc3]*
 
 * *[v1.41.0.rc2]*
   * [FIX]: Fix for an issue where Facebook card thumbnails would not be
