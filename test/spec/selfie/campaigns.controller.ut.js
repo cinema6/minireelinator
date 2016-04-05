@@ -544,7 +544,10 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         },
                                         data: {
                                             service: 'youtube',
-                                            videoid: '123'
+                                            videoid: '123',
+                                            thumbs: {
+                                                large: 'large-thumb-from-data.jpg'
+                                            }
                                         }
                                     }
                                 ],
@@ -823,9 +826,20 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 it('should get thumbs from Thumbnail Service', function() {
                                     expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123', {
                                         service: 'youtube',
-                                        videoid: '123'
+                                        videoid: '123',
+                                        thumbs: {
+                                            large: 'large-thumb-from-data.jpg'
+                                        }
                                     });
                                     expect(SelfieCampaignsCtrl.data['cam-3'].thumb).toEqual('large-thumb.jpg');
+                                });
+
+                                it('should get the thumbs from the card if not from the ThumbnailService', function() {
+                                    thumbDeferred.ensureFulfillment.and.returnValue($q.when({ large: null }));
+                                    $scope.$apply(function() {
+                                        SelfieCampaignsCtrl.initWithModel(model);
+                                    });
+                                    expect(SelfieCampaignsCtrl.data['cam-3'].thumb).toEqual('large-thumb-from-data.jpg');
                                 });
                             });
 
