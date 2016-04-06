@@ -24,13 +24,13 @@
                             <li>
                                 <div class="grid__item one-third orderItem__label">Campaign Name</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__cost text--right">{{SelfieCampaignFundConfirmCtrl.campaign.name}}</div>
+                                    <div class="orderItem__cost text--right">{{SelfieCampaignFundCtrl.campaign.name}}</div>
                                 </div>
                             </li>
                             <li>
                             <div class="grid__item one-third orderItem__label">Timeline</div><!--
                             --><div class="grid__item two-thirds">
-                                    <div class="orderItem__cost text--right">{{SelfieCampaignFundConfirmCtrl.duration}}</div>
+                                    <div class="orderItem__cost text--right">{{SelfieCampaignFundCtrl.duration}}</div>
                                 </div>
                             </li>
                         </ul>
@@ -40,20 +40,20 @@
                                     <h1 class="tk--hdr">Total Budget</h1>
                                 </div><!--
                                 --><div class="grid__item one-third orderItem__label">
-                                    <h1 class="tk--hdr">${{SelfieCampaignFundConfirmCtrl.campaign.pricing.budget}}</h1>
+                                    <h1 class="tk--hdr">${{SelfieCampaignFundCtrl.campaign.pricing.budget}}</h1>
                                 </div>
                             </li>
                             <li>
                                 <div class="grid__item one-third orderItem__label">Daily Budget</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div ng-if="SelfieCampaignFundConfirmCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.campaign.pricing.dailyLimit}}</div>
-                                    <div ng-if="!SelfieCampaignFundConfirmCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">No limit</div>
+                                    <div ng-if="SelfieCampaignFundCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">${{SelfieCampaignFundCtrl.campaign.pricing.dailyLimit}}</div>
+                                    <div ng-if="!SelfieCampaignFundCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">No limit</div>
                                 </div>
                             </li>
                             <li>
                             <div class="grid__item one-third orderItem__label">Est. Views</div><!--
                             --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">{{(SelfieCampaignFundConfirmCtrl.campaign.pricing.budget / SelfieCampaignFundConfirmCtrl.cpv) | number:0}}</div>
+                                    <div class="orderItem__label text--right">{{(SelfieCampaignFundCtrl.campaign.pricing.budget / SelfieCampaignFundCtrl.cpv) | number:0}}</div>
                                 </div>
                             </li>
                         </ul>
@@ -63,42 +63,42 @@
                                     <h1 class="tk--hdr">Total CPV</h1>
                                 </div><!--
                                 --><div class="grid__item one-third orderItem__label">
-                                    <h1 class="tk--hdr">${{SelfieCampaignFundConfirmCtrl.cpv | number:2}}</h1>
+                                    <h1 class="tk--hdr">${{SelfieCampaignFundCtrl.cpv | number:2}}</h1>
                                 </div>
 
                             </li>
                             <li class="orderItem__subHdr">
                                 <div class="grid__item one-third orderItem__label">Base CPV</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.schema.pricing.cost.__base | number}}</div>
+                                    <div class="orderItem__label text--right">${{SelfieCampaignFundCtrl.schema.pricing.cost.__base | number}}</div>
                                 </div>
                             </li>
-                            <li ng-show="SelfieCampaignFundConfirmCtrl.interests">
+                            <li ng-show="SelfieCampaignFundCtrl.interests">
                                 <div class="grid__item one-third orderItem__label">Interests:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.schema.pricing.cost.__priceForInterests | number}}</div>
+                                    <div class="orderItem__label text--right">${{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForInterests | number}}</div>
                                 </div>
                             </li>
-                            <li ng-show="SelfieCampaignFundConfirmCtrl.interests" class="orderItem__subItem">
-                                <div class="grid__item orderItem__label">{{SelfieCampaignFundConfirmCtrl.interests}}</div>
+                            <li ng-show="SelfieCampaignFundCtrl.interests" class="orderItem__subItem">
+                                <div class="grid__item orderItem__label">{{SelfieCampaignFundCtrl.interests}}</div>
                             </li>
-                            <li ng-show="SelfieCampaignFundConfirmCtrl.demographics.age.list || SelfieCampaignFundConfirmCtrl.demographics.gender.list || SelfieCampaignFundConfirmCtrl.demographics.income.list">
+                            <li ng-show="SelfieCampaignFundCtrl.demographics.age.list || SelfieCampaignFundCtrl.demographics.gender.list || SelfieCampaignFundCtrl.demographics.income.list">
                                 <div class="grid__item one-third orderItem__label">Demographics:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.schema.pricing.cost.__priceForDemoTargeting | number}}</div>
+                                    <div class="orderItem__label text--right">${{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForDemoTargeting | number}}</div>
                                 </div>
                             </li>
-                            <li ng-show="SelfieCampaignFundConfirmCtrl.demographics.age.list || SelfieCampaignFundConfirmCtrl.demographics.gender.list || SelfieCampaignFundConfirmCtrl.demographics.income.list" class="orderItem__subItem">
-                                <div ng-if="demo.list" ng-repeat="demo in SelfieCampaignFundConfirmCtrl.demographics" class="grid__item orderItem__label">{{demo.name}}: {{demo.list}}</div>
+                            <li ng-show="SelfieCampaignFundCtrl.demographics.age.list || SelfieCampaignFundCtrl.demographics.gender.list || SelfieCampaignFundCtrl.demographics.income.list" class="orderItem__subItem">
+                                <div ng-if="demo.list" ng-repeat="demo in SelfieCampaignFundCtrl.demographics" class="grid__item orderItem__label">{{demo.name}}: {{demo.list}}</div>
                             </li>
-                            <li ng-show="SelfieCampaignFundConfirmCtrl.geo.states.list || SelfieCampaignFundConfirmCtrl.geo.dmas.list || SelfieCampaignFundConfirmCtrl.geo.zipcodes.list">
+                            <li ng-show="SelfieCampaignFundCtrl.geo.states.list || SelfieCampaignFundCtrl.geo.dmas.list || SelfieCampaignFundCtrl.geo.zipcodes.list">
                                 <div class="grid__item one-third orderItem__label">Location:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.schema.pricing.cost.__priceForGeoTargeting | number}}</div>
+                                    <div class="orderItem__label text--right">${{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForGeoTargeting | number}}</div>
                                 </div>
                             </li>
-                            <li ng-show="SelfieCampaignFundConfirmCtrl.geo.states.list || SelfieCampaignFundConfirmCtrl.geo.dmas.list || SelfieCampaignFundConfirmCtrl.geo.zipcodes.list" class="orderItem__subItem">
-                                <div ng-if="geo.list" ng-repeat="geo in SelfieCampaignFundConfirmCtrl.geo" class="grid__item orderItem__label">{{geo.name}}: {{geo.list}}</div>
+                            <li ng-show="SelfieCampaignFundCtrl.geo.states.list || SelfieCampaignFundCtrl.geo.dmas.list || SelfieCampaignFundCtrl.geo.zipcodes.list" class="orderItem__subItem">
+                                <div ng-if="geo.list" ng-repeat="geo in SelfieCampaignFundCtrl.geo" class="grid__item orderItem__label">{{geo.name}}: {{geo.list}}</div>
                             </li>
                         </ul>
                     </div>
@@ -124,24 +124,24 @@
                             <li>
                                 <div class="grid__item two-thirds orderItem__label">Available Funds</div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">${{SelfieCampaignFundConfirmCtrl.accounting.remainingFunds}}</div>
+                                    <div class="text--right">${{SelfieCampaignFundCtrl.accounting.remainingFunds}}</div>
                                 </div>
                             </li>
-                            <li ng-if="SelfieCampaignFundConfirmCtrl.deposit > SelfieCampaignFundCtrl.minDeposit">
+                            <li ng-if="SelfieCampaignFundCtrl.deposit > SelfieCampaignFundCtrl.minDeposit">
                                 <div class="grid__item two-thirds orderItem__label">Additional Funds</div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">${{SelfieCampaignFundConfirmCtrl.deposit - SelfieCampaignFundCtrl.minDeposit}}</div>
+                                    <div class="text--right">${{SelfieCampaignFundCtrl.deposit - SelfieCampaignFundCtrl.minDeposit}}</div>
                                 </div>
                             </li>
 
                         </ul>
-                        <ul c6-alias="SelfieCampaignFundConfirmCtrl.paymentMethod as method">
+                        <ul ng-if="SelfieCampaignFundCtrl.paymentMethod" c6-alias="SelfieCampaignFundCtrl.paymentMethod as method">
                             <li>
                                 <div class="grid__item two-thirds orderItem__label">
                                     <h1 class="tk--hdr">Total Charge:</h1>
                                 </div><!--
                                 --><div class="grid__item one-third orderItem__label">
-                                    <h1 class="tk--hdr">${{SelfieCampaignFundConfirmCtrl.deposit}}</h1>
+                                    <h1 class="tk--hdr">${{SelfieCampaignFundCtrl.deposit}}</h1>
                                 </div>
                             </li>
                             <li>
@@ -158,17 +158,18 @@
                                     <div ng-if="method.type === 'paypal'" class="text--right"><i>{{method.email}}</i></div>
                                 </div>
                             </li>
-
                         </ul>
                     </div>
+
+                    <span ng-if="SelfieCampaignCtrl.confirmationError" class="alertMessage alert__failure text--center">The was a problem submitting your campaign.</span>
                 </div>
             </div>
         </div>
 
     </div>
     <footer class="modalFooter__group">
-        <button class="btnAction btnAction btnAction--first" ng-click="SelfieCampaignFundConfirmCtrl.goBack()" title="Edit">Edit</button>
-        <button ng-click="SelfieCampaignCtrl.confirmSubmission(SelfieCampaignFundConfirmCtrl.paymentMethod, SelfieCampaignFundConfirmCtrl.deposit)" title="Confirm" ng-class="{ 'btnSpinner__waiting' : SelfieCampaignCtrl.confirmationPending }" class="btnAction btnAction--success btnAction--last" type="button">Confirm</button>
+        <button class="btnAction btnAction btnAction--first" ng-click="SelfieCampaignFundCtrl.goBack()" title="Edit">Edit</button>
+        <button ng-click="SelfieCampaignCtrl.confirmSubmission(SelfieCampaignFundCtrl.paymentMethod, SelfieCampaignFundCtrl.deposit)" title="Confirm" ng-class="{ 'btnSpinner__waiting' : SelfieCampaignCtrl.confirmationPending }" class="btnAction btnAction--success btnAction--last" type="button">Confirm</button>
     </footer>
 </div>
 <div class="modal__overlay modal__overlay--confirm">&nbsp;</div>

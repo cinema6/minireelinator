@@ -98,7 +98,7 @@ module.exports = function(http) {
                 status: 'settled'
             };
 
-            if (!method || !request.body.amount || request.body.amount < 50) {
+            if (!method || !request.body.amount || request.body.amount < 1) {
                 return this.respond(400, 'Bad request');
             }
 
