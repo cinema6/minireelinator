@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## v1.41.2 (April 6, 2016)
+* *[v1.41.2.rc1]*
+  * [FIX]: Fix for an issue where the sign up success page did not fit
+    correctly when accessed in a small iframe
+* *[/v1.41.2.rc1]*
+
 ## v1.41.1 (April 5, 2016)
 * *[v1.41.1.rc1]*
   * [FIX]: Fix for an issue where user input may be disrupted by an autosave when editing a draft campaign
