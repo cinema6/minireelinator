@@ -122,7 +122,11 @@ function( angular , c6State  ) {
 
                 AccountService.signUp(this.model)
                     .then(function(user) {
-                        c6State.goTo('Selfie:SignUpSuccess',[user]);
+                        c6State.goTo((SelfieSignUpCtrl.formOnly ?
+                            'Selfie:SignUpSuccess:Frame' :
+                            'Selfie:SignUpSuccess:Full'),
+                            [user]
+                        );
                     })
                     .catch(function(err) {
                         // failure, we should tell the user why

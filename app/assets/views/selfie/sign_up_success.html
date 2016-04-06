@@ -1,7 +1,7 @@
 <header class="signup__header grid">
     <div class="signup__gridHolder grid grid--middle">
         <div class="grid__item one-quarter">
-            <span class="rc__logo"></span><span class="ir">Reelcontent</span></h1>
+            <span class="rc__logo"></span><span class="ir">Reelcontent</span>
         </div><!--
         --><div class="grid__item three-quarters text--right">
             <ul class="header__nav">
@@ -20,7 +20,7 @@
                 <h2 class="tk--hdr text--center">Please Activate Your Account</h2>
                 <p class="text--center">Thank you for registering for Reelcontent Self-Serve Video Ads!</p>
                 <p ng-show="SelfieSignUpSuccessCtrl.model.email" class="subAction alertMessage alert__success text--center">Before you can continue, you must activate your account.<br><strong>Please check your email {{SelfieSignUpSuccessCtrl.model.email}} for an activation link.</strong></p>
-                <p class="subAction text--center">Didn't get the email?<br>
+                <p ng-if="currentState !== 'Selfie:SignUpSuccess:Frame'" class="subAction text--center">Didn't get the email?<br>
                     <a c6-sref="Selfie:Login">Login</a> in order to resend the confirmation link.</p>
             </div>
         </div>
