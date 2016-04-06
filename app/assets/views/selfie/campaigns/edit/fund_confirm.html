@@ -1,0 +1,164 @@
+<div class="modalDialog__group modalDialog__group--confirm modalBody__group--tall selfieModal">
+    <header class="modalHeader__group">
+        <h1 class="modal__title">Confirm your campaign</h1>
+        <h3 class="modal__subTitle tk--subHdr">It may take up to 24 hours for your campaign to be approved.</h3>
+        <button class="modal__closeBtn btnInvis" ng-click="SelfieCampaignFundConfirmCtrl.cancel()"><span class="ir">Close</span>
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                L18,1.5L16.5,0z"></path>
+            </svg>
+        </button>
+    </header>
+
+    <div class="modalBody__group typo--centered">
+        <div class="reviewOrder__group">
+            <div class="grid">
+                <div class="grid__item one-half">
+                    <div class="orderItems">
+                        <ul>
+                            <li>
+                                <div class="grid__item two-thirds orderItem__label">
+                                    <h1 class="tk--hdr">Campaign Details</h1>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="grid__item one-third orderItem__label">Campaign Name</div><!--
+                                --><div class="grid__item two-thirds">
+                                    <div class="orderItem__cost text--right">{{SelfieCampaignFundConfirmCtrl.campaign.name}}</div>
+                                </div>
+                            </li>
+                            <li>
+                            <div class="grid__item one-third orderItem__label">Timeline</div><!--
+                            --><div class="grid__item two-thirds">
+                                    <div class="orderItem__cost text--right">{{SelfieCampaignFundConfirmCtrl.duration}}</div>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <div class="grid__item two-thirds orderItem__label">
+                                    <h1 class="tk--hdr">Total Budget</h1>
+                                </div><!--
+                                --><div class="grid__item one-third orderItem__label">
+                                    <h1 class="tk--hdr">${{SelfieCampaignFundConfirmCtrl.campaign.pricing.budget}}</h1>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="grid__item one-third orderItem__label">Daily Budget</div><!--
+                                --><div class="grid__item two-thirds">
+                                    <div ng-if="SelfieCampaignFundConfirmCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.campaign.pricing.dailyLimit}}</div>
+                                    <div ng-if="!SelfieCampaignFundConfirmCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">No limit</div>
+                                </div>
+                            </li>
+                            <li>
+                            <div class="grid__item one-third orderItem__label">Est. Views</div><!--
+                            --><div class="grid__item two-thirds">
+                                    <div class="orderItem__label text--right">{{(SelfieCampaignFundConfirmCtrl.campaign.pricing.budget / SelfieCampaignFundConfirmCtrl.cpv) | number:0}}</div>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <div class="grid__item two-thirds orderItem__label">
+                                    <h1 class="tk--hdr">Total CPV</h1>
+                                </div><!--
+                                --><div class="grid__item one-third orderItem__label">
+                                    <h1 class="tk--hdr">${{SelfieCampaignFundConfirmCtrl.cpv | number:2}}</h1>
+                                </div>
+
+                            </li>
+                            <li class="orderItem__subHdr">
+                                <div class="grid__item one-third orderItem__label">Base CPV</div><!--
+                                --><div class="grid__item two-thirds">
+                                    <div class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.schema.pricing.cost.__base | number}}</div>
+                                </div>
+                            </li>
+                            <li ng-show="SelfieCampaignFundConfirmCtrl.interests">
+                                <div class="grid__item one-third orderItem__label">Interests:</div><!--
+                                --><div class="grid__item two-thirds">
+                                    <div class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.schema.pricing.cost.__priceForInterests | number}}</div>
+                                </div>
+                            </li>
+                            <li ng-show="SelfieCampaignFundConfirmCtrl.interests" class="orderItem__subItem">
+                                <div class="grid__item orderItem__label">{{SelfieCampaignFundConfirmCtrl.interests}}</div>
+                            </li>
+                            <li ng-show="SelfieCampaignFundConfirmCtrl.demographics.age.list || SelfieCampaignFundConfirmCtrl.demographics.gender.list || SelfieCampaignFundConfirmCtrl.demographics.income.list">
+                                <div class="grid__item one-third orderItem__label">Demographics:</div><!--
+                                --><div class="grid__item two-thirds">
+                                    <div class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.schema.pricing.cost.__priceForDemoTargeting | number}}</div>
+                                </div>
+                            </li>
+                            <li ng-show="SelfieCampaignFundConfirmCtrl.demographics.age.list || SelfieCampaignFundConfirmCtrl.demographics.gender.list || SelfieCampaignFundConfirmCtrl.demographics.income.list" class="orderItem__subItem">
+                                <div ng-if="demo.list" ng-repeat="demo in SelfieCampaignFundConfirmCtrl.demographics" class="grid__item orderItem__label">{{demo.name}}: {{demo.list}}</div>
+                            </li>
+                            <li ng-show="SelfieCampaignFundConfirmCtrl.geo.states.list || SelfieCampaignFundConfirmCtrl.geo.dmas.list || SelfieCampaignFundConfirmCtrl.geo.zipcodes.list">
+                                <div class="grid__item one-third orderItem__label">Location:</div><!--
+                                --><div class="grid__item two-thirds">
+                                    <div class="orderItem__label text--right">${{SelfieCampaignFundConfirmCtrl.schema.pricing.cost.__priceForGeoTargeting | number}}</div>
+                                </div>
+                            </li>
+                            <li ng-show="SelfieCampaignFundConfirmCtrl.geo.states.list || SelfieCampaignFundConfirmCtrl.geo.dmas.list || SelfieCampaignFundConfirmCtrl.geo.zipcodes.list" class="orderItem__subItem">
+                                <div ng-if="geo.list" ng-repeat="geo in SelfieCampaignFundConfirmCtrl.geo" class="grid__item orderItem__label">{{geo.name}}: {{geo.list}}</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div><!--
+                --><div class="grid__item one-half">
+                    <div class="orderItems">
+                        <ul>
+                            <li>
+                                <div class="grid__item two-thirds orderItem__label">
+                                    <h1 class="tk--hdr">Deposit Details</h1>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="grid__item two-thirds orderItem__label">Total Campaign Budget</div><!--
+                                --><div class="grid__item one-third">
+                                    <div class="text--right">$1,000</div>
+                                </div>
+                            </li>
+                            <li>
+                            <div class="grid__item two-thirds orderItem__label">Available Funds</div><!--
+                            --><div class="grid__item one-third">
+                                    <div class="text--right">$0</div>
+                                </div>
+                            </li>
+
+                        </ul>
+                        <ul c6-alias="SelfieCampaignFundConfirmCtrl.paymentMethod as method">
+                            <li>
+                                <div class="grid__item two-thirds orderItem__label">
+                                    <h1 class="tk--hdr">Total Charge:</h1>
+                                </div><!--
+                                --><div class="grid__item one-third orderItem__label">
+                                    <h1 class="tk--hdr">$1,000</h1>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="grid__item two-thirds orderItem__label">Payment Method</div><!--
+                                --><div class="grid__item one-third">
+                                    <div ng-if="method.type === 'creditCard'" class="text--right">{{method.cardType | paymentType}} **** {{method.last4}}</div>
+                                    <div ng-if="method.type === 'paypal'" class="text--right">PayPal</div>
+                                </div>
+                            </li>
+                            <li>
+                            <div class="grid__item one-third orderItem__label"><i ng-if="method.type === 'creditCard'">{{method.cardholderName}}</i></div><!--
+                            --><div class="grid__item two-thirds">
+                                    <div ng-if="method.type === 'creditCard'" class="text--right"><i>Exp. {{method.expirationDate}}</i></div>
+                                    <div ng-if="method.type === 'paypal'" class="text--right"><i>{{method.email}}</i></div>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="modalFooter__group">
+        <button class="btnAction btnAction btnAction--first" ng-click="SelfieCampaignFundConfirmCtrl.goBack()" title="Edit">Edit</button>
+        <button ng-click="SelfieCampaignCtrl.confirmSubmission(SelfieCampaignFundConfirmCtrl.paymentMethod)" title="Confirm" ng-class="{ 'btnSpinner__waiting' : SelfieCampaignCtrl.confirmationPending }" class="btnAction btnAction--success btnAction--last" type="button">Confirm</button>
+    </footer>
+</div>
+<div class="modal__overlay modal__overlay--confirm">&nbsp;</div>

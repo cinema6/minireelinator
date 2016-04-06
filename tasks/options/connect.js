@@ -49,6 +49,7 @@
                             '/api/election': 'mocks/vote/main.js',
                             '/api/campaign': 'mocks/campaign/main.js',
                             '/api/expgroup': 'mocks/expgroup/main.js',
+                            '/api/payment': 'mocks/payment/main.js',
                             '/api/payments': 'mocks/payment/main.js',
                             '/api/analytics':'mocks/analytic/main.js',
                             '/api/collateral':'mocks/collateral/main.js',

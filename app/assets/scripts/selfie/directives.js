@@ -221,6 +221,21 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
+        .directive('submitFormById', ['$document',function($document) {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+                    $element.on('click', function() {
+                        var form = $document[0].getElementById(attrs.submitFormById);
+
+                        if (form && form.submit) {
+                            form.submit();
+                        }
+                    });
+                }
+            };
+        }])
+
         .directive('selectLabel', ['$document',function($document) {
             return {
                 restrict: 'A',

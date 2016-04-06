@@ -124,8 +124,8 @@
 
     </div>
     <footer class="modalFooter__group">
-        <button class="btnAction btnAction btnAction--first" ng-show="!!dialog.cancel" ng-click="dialog.onCancel()" title="Cancel">Cancel</button>
-        <button ng-click="dialog.onAffirm()" title="Yes" class="btnAction btnAction--success btnAction--last" type="button">Review</button>
+        <button class="btnAction btnAction btnAction--first" ng-click="SelfieCampaignFundCtrl.cancel()" title="Cancel">Cancel</button>
+        <button ng-click="SelfieCampaignFundCtrl.confirm()" submit-form-by-id="c6-payment-method" ng-class="{ 'btnSpinner__waiting' : SelfieCampaignFundCtrl.pending }" title="Yes" class="btnAction btnAction--success btnAction--last" type="button">Review</button>
     </footer>
 
 </div>

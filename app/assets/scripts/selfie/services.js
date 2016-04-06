@@ -376,7 +376,6 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     return formatDate(startDate) + ' to ' + formatDate(endDate);
                 }
 
-
                 return {
                     duration: generateDuration(campaign),
                     geo: generateGeo(campaign),
@@ -466,6 +465,13 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
 
             this.getHistory = function() {
                 return $http.get(c6UrlMaker('payments', 'api'))
+                    .then(function(response) {
+                        return response.data;
+                    });
+            };
+
+            this.makePayment = function(data) {
+                return $http.post(c6UrlMaker('payment', 'api'), data)
                     .then(function(response) {
                         return response.data;
                     });
