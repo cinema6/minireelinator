@@ -757,11 +757,11 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
                                                  'c6Debounce','c6AsyncQueue','ConfirmDialogService',
-                                                 'CampaignService','SelfieCampaignSummaryService',
+                                                 'CampaignService',
                                                  'SoftAlertService','intercom','PaymentService',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
                                                   c6Debounce , c6AsyncQueue , ConfirmDialogService ,
-                                                  CampaignService , SelfieCampaignSummaryService ,
+                                                  CampaignService ,
                                                   SoftAlertService , intercom , PaymentService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
@@ -776,8 +776,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function returnToDashboard() {
-                SelfieCampaignSummaryService.close();
-                SelfieCampaignSummaryService.pending(false);
+                // SelfieCampaignSummaryService.close();
+                // SelfieCampaignSummaryService.pending(false);
 
                 return c6State.goTo('Selfie:CampaignDashboard');
             }
@@ -984,20 +984,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
                 }
 
-                // here we need to save the campaign if it's a draft
-                // and then go to the Fund state
-                // we'll need a different method exposed for submitting
-                // once all the payment stuff is done. This method
-                // might go in the Confirm state since we'll want to show
-                // a spinner in that modal while we submit payment
-                // and then create the update request. We'll need to handle
-                // errors in the creation of payment method (Fund state) and
-                // then submission of payment (Confirm state) and the creation
-                // of update request. What happens if we successfully submit payment
-                // but then fail to create udpate request???
-
-                // TODO: Campaign Summary Service will need to change to Confirm state
                 this.pending = true;
+
+                // What happens here if save fails or if going to Fund state fails??
 
                 return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
                     .then(function() {
@@ -1013,14 +1002,16 @@ function( angular , c6State  , PaginatedListState                    ,
                     amount = arguments[1],
                     self = this;
 
-                console.log(paymentMethod, amount);
-
                 this.confirmationPending = true;
 
-                // we need to handle an error when submitting a payment
-                // and handle an error when creating an update request
+                // We'll need to handle errors in the creation of payment method (Fund state)
+                // and then submission of payment (Confirm state) and the creation
+                // of update request. What happens if we successfully submit payment
+                // but then fail to create udpate request???
 
-                return PaymentService.makePayment(paymentMethod, amount)
+                return (!!amount ?
+                        PaymentService.makePayment(paymentMethod.token, amount) :
+                        $q.when(null))
                     .then(createUpdateRequest)
                     .then(setPending)
                     .then(returnToDashboard)
@@ -1794,34 +1785,29 @@ function( angular , c6State  , PaginatedListState                    ,
                                                            'PaymentService',
             function                                      ( cinema6 , c6State , $q ,
                                                             PaymentService ) {
-                var SelfieState = c6State.get('Selfie');
-
                 this.templateUrl = 'views/selfie/campaigns/edit/fund.html';
                 this.controller = 'SelfieCampaignFundController';
                 this.controllerAs = 'SelfieCampaignFundCtrl';
 
                 this.model = function() {
-                    // need to fetch all payment methods
-                    // need to get account balance
-                    // if campaign is not a draft need to check if new budget
-                    // is more than current budget, in which case they need to add funds
-
-                    // need an account balance summary service that has an object
-                    // with all data, and gets updated whenever a checkBalance() method
-                    // is called. That way it will get updated everywhere on demand
-
-                    var campaign = this.cParent.campaign;
-
                     return $q.all({
-                        campaign: campaign,
-                        paymentMethods: cinema6.db.findAll('paymentMethod', {
-                            org: campaign.org || SelfieState.cModel.org.id
-                        })
+                        balance: PaymentService.getBalance(),
+                        paymentMethods: cinema6.db.findAll('paymentMethod')
                     });
                 };
 
                 this.afterModel = function(model) {
-                    var self = this;
+                    var CampaignState = this.cParent,
+                        self = this;
+
+                    this.campaign = CampaignState.campaign;
+                    this._campaign = CampaignState._campaign;
+
+                    this.updateRequest = CampaignState.updateRequest;
+                    this._updateRequest = CampaignState._updateRequest;
+
+                    this.interests = CampaignState.cModel.categories;
+                    this.schema = CampaignState.schema;
 
                     return $q.all((!model.paymentMethods.length ? {
                         token: PaymentService.getToken(),
@@ -1831,13 +1817,17 @@ function( angular , c6State  , PaginatedListState                    ,
                         self.newMethod = promises.newMethod;
                     });
                 };
+
+                this.enter = function() {
+                    c6State.goTo('Selfie:Campaign:Fund:Deposit');
+                };
             }]);
         }])
 
         .controller('SelfieCampaignFundController', ['cinema6','cState','c6State',
-                                                     'ConfirmDialogService',
+                                                     'ConfirmDialogService','PaymentService',
         function                                    ( cinema6 , cState , c6State ,
-                                                      ConfirmDialogService ) {
+                                                      ConfirmDialogService , PaymentService ) {
             var self = this;
 
             function handleError(error) {
@@ -1854,17 +1844,82 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
             }
 
+            Object.defineProperties(this, {
+                depositError: {
+                    get: function() {
+                        if (this.minDeposit &&
+                            (!this.deposit || this.deposit < this.minDeposit)) {
+                            // a deposit of at least {{minDeposit}} is required
+                            return 1;
+                        }
+
+                        if ((this.minDeposit && this.deposit < 1) ||
+                            (this.deposit && this.deposit < 1)) {
+                            // a deposit must be at least $1
+                            return 2;
+                        }
+
+                        return false;
+                    }
+                }
+            });
+
             this.initWithModel = function(model) {
                 this.paymentMethods = model.paymentMethods;
-                this.campaign = model.campaign;
 
+                // this might be the pojoified campaign
+                // or pojoified updateRequest.data
+                this.campaign = cState.campaign;
+
+                // this will always be the actual campaign model
+                this._campaign = cState._campaign;
+
+                // this will be the actual update request model or null
+                this._updateRequest = cState._updateRequest;
+
+                // this is a new payment method model and token.
+                // only defined if user has no payment methods.
+                // We'll need to create new payment method models
+                // in the success() method if we allow users to
+                // always be able to add new methods.
+                // Currently they can only add a new method once,
+                // when they don't have any set up already
                 this.newMethod = cState.newMethod;
                 this.token = cState.token;
 
+                // this defaults the radio button to Credit Card
+                // when the user has no existing payment methods
                 this.type = 'creditcard';
+
+                // this sets the chosen payment method to be the default
                 this.paymentMethod = model.paymentMethods.filter(function(method) {
                     return !!method.default;
                 })[0];
+
+                this.accounting = PaymentService.balance;
+                this.budgetChange = this.calculateBudgetChange();
+                this.minDeposit = this.calculateMinDeposit();
+                this.deposit = this.minDeposit;
+            };
+
+            this.calculateMinDeposit = function() {
+                var change = this.calculateBudgetChange(),
+                    availableFunds = this.accounting.remainingFunds;
+
+                return change > 0 && availableFunds < change ?
+                    Math.abs(availableFunds - change) :
+                    0;
+            };
+
+            this.calculateBudgetChange = function() {
+                var newBudget = this._updateRequest ?
+                        this._updateRequest.data.pricing.budget :
+                        this._campaign.pricing.budget,
+                    change = this.campaign.pricing.budget - newBudget;
+
+                return this._campaign.status === 'draft' ?
+                    this.campaign.pricing.budget :
+                    change;
             };
 
             this.success = function(method) {
@@ -1873,7 +1928,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     paymentMethodNonce: method.nonce
                 });
 
-                this.newMethod.save()
+                return this.newMethod.save()
                     .then(function(method) {
                         self.pending = false;
 
@@ -1881,9 +1936,16 @@ function( angular , c6State  , PaginatedListState                    ,
                         self.paymentMethod = method;
 
                         if (method.type === 'creditCard') {
-                            c6State.goTo('Selfie:Campaign:Fund:Confirm', [this.paymentMethod]);
+                            return c6State.goTo('Selfie:Campaign:Fund:Confirm', [{
+                                paymentMethod: method,
+                                amount: self.deposit
+                            }]);
                         }
                     }, handleError);
+            };
+
+            this.failure = function() {
+                this.pending = false;
             };
 
             this.cancel = function() {
@@ -1891,16 +1953,27 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.confirm = function() {
-                // if this.paymentMethods.length is 0 we need to try
-                // submitting the braintree form
+                // if this.paymentMethods.length is 0 then braintree's
+                // form will be submitted and the state transition is
+                // handled in the success() method
 
                 this.pending = true;
 
                 if (this.paymentMethod) {
                     this.pending = false;
-                    c6State.goTo('Selfie:Campaign:Fund:Confirm', [this.paymentMethod]);
+                    c6State.goTo('Selfie:Campaign:Fund:Confirm', [{
+                        paymentMethod: this.paymentMethod,
+                        amount: this.deposit
+                    }]);
                 }
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Campaign:Fund:Deposit', [function() {
+                this.templateUrl = 'views/selfie/campaigns/edit/fund_deposit.html';
+            }]);
         }])
 
         .config(['c6StateProvider',
@@ -1909,42 +1982,31 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.templateUrl = 'views/selfie/campaigns/edit/fund_confirm.html';
                 this.controller = 'SelfieCampaignFundConfirmController';
                 this.controllerAs = 'SelfieCampaignFundConfirmCtrl';
-
-                this.afterModel = function() {
-                    this.campaign = this.cParent.campaign;
-                    this.interests = this.cParent.cModel.categories;
-                    this.schema = this.cParent.schema;
-                };
             }]);
         }])
 
-        .controller('SelfieCampaignFundConfirmController', ['cState','c6State','CampaignService',
-        function                                           ( cState , c6State , CampaignService ) {
+        .controller('SelfieCampaignFundConfirmController', ['cState','c6State',
+                                                            'CampaignService','PaymentService',
+        function                                           ( cState , c6State ,
+                                                             CampaignService , PaymentService ) {
             this.initWithModel = function(model) {
-                this.paymentMethod = model;
+                this.paymentMethod = model.paymentMethod;
+                this.deposit = model.amount || 0;
 
-                this.campaign = cState.campaign;
-                this.interests = cState.interests;
-                this.schema = cState.schema;
+                this.campaign = cState.cParent.campaign;
+                this.schema = cState.cParent.schema;
 
                 extend(this, CampaignService.getSummary({
                     campaign: this.campaign,
-                    interests: this.interests
+                    interests: cState.cParent.interests
                 }));
 
                 this.cpv = CampaignService.getCpv(this.campaign, this.schema);
-            };
-
-            this.cancel = function() {
-                c6State.goTo(cState.cParent.cName);
+                this.accounting = PaymentService.balance;
             };
 
             this.goBack = function() {
-                c6State.goTo('Selfie:Campaign:Fund');
-            };
-
-            this.confirm = function() {
-                // this.paymentMethod.token is what is sent to make the the payment
+                c6State.goTo('Selfie:Campaign:Fund:Deposit');
             };
         }])
 

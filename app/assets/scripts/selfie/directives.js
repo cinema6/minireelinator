@@ -47,7 +47,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     var checkView = attrs.checkView;
 
                     function handleModelChange(value) {
-                        if (ngModel.$modelValue || (checkView && ngModel.$viewValue)) {
+                        if ((ngModel.$modelValue || ngModel.$modelValue === 0) ||
+                            (checkView && (ngModel.$viewValue || ngModel.$viewValue === 0))) {
                             $element.addClass('form__fillCheck--filled');
                         } else {
                             $element.removeClass('form__fillCheck--filled');
@@ -1387,6 +1388,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             return {
                 restrict: 'E',
                 scope: {
+                    hideSaveButton: '=',
                     clientToken: '@',
                     onSuccess: '&',
                     onFailure: '&',
@@ -1457,6 +1459,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                             scope.$apply(function() {
                                 scope.errorMessage = event.message;
                                 scope.pending = false;
+                                scope.onFailure();
                             });
                         },
                         onPaymentMethodReceived: function(method) {
@@ -1613,56 +1616,6 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     .then(login)
                     .then(goToApp)
                     .catch(writeError);
-            };
-        }])
-
-        .directive('selfieCampaignSummary', ['SelfieCampaignSummaryService',
-        function                            ( SelfieCampaignSummaryService ) {
-            return {
-                restrict: 'E',
-                templateUrl: 'views/selfie/directives/campaign_summary.html',
-                scope: {},
-                link: function(scope) {
-                    scope.model = SelfieCampaignSummaryService.model;
-                }
-            };
-        }])
-
-        .service('SelfieCampaignSummaryService', ['CampaignService',
-        function                                 ( CampaignService ) {
-            var model = {};
-
-            Object.defineProperty(this, 'model', {
-                get: function() {
-                    return model;
-                }
-            });
-
-            this.display = function(dialogModel) {
-                var campaign = dialogModel.campaign,
-                    interests = dialogModel.interests,
-                    schema = dialogModel.schema;
-
-                if (!campaign || !interests || !schema) { return; }
-
-                extend(model, dialogModel);
-
-                extend(model, CampaignService.getSummary({
-                    campaign: campaign,
-                    interests: interests
-                }));
-
-                model.cpv = CampaignService.getCpv(campaign, schema);
-
-                model.show = true;
-            };
-
-            this.close = function() {
-                model.show = false;
-            };
-
-            this.pending = function(bool) {
-                model.pending = bool;
             };
         }])
 

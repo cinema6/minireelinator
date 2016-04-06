@@ -101,7 +101,7 @@
                 </fieldset>
 
                 <div class="ui__btnHolder--sub">
-                    <button ng-class="{ 'btnSpinner__waiting' : pending }" ng-click="pending = true" class="action__btn action__btn--wide">Save</button>
+                    <button ng-show="!hideSaveButton" id="credit-card-submit" ng-class="{ 'btnSpinner__waiting' : pending }" ng-click="pending = true" class="action__btn action__btn--wide">Save</button>
                 </div>
 
                 <span class="alertMessage alert__failure text--center" ng-show="!!errorMessage">{{errorMessage}}</span>

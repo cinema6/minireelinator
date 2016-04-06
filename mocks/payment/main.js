@@ -38,7 +38,7 @@ module.exports = function(http) {
             });
     }
 
-    http.whenGET('/api/accounting/balance', function() {
+    http.whenGET('/api/accounting/balance', function(request) {
         var allDeposits = grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
                 .map(function(path) {
                     return grunt.file.readJSON(path);
@@ -55,7 +55,28 @@ module.exports = function(http) {
                     return grunt.file.readJSON(path);
                 });
 
-        // TODO: calculate balance and outstandingBudget
+        var credits = allDeposits.reduce(function(result, payment) {
+            return result + (payment.amount || 0);
+        }, 0);
+
+        var campaignBudget = allCampaigns.reduce(function(result, campaign) {
+            if ((/active|paused|error|pending/).test(campaign.status) && !campaign.updateRequest) {
+                return result + campaign.pricing.budget;
+            }
+            return result;
+        }, 0);
+
+        var updateRequestBudget = allUpdateRequests.reduce(function(result, updateRequest) {
+            if ((/active|paused|error|pending/).test(updateRequest.data.status)) {
+                return result + ((updateRequest.data && updateRequest.data.pricing && updateRequest.data.pricing.budget) || 0);
+            }
+            return result;
+        }, 0);
+
+        return this.respond(200, {
+            balance: credits,
+            outstandingBudget: campaignBudget + updateRequestBudget
+        });
     });
 
     http.whenPOST('/api/payment', function(request) {
@@ -120,7 +141,8 @@ module.exports = function(http) {
 
     http.whenPOST('/api/payments/methods', function(request) {
         var token = genId('pay'),
-            type = ['creditCard', 'paypal'][randomNum(0,1)],
+            // type = ['creditCard', 'paypal'][randomNum(0,1)],
+            type = 'creditCard',
             currentTime = (new Date()).toISOString(),
             paymentMethod = {
                 token: token,

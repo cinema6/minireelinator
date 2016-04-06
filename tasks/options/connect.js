@@ -44,6 +44,7 @@
                             '/api/search': 'mocks/search/main.js',
                             '/api/auth': 'mocks/auth/main.js',
                             '/api/geo': 'mocks/geo/main.js',
+                            '/api/accounting':'mocks/payment/main.js',
                             '/api/account': 'mocks/account/main.js',
                             '/api/content': 'mocks/content/main.js',
                             '/api/election': 'mocks/vote/main.js',

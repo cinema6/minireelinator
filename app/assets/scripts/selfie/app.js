@@ -29,12 +29,17 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                                 );
                                 this.state(
                                     'Selfie:Campaign:Fund',
-                                    'Selfie:New:Campaign:Fund'
-                                );
-                                this.state(
-                                    'Selfie:Campaign:Fund:Confirm',
-                                    'Selfie:New:Campaign:Fund:Confirm'
-                                );
+                                    'Selfie:New:Campaign:Fund',
+                                    function() {
+                                        this.state(
+                                            'Selfie:Campaign:Fund:Deposit',
+                                            'Selfie:New:Campaign:Fund:Deposit'
+                                        );
+                                        this.state(
+                                            'Selfie:Campaign:Fund:Confirm',
+                                            'Selfie:New:Campaign:Fund:Confirm'
+                                        );
+                                    });
                             });
                         });
                         this.route('/edit/:campaignId', 'Selfie:EditCampaign', function() {
@@ -45,12 +50,17 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                                 );
                                 this.state(
                                     'Selfie:Campaign:Fund',
-                                    'Selfie:Edit:Campaign:Fund'
-                                );
-                                this.state(
-                                    'Selfie:Campaign:Fund:Confirm',
-                                    'Selfie:Edit:Campaign:Fund:Confirm'
-                                );
+                                    'Selfie:Edit:Campaign:Fund',
+                                    function() {
+                                        this.state(
+                                            'Selfie:Campaign:Fund:Deposit',
+                                            'Selfie:Edit:Campaign:Fund:Deposit'
+                                        );
+                                        this.state(
+                                            'Selfie:Campaign:Fund:Confirm',
+                                            'Selfie:Edit:Campaign:Fund:Confirm'
+                                        );
+                                    });
                             });
                         });
                         this.route('/manage/:campaignId',

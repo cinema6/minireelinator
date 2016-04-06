@@ -456,6 +456,30 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
 
         .service('PaymentService', ['$http','c6UrlMaker',
         function                   ( $http , c6UrlMaker ) {
+            var accounting = {};
+
+            Object.defineProperties(this, {
+                balance: {
+                    get: function() {
+                        return accounting;
+                    }
+                }
+            });
+
+            this.getBalance = function() {
+                return $http.get(c6UrlMaker('accounting/balance', 'api'))
+                    .then(function(response) {
+                        var balance = response.data.balance,
+                            outstandingBudget = response.data.outstandingBudget;
+
+                        accounting.balance = balance;
+                        accounting.outstandingBudget = outstandingBudget;
+                        accounting.remainingFunds = balance - outstandingBudget;
+
+                        return accounting;
+                    });
+            };
+
             this.getToken = function() {
                 return $http.get(c6UrlMaker('payments/clientToken', 'api'))
                     .then(function(response) {
@@ -470,11 +494,13 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     });
             };
 
-            this.makePayment = function(data) {
-                return $http.post(c6UrlMaker('payment', 'api'), data)
-                    .then(function(response) {
-                        return response.data;
-                    });
+            this.makePayment = function(token, amount) {
+                return $http.post(c6UrlMaker('payment', 'api'), {
+                    paymentMethod: token,
+                    amount: amount
+                }).then(function(response) {
+                    return response.data;
+                });
             };
         }])
 
