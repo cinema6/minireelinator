@@ -6,6 +6,7 @@
                 <a c6-sref="Selfie:CampaignDashboard">Back to Campaigns</a>
             </h1>
             <div class="pageHeader__actions">
+                <account-balance></account-balance>
                 <div class="btnGroup">
                     <button ng-click="SelfieCampaignCtrl.copy()" ng-class="{ 'btnSpinner__waiting' : SelfieCampaignCtrl.pendingCopy }" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-copy"></i> Copy</button>
                     <button ng-if="!SelfieCampaignCtrl.campaign.status || SelfieCampaignCtrl.campaign.status === 'draft'" ng-click="SelfieCampaignCtrl.delete()" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-trash-o"></i> Delete</button>

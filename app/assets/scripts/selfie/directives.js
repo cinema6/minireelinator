@@ -27,6 +27,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
     return angular.module('c6.app.selfie.directives', [])
         .value('Chart', Chart)
 
+        .directive('accountBalance', [function() {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/account_balance.html'
+            };
+        }])
+
         .directive('stopPropagate', [function() {
             return {
                 restrict: 'A',
@@ -216,21 +223,6 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
                         if (input && input.focus) {
                             input.focus();
-                        }
-                    });
-                }
-            };
-        }])
-
-        .directive('submitFormById', ['$document',function($document) {
-            return {
-                restrict: 'A',
-                link: function(scope, $element, attrs) {
-                    $element.on('click', function() {
-                        var form = $document[0].getElementById(attrs.submitFormById);
-
-                        if (form && form.submit) {
-                            form.submit();
                         }
                     });
                 }

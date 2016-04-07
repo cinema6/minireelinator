@@ -7,6 +7,7 @@
                 {{campaign.name}}
             </h1>
             <div class="pageHeader__actions">
+                <account-balance></account-balance>
                 <div class="btnGroup">
                     <button ng-click="SelfieManageCampaignCtrl.edit()" ng-class="{'btn--disabled' : !SelfieManageCampaignCtrl.canEdit }" ng-disabled="!SelfieManageCampaignCtrl.canEdit" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-pencil-square-o"></i> Edit</button>
                     <button ng-click="SelfieManageCampaignCtrl.copy(campaign)" ng-class="{ 'btnSpinner__waiting' : SelfieManageCampaignCtrl.pendingCopy }" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-copy"></i> Copy</button>
