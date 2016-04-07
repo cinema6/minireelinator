@@ -1680,6 +1680,12 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
+        .filter('abs', [function() {
+            return function(number) {
+                return Math.abs(number);
+            };
+        }])
+
         .filter('videoService', [function() {
             return function(service) {
                 switch (service) {

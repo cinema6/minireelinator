@@ -757,12 +757,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
                                                  'c6Debounce','c6AsyncQueue','ConfirmDialogService',
-                                                 'CampaignService',
-                                                 'SoftAlertService','intercom','PaymentService',
+                                                 'CampaignService','PaymentService',
+                                                 'SoftAlertService','intercom',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
                                                   c6Debounce , c6AsyncQueue , ConfirmDialogService ,
-                                                  CampaignService ,
-                                                  SoftAlertService , intercom , PaymentService ) {
+                                                  CampaignService , PaymentService ,
+                                                  SoftAlertService , intercom ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -776,9 +776,6 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function returnToDashboard() {
-                // SelfieCampaignSummaryService.close();
-                // SelfieCampaignSummaryService.pending(false);
-
                 return c6State.goTo('Selfie:CampaignDashboard');
             }
 
@@ -1794,21 +1791,18 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function(model) {
-                    var CampaignState = this.cParent,
+                    var hasPaymentMethods = model.paymentMethods.length,
+                        CampaignState = this.cParent,
                         self = this;
 
-                    this.campaign = CampaignState.campaign;
-                    this._campaign = CampaignState._campaign;
-
-                    this.updateRequest = CampaignState.updateRequest;
                     this._updateRequest = CampaignState._updateRequest;
-
+                    this._campaign = CampaignState._campaign;
+                    this.campaign = CampaignState.campaign;
                     this.interests = CampaignState.cModel.categories;
                     this.schema = CampaignState.schema;
-
                     this.budgetHasChanged = !!this.calculateBudgetChange();
 
-                    return $q.all((!model.paymentMethods.length ? {
+                    return $q.all((!hasPaymentMethods ? {
                         token: PaymentService.getToken(),
                         newMethod: cinema6.db.create('paymentMethod', {})
                     } : {})).then(function(promises) {
@@ -1824,36 +1818,22 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.calculateBudgetChange = function() {
-                    var newBudget = this._updateRequest ?
+                    var newBudget = this.campaign.pricing.budget,
+                        oldBudget = this._updateRequest ?
                             this._updateRequest.data.pricing.budget :
                             this._campaign.pricing.budget,
-                        change = this.campaign.pricing.budget - newBudget;
+                        change = newBudget - oldBudget;
 
-                    return this._campaign.status === 'draft' ?
-                        this.campaign.pricing.budget : change;
+                    return this._campaign.status === 'draft' ? newBudget : change;
                 };
             }]);
         }])
 
-        .controller('SelfieCampaignFundController', ['cinema6','cState','c6State','CampaignService',
-                                                     'ConfirmDialogService','PaymentService',
-        function                                    ( cinema6 , cState , c6State , CampaignService ,
-                                                      ConfirmDialogService , PaymentService ) {
+        .controller('SelfieCampaignFundController', ['cState','c6State','CampaignService',
+                                                     'PaymentService',
+        function                                    ( cState , c6State , CampaignService ,
+                                                      PaymentService ) {
             var self = this;
-
-            function handleError(error) {
-                ConfirmDialogService.display({
-                    prompt: 'There was a problem saving your payment method: ' + error.data,
-                    affirm: 'OK',
-
-                    onCancel: function() {
-                        return ConfirmDialogService.close();
-                    },
-                    onAffirm: function() {
-                        return ConfirmDialogService.close();
-                    }
-                });
-            }
 
             Object.defineProperties(this, {
                 depositError: {
@@ -1913,7 +1893,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.minDeposit = this.calculateMinDeposit();
                 this.deposit = this.minDeposit;
 
-                this.cpv = CampaignService.getCpv(this.campaign, cState.schema);
+                this.cpv = CampaignService.getCpv(this.campaign, this.schema);
                 extend(this, CampaignService.getSummary({
                     campaign: this.campaign,
                     interests: cState.interests
@@ -1933,12 +1913,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 // form will be submitted and the state transition is
                 // handled in the success() method
 
-                this.pending = true;
-
-                if (this.paymentMethod) {
-                    this.pending = false;
+                if (!this.paymentMethod) {
+                    this.pending = true;
+                } else {
                     this.deposit = this.deposit || 0;
-
                     c6State.goTo('Selfie:Campaign:Fund:Confirm');
                 }
             };
