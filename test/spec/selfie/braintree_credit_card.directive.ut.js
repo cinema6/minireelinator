@@ -271,10 +271,17 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                     message: 'There was a problem'
                 };
 
+                compileDirective({
+                    failure: function() {}
+                });
+
+                spyOn(scope, 'onFailure');
+
                 config.onError(error);
 
                 expect(scope.errorMessage).toEqual(error.message);
                 expect(scope.pending).toBe(false);
+                expect(scope.onFailure).toHaveBeenCalled();
             });
         });
     });
