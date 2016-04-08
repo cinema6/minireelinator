@@ -108,8 +108,72 @@ define(['app'], function(appModule) {
             });
 
             describe('afterModel()', function() {
-                beforeEach(function() {
-                    spyOn(FundState, 'calculateBudgetChange').and.returnValue(100);
+                describe('when campaign is a draft', function() {
+                    beforeEach(function() {
+                        FundState.cParent._campaign.status = 'draft';
+                        FundState.cParent._campaign.pricing.budget = 500;
+                        FundState.cParent.campaign.pricing.budget = 500;
+
+                        FundState.afterModel({ paymentMethods: [] });
+                    });
+
+                    it('should set the budget change to the full campaign budget', function() {
+                        expect(FundState.budgetChange).toBe(500);
+                        expect(FundState.newBudget).toBe(500);
+                        expect(FundState.oldBudget).toBe(500);
+                    });
+
+                    it('should set the idDraft flag to true', function() {
+                        expect(FundState.isDraft).toBe(true);
+                    });
+                });
+
+                describe('when campaign is not a draft', function() {
+                    beforeEach(function() {
+                        FundState.cParent._campaign.status = 'active';
+                        FundState.cParent._campaign.pricing.budget = 200;
+                        FundState.cParent.campaign.pricing.budget = 400;
+                    });
+
+                    describe('when the campaign does not have a pending update request', function() {
+                        beforeEach(function() {
+                            FundState.afterModel({ paymentMethods: [] });
+                        });
+
+                        it('should set the old budget to the budget from the original campaign', function() {
+                            expect(FundState.budgetChange).toBe(200);
+                            expect(FundState.newBudget).toBe(400);
+                            expect(FundState.oldBudget).toBe(200);
+                        });
+
+                        it('should set the isDraft flag to false', function() {
+                            expect(FundState.isDraft).toBe(false);
+                        });
+                    });
+
+                    describe('when the campaign has a pending update request', function() {
+                        beforeEach(function() {
+                            FundState.cParent._updateRequest = {
+                                data: {
+                                    pricing: {
+                                        budget: 300
+                                    }
+                                }
+                            };
+
+                            FundState.afterModel({ paymentMethods: [] });
+                        });
+
+                        it('should set the old budget to the budget from the update request', function() {
+                            expect(FundState.budgetChange).toBe(100);
+                            expect(FundState.newBudget).toBe(400);
+                            expect(FundState.oldBudget).toBe(300);
+                        });
+
+                        it('should set the isDraft flag to false', function() {
+                            expect(FundState.isDraft).toBe(false);
+                        });
+                    });
                 });
 
                 it('should add properties from the parent state', function() {
@@ -117,27 +181,9 @@ define(['app'], function(appModule) {
                         paymentMethods: []
                     });
 
-                    expect(FundState._updateRequest).toBe(FundState.cParent._updateRequest);
-                    expect(FundState._campaign).toBe(FundState.cParent._campaign);
                     expect(FundState.campaign).toBe(FundState.cParent.campaign);
-                    expect(FundState.interests).toBe(FundState.cParent.cModel.categories);
                     expect(FundState.schema).toBe(FundState.cParent.schema);
-                });
-
-                it('should set the budgetHasChanged flag based on calculateBudgetChange', function() {
-                    FundState.afterModel({
-                        paymentMethods: []
-                    });
-
-                    expect(FundState.budgetHasChanged).toBe(true);
-
-                    FundState.calculateBudgetChange.and.returnValue(0);
-
-                    FundState.afterModel({
-                        paymentMethods: []
-                    });
-
-                    expect(FundState.budgetHasChanged).toBe(false);
+                    expect(FundState.interests).toBe(FundState.cParent.cModel.categories);
                 });
 
                 describe('when there are no paymentMethods', function() {
@@ -184,7 +230,15 @@ define(['app'], function(appModule) {
             describe('enter()', function() {
                 describe('when budget has changed', function() {
                     it('should go to Selfie:Campaign:Fund:Deposit state', function() {
-                        FundState.budgetHasChanged = true;
+                        FundState.budgetChange = 100;
+
+                        FundState.enter();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Campaign:Fund:Deposit');
+                    });
+
+                    it('should go to Selfie:Campaign:Fund:Deposit state', function() {
+                        FundState.budgetChange = -100;
 
                         FundState.enter();
 
@@ -194,75 +248,11 @@ define(['app'], function(appModule) {
 
                 describe('when budget has not changed', function() {
                     it('should go to Selfie:Campaign:Fund:Confirm state', function() {
-                        FundState.budgetHasChanged = false;
+                        FundState.budgetHasChanged = 0;
 
                         FundState.enter();
 
                         expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Campaign:Fund:Confirm');
-                    });
-                });
-            });
-
-            describe('calculateBudgetChange()', function() {
-                beforeEach(function() {
-                    FundState.afterModel({
-                        paymentMethods: []
-                    });
-                });
-
-                describe('when campaign is draft', function() {
-                    it('should be the full campaign budget', function() {
-                        expect(FundState.calculateBudgetChange()).toBe(100);
-                    });
-                });
-
-                describe('when campaign is not draft', function() {
-                    beforeEach(function() {
-                        FundState.cParent._campaign.status = 'pending';
-                    });
-
-                    describe('when budget has not changed', function() {
-                        it('should set budgetHasChanged flag to false', function() {
-                            expect(FundState.calculateBudgetChange()).toBe(0);
-                        });
-                    });
-
-                    describe('when budget has changed', function() {
-                        it('should set budgetHasChanged flag to true', function() {
-                            FundState.cParent._campaign.pricing.budget = 75;
-
-                            expect(FundState.calculateBudgetChange()).toBe(25);
-                        });
-                    });
-
-                    describe('when there is an updateRequest', function() {
-                        describe('when budget has not changed', function() {
-                            it('should set budgetHasChanged flag to false', function() {
-                                FundState._updateRequest = {
-                                    data: {
-                                        pricing: {
-                                            budget: 100
-                                        }
-                                    }
-                                };
-
-                                expect(FundState.calculateBudgetChange()).toBe(0);
-                            });
-                        });
-
-                        describe('when budget has changed', function() {
-                            it('should set budgetHasChanged flag to true', function() {
-                                FundState._updateRequest = {
-                                    data: {
-                                        pricing: {
-                                            budget: 25
-                                        }
-                                    }
-                                };
-
-                                expect(FundState.calculateBudgetChange()).toBe(75);
-                            });
-                        });
                     });
                 });
             });

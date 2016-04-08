@@ -113,8 +113,8 @@
                             </li>
                             <li>
                                 <div class="grid__item two-thirds orderItem__label">
-                                    <span ng-if="SelfieCampaignFundCtrl._campaign.status === 'draft'">Total Campaign Budget</span>
-                                    <span ng-if="SelfieCampaignFundCtrl._campaign.status !== 'draft'">Total Campaign Budget Change</span>
+                                    <span ng-if="SelfieCampaignFundCtrl.isDraft">Total Campaign Budget</span>
+                                    <span ng-if="!SelfieCampaignFundCtrl.isDraft">Total Campaign Budget Change</span>
                                 </div><!--
                                 --><div class="grid__item one-third">
                                     <div ng-if="SelfieCampaignFundCtrl.budgetChange >= 0" class="text--right">${{SelfieCampaignFundCtrl.budgetChange | number}}</div>

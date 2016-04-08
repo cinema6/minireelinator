@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('SelfieCampaignFundController', function() {
+    fdescribe('SelfieCampaignFundController', function() {
         var $rootScope,
             $controller,
             c6State,
@@ -31,7 +31,11 @@ define(['app'], function(appModule) {
             });
 
             PaymentService = {
-                balance: {}
+                balance: {
+                    remainingFunds: 50,
+                    outstandingBudget: 550,
+                    balance: 600
+                }
             };
 
             paymentMethods = [
@@ -62,11 +66,11 @@ define(['app'], function(appModule) {
                 newMethod: {
                     save: jasmine.createSpy('newMethod.save()').and.returnValue(saveDeferred.promise)
                 },
-                calculateBudgetChange: jasmine.createSpy('cState.calculateBudgetChange()').and.returnValue(100),
-                _updateRequest: {},
-                _campaign: {},
+                isDraft: true,
+                budgetChange: 80,
                 campaign: {},
                 schema: {},
+                interests: {}
             };
 
             spyOn(CampaignService, 'getCpv').and.returnValue(0.08);
@@ -93,26 +97,69 @@ define(['app'], function(appModule) {
                             SelfieCampaignFundCtrl.deposit = undefined;
                             expect(SelfieCampaignFundCtrl.depositError).toBe(1);
 
-                            SelfieCampaignFundCtrl.deposit = undefined;
-                            expect(SelfieCampaignFundCtrl.depositError).toBe(1);
+                            SelfieCampaignFundCtrl.deposit = 60;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
                         });
                     });
 
                     describe('when deposit is less than minimum', function() {
                         it('should return 1', function() {
+                            SelfieCampaignFundCtrl.minDeposit = 50;
 
+                            SelfieCampaignFundCtrl.deposit = 30;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(1);
+
+                            SelfieCampaignFundCtrl.deposit = 60;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
                         });
                     });
 
                     describe('when deposit is greater than or equal to minimum', function() {
                         it('should return false', function() {
+                            SelfieCampaignFundCtrl.minDeposit = 50;
 
+                            SelfieCampaignFundCtrl.deposit = 30;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(1);
+
+                            SelfieCampaignFundCtrl.deposit = 50;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
+
+                            SelfieCampaignFundCtrl.deposit = 50;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
                         });
                     });
                 });
 
                 describe('when a minimum deposit is not required', function() {
+                    describe('when deposit is less than 1', function() {
+                        it('should return 2', function() {
+                            SelfieCampaignFundCtrl.minDeposit = 0;
 
+                            SelfieCampaignFundCtrl.deposit = 0.5;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(2);
+
+                            SelfieCampaignFundCtrl.deposit = 0;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
+
+                            SelfieCampaignFundCtrl.deposit = 50;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
+                        });
+                    });
+
+                    describe('when deposit is undefined', function() {
+                        it('should return false', function() {
+                            SelfieCampaignFundCtrl.minDeposit = 0;
+
+                            SelfieCampaignFundCtrl.deposit = undefined;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
+
+                            SelfieCampaignFundCtrl.deposit = 0;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
+
+                            SelfieCampaignFundCtrl.deposit = 50;
+                            expect(SelfieCampaignFundCtrl.depositError).toBe(false);
+                        });
+                    });
                 });
             });
         });
@@ -120,27 +167,34 @@ define(['app'], function(appModule) {
         describe('methods', function() {
             describe('initWithModel()', function() {
                 it('add the model and the token', function() {
-                    spyOn(SelfieCampaignFundCtrl, 'calculateMinDeposit').and.returnValue(50);
+                    spyOn(SelfieCampaignFundCtrl, 'calculateMinDeposit').and.callThrough();
 
                     SelfieCampaignFundCtrl.initWithModel({
                         paymentMethods: paymentMethods
                     });
 
                     expect(SelfieCampaignFundCtrl.paymentMethods).toBe(paymentMethods);
-                    expect(SelfieCampaignFundCtrl.campaign).toBe(cState.campaign);
-                    expect(SelfieCampaignFundCtrl._campaign).toBe(cState._campaign);
-                    expect(SelfieCampaignFundCtrl._updateRequest).toBe(cState._updateRequest);
                     expect(SelfieCampaignFundCtrl.paymentMethod).toBe(paymentMethods[0]);
+
+                    expect(SelfieCampaignFundCtrl.newMethod).toBe(cState.newMethod);
                     expect(SelfieCampaignFundCtrl.token).toBe(cState.token);
+
                     expect(SelfieCampaignFundCtrl.schema).toBe(cState.schema);
+                    expect(SelfieCampaignFundCtrl.isDraft).toBe(cState.isDraft);
+                    expect(SelfieCampaignFundCtrl.campaign).toBe(cState.campaign);
+                    expect(SelfieCampaignFundCtrl.newPaymentType).toEqual('creditcard');
+                    expect(SelfieCampaignFundCtrl.budgetChange).toEqual(cState.budgetChange);
                     expect(SelfieCampaignFundCtrl.accounting).toBe(PaymentService.balance);
-                    expect(SelfieCampaignFundCtrl.minDeposit).toEqual(50);
-                    expect(SelfieCampaignFundCtrl.calculateMinDeposit).toHaveBeenCalled();
-                    expect(SelfieCampaignFundCtrl.budgetChange).toEqual(100);
-                    expect(cState.calculateBudgetChange).toHaveBeenCalled();
-                    expect(SelfieCampaignFundCtrl).toEqual(jasmine.objectContaining(summary));
+                    expect(SelfieCampaignFundCtrl.minDeposit).toEqual(30);
                     expect(SelfieCampaignFundCtrl.cpv).toEqual(0.08);
-                    expect(SelfieCampaignFundCtrl.type).toEqual('creditcard');
+                    expect(SelfieCampaignFundCtrl).toEqual(jasmine.objectContaining(summary));
+
+                    expect(SelfieCampaignFundCtrl.calculateMinDeposit).toHaveBeenCalled();
+                    expect(CampaignService.getCpv).toHaveBeenCalledWith(cState.campaign, cState.schema);
+                    expect(CampaignService.getSummary).toHaveBeenCalledWith({
+                        campaign: cState.campaign,
+                        interests: cState.interests
+                    });
                 });
             });
 
@@ -148,7 +202,7 @@ define(['app'], function(appModule) {
                 describe('when budget change is greater than 0', function() {
                     describe('when availableFunds are less than budget change', function() {
                         it('should be the difference', function() {
-                            cState.calculateBudgetChange.and.returnValue(100);
+                            SelfieCampaignFundCtrl.budgetChange = 100;
                             SelfieCampaignFundCtrl.accounting = {
                                 remainingFunds: 20
                             };
@@ -159,7 +213,7 @@ define(['app'], function(appModule) {
 
                     describe('when availableFunds are greater than budget change', function() {
                         it('should be the difference', function() {
-                            cState.calculateBudgetChange.and.returnValue(100);
+                            SelfieCampaignFundCtrl.budgetChange = 100;
                             SelfieCampaignFundCtrl.accounting = {
                                 remainingFunds: 200
                             };
@@ -171,14 +225,14 @@ define(['app'], function(appModule) {
 
                 describe('when budget change is less than or equal to 0', function() {
                     it('should be 0', function() {
-                        cState.calculateBudgetChange.and.returnValue(0);
+                        SelfieCampaignFundCtrl.budgetChange = 0;
                         SelfieCampaignFundCtrl.accounting = {
                             remainingFunds: 100
                         };
 
                         expect(SelfieCampaignFundCtrl.calculateMinDeposit()).toEqual(0);
 
-                        cState.calculateBudgetChange.and.returnValue(-50);
+                        SelfieCampaignFundCtrl.budgetChange = -50;
 
                         expect(SelfieCampaignFundCtrl.calculateMinDeposit()).toEqual(0);
                     });
@@ -330,7 +384,7 @@ define(['app'], function(appModule) {
             describe('goBack()', function() {
                 describe('when budget has not changed', function() {
                     it('should go to Selfie:Campaign state', function() {
-                        cState.budgetHasChanged = false;
+                        SelfieCampaignFundCtrl.budgetChange = 0;
 
                         SelfieCampaignFundCtrl.goBack();
 
@@ -340,7 +394,7 @@ define(['app'], function(appModule) {
 
                 describe('when budget has changed', function() {
                     it('should go to Selfie:Campaign:Fund:Deposit state', function() {
-                        cState.budgetHasChanged = true;
+                        SelfieCampaignFundCtrl.budgetChange = 100;
 
                         SelfieCampaignFundCtrl.goBack();
 

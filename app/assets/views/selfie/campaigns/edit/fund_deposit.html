@@ -33,7 +33,7 @@
                                     <div class="text--right">${{SelfieCampaignFundCtrl.accounting.remainingFunds | number}}</div>
                                 </div>
                             </li>
-                            <li ng-if="SelfieCampaignFundCtrl._campaign.status !== 'draft'">
+                            <li ng-if="SelfieCampaignFundCtrl.isDraft">
                                 <div class="grid__item two-thirds orderItem__label">Budget Change</div><!--
                                 --><div class="grid__item one-third">
                                     <div ng-if="SelfieCampaignFundCtrl.budgetChange >= 0" class="text--right">${{SelfieCampaignFundCtrl.budgetChange | number}}</div>
@@ -100,8 +100,8 @@
                                         </braintree-paypal>
 
                                         <div class="paymentMethod__optionTypes">
-                                            <input type="radio" name="paymentType" id="paymentType__auto" value="creditcard" ng-model="SelfieCampaignFundCtrl.type"> <label for="paymentType__auto"><span class="radio__input"></span>Credit Card</label>
-                                            <input type="radio" name="paymentType" id="paymentType__selected" value="paypal" ng-model="SelfieCampaignFundCtrl.type" hidden-input-click="braintree-paypal-button"> <label for="paymentType__selected"><span class="radio__input"></span>PayPal</label>
+                                            <input type="radio" name="paymentType" id="paymentType__auto" value="creditcard" ng-model="SelfieCampaignFundCtrl.newPaymentType"> <label for="paymentType__auto"><span class="radio__input"></span>Credit Card</label>
+                                            <input type="radio" name="paymentType" id="paymentType__selected" value="paypal" ng-model="SelfieCampaignFundCtrl.newPaymentType" hidden-input-click="braintree-paypal-button"> <label for="paymentType__selected"><span class="radio__input"></span>PayPal</label>
                                         </div>
                                     </div>
 
@@ -110,7 +110,7 @@
 
                                     <!-- BRAINTREE CREDIT CARD FORM -->
                                     <div ng-if="!SelfieCampaignFundCtrl.paymentMethods.length">
-                                        <div ng-show="SelfieCampaignFundCtrl.type === 'creditcard'">
+                                        <div ng-show="SelfieCampaignFundCtrl.newPaymentType === 'creditcard'">
                                             <braintree-credit-card hide-save-button="true" client-token="{{SelfieCampaignFundCtrl.token}}" method="SelfieCampaignFundCtrl.newMethod" on-success="SelfieCampaignFundCtrl.success(method)" on-cancel="SelfieCampaignFundCtrl.cancel()" on-failure="SelfieCampaignFundCtrl.failure()"></braintree-credit-card>
                                         </div>
                                     </div>

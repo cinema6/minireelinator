@@ -1796,12 +1796,20 @@ function( angular , c6State  , PaginatedListState                    ,
                         CampaignState = this.cParent,
                         self = this;
 
-                    this._updateRequest = CampaignState._updateRequest;
-                    this._campaign = CampaignState._campaign;
+                    // this could be the pojoified campaign
+                    // or pojoified updateRequest.data
                     this.campaign = CampaignState.campaign;
-                    this.interests = CampaignState.cModel.categories;
+
                     this.schema = CampaignState.schema;
-                    this.budgetHasChanged = !!this.calculateBudgetChange();
+                    this.interests = CampaignState.cModel.categories;
+                    this.isDraft = CampaignState._campaign.status === 'draft';
+                    this.newBudget = this.campaign.pricing.budget;
+                    this.oldBudget = CampaignState._updateRequest ?
+                        CampaignState._updateRequest.data.pricing.budget :
+                        CampaignState._campaign.pricing.budget;
+                    this.budgetChange = !this.isDraft ?
+                        this.newBudget - this.oldBudget :
+                        this.newBudget;
 
                     return $q.all((!hasPaymentMethods ? {
                         token: PaymentService.getToken(),
@@ -1813,19 +1821,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.enter = function() {
-                    c6State.goTo(this.budgetHasChanged ?
+                    c6State.goTo(!!this.budgetChange ?
                         'Selfie:Campaign:Fund:Deposit' :
                         'Selfie:Campaign:Fund:Confirm');
-                };
-
-                this.calculateBudgetChange = function() {
-                    var newBudget = this.campaign.pricing.budget,
-                        oldBudget = this._updateRequest ?
-                            this._updateRequest.data.pricing.budget :
-                            this._campaign.pricing.budget,
-                        change = newBudget - oldBudget;
-
-                    return this._campaign.status === 'draft' ? newBudget : change;
                 };
             }]);
         }])
@@ -1859,15 +1857,10 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.paymentMethods = model.paymentMethods;
 
-                // this might be the pojoified campaign
-                // or pojoified updateRequest.data
-                this.campaign = cState.campaign;
-
-                // this will always be the actual campaign model
-                this._campaign = cState._campaign;
-
-                // this will be the actual update request model or null
-                this._updateRequest = cState._updateRequest;
+                // this sets the chosen payment method to be the default
+                this.paymentMethod = model.paymentMethods.filter(function(method) {
+                    return !!method.default;
+                })[0];
 
                 // this is a new payment method model and token.
                 // only defined if user has no payment methods.
@@ -1879,18 +1872,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.newMethod = cState.newMethod;
                 this.token = cState.token;
 
-                // this defaults the radio button to Credit Card
-                // when the user has no existing payment methods
-                this.type = 'creditcard';
-
-                // this sets the chosen payment method to be the default
-                this.paymentMethod = model.paymentMethods.filter(function(method) {
-                    return !!method.default;
-                })[0];
-
                 this.schema = cState.schema;
+                this.isDraft = cState.isDraft;
+                this.campaign = cState.campaign;
+                this.newPaymentType = 'creditcard';
+                this.budgetChange = cState.budgetChange;
                 this.accounting = PaymentService.balance;
-                this.budgetChange = cState.calculateBudgetChange();
                 this.minDeposit = this.calculateMinDeposit();
                 this.deposit = this.minDeposit;
 
@@ -1902,11 +1889,10 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.calculateMinDeposit = function() {
-                var change = cState.calculateBudgetChange(),
-                    availableFunds = this.accounting.remainingFunds;
+                var availableFunds = this.accounting.remainingFunds;
 
-                return change > 0 && availableFunds < change ?
-                    Math.abs(availableFunds - change) : 0;
+                return this.budgetChange > 0 && availableFunds < this.budgetChange ?
+                    Math.abs(availableFunds - this.budgetChange) : 0;
             };
 
             this.confirm = function() {
@@ -1957,7 +1943,7 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.goBack = function() {
-                c6State.goTo(cState.budgetHasChanged ?
+                c6State.goTo(!!this.budgetChange ?
                     'Selfie:Campaign:Fund:Deposit' :
                     cState.cParent.cName);
             };
