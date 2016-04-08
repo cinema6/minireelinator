@@ -122,7 +122,6 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                             pricing: {},
                             application: 'selfie',
                             advertiserDisplayName: selfie.cModel.company,
-                            paymentMethod: undefined,
                             targeting: {
                                 geo: {
                                     states: [],
@@ -201,7 +200,6 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                                 }
                             ],
                             advertiserDisplayName: 'My Brand',
-                            paymentMethod: 'pay-1234',
                             targeting: {
                                 geo: {
                                     states: ['alaska'],
@@ -271,20 +269,12 @@ define(['app', 'minireel/services', 'c6uilib', 'c6_defines'], function(appModule
                         expect(result.statusHistory).toEqual(undefined);
 
                         expect(result.targeting).toEqual(existingCampaign.targeting);
-                        expect(result.paymentMethod).toEqual(existingCampaign.paymentMethod);
                         expect(result.pricing).toEqual(existingCampaign.pricing);
                         expect(result.advertiserDisplayName).toEqual(existingCampaign.advertiserDisplayName);
                         expect(result.advertiserId).toEqual(existingCampaign.advertiserId);
 
                         expect(result.name).toEqual(existingCampaign.name + ' (Copy)');
                         expect(result.application).toEqual('selfie');
-                    });
-
-                    it('should not copy payment method if the selfie user is not the campaign creator', function() {
-                        result = CampaignService.create(existingCampaign, user);
-
-                        expect(result.paymentMethod).toBe(undefined);
-                        expect(result.paymentMethod).not.toEqual(existingCampaign.paymentMethod);
                     });
 
                     it('should be a new campaign object', function() {

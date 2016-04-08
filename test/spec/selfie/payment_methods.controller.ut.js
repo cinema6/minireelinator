@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    fdescribe('SelfiePaymentMethodsController', function() {
+    describe('SelfiePaymentMethodsController', function() {
         var $rootScope,
             $scope,
             $controller,
@@ -12,6 +12,7 @@ define(['app'], function(appModule) {
         function compileCtrl() {
             $scope = $rootScope.$new();
             $scope.methods = paymentMethods;
+            $scope.chosenMethod = paymentMethods[1];
 
             $scope.$apply(function() {
                 SelfiePaymentMethodsCtrl = $controller('SelfiePaymentMethodsController', {
@@ -60,36 +61,27 @@ define(['app'], function(appModule) {
                     expect(SelfiePaymentMethodsCtrl.methods).toEqual([]);
                 });
 
-                it('should contain all methods except the current one', function() {
+                it('should contain all methods except the chosen one', function() {
                     expect(SelfiePaymentMethodsCtrl.methods.length).toBe(2);
                     expect(SelfiePaymentMethodsCtrl.methods.indexOf(paymentMethods[1])).toEqual(-1);
                 });
-            });
 
-            describe('currentMethod', function() {
-                it('should be undefined if there are no payment options', function() {
-                    paymentMethods = [];
-
-                    compileCtrl();
-
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(undefined);
-                });
-
-                it('should default to the primary method', function() {
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(paymentMethods[1]);
+                it('should contain all methods if there is no chosen one', function() {
+                    $scope.chosenMethod = undefined;
+                    expect(SelfiePaymentMethodsCtrl.methods.length).toBe(3);
                 });
             });
         });
 
         describe('methods', function() {
-            describe('setCurrentMethod(method)', function() {
+            describe('setChosenMethod(method)', function() {
                 beforeEach(function() {
                     SelfiePaymentMethodsCtrl.showDropdown = true;
-                    SelfiePaymentMethodsCtrl.setCurrentMethod(paymentMethods[0]);
+                    SelfiePaymentMethodsCtrl.setChosenMethod(paymentMethods[0]);
                 });
 
-                it('should set the current method', function() {
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(paymentMethods[0]);
+                it('should set the chosen method', function() {
+                    expect($scope.chosenMethod).toBe(paymentMethods[0]);
                 });
 
                 it('should hide the drop down', function() {
