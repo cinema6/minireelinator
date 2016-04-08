@@ -6,6 +6,7 @@
                 <a c6-sref="Selfie:CampaignDashboard">Back to Campaigns</a>
             </h1>
             <div class="pageHeader__actions">
+                <account-balance></account-balance>
                 <div class="btnGroup">
                     <button ng-click="SelfieCampaignCtrl.copy()" ng-class="{ 'btnSpinner__waiting' : SelfieCampaignCtrl.pendingCopy }" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-copy"></i> Copy</button>
                     <button ng-if="!SelfieCampaignCtrl.campaign.status || SelfieCampaignCtrl.campaign.status === 'draft'" ng-click="SelfieCampaignCtrl.delete()" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-trash-o"></i> Delete</button>
@@ -41,14 +42,6 @@
                 <a c6-scroll-to href="#section_6" ng-class="{'tocNav__link--inputError': !SelfieCampaignCtrl.validation.sections.section6 && SelfieCampaignCtrl.validation.show }" class="tocNav__link hint--right" data-hint="Set Your Budget">6</a>
                 <!--<div class="tocNav__label tk--hdr">Set Your Budget</div>-->
             </li>
-            <li class="tocNav__item">
-                <a c6-scroll-to href="#section_7" ng-class="{'tocNav__link--inputError': !SelfieCampaignCtrl.validation.sections.section7 && SelfieCampaignCtrl.validation.show }" class="tocNav__link hint--right" data-hint="Payment Options">7</a>
-                <!--<div class="tocNav__label tk--hdr">Payment Options</div>-->
-            </li>
-            <li class="tocNav__item">
-                <a c6-scroll-to href="#section_8" ng-class="{'tocNav__link--inputError': !SelfieCampaignCtrl.validation.sections.section8 && SelfieCampaignCtrl.validation.show }" class="tocNav__link hint--right" data-hint="Submit Your Ad">8</a>
-                <!--<div class="tocNav__label tk--hdr">Submit Your Ad</div>-->
-            </li>
         </ul>
     </nav>
 
@@ -67,7 +60,6 @@
             <div ng-include="'views/selfie/campaigns/edit/text.html'"></div>
             <div ng-include="'views/selfie/campaigns/edit/targeting.html'"></div>
             <div ng-include="'views/selfie/campaigns/edit/flight_dates.html'"></div>
-            <div ng-include="'views/selfie/campaigns/edit/payment.html'"></div>
             <div ng-include="'views/selfie/campaigns/edit/submit.html'"></div>
 
         </div><!-- .grid -->

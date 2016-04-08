@@ -1,165 +1,113 @@
-<div class="modal__overlay"></div>
-<div class="gridHolder modal__group modalPayment__group">
+<div class="grid grid--center">
 
-    <div class="grid grid--center">
-        <button class="modal__closeBtn btnInvis" ng-click="onCancel()"><span class="ir">Close</span>
-            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
-                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
-                L18,1.5L16.5,0z"/>
-            </svg>
-        </button>
-        <section class="grid__item two-thirds">
+    <div class="assetLoader ui__connector" ng-show="!ready">
+        <div class="assetLoader__status">
+            <div class="assetLoader__status--icon">
+                <div class="spinner"></div>
+            </div>
+            <div class="assetLoader__status--text text-small">Loading secure credit card form...</div>
+        </div>
+    </div>
 
-            <header class="text--center">
-                <h1 class="tk--hdr modal__title">Add a credit card</h1>
-                <p class="tk--copy modal__copy">Your campaign would use the primary payment method provided in the account settings unless you choose to use a different option.</p>
-            </header>
+    <div class="grid__item" ng-show="ready">
+        <div class="form__items addPayment__method">
+            <form id="c6-payment-method">
+                <fieldset class="form__item">
+                    <!-- <input class="form__textBox form__fillCheck" type="text" id="c6-addCard-number"> -->
+                    <div class="form__textBox form__fillCheck" id="c6-addCard-number"></div>
 
-            <div class="assetLoader ui__connector" ng-show="!ready">
-                <div class="assetLoader__status">
-                    <div class="assetLoader__status--icon">
-                        <div class="spinner"></div>
+                    <label class="form__label form__label--lrg" for="c6-addCard-number">
+                        <i class="fa fa-times ui--error"></i>
+                        Card Number
+                    </label>
+                    <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
+                        <div class="form__helpText">
+                            Provide the credit card number.
+                        </div>
                     </div>
-                    <div class="assetLoader__status--text text-small">Loading secure credit card form...</div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Your card number is invalid.
+                        </p>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form__item">
+                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-addCard-name" ng-model="name">
+                    <label class="form__label form__label--lrg" for="c6-addCard-name">
+                        <i class="fa fa-times ui--error"></i>
+                        Name on the Card
+                    </label>
+                    <div class="form__helpBox form__helpBox--center form__helpBox--rightLrg">
+                        <div class="form__helpText">
+                            Provide the name, as you see it exactly, on the credit card.
+                        </div>
+                    </div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Your card number is invalid.
+                        </p>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form__item">
+                    <div class="form__textBox form__fillCheck" id="c6-expiration-date"></div>
+
+                    <label class="form__label form__label--lrg" for="c6-expiration-date">
+                        <i class="fa fa-times ui--error"></i>
+                        Expiration Date (MM/YYYY)
+                    </label>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> The date is incorrect.
+                        </p>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form__item">
+                    <div class="form__textBox form__fillCheck" id="c6-cvv"></div>
+
+                    <label class="form__label form__label--lrg" for="c6-cvv">
+                        <i class="fa fa-times ui--error"></i>
+                        CVV
+                    </label>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Invalid.
+                        </p>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form__item">
+                   <!--  <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-addCard-zip"> -->
+
+                    <div class="form__textBox form__fillCheck" id="c6-zip"></div>
+
+                    <label class="form__label form__label--lrg" for="c6-zip">
+                        <i class="fa fa-times ui--error"></i>
+                        Billing Zip Code
+                    </label>
+
+                    <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
+                        <div class="form__helpText">
+                            Provide the billing zip code for your credit card. It may be different than your home address zip code.
+                        </div>
+                    </div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Your zip code is not recognized.
+                        </p>
+                    </div>
+                </fieldset>
+
+                <div class="ui__btnHolder--sub">
+                    <button ng-show="!hideSaveButton" id="credit-card-submit" ng-class="{ 'btnSpinner__waiting' : pending }" ng-click="pending = true" class="action__btn action__btn--wide">Save</button>
                 </div>
-            </div>
 
-            <div class="grid grid--center" ng-show="ready">
+                <span class="alertMessage alert__failure text--center" ng-show="!!errorMessage">{{errorMessage}}</span>
 
-                <div class="grid__item two-thirds">
-                    <div class="form__items addPayment__method">
-                        <form id="c6-payment-method">
-                            <fieldset class="form__item">
-                                <!-- <input class="form__textBox form__fillCheck" type="text" id="c6-addCard-number"> -->
-                                <div class="form__textBox form__fillCheck" id="c6-addCard-number"></div>
+            </form>
 
-                                <label class="form__label form__label--lrg" for="c6-addCard-number">
-                                    <i class="fa fa-times ui--error"></i>
-                                    Card Number
-                                </label>
-                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
-                                    <div class="form__helpText">
-                                        Provide the credit card number.
-                                    </div>
-                                </div>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> Your card number is invalid.
-                                    </p>
-                                </div>
-                            </fieldset>
-
-                            <fieldset class="form__item">
-                                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-addCard-name" ng-model="name">
-                                <label class="form__label form__label--lrg" for="c6-addCard-name">
-                                    <i class="fa fa-times ui--error"></i>
-                                    Name on the Card
-                                </label>
-                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
-                                    <div class="form__helpText">
-                                        Provide the name, as you see it exactly, on the credit card.
-                                    </div>
-                                </div>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> Your card number is invalid.
-                                    </p>
-                                </div>
-                            </fieldset>
-
-                            <fieldset class="form__item">
-                                <div class="form__textBox form__fillCheck" id="c6-expiration-date"></div>
-
-                                <label class="form__label form__label--lrg" for="c6-expiration-date">
-                                    <i class="fa fa-times ui--error"></i>
-                                    Expiration Date (MM/YYYY)
-                                </label>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> The date is incorrect.
-                                    </p>
-                                </div>
-                            </fieldset>
-
-                            <fieldset class="form__item">
-                                <div class="form__textBox form__fillCheck" id="c6-cvv"></div>
-
-                                <label class="form__label form__label--lrg" for="c6-cvv">
-                                    <i class="fa fa-times ui--error"></i>
-                                    CVV
-                                </label>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> Invalid.
-                                    </p>
-                                </div>
-                            </fieldset>
-
-                            <fieldset class="form__item">
-                               <!--  <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-addCard-zip"> -->
-
-                                <div class="form__textBox form__fillCheck" id="c6-zip"></div>
-
-                                <label class="form__label form__label--lrg" for="c6-zip">
-                                    <i class="fa fa-times ui--error"></i>
-                                    Billing Zip Code
-                                </label>
-
-                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
-                                    <div class="form__helpText">
-                                        Provide the billing zip code for your credit card. It may be different than your home address zip code.
-                                    </div>
-                                </div>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> Your zip code is not recognized.
-                                    </p>
-                                </div>
-                            </fieldset>
-
-                            <fieldset class="form__item">
-                                <select c6-select-box class="form__selectBox form__selectBox--single" data-options="['Yes','No']" ng-model="makeDefault" ng-options="option for option in ['Yes','No']" id="c6-make-default"></select>
-
-                                <label class="form__label form__label--lrg" for="c6-make-default">
-                                    <i class="fa fa-times ui--error"></i>
-                                    Make this a Primary Card
-                                </label>
-                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
-                                    <div class="form__helpText">
-                                        If you make this your primary card, all future campaigns will automatically use this card first.
-                                    </div>
-                                </div>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> You need to select yes or no.
-                                    </p>
-                                </div>
-                            </fieldset>
-
-                            <div class="ui__btnHolder--sub">
-                                <button ng-class="{ 'btnSpinner__waiting' : pending }" ng-click="pending = true" class="action__btn action__btn--wide">Save</button>
-                            </div>
-
-                            <span class="alertMessage alert__failure text--center" ng-show="!!errorMessage">{{errorMessage}}</span>
-
-                        </form>
-
-                    </div><!--.form__items-->
-                </div><!--.grid__item .three-fifths-->
-            </div><!--.grid .grid--center-->
-        </section><!--.grid__item .five-sixths-->
-            <div class="payment__seals grid__item one-whole" ng-show="ready">
-                <div class="payment__sealItem braintree--seal">
-                    <span class="payment__itemText"> Secure payments by</span>
-                    <a href="https://www.braintreegateway.com/merchants/hrmsqg32vjw32sjz/verified" target="_blank">
-                      <img src="https://s3.amazonaws.com/braintree-badges/braintree-badge-light.png" width="164px" height ="44px" border="0"/>
-                    </a>
-                </div>
-                <div class="payment__sealItem paypal--seal">
-                    <!-- PayPal Logo --><table border="0" cellpadding="10" cellspacing="0" align="center"><tr><td align="center"></td></tr><tr><td align="center"><a href="https://www.braintreegateway.com/merchants/hrmsqg32vjw32sjz/verified" target="_blank"><img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" border="0" alt="PayPal Logo"></a></td></tr></table><!-- PayPal Logo -->
-                </div>
-            </div>
-    </div><!--.grid grid--center-->
-
-</div>
+        </div><!--.form__items-->
+    </div><!--.grid__item .three-fifths-->
+</div><!--.grid .grid--center-->

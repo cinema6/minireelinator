@@ -15,7 +15,6 @@ define(['app'], function(appModule) {
             var card,
                 categories,
                 campaign,
-                paymentMethods,
                 updateRequest,
                 user,
                 advertiser;
@@ -51,20 +50,6 @@ define(['app'], function(appModule) {
                             interests: []
                         }
                     };
-                    paymentMethods = [
-                        {
-                            id: 'pay-1',
-                            token: 'pay-1'
-                        },
-                        {
-                            id: 'pay-2',
-                            token: 'pay-2'
-                        },
-                        {
-                            id: 'pay-3',
-                            token: 'pay-3'
-                        }
-                    ];
                     updateRequest = {
                         id: 'ur-123',
                         data: {
@@ -129,16 +114,14 @@ define(['app'], function(appModule) {
             });
 
             describe('model()', function() {
-                var success, failure, updateRequestDeferred, advertiserDeferred, paymentMethodsDeferred;
+                var success, failure, updateRequestDeferred, advertiserDeferred;
 
                 beforeEach(function() {
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
                     updateRequestDeferred = $q.defer();
                     advertiserDeferred = $q.defer();
-                    paymentMethodsDeferred = $q.defer();
 
-                    spyOn(cinema6.db, 'findAll').and.returnValue(paymentMethodsDeferred.promise);
                     spyOn(cinema6.db, 'find').and.callFake(function(type) {
                         var response;
 
@@ -167,8 +150,7 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should find the updateRequest and the advertiser and paymentMethods for the org of the campaign creator', function() {
-                        expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
+                    it('should find the updateRequest and the advertiser for the org of the campaign creator', function() {
                         expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-123:ur-123');
                         expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
                     });
@@ -177,12 +159,10 @@ define(['app'], function(appModule) {
                         it('should return the model object', function() {
                             $rootScope.$apply(function() {
                                 updateRequestDeferred.resolve(updateRequest);
-                                paymentMethodsDeferred.resolve(paymentMethods);
                                 advertiserDeferred.resolve(advertiser);
                             });
 
                             expect(success).toHaveBeenCalledWith({
-                                paymentMethods: paymentMethods,
                                 updateRequest: updateRequest,
                                 advertiser: advertiser
                             });
@@ -193,7 +173,6 @@ define(['app'], function(appModule) {
                         it('should trigger failure', function() {
                             $rootScope.$apply(function() {
                                 updateRequestDeferred.resolve(updateRequest);
-                                paymentMethodsDeferred.resolve(paymentMethods);
                                 advertiserDeferred.reject('Not Found');
                             });
 
@@ -210,8 +189,7 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should find the paymentMethods for the org of the campaign creator', function() {
-                        expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
+                    it('should find the advertiser for the org of the campaign creator', function() {
                         expect(cinema6.db.find).not.toHaveBeenCalledWith('updateRequest', jasmine.any(String));
                         expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
                     });
@@ -219,12 +197,10 @@ define(['app'], function(appModule) {
                     describe('when the requests are successful', function() {
                         it('should return the model object', function() {
                             $rootScope.$apply(function() {
-                                paymentMethodsDeferred.resolve(paymentMethods);
                                 advertiserDeferred.resolve(advertiser);
                             });
 
                             expect(success).toHaveBeenCalledWith({
-                                paymentMethods: paymentMethods,
                                 updateRequest: null,
                                 advertiser: advertiser
                             });
@@ -234,7 +210,6 @@ define(['app'], function(appModule) {
                     describe('when any request fails', function() {
                         it('should trigger failure', function() {
                             $rootScope.$apply(function() {
-                                paymentMethodsDeferred.resolve(paymentMethods);
                                 advertiserDeferred.reject('Not Found');
                             });
 
@@ -254,7 +229,6 @@ define(['app'], function(appModule) {
                     spyOn(cinema6.db, 'findAll').and.returnValue(interestsDeferred.promise);
 
                     model = {
-                        paymentMethods: paymentMethods,
                         updateRequest: updateRequest
                     };
 
@@ -341,7 +315,6 @@ define(['app'], function(appModule) {
 
                 beforeEach(function() {
                     model = {
-                        paymentMethods: paymentMethods,
                         updateRequest: updateRequest
                     };
                     spyOn(c6State, 'goTo');

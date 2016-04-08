@@ -9,7 +9,8 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             $q,
             $scope,
             SelfieCtrl,
-            tracker;
+            tracker,
+            PaymentService;
 
         var user,
             intercom;
@@ -17,7 +18,7 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
         function instantiate() {
             $scope = $rootScope.$new();
             $scope.$apply(function() {
-                SelfieCtrl = $controller('SelfieController', { $scope: $scope });
+                SelfieCtrl = $controller('SelfieController', { $scope: $scope, PaymentService: PaymentService });
                 SelfieCtrl.initWithModel(user);
             });
 
@@ -52,11 +53,19 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             spyOn(tracker, 'create');
             spyOn(c6State, 'on');
 
+            PaymentService = {
+                balance: {}
+            };
+
             SelfieCtrl = instantiate();
         });
 
         it('should exist', function() {
             expect(SelfieCtrl).toEqual(jasmine.any(Object));
+        });
+
+        it('should set the PaymentService balance', function() {
+            expect(SelfieCtrl.accounting).toBe(PaymentService.balance);
         });
 
         it('should initialize a tracker', function() {

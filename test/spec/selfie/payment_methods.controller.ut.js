@@ -7,13 +7,12 @@ define(['app'], function(appModule) {
             $controller,
             SelfiePaymentMethodsCtrl;
 
-        var campaign,
-            paymentMethods;
+        var paymentMethods;
 
         function compileCtrl() {
             $scope = $rootScope.$new();
-            $scope.campaign = campaign;
             $scope.methods = paymentMethods;
+            $scope.chosenMethod = paymentMethods[1];
 
             $scope.$apply(function() {
                 SelfiePaymentMethodsCtrl = $controller('SelfiePaymentMethodsController', {
@@ -29,9 +28,6 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
 
-                campaign = {
-                    id: 'cam-123'
-                };
                 paymentMethods = [
                     {
                         id: 'pay-1',
@@ -57,18 +53,6 @@ define(['app'], function(appModule) {
             expect(SelfiePaymentMethodsCtrl).toEqual(jasmine.any(Object));
         });
 
-        it('should set the default/primary payment method on the campaign immediately if not defined', function() {
-            expect(campaign.paymentMethod).toBe('pay-2');
-        });
-
-        it('should not set change the payment method defined on the campaign', function() {
-            campaign.paymentMethod = 'pay-3';
-
-            compileCtrl();
-
-            expect(campaign.paymentMethod).toBe('pay-3');
-        });
-
         describe('properties', function() {
             describe('methods', function() {
                 it('should be empty array if none are defined on the $scope', function() {
@@ -77,48 +61,27 @@ define(['app'], function(appModule) {
                     expect(SelfiePaymentMethodsCtrl.methods).toEqual([]);
                 });
 
-                it('should contain all methods except the current one', function() {
+                it('should contain all methods except the chosen one', function() {
                     expect(SelfiePaymentMethodsCtrl.methods.length).toBe(2);
                     expect(SelfiePaymentMethodsCtrl.methods.indexOf(paymentMethods[1])).toEqual(-1);
                 });
-            });
 
-            describe('currentMethod', function() {
-                it('should be undefined if there are no payment options', function() {
-                    paymentMethods = [];
-
-                    compileCtrl();
-
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(undefined);
-                });
-
-                it('should default to the primary method', function() {
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(paymentMethods[1]);
-                });
-
-                it('should come from the campaign if defined', function() {
-                    campaign.paymentMethod = 'pay-3';
-
-                    compileCtrl();
-
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(paymentMethods[2]);
+                it('should contain all methods if there is no chosen one', function() {
+                    $scope.chosenMethod = undefined;
+                    expect(SelfiePaymentMethodsCtrl.methods.length).toBe(3);
                 });
             });
         });
 
         describe('methods', function() {
-            describe('setCurrentMethod(method)', function() {
+            describe('setChosenMethod(method)', function() {
                 beforeEach(function() {
                     SelfiePaymentMethodsCtrl.showDropdown = true;
-                    SelfiePaymentMethodsCtrl.setCurrentMethod(paymentMethods[0]);
+                    SelfiePaymentMethodsCtrl.setChosenMethod(paymentMethods[0]);
                 });
 
-                it('should set the current method', function() {
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(paymentMethods[0]);
-                });
-
-                it('should set the property on the campaign', function() {
-                    expect(campaign.paymentMethod).toBe('pay-1');
+                it('should set the chosen method', function() {
+                    expect($scope.chosenMethod).toBe(paymentMethods[0]);
                 });
 
                 it('should hide the drop down', function() {
@@ -157,24 +120,6 @@ define(['app'], function(appModule) {
 
                     SelfiePaymentMethodsCtrl.toggleDropdown();
                     expect(SelfiePaymentMethodsCtrl.showDropdown).toBeFalsy();
-                });
-            });
-        });
-
-        describe('$watchers', function() {
-            describe('campaign.paymentMethod', function() {
-                it('should update the current method', function() {
-                    spyOn(SelfiePaymentMethodsCtrl, 'setCurrentMethod').and.callThrough();
-
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(paymentMethods[1]);
-                    expect(campaign.paymentMethod).toBe('pay-2');
-
-                    $scope.$apply(function() {
-                        campaign.paymentMethod = 'pay-3';
-                    });
-
-                    expect(SelfiePaymentMethodsCtrl.setCurrentMethod).toHaveBeenCalledWith(paymentMethods[2]);
-                    expect(SelfiePaymentMethodsCtrl.currentMethod).toBe(paymentMethods[2]);
                 });
             });
         });

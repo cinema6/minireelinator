@@ -41,8 +41,12 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
         }])
 
         .controller('SelfieController', ['$scope','AuthService','c6State','tracker','intercom',
-        function                        ( $scope , AuthService , c6State , tracker , intercom ) {
+                                         'PaymentService',
+        function                        ( $scope , AuthService , c6State , tracker , intercom ,
+                                          PaymentService ) {
             var self = this;
+
+            this.accounting = PaymentService.balance;
 
             this.initWithModel = function(model) {
                 this.model = model;

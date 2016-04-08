@@ -98,10 +98,6 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                         pricing: copy({}),
                         application: value('selfie'),
                         advertiserDisplayName: copy(_user.company),
-                        paymentMethod: function(base) {
-                            var appUser = getAppUser();
-                            return _user.id === appUser.id ? base.paymentMethod : undefined;
-                        },
                         targeting: {
                             geo: {
                                 states: copy([]),
@@ -380,7 +376,6 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     return formatDate(startDate) + ' to ' + formatDate(endDate);
                 }
 
-
                 return {
                     duration: generateDuration(campaign),
                     geo: generateGeo(campaign),
@@ -461,6 +456,30 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
 
         .service('PaymentService', ['$http','c6UrlMaker',
         function                   ( $http , c6UrlMaker ) {
+            var accounting = {};
+
+            Object.defineProperties(this, {
+                balance: {
+                    get: function() {
+                        return accounting;
+                    }
+                }
+            });
+
+            this.getBalance = function() {
+                return $http.get(c6UrlMaker('accounting/balance', 'api'))
+                    .then(function(response) {
+                        var balance = response.data.balance,
+                            outstandingBudget = response.data.outstandingBudget;
+
+                        accounting.balance = balance;
+                        accounting.outstandingBudget = outstandingBudget;
+                        accounting.remainingFunds = balance - outstandingBudget;
+
+                        return accounting;
+                    });
+            };
+
             this.getToken = function() {
                 return $http.get(c6UrlMaker('payments/clientToken', 'api'))
                     .then(function(response) {
@@ -473,6 +492,15 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     .then(function(response) {
                         return response.data;
                     });
+            };
+
+            this.makePayment = function(token, amount) {
+                return $http.post(c6UrlMaker('payment', 'api'), {
+                    paymentMethod: token,
+                    amount: amount
+                }).then(function(response) {
+                    return response.data;
+                });
             };
         }])
 

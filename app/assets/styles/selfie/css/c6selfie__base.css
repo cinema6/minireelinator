@@ -323,6 +323,9 @@ fa,
         .action__btn:hover {
             background:#0E7D81;
         }
+        a.action__btn:focus {
+            border:2px solid #0E7D81;
+        }
 
         .action__btn--small {
             font-size:1em;
@@ -6646,8 +6649,12 @@ div.tree-multiselect span.remove-selected {
         color:#4fc184;
         border:2px solid #4fc184;
         font-weight:600;
+        vertical-align: top;
     }
-    .action__btn--balance:hover {
+    .action__btn--balance:hover,
+    .action__btn--balance:focus,
+    a.action__btn--balance:hover,
+    a.action__btn--balance:focus {
         background:#4fc184;
         color:#fff;
         border-color:#4fc184;

@@ -45,6 +45,49 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('methods', function() {
+            describe('getBalance()', function() {
+                beforeEach(function(){
+                    success = jasmine.createSpy('get().success');
+                    failure = jasmine.createSpy('get().failure');
+                });
+
+                it('will request and return account balance info from the API and populate a computed balance object on the service',function(){
+                    var response = {
+                        balance: 1000,
+                        outstandingBudget: 300
+                    };
+
+                    var calculatedResponse = {
+                        balance: 1000,
+                        outstandingBudget: 300,
+                        remainingFunds: 700
+                    };
+
+                    $httpBackend.expectGET('/api/accounting/balance')
+                        .respond(200, response);
+
+                    PaymentService.getBalance().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith(calculatedResponse);
+                    expect(failure).not.toHaveBeenCalled();
+                    expect(PaymentService.balance).toEqual(calculatedResponse);
+                });
+
+                it('will reject promise if not successful',function(){
+                    $httpBackend.expectGET('/api/accounting/balance')
+                        .respond(500, 'Server Error');
+
+                    PaymentService.getBalance().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
             describe('getToken()', function() {
                 beforeEach(function(){
                     success = jasmine.createSpy('get().success');
@@ -120,6 +163,54 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         .respond(500, 'Server Error');
 
                     PaymentService.getHistory().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
+            describe('makePayment()', function() {
+                var postData, transaction;
+
+                beforeEach(function(){
+                    success = jasmine.createSpy('get().success');
+                    failure = jasmine.createSpy('get().failure');
+
+                    postData = {
+                        paymentMethod: 'pay-123',
+                        amount: 500
+                    };
+
+                    transaction = {
+                        id: 'trans-123',
+                        status: 'settled',
+                        type: 'credit',
+                        amount: 500,
+                        method: {}
+                    };
+                });
+
+                it('will post a payment method and amount to be paid',function(){
+                    $httpBackend.expectPOST('/api/payment', postData)
+                        .respond(201, transaction);
+
+                    PaymentService.makePayment(postData.paymentMethod, postData.amount)
+                        .then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith(transaction);
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('will reject promise if not successful',function(){
+                    $httpBackend.expectPOST('/api/payment', postData)
+                        .respond(500, 'Server Error');
+
+                    PaymentService.makePayment(postData.paymentMethod, postData.amount)
+                        .then(success, failure);
 
                     $httpBackend.flush();
 
