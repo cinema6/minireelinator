@@ -111,31 +111,66 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when sign up succeeds', function() {
-                    it('should go to "Selfie:SignUpSuccess"', function() {
-                        SelfieSignUpCtrl.model = user = {
-                            firstName: 'Selfie',
-                            lastName: 'User',
-                            company: 'Brand',
-                            email: 'selfie@user.com',
-                            password: '123456'
-                        };
-                        spyOn(AccountService, 'signUp').and.returnValue($q.when(user));
-                        spyOn(c6State, 'goTo');
+                    describe('when it is form only', function() {
+                        it('should go to "Selfie:SignUpSuccess:Frame"', function() {
+                            SelfieSignUpCtrl.model = user = {
+                                firstName: 'Selfie',
+                                lastName: 'User',
+                                company: 'Brand',
+                                email: 'selfie@user.com',
+                                password: '123456'
+                            };
+                            spyOn(AccountService, 'signUp').and.returnValue($q.when(user));
+                            spyOn(c6State, 'goTo');
 
-                        $scope.$apply(function() {
-                            SelfieSignUpCtrl.submit();
+                            SelfieSignUpCtrl.formOnly = true;
+
+                            $scope.$apply(function() {
+                                SelfieSignUpCtrl.submit();
+                            });
+
+                            expect(SelfieSignUpCtrl.errors).toEqual({
+                                show: false,
+                                firstName: false,
+                                lastName: false,
+                                company: false,
+                                email: false,
+                                password: false
+                            });
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUpSuccess:Frame', [user]);
                         });
+                    });
 
-                        expect(SelfieSignUpCtrl.errors).toEqual({
-                            show: false,
-                            firstName: false,
-                            lastName: false,
-                            company: false,
-                            email: false,
-                            password: false
+                    describe('when it the full sign up page', function() {
+                        it('should go to "Selfie:SignUpSuccess:Full"', function() {
+                            SelfieSignUpCtrl.model = user = {
+                                firstName: 'Selfie',
+                                lastName: 'User',
+                                company: 'Brand',
+                                email: 'selfie@user.com',
+                                password: '123456'
+                            };
+                            spyOn(AccountService, 'signUp').and.returnValue($q.when(user));
+                            spyOn(c6State, 'goTo');
+
+                            SelfieSignUpCtrl.formOnly = false;
+
+                            $scope.$apply(function() {
+                                SelfieSignUpCtrl.submit();
+                            });
+
+                            expect(SelfieSignUpCtrl.errors).toEqual({
+                                show: false,
+                                firstName: false,
+                                lastName: false,
+                                company: false,
+                                email: false,
+                                password: false
+                            });
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUpSuccess:Full', [user]);
                         });
-
-                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUpSuccess', [user]);
                     });
                 });
             });
