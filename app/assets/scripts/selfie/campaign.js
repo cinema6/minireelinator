@@ -28,9 +28,9 @@ function( angular , c6State  , PaginatedListState                    ,
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6','PaymentService',
+            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6',
                                                                'CampaignService','$q',
-            function                                          ( c6State , cinema6 , PaymentService ,
+            function                                          ( c6State , cinema6 ,
                                                                 CampaignService , $q ) {
                 this.afterModel = function() {
                     var cState = this,
@@ -41,8 +41,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     return $q.all({
                         orgs: CampaignService.getOrgs(),
-                        advertisers: cinema6.db.findAll('advertiser', {org: org}),
-                        accounting: PaymentService.getBalance()
+                        advertisers: cinema6.db.findAll('advertiser', {org: org})
                     }).then(function(data) {
                         cState.orgs = data.orgs;
                         cState.advertisers = data.advertisers;
@@ -58,10 +57,10 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaigns', ['$injector','SettingsService','$q',
-                                                       'paginatedDbList','c6State',
+                                                       'paginatedDbList','c6State','PaymentService',
                                                        'SpinnerService','$location',
             function                                  ( $injector , SettingsService , $q ,
-                                                        paginatedDbList , c6State ,
+                                                        paginatedDbList , c6State , PaymentService ,
                                                         SpinnerService , $location ) {
                 $injector.invoke(PaginatedListState, this);
 
@@ -150,6 +149,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.hasCampaigns = this.cParent.hasCampaigns;
+
+                    return PaymentService.getBalance();
                 };
             }]);
         }])

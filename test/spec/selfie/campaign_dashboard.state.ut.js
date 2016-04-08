@@ -9,7 +9,6 @@ define(['app'], function(appModule) {
                 selfieState,
                 cinema6,
                 CampaignService,
-                PaymentService,
                 $q;
 
             var deferredOrgs,
@@ -23,14 +22,12 @@ define(['app'], function(appModule) {
                     c6State = $injector.get('c6State');
                     cinema6 = $injector.get('cinema6');
                     CampaignService = $injector.get('CampaignService');
-                    PaymentService = $injector.get('PaymentService');
                     $q = $injector.get('$q');
                 });
 
                 deferredOrgs = $q.defer();
                 deferredAdvertisers = $q.defer();
                 spyOn(CampaignService, 'getOrgs').and.returnValue(deferredOrgs.promise);
-                spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
 
                 selfieState = c6State.get('Selfie');
                 selfieState.cModel = {
@@ -69,10 +66,6 @@ define(['app'], function(appModule) {
 
                 it('should fetch all advertisers', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('advertiser', {org: 'o-123'});
-                });
-
-                it('should get account balance', function() {
-                    expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
                 describe('when orgs and advertisers are returned', function() {

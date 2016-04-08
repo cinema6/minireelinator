@@ -33,7 +33,7 @@
                                     <div class="text--right">${{SelfieCampaignFundCtrl.accounting.remainingFunds | number}}</div>
                                 </div>
                             </li>
-                            <li ng-if="SelfieCampaignFundCtrl.isDraft">
+                            <li ng-if="!SelfieCampaignFundCtrl.isDraft">
                                 <div class="grid__item two-thirds orderItem__label">Budget Change</div><!--
                                 --><div class="grid__item one-third">
                                     <div ng-if="SelfieCampaignFundCtrl.budgetChange >= 0" class="text--right">${{SelfieCampaignFundCtrl.budgetChange | number}}</div>

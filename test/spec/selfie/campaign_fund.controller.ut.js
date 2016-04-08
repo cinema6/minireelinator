@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    fdescribe('SelfieCampaignFundController', function() {
+    describe('SelfieCampaignFundController', function() {
         var $rootScope,
             $controller,
             c6State,
