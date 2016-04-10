@@ -15,9 +15,11 @@
                 <h1 class="tk--hdr modal__title">Add a credit card</h1>
                 <p class="tk--copy modal__copy">Your campaign would use the primary payment method provided in the account settings unless you choose to use a different option.</p>
             </header>
-
-            <braintree-credit-card client-token="{{SelfieAccountPaymentNewCtrl.token}}" method="SelfieAccountPaymentNewCtrl.model" on-success="SelfieAccountPaymentNewCtrl.success(method)" on-cancel="SelfieAccountPaymentNewCtrl.cancel()"></braintree-credit-card>
-
+            <div class="grid text--center">
+                <div class="grid__item two-thirds item--center">
+                <braintree-credit-card client-token="{{SelfieAccountPaymentNewCtrl.token}}" method="SelfieAccountPaymentNewCtrl.model" on-success="SelfieAccountPaymentNewCtrl.success(method)" on-cancel="SelfieAccountPaymentNewCtrl.cancel()"></braintree-credit-card>
+                </div>
+            </div>
         </section><!--.grid__item .five-sixths-->
             <div class="payment__seals grid__item one-whole" ng-show="ready">
                 <div class="payment__sealItem braintree--seal">
