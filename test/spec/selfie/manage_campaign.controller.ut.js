@@ -35,7 +35,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             campaign,
             card,
             categories,
-            paymentMethods,
             updateRequest,
             user,
             advertiser,
@@ -117,7 +116,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 name: undefined,
                 pricing: {},
                 status: 'draft',
-                appllication: 'selfie',
+                application: 'selfie',
                 advertiserDisplayName: 'My Company',
                 targeting: {
                     geo: {
@@ -134,7 +133,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 cards: [ card ]
             });
             categories = [];
-            paymentMethods = [];
             updateRequest = null;
             user = {
                 id: 'u-123'
@@ -162,7 +160,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             compileCtrl(cState, {
                 categories: categories,
-                paymentMethods: paymentMethods,
                 updateRequest: updateRequest
             });
         });
@@ -174,39 +171,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         describe('properties', function() {
             describe('canSubmit', function() {
                 it('should be false if campaign has not changed', function() {
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
-
-                    campaign.paymentMethod = 'pay-1234';
-                    campaign.updateRequest = undefined;
-
                     compileCtrl(cState, {
-                        categories: categories,
-                        paymentMethods: paymentMethods
+                        categories: categories
                     });
 
                     expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
 
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-99999';
-
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(true);
-                });
-
-                it('should be false if campaign does not have paymentMethod', function() {
-                    campaign.paymentMethod = 'pay-1234';
-                    campaign.updateRequest = undefined;
-
-                    compileCtrl(cState, {
-                        categories: categories,
-                        paymentMethods: paymentMethods
-                    });
-
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = '';
-
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-11111';
+                    SelfieManageCampaignCtrl.campaign.pricing.budget = 100;
 
                     expect(SelfieManageCampaignCtrl.canSubmit).toBe(true);
                 });
@@ -338,16 +309,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieManageCampaignCtrl.card = null;
                         SelfieManageCampaignCtrl.campaign = null;
                         SelfieManageCampaignCtrl.categories = null;
-                        SelfieManageCampaignCtrl.paymentMethods = null;
                         SelfieManageCampaignCtrl._proxyCampaign = null;
 
-                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods, updateRequest: updateRequest, advertiser: advertiser});
+                        SelfieManageCampaignCtrl.initWithModel({categories: categories, updateRequest: updateRequest, advertiser: advertiser});
                     });
 
                     expect(SelfieManageCampaignCtrl.card).toEqual(card);
                     expect(SelfieManageCampaignCtrl.campaign).toEqual(campaign);
                     expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
-                    expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
                     expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
                     expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
                 });
@@ -427,8 +396,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     campaign.id = 'cam-123';
 
                     compileCtrl(cState, {
-                        categories: categories,
-                        paymentMethods: paymentMethods
+                        categories: categories
                     });
 
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
@@ -450,7 +418,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 it('should create an update request', function() {
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
+                    campaign.pricing.budget = 100;
 
                     SelfieManageCampaignCtrl.safeUpdate();
 
@@ -909,54 +877,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                 });
                             });
                         });
-                    });
-                });
-            });
-
-            describe('updatePaymentMethod()', function() {
-                var updateRequest, updateRequestDeferred;
-
-                beforeEach(function() {
-                    updateRequest = {};
-                    updateRequestDeferred = $q.defer();
-
-                    campaign.id = 'cam-123';
-
-                    compileCtrl(cState, {
-                        categories: categories,
-                        paymentMethods: paymentMethods
-                    });
-
-                    spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
-                        updateRequest.data = obj.data;
-                        updateRequest.campaign = obj.campaign;
-                        updateRequest.save = jasmine.createSpy('update.save()').and.returnValue(updateRequestDeferred.promise);
-                        return updateRequest;
-                    });
-                });
-
-                it('should be wrapped in a c6AsyncQueue', function() {
-                    expect(debouncedFns).toContain(SelfieManageCampaignCtrl.updatePaymentMethod);
-                });
-
-                it('should do nothing if canSubmit is false', function() {
-                    SelfieManageCampaignCtrl.updatePaymentMethod();
-
-                    expect(cinema6.db.create).not.toHaveBeenCalled();
-                });
-
-                it('should create an update request', function() {
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
-
-                    SelfieManageCampaignCtrl.updatePaymentMethod();
-
-                    $scope.$digest();
-
-                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                        data: {
-                            paymentMethod: 'pay-8888'
-                        },
-                        campaign: 'cam-123'
                     });
                 });
             });

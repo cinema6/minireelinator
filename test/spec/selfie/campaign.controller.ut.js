@@ -31,9 +31,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             CampaignService,
             MiniReelService,
             ConfirmDialogService,
-            SelfieCampaignSummaryService,
             SelfieCampaignCtrl,
             SoftAlertService,
+            PaymentService,
             intercom;
 
         var cState,
@@ -41,7 +41,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             card,
             categories,
             logos,
-            paymentMethods,
             advertiser,
             user,
             targetingCostData;
@@ -106,7 +105,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 MiniReelService = $injector.get('MiniReelService');
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
                 SoftAlertService = $injector.get('SoftAlertService');
-                SelfieCampaignSummaryService = $injector.get('SelfieCampaignSummaryService');
+                PaymentService = $injector.get('PaymentService');
             });
 
             targetingCostData = {
@@ -151,14 +150,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 }
             });
             campaign = cinema6.db.create('selfieCampaign', {
-                id: 'cam-123',
+                // id: 'cam-123',
                 advertiserId: 'a-123',
                 name: undefined,
                 pricing: {},
                 status: 'draft',
                 application: 'selfie',
                 advertiserDisplayName: 'My Company',
-                paymentMethod: undefined,
                 targeting: {
                     geo: {
                         states: [],
@@ -175,12 +173,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
             categories = [];
             logos = [];
-            paymentMethods = [
-                {
-                    token: 'pay-123',
-                    default: true
-                }
-            ];
             user = {
                 id: 'u-123'
             };
@@ -191,15 +183,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 card: campaign.cards[0],
                 advertiser: advertiser,
                 user: user,
-                paymentOptional: false,
                 saveCampaign: jasmine.createSpy('cState.saveCampaign()'),
                 saveUpdateRequest: jasmine.createSpy('cState.saveUpdateRequest()')
             };
 
             compileCtrl(cState, {
                 categories: categories,
-                logos: logos,
-                paymentMethods: paymentMethods
+                logos: logos
             });
         });
 
@@ -275,9 +265,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.campaign.advertiserDisplayName = 'Sponsor Name';
-                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieCampaignCtrl.campaign.paymentMethod = 'pay-8987628376786';
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.card.data.service = 'youtube';
@@ -358,16 +345,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.validation.budget = true;
                         SelfieCampaignCtrl.validation.dailyLimit = true;
                         expect(SelfieCampaignCtrl.validation.sections.section6).toBe(true);
-
-                        SelfieCampaignCtrl.paymentOptional = false;
-                        expect(SelfieCampaignCtrl.validation.sections.section7).toBe(false);
-                        SelfieCampaignCtrl.paymentOptional = true;
-                        expect(SelfieCampaignCtrl.validation.sections.section7).toBe(true);
-                        SelfieCampaignCtrl.paymentOptional = false;
-                        cState.campaign.paymentMethod = 'pay-123';
-                        expect(SelfieCampaignCtrl.validation.sections.section7).toBe(true);
-
-                        expect(SelfieCampaignCtrl.validation.sections.section8).toBe(true);
                     });
                 });
             });
@@ -396,9 +373,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.categories = null;
                         SelfieCampaignCtrl.logos = null;
                         SelfieCampaignCtrl.advertiser = null;
-                        SelfieCampaignCtrl.paymentMethods = null;
 
-                        SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos, paymentMethods: paymentMethods });
+                        SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos });
                     });
 
                     expect(SelfieCampaignCtrl.card).toEqual(cState.card);
@@ -406,12 +382,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.advertiser).toEqual(cState.advertiser);
                     expect(SelfieCampaignCtrl.logos).toEqual(logos);
                     expect(SelfieCampaignCtrl.categories).toEqual(categories);
-                    expect(SelfieCampaignCtrl.paymentMethods).toEqual(paymentMethods);
                     expect(SelfieCampaignCtrl._proxyCard).toEqual(copy(cState.card));
                     expect(SelfieCampaignCtrl._proxyCampaign).toEqual(copy(cState.campaign));
                     expect(SelfieCampaignCtrl.originalCampaign).toEqual(campaign);
                     expect(SelfieCampaignCtrl.user).toEqual(user);
-                    expect(SelfieCampaignCtrl.paymentOptional).toEqual(cState.paymentOptional);
                     expect(SelfieCampaignCtrl.targetingCost).toEqual(targetingCostData);
                 });
             });
@@ -486,28 +460,368 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
             });
 
-            describe('submit()', function() {
-                var saveDeferred, updateRequestDeferred, updateRequest;
+            describe('confirmSubmission()', function() {
+                var makePaymentDeferred, updateRequestDeferred, updateRequest;
 
                 beforeEach(function() {
                     updateRequest = {};
-                    saveDeferred = $q.defer();
                     updateRequestDeferred = $q.defer();
-
-                    cState.saveCampaign.and.returnValue(saveDeferred.promise);
+                    makePaymentDeferred = $q.defer();
 
                     spyOn(c6State, 'goTo');
-                    spyOn(ConfirmDialogService, 'display');
-                    spyOn(SelfieCampaignSummaryService, 'display');
-                    spyOn(SelfieCampaignSummaryService, 'close');
-                    spyOn(SelfieCampaignSummaryService, 'pending');
                     spyOn(campaign, 'pojoify').and.callThrough();
+                    spyOn(PaymentService, 'makePayment').and.returnValue(makePaymentDeferred.promise);
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                         updateRequest.data = obj.data;
                         updateRequest.campaign = obj.campaign;
                         updateRequest.save = jasmine.createSpy('update.save()').and.returnValue(updateRequestDeferred.promise);
                         return updateRequest;
                     });
+                });
+
+                it('should be an async debounce function', function() {
+                    expect(debouncedFns).toContain(SelfieCampaignCtrl.confirmSubmission);
+                });
+
+                describe('when the campaign does not have a pending update request', function() {
+                    // this means cState.updateRequest is null
+
+                    ['draft','expired','canceled','outOfBudget','paused','active'].forEach(function(status) {
+                        // does not include pending because pending campaigns always have update requests
+
+                        describe('when campaign has status of ' + status, function() {
+
+                            [0, 500].forEach(function(amount) {
+
+                                describe('when the amount is ' + amount, function() {
+                                    var expectedData;
+
+                                    beforeEach(function() {
+                                        cState._campaign.status = status;
+                                        cState._campaign.id = 'cam-123';
+
+                                        if (status !== 'draft') {
+                                            cState.campaign.status = status;
+                                            cState.campaign.id = 'cam-123';
+                                        }
+
+                                        expectedData = status === 'draft' ? cState._campaign.pojoify() : copy(cState.campaign);
+                                        expectedData.status = (/draft|expired|canceled|outOfBudget/).test(status) ? 'active' : status;
+
+                                        $scope.$apply(function() {
+                                            SelfieCampaignCtrl.confirmSubmission({token: 'pay-123'}, amount);
+                                        });
+                                    });
+
+                                    it('should set confirmationPending', function() {
+                                        expect(SelfieCampaignCtrl.confirmationPending).toBe(true);
+                                    });
+
+                                    if (!amount) {
+                                        it('should not make a payment', function() {
+                                            expect(PaymentService.makePayment).not.toHaveBeenCalled();
+                                        });
+                                    } else {
+                                        it('should make a payment', function() {
+                                            expect(PaymentService.makePayment).toHaveBeenCalledWith('pay-123', amount);
+                                        });
+
+                                        describe('when payment fails', function() {
+                                            beforeEach(function() {
+                                                $scope.$apply(function() {
+                                                    makePaymentDeferred.reject('BAD');
+                                                });
+                                            });
+
+                                            it('should not create an update request', function() {
+                                                expect(cinema6.db.create).not.toHaveBeenCalled();
+                                                expect(cState.saveUpdateRequest).not.toHaveBeenCalled();
+                                            });
+
+                                            it('should set confirmationError and unset confirmationPending', function() {
+                                                expect(SelfieCampaignCtrl.confirmationError).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
+                                            });
+                                        });
+                                    }
+
+                                    describe('once payment succeeds or when payment is not necessary', function() {
+                                        beforeEach(function() {
+                                            $scope.$apply(function() {
+                                                makePaymentDeferred.resolve();
+                                            });
+                                        });
+
+                                        if (status === 'draft') {
+                                            it('should pojoify the master campaign', function() {
+                                                expect(campaign.pojoify).toHaveBeenCalled();
+                                            });
+                                        } else {
+                                            it('should not pojoify the master campaign', function() {
+                                                expect(campaign.pojoify).not.toHaveBeenCalled();
+                                            });
+                                        }
+
+                                        it('should create an update request', function() {
+                                            expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                                                campaign: 'cam-123',
+                                                data: jasmine.objectContaining(expectedData)
+                                            });
+                                        });
+
+                                        it('should save the update request', function() {
+                                            expect(updateRequest.save).toHaveBeenCalled();
+                                        });
+
+                                        describe('when the update request save succeeds', function() {
+                                            if (status === 'draft') {
+                                                it('should change the status on the campaign bound in the UI', function() {
+                                                    expect(SelfieCampaignCtrl.campaign.status).toBe('draft');
+
+                                                    $rootScope.$apply(function() {
+                                                        updateRequestDeferred.resolve(updateRequest);
+                                                    });
+
+                                                    expect(SelfieCampaignCtrl.campaign.status).toBe('pending');
+                                                });
+
+                                                it('should send intercom a "submitCampaign" event with metadata', function() {
+                                                    $rootScope.$apply(function() {
+                                                        updateRequestDeferred.resolve(updateRequest);
+                                                    });
+
+                                                    expect(intercom).toHaveBeenCalledWith('trackEvent', 'submitCampaign', {
+                                                        campaignId: cState._campaign.id,
+                                                        campaignName: cState._campaign.name,
+                                                        advertiserId: cState._campaign.advertiserId,
+                                                        advertiserName: cState._campaign.advertiserDisplayName
+                                                    });
+                                                });
+                                            } else {
+                                                it('should not change the status on the campaign bound in the UI', function() {
+                                                    expect(SelfieCampaignCtrl.campaign.status).toBe(status);
+
+                                                    $rootScope.$apply(function() {
+                                                        updateRequestDeferred.resolve(updateRequest);
+                                                    });
+
+                                                    expect(SelfieCampaignCtrl.campaign.status).toBe(status);
+                                                });
+
+                                                it('should not send intercom a "submitCampaign" event with metadata', function() {
+                                                    $rootScope.$apply(function() {
+                                                        updateRequestDeferred.resolve(updateRequest);
+                                                    });
+
+                                                    expect(intercom).not.toHaveBeenCalledWith('trackEvent', 'submitCampaign', {
+                                                        campaignId: cState._campaign.id,
+                                                        campaignName: cState._campaign.name,
+                                                        advertiserId: cState._campaign.advertiserId,
+                                                        advertiserName: cState._campaign.advertiserDisplayName
+                                                    });
+                                                });
+                                            }
+
+                                            it('should go to the dashboard', function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+
+                                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                            });
+
+                                            it('should set the allowExit flag on the cState and unset confirmationPending', function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+
+                                                expect(cState.allowExit).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
+                                            });
+                                        });
+
+                                        describe('when update request fails', function() {
+                                            beforeEach(function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.reject({data:'Error!'});
+                                                });
+                                            });
+
+                                            it('should not send intercom a "submitCampaign" event with metadata', function() {
+                                                expect(intercom).not.toHaveBeenCalled();
+                                            });
+
+                                            it('should not return to dashboard and should set confirmationError and unset confirmationPending', function() {
+                                                expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                                expect(SelfieCampaignCtrl.confirmationError).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+
+                describe('when the campaign has a pending update request', function() {
+                    // this means cState.updateRequest is defined
+
+                    ['pending','expired','canceled','outOfBudget','paused','active'].forEach(function(status) {
+                        // this does not include draft because a draft will never have an update request
+
+                        describe('when campaign has status of ' + status, function() {
+
+                            [0, 500].forEach(function(amount) {
+
+                                describe('when the amount is ' + amount, function() {
+                                    var expectedData;
+
+                                    beforeEach(function() {
+                                        cState._campaign.status = status;
+                                        cState.campaign.status = status;
+
+                                        cState.saveUpdateRequest.and.returnValue(updateRequestDeferred.promise);
+                                        cState.updateRequest = { id: 'ur-123' };
+
+                                        $scope.$apply(function() {
+                                            SelfieCampaignCtrl.confirmSubmission({token: 'pay-123'}, amount);
+                                        });
+                                    });
+
+                                    it('should set confirmationPending', function() {
+                                        expect(SelfieCampaignCtrl.confirmationPending).toBe(true);
+                                    });
+
+                                    if (!amount) {
+                                        it('should not make a payment', function() {
+                                            expect(PaymentService.makePayment).not.toHaveBeenCalled();
+                                        });
+                                    } else {
+                                        it('should make a payment', function() {
+                                            expect(PaymentService.makePayment).toHaveBeenCalledWith('pay-123', amount);
+                                        });
+
+                                        describe('when payment fails', function() {
+                                            beforeEach(function() {
+                                                $scope.$apply(function() {
+                                                    makePaymentDeferred.reject('BAD');
+                                                });
+                                            });
+
+                                            it('should not create an update request', function() {
+                                                expect(cinema6.db.create).not.toHaveBeenCalled();
+                                                expect(cState.saveUpdateRequest).not.toHaveBeenCalled();
+                                            });
+
+                                            it('should set confirmationError and unset confirmationPending', function() {
+                                                expect(SelfieCampaignCtrl.confirmationError).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
+                                            });
+                                        });
+                                    }
+
+                                    describe('once payment succeeds or when payment is not necessary', function() {
+                                        beforeEach(function() {
+                                            $scope.$apply(function() {
+                                                makePaymentDeferred.resolve();
+                                            });
+                                        });
+
+                                        it('should not pojoify the master campaign', function() {
+                                            expect(campaign.pojoify).not.toHaveBeenCalled();
+                                        });
+
+                                        it('should not create an update request', function() {
+                                            expect(cinema6.db.create).not.toHaveBeenCalled();
+                                        });
+
+                                        it('should save the existing update request', function() {
+                                            expect(cState.saveUpdateRequest).toHaveBeenCalled();
+                                        });
+
+                                        describe('when the update request save succeeds', function() {
+                                            it('should not change the status on the campaign bound in the UI', function() {
+                                                expect(SelfieCampaignCtrl.campaign.status).toBe(status);
+
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+
+                                                expect(SelfieCampaignCtrl.campaign.status).toBe(status);
+                                            });
+
+                                            it('should not send intercom a "submitCampaign" event with metadata', function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+
+                                                expect(intercom).not.toHaveBeenCalledWith('trackEvent', 'submitCampaign', {
+                                                    campaignId: cState._campaign.id,
+                                                    campaignName: cState._campaign.name,
+                                                    advertiserId: cState._campaign.advertiserId,
+                                                    advertiserName: cState._campaign.advertiserDisplayName
+                                                });
+                                            });
+
+                                            it('should go to the dashboard', function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+
+                                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                            });
+
+                                            it('should set the allowExit flag on the cState and unset confirmationPending', function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+
+                                                expect(cState.allowExit).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
+                                            });
+                                        });
+
+                                        describe('when update request fails', function() {
+                                            beforeEach(function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.reject({data:'Error!'});
+                                                });
+                                            });
+
+                                            it('should not send intercom a "submitCampaign" event with metadata', function() {
+                                                expect(intercom).not.toHaveBeenCalled();
+                                            });
+
+                                            it('should not return to dashboard and should set confirmationError and unset confirmationPending', function() {
+                                                expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                                expect(SelfieCampaignCtrl.confirmationError).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+
+            describe('submit()', function() {
+                var saveDeferred, stateTransitionDeferred;
+
+                beforeEach(function() {
+                    saveDeferred = $q.defer();
+                    stateTransitionDeferred = $q.defer();
+
+                    cState.saveCampaign.and.returnValue(saveDeferred.promise);
+
+                    spyOn(c6State, 'goTo').and.returnValue(stateTransitionDeferred.promise);
+                    spyOn(ConfirmDialogService, 'display');
+                });
+
+                it('should be an async debounce function', function() {
+                    expect(debouncedFns).toContain(SelfieCampaignCtrl.submit);
                 });
 
                 it('should set validation.show to true to trigger error states', function() {
@@ -517,14 +831,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     expect(SelfieCampaignCtrl.validation.show).toBe(true);
                     expect(cState.saveCampaign).not.toHaveBeenCalled();
-                    expect(cinema6.db.create).not.toHaveBeenCalled();
                 });
 
                 describe('when the campaign can submit', function() {
                     beforeEach(function() {
                         cState.campaign.name = 'Campaign Name';
                         cState.campaign.advertiserDisplayName = 'Advertiser Name';
-                        cState.campaign.paymentMethod = 'pay-123';
                         cState.card.links.Website = 'http://cinema6.com';
                         cState.card.data.service = 'Youtube';
                         cState.card.data.videoid = 'xh653bs8';
@@ -546,125 +858,72 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             cState.campaign.status = 'draft';
 
                             SelfieCampaignCtrl.submit();
-
-                            onAffirm = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onAffirm;
-                            onCancel = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onCancel;
                         });
 
-                        it('should should the campaign summary', function() {
-                            expect(SelfieCampaignSummaryService.display).toHaveBeenCalled();
+                        it('should save the campaign', function() {
+                            expect(cState.saveCampaign).toHaveBeenCalled();
                         });
 
-                        describe('onAffirm()', function() {
+                        it('should set pending to true', function() {
+                            expect(SelfieCampaignCtrl.pending).toBe(true);
+                        });
+
+                        describe('when save succeeds', function() {
                             beforeEach(function() {
-                                onAffirm();
+                                $rootScope.$apply(function() {
+                                    saveDeferred.resolve();
+                                });
                             });
 
-                            it('should be wrapped in a c6AsyncQueue', function() {
-                                expect(debouncedFns).toContain(onAffirm);
+                            it('should go to Selfie:Campaign:Fund state', function() {
+                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Campaign:Fund');
                             });
 
-                            it('should set summary save to pending', function() {
-                                expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(true);
-                            });
-
-                            it('should save the campaign', function() {
-                                expect(cState.saveCampaign).toHaveBeenCalled();
-                            });
-
-                            describe('when the save succeeds', function() {
-                                var expectedData;
-
-                                beforeEach(function() {
-                                    cState._campaign.id = 'cam-123';
-
-                                    expectedData = campaign.pojoify();
-                                    expectedData.status = 'active';
-
+                            describe('when state transitions', function() {
+                                it('should set pending and confirmationError to false', function() {
                                     $rootScope.$apply(function() {
-                                        saveDeferred.resolve();
+                                        stateTransitionDeferred.resolve();
                                     });
+
+                                    expect(SelfieCampaignCtrl.pending).toBe(false);
+                                    expect(SelfieCampaignCtrl.confirmationError).toBe(false);
+                                    expect(ConfirmDialogService.display).not.toHaveBeenCalled();
                                 });
+                            });
 
-                                it('should pojoify the master campaign', function() {
-                                    expect(campaign.pojoify).toHaveBeenCalled();
+                            describe('when state transition fails', function() {
+                                it('should set pending and confirmationError to false', function() {
+                                    $rootScope.$apply(function() {
+                                        stateTransitionDeferred.reject('BAD');
+                                    });
+
+                                    expect(SelfieCampaignCtrl.pending).toBe(false);
+                                    expect(SelfieCampaignCtrl.confirmationError).toBe(false);
+                                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                    expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toContain('There was a problem');
                                 });
+                            });
+                        });
 
-                                it('should create an update request with campaign.status = "active"', function() {
-                                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                                        campaign: 'cam-123',
-                                        data: jasmine.objectContaining(expectedData)
-                                    });
+                        describe('when save fails', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
+                                    saveDeferred.reject('BAD');
                                 });
+                            });
 
-                                it('should save the update request', function() {
-                                    expect(updateRequest.save).toHaveBeenCalled();
-                                });
+                            it('should not go to Selfie:Campaign:Fund state', function() {
+                                expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:Campaign:Fund');
+                            });
 
-                                describe('when the update request save succeeds', function() {
-                                    it('should change the status on the campaign bound in the UI', function() {
-                                        expect(SelfieCampaignCtrl.campaign.status).toBe('draft');
+                            it('should show error modal', function() {
+                                expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toContain('There was a problem');
+                            });
 
-                                        $rootScope.$apply(function() {
-                                            updateRequestDeferred.resolve(updateRequest);
-                                        });
-
-                                        expect(SelfieCampaignCtrl.campaign.status).toBe('pending');
-                                    });
-
-                                    it('should send intercom a "submitCampaign" event with metadata', function() {
-                                        $rootScope.$apply(function() {
-                                            updateRequestDeferred.resolve(updateRequest);
-                                        });
-
-                                        expect(intercom).toHaveBeenCalledWith('trackEvent', 'submitCampaign', {
-                                            campaignId: cState._campaign.id,
-                                            campaignName: cState._campaign.name,
-                                            advertiserId: cState._campaign.advertiserId,
-                                            advertiserName: cState._campaign.advertiserDisplayName
-                                        });
-                                    });
-
-                                    it('should go to the dashboard', function() {
-                                        $rootScope.$apply(function() {
-                                            updateRequestDeferred.resolve(updateRequest);
-                                        });
-
-                                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                                    });
-
-                                    it('should set the allowExit flag on the cState', function() {
-                                        $rootScope.$apply(function() {
-                                            updateRequestDeferred.resolve(updateRequest);
-                                        });
-
-                                        expect(cState.allowExit).toBe(true);
-                                    });
-                                });
-
-                                describe('when update request fails', function() {
-                                    beforeEach(function() {
-                                        $rootScope.$apply(function() {
-                                            updateRequestDeferred.reject({data:'Error!'});
-                                        });
-                                    });
-
-                                    it('should not send intercom a "submitCampaign" event with metadata', function() {
-                                        expect(intercom).not.toHaveBeenCalled();
-                                    });
-
-                                    it('should close the summary', function() {
-                                        expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
-                                    });
-
-                                    it('should set summary pending to false', function() {
-                                        expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
-                                    });
-
-                                    it('should show an error modal', function() {
-                                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
-                                    });
-                                });
+                            it('should set pending and confirmationError to false', function() {
+                                expect(SelfieCampaignCtrl.pending).toBe(false);
+                                expect(SelfieCampaignCtrl.confirmationError).toBe(false);
                             });
                         });
                     });
@@ -680,6 +939,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             });
 
                             it('should alert the user that nothing has changed, and do nothing', function() {
+                                expect(cState.saveCampaign).not.toHaveBeenCalled();
+                                expect(c6State.goTo).not.toHaveBeenCalled();
+                                expect(SelfieCampaignCtrl.pending).not.toBe(true);
                                 expect(ConfirmDialogService.display).toHaveBeenCalled();
                                 expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('No changes have been detected.')
                             });
@@ -691,293 +953,44 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                 cState.campaign.status = 'paused';
                                 cState.campaign.id = 'cam-123';
                                 cState.campaign.name = 'Something else!';
+
+                                SelfieCampaignCtrl.submit();
                             });
 
-                            describe('when the campaign has a pending update request', function() {
-                                var onAffirm, onCancel;
-
-                                beforeEach(function() {
-                                    cState.saveUpdateRequest.and.returnValue(updateRequestDeferred.promise);
-                                    cState.updateRequest = { id: 'ur-123' };
-
-                                    SelfieCampaignCtrl.submit();
-
-                                    onAffirm = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onAffirm;
-                                    onCancel = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onCancel;
-                                });
-
-                                it('should show the campaign summary', function() {
-                                    expect(SelfieCampaignSummaryService.display).toHaveBeenCalled();
-                                });
-
-                                describe('onAffirm()', function() {
-                                    beforeEach(function() {
-                                        $rootScope.$apply(function() {
-                                            onAffirm();
-                                        });
-                                    });
-
-                                    it('should set summary save to pending', function() {
-                                        expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(true);
-                                    });
-
-                                    it('should save the updateRequest', function() {
-                                        expect(cState.saveUpdateRequest).toHaveBeenCalled();
-                                    });
-
-                                    it('should not create a new update request', function() {
-                                        expect(cinema6.db.create).not.toHaveBeenCalled();
-                                    });
-
-                                    describe('after the update request is saved', function() {
-                                        beforeEach(function() {
-                                            $rootScope.$apply(function() {
-                                                updateRequestDeferred.resolve({
-                                                    data: SelfieCampaignCtrl.campaign,
-                                                    campaign: 'cam-123'
-                                                });
-                                            });
-                                        });
-
-                                        it('should not send intercom a "submitCampaign" event with metadata', function() {
-                                            expect(intercom).not.toHaveBeenCalled();
-                                        });
-
-                                        it('should set summary pending to false and close it', function() {
-                                            expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
-                                            expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
-                                        });
-
-                                        it('should not modify the status on the campaign bound in the UI', function() {
-                                            expect(SelfieCampaignCtrl.campaign.status).toBe('paused');
-                                        });
-
-                                        it('should go to the dashboard', function() {
-                                            expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                                        });
-
-                                        it('should set the allowExit flag on the cState', function() {
-                                            expect(cState.allowExit).toBe(true);
-                                        });
-                                    });
-
-                                    describe('when update request fails', function() {
-                                        beforeEach(function() {
-                                            $rootScope.$apply(function() {
-                                                updateRequestDeferred.reject({data:'Error!'});
-                                            });
-                                        });
-
-                                        it('should close the summary', function() {
-                                            expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
-                                        });
-
-                                        it('should set summary pending to false', function() {
-                                            expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
-                                        });
-
-                                        it('should show an error modal', function() {
-                                            expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
-                                        });
-                                    });
-                                });
+                            it('should set pending to true', function() {
+                                expect(SelfieCampaignCtrl.pending).toBe(true);
                             });
 
-                            describe('when the campaign does not have a pending update request', function() {
-                                var onAffirm, onCancel;
+                            it('should not save the campaign', function() {
+                                expect(cState.saveCampaign).not.toHaveBeenCalled();
+                            });
 
-                                beforeEach(function() {
-                                    SelfieCampaignCtrl.submit();
+                            it('should go to Selfie:Campaign:Fund state', function() {
+                                expect(c6State.goTo).not.toHaveBeenCalled();
+                            });
 
+                            describe('when state transition succeeds', function() {
+                                it('should set pending and confirmationError to false', function() {
                                     $rootScope.$apply(function() {
-                                        saveDeferred.resolve();
+                                        stateTransitionDeferred.resolve();
                                     });
 
-                                    onAffirm = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onAffirm;
-                                    onCancel = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onCancel;
+                                    expect(SelfieCampaignCtrl.pending).toBe(false);
+                                    expect(SelfieCampaignCtrl.confirmationError).toBe(false);
+                                    expect(ConfirmDialogService.display).not.toHaveBeenCalled();
                                 });
+                            });
 
-                                it('should show the campaign summary', function() {
-                                    expect(SelfieCampaignSummaryService.display).toHaveBeenCalled();
-                                });
-
-                                ['expired','outOfBudget','canceled'].forEach(function(status) {
-                                    describe('when campaign has status of '+ status, function() {
-                                        describe('onAffirm()', function() {
-                                            beforeEach(function() {
-                                                cState._campaign.status = status;
-                                                cState.campaign.status = status;
-
-                                                $rootScope.$apply(function() {
-                                                    onAffirm();
-                                                });
-                                            });
-
-                                            it('should set summary save to pending', function() {
-                                                expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(true);
-                                            });
-
-                                            it('should not save the campaign', function() {
-                                                expect(cState.saveCampaign).not.toHaveBeenCalled();
-                                            });
-
-                                            describe('when the campaign does not have a pending update request', function() {
-                                                it('should not pojoify the master campaign', function() {
-                                                    expect(campaign.pojoify).not.toHaveBeenCalled();
-                                                });
-
-                                                it('should create an update request and set the status to "active"', function() {
-                                                    var expected = copy(cState.campaign);
-                                                    expected.status = 'active';
-
-                                                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                                                        campaign: 'cam-123',
-                                                        data: expected
-                                                    });
-                                                });
-
-                                                it('should save the update request', function() {
-                                                    expect(updateRequest.save).toHaveBeenCalled();
-                                                });
-
-                                                describe('when the update request save succeeds', function() {
-                                                    it('should not modify the status on the campaign bound in the UI', function() {
-                                                        expect(SelfieCampaignCtrl.campaign.status).toBe(status);
-
-                                                        $rootScope.$apply(function() {
-                                                            updateRequestDeferred.resolve(updateRequest);
-                                                        });
-
-                                                        expect(SelfieCampaignCtrl.campaign.status).toBe(status);
-                                                    });
-
-                                                    it('should go to the dashboard', function() {
-                                                        $rootScope.$apply(function() {
-                                                            updateRequestDeferred.resolve(updateRequest);
-                                                        });
-
-                                                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                                                    });
-
-                                                    it('should set the allowExit flag on the cState', function() {
-                                                        $rootScope.$apply(function() {
-                                                            updateRequestDeferred.resolve(updateRequest);
-                                                        });
-
-                                                        expect(cState.allowExit).toBe(true);
-                                                    });
-                                                });
-
-                                                describe('when update request fails', function() {
-                                                    beforeEach(function() {
-                                                        $rootScope.$apply(function() {
-                                                            updateRequestDeferred.reject({data:'Error!'});
-                                                        });
-                                                    });
-
-                                                    it('should close the summary', function() {
-                                                        expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
-                                                    });
-
-                                                    it('should set summary pending to false', function() {
-                                                        expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
-                                                    });
-
-                                                    it('should show an error modal', function() {
-                                                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
-                                                    });
-                                                });
-                                            });
-                                        });
+                            describe('if state transition fails', function() {
+                                it('should set pending and confirmationError to false and show an error modal', function() {
+                                    $rootScope.$apply(function() {
+                                        stateTransitionDeferred.reject('BAD');
                                     });
-                                });
 
-                                ['paused','active'].forEach(function(status) {
-                                    describe('when campaign has status of '+ status, function() {
-                                        describe('onAffirm()', function() {
-                                            beforeEach(function() {
-                                                cState._campaign.status = status;
-                                                cState.campaign.status = status;
-
-                                                $rootScope.$apply(function() {
-                                                    onAffirm();
-                                                });
-                                            });
-
-                                            it('should set summary save to pending', function() {
-                                                expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(true);
-                                            });
-
-                                            it('should not save the campaign', function() {
-                                                expect(cState.saveCampaign).not.toHaveBeenCalled();
-                                            });
-
-                                            describe('when the campaign does not have a pending update request', function() {
-                                                it('should not pojoify the master campaign', function() {
-                                                    expect(campaign.pojoify).not.toHaveBeenCalled();
-                                                });
-
-                                                it('should create an update request without modifying the current status', function() {
-                                                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                                                        campaign: 'cam-123',
-                                                        data: cState.campaign
-                                                    });
-                                                });
-
-                                                it('should save the update request', function() {
-                                                    expect(updateRequest.save).toHaveBeenCalled();
-                                                });
-
-                                                describe('when the update request save succeeds', function() {
-                                                    it('should not modify the status on the campaign bound in the UI', function() {
-                                                        expect(SelfieCampaignCtrl.campaign.status).toBe(status);
-
-                                                        $rootScope.$apply(function() {
-                                                            updateRequestDeferred.resolve(updateRequest);
-                                                        });
-
-                                                        expect(SelfieCampaignCtrl.campaign.status).toBe(status);
-                                                    });
-
-                                                    it('should go to the dashboard', function() {
-                                                        $rootScope.$apply(function() {
-                                                            updateRequestDeferred.resolve(updateRequest);
-                                                        });
-
-                                                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                                                    });
-
-                                                    it('should set the allowExit flag on the cState', function() {
-                                                        $rootScope.$apply(function() {
-                                                            updateRequestDeferred.resolve(updateRequest);
-                                                        });
-
-                                                        expect(cState.allowExit).toBe(true);
-                                                    });
-                                                });
-
-                                                describe('when update request fails', function() {
-                                                    beforeEach(function() {
-                                                        $rootScope.$apply(function() {
-                                                            updateRequestDeferred.reject({data:'Error!'});
-                                                        });
-                                                    });
-
-                                                    it('should close the summary', function() {
-                                                        expect(SelfieCampaignSummaryService.close).toHaveBeenCalled();
-                                                    });
-
-                                                    it('should set summary pending to false', function() {
-                                                        expect(SelfieCampaignSummaryService.pending).toHaveBeenCalledWith(false);
-                                                    });
-
-                                                    it('should show an error modal', function() {
-                                                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
-                                                    });
-                                                });
-                                            });
-                                        });
-                                    });
+                                    expect(SelfieCampaignCtrl.pending).toBe(false);
+                                    expect(SelfieCampaignCtrl.confirmationError).toBe(false);
+                                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                    expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toContain('There was a problem');
                                 });
                             });
                         });

@@ -323,7 +323,9 @@ fa,
         .action__btn:hover {
             background:#0E7D81;
         }
-
+        a.action__btn:focus {
+            border:2px solid #0E7D81;
+        }
         .action__btn--small {
             font-size:1em;
             padding:0.5rem 1rem 0.375rem;
@@ -6646,12 +6648,16 @@ div.tree-multiselect span.remove-selected {
         color:#4fc184;
         border:2px solid #4fc184;
         font-weight:600;
+        vertical-align: top;
     }
-    .action__btn--balance:hover {
-        background:#4fc184;
-        color:#fff;
-        border-color:#4fc184;
-    }
+    .action__btn--balance:hover,
+    .action__btn--balance:focus,
+    a.action__btn--balance:hover,
+    a.action__btn--balance:focus {
+          background:#4fc184;
+          color:#fff;
+          border-color:#4fc184;
+ }
         .action__btn--balance span {
             font-weight:normal;
         }
@@ -6747,6 +6753,15 @@ div.tree-multiselect span.remove-selected {
             .campaignSummary__item .campaignItem__title {
                 vertical-align: middle;
             }
+            .reviewOrder__group .orderItems .pmtDropdown ul {
+                margin-right: 0;
+            }
+                .reviewOrder__group .orderItems .pmtDropdown ul li,
+                .reviewOrder__group .orderItems .pmtDropdown ul li:first-child {
+                    padding: 0;
+                    margin-bottom: 0;
+                    border-bottom: 0;
+                }
         .campaignItem__title, .campaignSummary__group h3.tk--hdr {
             font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
             font-weight: 400;

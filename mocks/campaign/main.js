@@ -87,13 +87,16 @@ module.exports = function(http) {
         if (request.body.status === 'approved') {
             campaign = updateRequest.data;
             delete campaign.updateRequest;
+            grunt.file.delete(objectPath('updates', id));
         }
 
         campaign.pricing.cost = getCpv(updateRequest.data);
         campaign.lastUpdated = currentTime;
         grunt.file.write(objectPath('campaigns', campaign.id), JSON.stringify(campaign, null, '    '));
 
-        grunt.file.write(filePath, JSON.stringify(updateRequest, null, '    '));
+        if (request.body.status !== 'approved') {
+            grunt.file.write(filePath, JSON.stringify(updateRequest, null, '    '));
+        }
 
         this.respond(200, extend(updateRequest, {
             id: id

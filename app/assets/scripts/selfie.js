@@ -41,7 +41,13 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
         }])
 
         .controller('SelfieController', ['AuthService','c6State','intercom',
-        function                        ( AuthService , c6State , intercom ) {
+                                         'PaymentService',
+        function                        ( AuthService , c6State , intercom ,
+                                          PaymentService ) {
+            var self = this;
+
+            this.accounting = PaymentService.balance;
+
             this.initWithModel = function(model) {
                 this.model = model;
                 this.isAdmin = !!model.entitlements.adminCampaigns;
