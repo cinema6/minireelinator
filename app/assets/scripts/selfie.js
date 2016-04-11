@@ -40,10 +40,8 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
             }]);
         }])
 
-        .controller('SelfieController', ['$scope','AuthService','c6State','tracker','intercom',
-        function                        ( $scope , AuthService , c6State , tracker , intercom ) {
-            var self = this;
-
+        .controller('SelfieController', ['AuthService','c6State','intercom',
+        function                        ( AuthService , c6State , intercom ) {
             this.initWithModel = function(model) {
                 this.model = model;
                 this.isAdmin = !!model.entitlements.adminCampaigns;
@@ -56,18 +54,6 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
                         return c6State.goTo('Selfie:Login', null, {});
                     });
             };
-
-            this.trackStateChange = function(state){
-                tracker.pageview(state.cUrl, 'Platform - ' + state.cName);
-            };
-
-            c6State.on('stateChange', this.trackStateChange);
-
-            tracker.create(c6Defines.kTracker.accountId,c6Defines.kTracker.config);
-
-            $scope.$on('$destroy', function() {
-                c6State.removeListener('stateChange', self.trackStateChange);
-            });
         }])
 
         .config(['c6StateProvider',

@@ -8,8 +8,7 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             AuthService,
             $q,
             $scope,
-            SelfieCtrl,
-            tracker;
+            SelfieCtrl;
 
         var user,
             intercom;
@@ -46,25 +45,13 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
                 c6State = $injector.get('c6State');
                 AuthService = $injector.get('AuthService');
                 $q = $injector.get('$q');
-                tracker = $injector.get('tracker');
             });
-
-            spyOn(tracker, 'create');
-            spyOn(c6State, 'on');
 
             SelfieCtrl = instantiate();
         });
 
         it('should exist', function() {
             expect(SelfieCtrl).toEqual(jasmine.any(Object));
-        });
-
-        it('should initialize a tracker', function() {
-            expect(tracker.create).toHaveBeenCalledWith(c6Defines.kTracker.accountId, c6Defines.kTracker.config);
-        });
-
-        it('should add a listener for c6State changes', function() {
-            expect(c6State.on).toHaveBeenCalledWith('stateChange', SelfieCtrl.trackStateChange);
         });
 
         describe('properties', function() {
@@ -112,21 +99,6 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
 
                 it('should send intercom a "shutdown" event', function() {
                     expect(intercom).toHaveBeenCalledWith('shutdown');
-                });
-            });
-
-            describe('trackStateChange(state)', function() {
-                it('should track a page view', function() {
-                    var state = {
-                        cUrl: '/selfie',
-                        cName: 'Selfie Dashboard'
-                    };
-
-                    spyOn(tracker, 'pageview');
-
-                    SelfieCtrl.trackStateChange(state);
-
-                    expect(tracker.pageview).toHaveBeenCalledWith(state.cUrl, 'Platform - ' + state.cName);
                 });
             });
         });
