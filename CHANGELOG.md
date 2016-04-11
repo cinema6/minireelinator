@@ -1,11 +1,17 @@
 # MiniReelinator
 
+## v1.42.0 (April 11, 2016)
 * *[v1.42.0.rc1]*
   * [FEATURE]: Display account balance in the header of campaign list,
     campaign editor and campaign manager
   * [FEATURE]: Add ability to fund account when submitting campaigns
   * [FEATURE]: Remove payment method tab from manage campaign screen
   * [DEV]: Remove payment method from campaign entity
+  * [FIX]: Add Google Analytics on unauthenticated Selfie pages (sign up, etc)
+  * [FEATURE]: Add support for "promotion" query parameter on sign up
+  * [FEATURE]: Add Facebook and Google conversion tracking pixel on
+    sign up and sign up success pages
+* *[v1.42.0.rc1]*
 
 ## v1.41.2 (April 6, 2016)
 * *[v1.41.2.rc1]*
