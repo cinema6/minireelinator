@@ -44,8 +44,6 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
                                          'PaymentService',
         function                        ( AuthService , c6State , intercom ,
                                           PaymentService ) {
-            var self = this;
-
             this.accounting = PaymentService.balance;
 
             this.initWithModel = function(model) {
