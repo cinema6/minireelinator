@@ -17,7 +17,8 @@ define(['app'], function(appModule) {
                 CampaignService,
                 ConfirmDialogService,
                 SpinnerService,
-                intercom;
+                intercom,
+                PaymentService;
 
             var card,
                 categories,
@@ -44,6 +45,7 @@ define(['app'], function(appModule) {
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
                     CampaignService = $injector.get('CampaignService');
                     SpinnerService = $injector.get('SpinnerService');
+                    PaymentService = $injector.get('PaymentService');
 
                     card = MiniReelService.createCard('video');
                     categories = [
@@ -242,6 +244,18 @@ define(['app'], function(appModule) {
                     spyOn(SelfieLogoService, 'getLogos').and.returnValue($q.when(logos));
                     spyOn(SpinnerService, 'display');
                     spyOn(SpinnerService, 'close');
+                    spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
+                });
+
+                it('should get the account balance', function() {
+                    campaignState.campaign = campaign;
+                    campaignState.user = user;
+
+                    $rootScope.$apply(function() {
+                        campaignState.model().then(success, failure);
+                    });
+
+                    expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
                 describe('when campaign has an org', function() {
@@ -257,7 +271,8 @@ define(['app'], function(appModule) {
                         expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(campaign.org);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
-                            logos: logos
+                            logos: logos,
+                            balance: {}
                         });
 
                         expect(SpinnerService.display).toHaveBeenCalled();
@@ -279,7 +294,8 @@ define(['app'], function(appModule) {
                         expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(user.org.id);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
-                            logos: logos
+                            logos: logos,
+                            balance: {}
                         });
 
                         expect(SpinnerService.display).toHaveBeenCalled();

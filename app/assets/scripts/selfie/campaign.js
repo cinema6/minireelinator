@@ -552,9 +552,11 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService','c6State','$q',
                                                       'CampaignService','ConfirmDialogService',
                                                       'SpinnerService','intercom',
+                                                      'PaymentService',
             function                                 ( cinema6 , SelfieLogoService , c6State , $q ,
                                                        CampaignService , ConfirmDialogService ,
-                                                       SpinnerService , intercom ) {
+                                                       SpinnerService , intercom ,
+                                                       PaymentService ) {
                 var SelfieState = c6State.get('Selfie');
 
                 function campaignExtend(target, extension) {
@@ -631,6 +633,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     SpinnerService.display();
 
                     return $q.all({
+                        balance: PaymentService.getBalance(),
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
                         logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id)
                     }).catch(function() {
@@ -1991,7 +1994,9 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
-            function                                        ( cinema6 , $q , c6State ) {
+                                                             'PaymentService',
+            function                                        ( cinema6 , $q , c6State ,
+                                                              PaymentService ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -2011,6 +2016,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         null;
 
                     return $q.all({
+                        balance: PaymentService.getBalance(),
                         advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId),
                         updateRequest: updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :

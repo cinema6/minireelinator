@@ -10,7 +10,8 @@ define(['app'], function(appModule) {
                 newCampaignState,
                 c6State,
                 cinema6,
-                MiniReelService;
+                MiniReelService,
+                PaymentService;
 
             var card,
                 categories,
@@ -28,6 +29,7 @@ define(['app'], function(appModule) {
                     c6State = $injector.get('c6State');
                     cinema6 = $injector.get('cinema6');
                     MiniReelService = $injector.get('MiniReelService');
+                    PaymentService = $injector.get('PaymentService');
 
                     card = cinema6.db.create('card', MiniReelService.createCard('video'));
                     categories = [
@@ -122,6 +124,8 @@ define(['app'], function(appModule) {
                     updateRequestDeferred = $q.defer();
                     advertiserDeferred = $q.defer();
 
+                    spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
+
                     spyOn(cinema6.db, 'find').and.callFake(function(type) {
                         var response;
 
@@ -139,6 +143,14 @@ define(['app'], function(appModule) {
 
                     campaignState.campaign = campaign;
                     campaign.org = 'o-999';
+                });
+
+                it('should get the account balance', function() {
+                    $rootScope.$apply(function() {
+                        campaignState.model().then(success, failure);
+                    });
+
+                    expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
                 describe('when the campaign has an updateRequest', function() {
@@ -164,7 +176,8 @@ define(['app'], function(appModule) {
 
                             expect(success).toHaveBeenCalledWith({
                                 updateRequest: updateRequest,
-                                advertiser: advertiser
+                                advertiser: advertiser,
+                                balance: {}
                             });
                         });
                     });
@@ -202,7 +215,8 @@ define(['app'], function(appModule) {
 
                             expect(success).toHaveBeenCalledWith({
                                 updateRequest: null,
-                                advertiser: advertiser
+                                advertiser: advertiser,
+                                balance: {}
                             });
                         });
                     });
