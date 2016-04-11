@@ -27,6 +27,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
     return angular.module('c6.app.selfie.directives', [])
         .value('Chart', Chart)
 
+        .directive('accountBalance', [function() {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/account_balance.html'
+            };
+        }])
+
         .directive('stopPropagate', [function() {
             return {
                 restrict: 'A',
@@ -47,7 +54,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     var checkView = attrs.checkView;
 
                     function handleModelChange(value) {
-                        if (ngModel.$modelValue || (checkView && ngModel.$viewValue)) {
+                        if ((ngModel.$modelValue || ngModel.$modelValue === 0) ||
+                            (checkView && (ngModel.$viewValue || ngModel.$viewValue === 0))) {
                             $element.addClass('form__fillCheck--filled');
                         } else {
                             $element.removeClass('form__fillCheck--filled');
@@ -1372,6 +1380,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             return {
                 restrict: 'E',
                 scope: {
+                    hideSaveButton: '=',
                     clientToken: '@',
                     onSuccess: '&',
                     onFailure: '&',
@@ -1442,6 +1451,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                             scope.$apply(function() {
                                 scope.errorMessage = event.message;
                                 scope.pending = false;
+                                scope.onFailure();
                             });
                         },
                         onPaymentMethodReceived: function(method) {
@@ -1493,7 +1503,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             return {
                 restrict: 'E',
                 scope: {
-                    campaign: '=',
+                    chosenMethod: '=',
                     methods: '='
                 },
                 templateUrl: 'views/selfie/directives/payment_methods.html',
@@ -1504,26 +1514,12 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
         .controller('SelfiePaymentMethodsController', ['$scope',
         function                                      ( $scope ) {
-            var campaign = $scope.campaign,
-                methods = $scope.methods,
-                SelfiePaymentMethodsCtrl = this;
-
-            function getPrimaryMethod() {
-                return methods.filter(function(method) {
-                    return !!method.default;
-                })[0];
-            }
-
-            function getMethodById(token) {
-                return methods.filter(function(method) {
-                    return token === method.token;
-                })[0];
-            }
+            var methods = $scope.methods;
 
             Object.defineProperties(this, {
                 methods: {
                     get: function() {
-                        var current = SelfiePaymentMethodsCtrl.currentMethod || {};
+                        var current = $scope.chosenMethod || {};
 
                         return (methods || []).filter(function(method) {
                             return method.token !== current.token;
@@ -1532,17 +1528,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 }
             });
 
-            this.currentMethod = methods.filter(function(method) {
-                return campaign.paymentMethod === method.token;
-            })[0] || getPrimaryMethod();
-
-            if (!campaign.paymentMethod && this.currentMethod) {
-                campaign.paymentMethod = this.currentMethod.token;
-            }
-
-            this.setCurrentMethod = function(method) {
-                this.currentMethod = method;
-                campaign.paymentMethod = method.token;
+            this.setChosenMethod = function(method) {
+                $scope.chosenMethod = method;
                 this.showDropdown = false;
             };
 
@@ -1551,14 +1538,6 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
                 this.showDropdown = !this.showDropdown;
             };
-
-            $scope.$watch(function() {
-                return campaign.paymentMethod;
-            }, function(newToken, oldToken) {
-                if (newToken === oldToken) { return; }
-
-                SelfiePaymentMethodsCtrl.setCurrentMethod(getMethodById(newToken));
-            });
         }])
 
         .directive('selfieLoginDialog', ['SelfieLoginDialogService',
@@ -1632,56 +1611,6 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
-        .directive('selfieCampaignSummary', ['SelfieCampaignSummaryService',
-        function                            ( SelfieCampaignSummaryService ) {
-            return {
-                restrict: 'E',
-                templateUrl: 'views/selfie/directives/campaign_summary.html',
-                scope: {},
-                link: function(scope) {
-                    scope.model = SelfieCampaignSummaryService.model;
-                }
-            };
-        }])
-
-        .service('SelfieCampaignSummaryService', ['CampaignService',
-        function                                 ( CampaignService ) {
-            var model = {};
-
-            Object.defineProperty(this, 'model', {
-                get: function() {
-                    return model;
-                }
-            });
-
-            this.display = function(dialogModel) {
-                var campaign = dialogModel.campaign,
-                    interests = dialogModel.interests,
-                    schema = dialogModel.schema;
-
-                if (!campaign || !interests || !schema) { return; }
-
-                extend(model, dialogModel);
-
-                extend(model, CampaignService.getSummary({
-                    campaign: campaign,
-                    interests: interests
-                }));
-
-                model.cpv = CampaignService.getCpv(campaign, schema);
-
-                model.show = true;
-            };
-
-            this.close = function() {
-                model.show = false;
-            };
-
-            this.pending = function(bool) {
-                model.pending = bool;
-            };
-        }])
-
         .directive('rcCustomParams', [function() {
             return {
                 restrict: 'E',
@@ -1740,6 +1669,12 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                         param.value = param.default;
                     }
                 }
+            };
+        }])
+
+        .filter('abs', [function() {
+            return function(number) {
+                return Math.abs(number);
             };
         }])
 

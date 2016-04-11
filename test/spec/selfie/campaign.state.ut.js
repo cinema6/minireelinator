@@ -17,13 +17,13 @@ define(['app'], function(appModule) {
                 CampaignService,
                 ConfirmDialogService,
                 SpinnerService,
-                intercom;
+                intercom,
+                PaymentService;
 
             var card,
                 categories,
                 campaign,
                 logos,
-                paymentMethods,
                 updateRequest,
                 advertiser,
                 user;
@@ -45,6 +45,7 @@ define(['app'], function(appModule) {
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
                     CampaignService = $injector.get('CampaignService');
                     SpinnerService = $injector.get('SpinnerService');
+                    PaymentService = $injector.get('PaymentService');
 
                     card = MiniReelService.createCard('video');
                     categories = [
@@ -82,20 +83,6 @@ define(['app'], function(appModule) {
                         {
                             name: 'logo2',
                             src: 'logo2.png'
-                        }
-                    ];
-                    paymentMethods = [
-                        {
-                            id: 'pay-1',
-                            token: 'pay-1'
-                        },
-                        {
-                            id: 'pay-2',
-                            token: 'pay-2'
-                        },
-                        {
-                            id: 'pay-3',
-                            token: 'pay-3'
                         }
                     ];
                     advertiser = {
@@ -244,28 +231,6 @@ define(['app'], function(appModule) {
                         expect(campaignState.isCreator).toBe(false);
                     });
                 });
-
-                describe('when the Selfie user has paymentOptional entitlement', function() {
-                    it('should set the paymentOptional flag to true, regardless of the campaign user entitlements', function() {
-                        campaignState.cParent.advertiser = advertiser;
-                        campaignState.cParent.campaign = campaign;
-                        campaignState.cParent.user = user;
-
-                        campaignState.beforeModel();
-
-                        expect(campaignState.paymentOptional).toBe(false);
-
-                        user.entitlements.paymentOptional = true;
-                        campaignState.beforeModel();
-
-                        expect(campaignState.paymentOptional).toBe(false);
-
-                        selfieState.cModel.entitlements.paymentOptional = true;
-                        campaignState.beforeModel();
-
-                        expect(campaignState.paymentOptional).toBe(true);
-                    });
-                });
             });
 
             describe('model()', function() {
@@ -275,17 +240,22 @@ define(['app'], function(appModule) {
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
 
-                    spyOn(cinema6.db, 'findAll').and.callFake(function(type) {
-                        if (type === 'category') {
-                            return $q.when(categories);
-                        }
-                        if (type === 'paymentMethod') {
-                            return $q.when(paymentMethods);
-                        }
-                    });
+                    spyOn(cinema6.db, 'findAll').and.returnValue($q.when(categories));
                     spyOn(SelfieLogoService, 'getLogos').and.returnValue($q.when(logos));
                     spyOn(SpinnerService, 'display');
                     spyOn(SpinnerService, 'close');
+                    spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
+                });
+
+                it('should get the account balance', function() {
+                    campaignState.campaign = campaign;
+                    campaignState.user = user;
+
+                    $rootScope.$apply(function() {
+                        campaignState.model().then(success, failure);
+                    });
+
+                    expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
                 describe('when campaign has an org', function() {
@@ -298,12 +268,11 @@ define(['app'], function(appModule) {
                         });
 
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
-                        expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-99999'});
                         expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(campaign.org);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
                             logos: logos,
-                            paymentMethods: paymentMethods
+                            balance: {}
                         });
 
                         expect(SpinnerService.display).toHaveBeenCalled();
@@ -322,12 +291,11 @@ define(['app'], function(appModule) {
                         });
 
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
-                        expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: selfieState.cModel.org.id});
                         expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(user.org.id);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
                             logos: logos,
-                            paymentMethods: paymentMethods
+                            balance: {}
                         });
 
                         expect(SpinnerService.display).toHaveBeenCalled();
@@ -356,48 +324,6 @@ define(['app'], function(appModule) {
             });
 
             describe('afterModel()', function() {
-                describe('when there is a Primary Payment Method', function() {
-                    it('should add it to the campaign if the campaign does not have one', function() {
-                        campaignState.campaign = campaign;
-
-                        paymentMethods[1].default = true;
-
-                        campaignState.afterModel({ paymentMethods: paymentMethods });
-
-                        expect(campaignState.campaign.paymentMethod).toEqual('pay-2');
-                    });
-
-                    it('should not overwrite an existing payment on the campaign', function() {
-                        campaign.paymentMethod = paymentMethods[2].token;
-                        campaignState.campaign = campaign;
-
-                        paymentMethods[1].default = true;
-
-                        campaignState.afterModel({ paymentMethods: paymentMethods });
-
-                        expect(campaignState.campaign.paymentMethod).toEqual(paymentMethods[2].token);
-                    });
-                });
-
-                describe('when there is no Primary Payment Method', function() {
-                    it('should leave paymentMethod undefined', function() {
-                        campaignState.campaign = campaign;
-
-                        campaignState.afterModel({ paymentMethods: [] });
-
-                        expect(campaignState.campaign.paymentMethod).toEqual(undefined);
-                    });
-
-                    it('should not overwrite an existing payment on the campaign', function() {
-                        campaign.paymentMethod = paymentMethods[2].token;
-                        campaignState.campaign = campaign;
-
-                        campaignState.afterModel({ paymentMethods: [] });
-
-                        expect(campaignState.campaign.paymentMethod).toEqual(paymentMethods[2].token);
-                    });
-                });
-
                 it('should get the user campaign schema and put it on the state', function() {
                     var schema = {
                         pricing: {
@@ -408,11 +334,8 @@ define(['app'], function(appModule) {
                     };
                     spyOn(CampaignService, 'getSchema').and.returnValue($q.when(schema));
 
-                    campaign.paymentMethod = paymentMethods[2].token;
-                    campaignState.campaign = campaign;
-
                     $rootScope.$apply(function() {
-                        campaignState.afterModel({ paymentMethods: [] });
+                        campaignState.afterModel();
                     });
 
                     expect(CampaignService.getSchema).toHaveBeenCalled();

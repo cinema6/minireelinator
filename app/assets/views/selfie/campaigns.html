@@ -65,11 +65,11 @@
                     <button class="searchBtn action__btnSecondary action__btnSecondary--small" type="submit">Go</button>
                 </form>
             </div><!--
-        --><div class="grid__item one-third itemActions__group text--right">
-               <button ng-if="SelfieCampaignsCtrl.hasAdvertisers" c6-sref="Selfie:NewCampaign" c6-params="{}" title="New Campaign" class="action__btn action__btn--small" type="button">
-                <i class="fa fa-plus"></i>
-                    New Campaign
-                </button>
+        --><div class="pageHeader__actions">
+                <account-balance></account-balance>
+                <a ng-if="SelfieCampaignsCtrl.hasAdvertisers" c6-sref="Selfie:NewCampaign" c6-params="{}" title="New Campaign" class="action__btn action__btn--small" style="color: #fff;">
+                    <i class="fa fa-plus"></i> New Campaign
+                </a>
             </div>
         </div>
         </div><!--.mainHeader__group-->

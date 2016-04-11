@@ -38,6 +38,75 @@ module.exports = function(http) {
             });
     }
 
+    http.whenGET('/api/accounting/balance', function(request) {
+        var allDeposits = grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+                .map(function(path) {
+                    return grunt.file.readJSON(path);
+                })
+                .filter(function(transaction) {
+                    return transaction.type === 'credit';
+                }),
+            allCampaigns = grunt.file.expand(path.resolve(__dirname, '../campaign/campaigns/*.json'))
+                .map(function(path) {
+                    return grunt.file.readJSON(path);
+                }),
+            allUpdateRequests = grunt.file.expand(path.resolve(__dirname, '../campaign/updates/*.json'))
+                .map(function(path) {
+                    return grunt.file.readJSON(path);
+                });
+
+        var credits = allDeposits.reduce(function(result, payment) {
+            return result + (payment.amount || 0);
+        }, 0);
+
+        var campaignBudget = allCampaigns.reduce(function(result, campaign) {
+            if ((/active|paused|error|pending/).test(campaign.status) && !campaign.updateRequest) {
+                return result + campaign.pricing.budget;
+            }
+            return result;
+        }, 0);
+
+        var updateRequestBudget = allUpdateRequests.reduce(function(result, updateRequest) {
+            if ((/active|paused|error|pending/).test(updateRequest.data.status)) {
+                return result + ((updateRequest.data && updateRequest.data.pricing && updateRequest.data.pricing.budget) || 0);
+            }
+            return result;
+        }, 0);
+
+        return this.respond(200, {
+            balance: credits,
+            outstandingBudget: campaignBudget + updateRequestBudget
+        });
+    });
+
+    http.whenPOST('/api/payment', function(request) {
+        var id = genId('trans'),
+            currentTime = (new Date()).toISOString(),
+            method = grunt.file.expand(path.resolve(__dirname, './methods/*.json'))
+                .map(function(path) {
+                    return grunt.file.readJSON(path);
+                })
+                .filter(function(method) {
+                    return request.body.paymentMethod === method.token;
+                })[0],
+            transaction = {
+                createdAt: currentTime,
+                updatedAt: currentTime,
+                method: method,
+                amount: request.body.amount,
+                type: 'credit',
+                status: 'settled'
+            };
+
+            if (!method || !request.body.amount || request.body.amount < 1) {
+                return this.respond(400, 'Bad request');
+            }
+
+            grunt.file.write(objectPath('payments', id), JSON.stringify(transaction, null, '    '));
+
+            this.respond(200, extend(transaction, {id: id}));
+    });
+
     http.whenGET('/api/payments/clientToken', function(request) {
         var token = 'eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJ'+
             'mZTA4YmFlODE2ZTY4NjhhOWRjNWQ5ZGI4YmY5YzNmMTczZDA2NjdlM2UzY2ZmOD'+
@@ -72,7 +141,8 @@ module.exports = function(http) {
 
     http.whenPOST('/api/payments/methods', function(request) {
         var token = genId('pay'),
-            type = ['creditCard', 'paypal'][randomNum(0,1)],
+            // type = ['creditCard', 'paypal'][randomNum(0,1)],
+            type = 'creditCard',
             currentTime = (new Date()).toISOString(),
             paymentMethod = {
                 token: token,

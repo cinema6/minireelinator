@@ -10,8 +10,10 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 $location,
                 $injector,
                 $rootScope,
+                $q,
                 SettingsService,
-                SpinnerService;
+                SpinnerService,
+                PaymentService;
 
             var dbList,
                 deferred,
@@ -41,16 +43,19 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                     spyOn($injector, 'invoke').and.callThrough();
                     $rootScope = $injector.get('$rootScope');
                     $location = $injector.get('$location');
+                    $q = $injector.get('$q');
 
                     c6State = $injector.get('c6State');
                     paginatedDbList = $injector.get('paginatedDbList');
                     SettingsService = $injector.get('SettingsService');
                     SpinnerService = $injector.get('SpinnerService');
+                    PaymentService = $injector.get('PaymentService');
 
                     spyOn(SettingsService, 'register');
                     spyOn(SettingsService, 'getReadOnly');
                     spyOn(SpinnerService, 'display');
                     spyOn(SpinnerService, 'close');
+                    spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
 
                     user = {
                         id: 'u-123',
@@ -610,6 +615,12 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                     campaigns.afterModel();
 
                     expect(campaigns.hasCampaigns).toBe(true);
+                });
+
+                it('should get account balance', function() {
+                    campaigns.afterModel();
+
+                    expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
             });
         });

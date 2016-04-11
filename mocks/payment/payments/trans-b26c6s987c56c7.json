@@ -2,7 +2,7 @@
     "id": "trans-b26c6s987c56c7",
     "status": "rejected",
     "type": "credit",
-    "amount": "520.13",
+    "amount": 5000,
     "createdAt": "2015-09-22T22:34:28.229Z",
     "updatedAt": "2015-09-22T22:34:28.229Z",
     "campaignId": "c-b76ecf45af71cd",
