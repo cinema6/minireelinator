@@ -1,4 +1,4 @@
-define(['app', 'version'], function(appModule, version) {
+define(['app', 'version', 'c6_defines'], function(appModule, version, c6Defines) {
     'use strict';
 
     describe('AppController', function() {
@@ -8,10 +8,13 @@ define(['app', 'version'], function(appModule, version) {
             $scope,
             AppCtrl,
             CSSLoadingService,
-            c6State;
+            c6State,
+            tracker;
 
         function initCtrl(appName) {
-            $rootScope = {};
+            $rootScope = {
+                $on: jasmine.createSpy('$rootScope.$on()')
+            };
             $scope = _$rootScope_.$new();
             $scope.$apply(function() {
                 AppCtrl = $controller('AppController', {
@@ -29,11 +32,14 @@ define(['app', 'version'], function(appModule, version) {
                 _$rootScope_ = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 CSSLoadingService = $injector.get('CSSLoadingService');
+                tracker = $injector.get('tracker');
 
                 spyOn(CSSLoadingService, 'load');
+                spyOn(tracker, 'create');
 
                 c6State = {
-                    current: 'Selfie:State:Name'
+                    current: 'Selfie:State:Name',
+                    on: jasmine.createSpy('c6State.on()')
                 };
 
                 initCtrl('Portal');
@@ -50,6 +56,49 @@ define(['app', 'version'], function(appModule, version) {
             c6State.current = 'Selfie:New:State';
 
             expect($rootScope.currentState).toEqual('Selfie:New:State');
+        });
+
+        describe('when Selfie app', function() {
+            beforeEach(function() {
+                initCtrl('Selfie');
+            });
+
+            it('should initialize a tracker', function() {
+                expect(tracker.create).toHaveBeenCalledWith(c6Defines.kTracker.accountId, c6Defines.kTracker.config);
+            });
+
+            it('should add a listener for c6State changes', function() {
+                expect(c6State.on).toHaveBeenCalledWith('stateChange', AppCtrl.trackStateChange);
+            });
+        });
+
+        describe('when Portal app', function() {
+            beforeEach(function() {
+                initCtrl('Portal');
+            });
+
+            it('should not initialize a tracker', function() {
+                expect(tracker.create).not.toHaveBeenCalledWith(c6Defines.kTracker.accountId, c6Defines.kTracker.config);
+            });
+
+            it('should add a listener for c6State changes', function() {
+                expect(c6State.on).not.toHaveBeenCalledWith('stateChange', AppCtrl.trackStateChange);
+            });
+        });
+
+        describe('trackStateChange(state)', function() {
+            it('should track a page view', function() {
+                var state = {
+                    cUrl: '/selfie',
+                    cName: 'Selfie Dashboard'
+                };
+
+                spyOn(tracker, 'pageview');
+
+                AppCtrl.trackStateChange(state);
+
+                expect(tracker.pageview).toHaveBeenCalledWith(state.cUrl, 'Platform - ' + state.cName);
+            });
         });
 
         describe('loading app-specific CSS files', function() {

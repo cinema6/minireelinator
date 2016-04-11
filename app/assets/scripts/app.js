@@ -1362,23 +1362,27 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .controller('AppController', ['CSSLoadingService','cState','c6State','$rootScope',
-        function                     ( CSSLoadingService , cState , c6State , $rootScope ) {
-            var appStyles = {
-                Portal: [
-                    'styles/c6main.css',
-                    'styles/minireel/c6studio.css'
-                ],
-                Selfie: [
-                    'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,' +
-                        '600,700,300italic,400italic,600italic,700italic|Roboto+Conde' +
-                        'nsed:300italic,400italic,300,400',
-                    'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css',
-                    'styles/selfie/css/select2.min.css',
-                    'styles/selfie/css/css-wizardry-grids.css',
-                    'styles/selfie/css/c6selfie__base.css',
-                    'styles/selfie/css/hint.min.css'
-                ]
-            };
+                                      'tracker',
+        function                     ( CSSLoadingService , cState , c6State , $rootScope ,
+                                       tracker ) {
+            var self = this,
+                appStyles = {
+                    Portal: [
+                        'styles/c6main.css',
+                        'styles/minireel/c6studio.css'
+                    ],
+                    Selfie: [
+                        'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,' +
+                            '600,700,300italic,400italic,600italic,700italic|Roboto+Conde' +
+                            'nsed:300italic,400italic,300,400',
+                        'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awes' +
+                            'ome.min.css',
+                        'styles/selfie/css/select2.min.css',
+                        'styles/selfie/css/css-wizardry-grids.css',
+                        'styles/selfie/css/c6selfie__base.css',
+                        'styles/selfie/css/hint.min.css'
+                    ]
+                };
 
             Object.defineProperties($rootScope, {
                 currentState: {
@@ -1394,5 +1398,19 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             this.version = version;
             this.validImgSrc = /^(http:\/\/|https:\/\/|\/\/)/;
             this.validUrl = /^(http:\/\/|https:\/\/|\/\/)/;
+
+            this.trackStateChange = function(state){
+                tracker.pageview(state.cUrl, 'Platform - ' + state.cName);
+            };
+
+            if (cState.name === 'Selfie') {
+                c6State.on('stateChange', this.trackStateChange);
+
+                tracker.create(c6Defines.kTracker.accountId,c6Defines.kTracker.config);
+
+                $rootScope.$on('$destroy', function() {
+                    c6State.removeListener('stateChange', self.trackStateChange);
+                });
+            }
         }]);
 });

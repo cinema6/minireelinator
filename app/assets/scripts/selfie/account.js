@@ -71,7 +71,8 @@ function( angular , c6State  ) {
                 this.controllerAs = 'SelfieSignUpCtrl';
 
                 this.beforeModel = function() {
-                    var referral = $location.search().ref;
+                    var referral = $location.search().ref,
+                        promotion = $location.search().promotion;
 
                     SettingsService.register('Selfie::referral', { referral: referral }, {
                         localSync: referral || true,
@@ -79,10 +80,18 @@ function( angular , c6State  ) {
                             return local === true;
                         }
                     });
+
+                    SettingsService.register('Selfie::promotion', { promotion: promotion }, {
+                        localSync: promotion || true,
+                        validateLocal: function(local) {
+                            return local === true;
+                        }
+                    });
                 };
 
                 this.model = function() {
-                    var ref = SettingsService.getReadOnly('Selfie::referral').referral;
+                    var ref = SettingsService.getReadOnly('Selfie::referral').referral,
+                        promotion = SettingsService.getReadOnly('Selfie::promotion').promotion;
 
                     return {
                         email: '',
@@ -90,7 +99,8 @@ function( angular , c6State  ) {
                         company: '',
                         firstName: '',
                         lastName: '',
-                        referralCode: ref
+                        referralCode: ref,
+                        promotion: promotion
                     };
                 };
             }]);

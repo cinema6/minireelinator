@@ -58,12 +58,38 @@ define(['app'], function(appModule) {
                         });
                     });
                 });
+
+                describe('when there is a promotion=code query param', function() {
+                    it('should register the code with the SettingsService', function() {
+                        $location.search.and.returnValue({ promotion: 'promotest' });
+
+                        signUp.beforeModel();
+
+                        expect(SettingsService.register).toHaveBeenCalledWith('Selfie::promotion', { promotion: 'promotest' }, {
+                            localSync: 'promotest',
+                            validateLocal: jasmine.any(Function)
+                        });
+                    });
+                });
+
+                describe('when there is no promotion=code query param', function() {
+                    it('should register the code with the SettingsService', function() {
+                        $location.search.and.returnValue({});
+
+                        signUp.beforeModel();
+
+                        expect(SettingsService.register).toHaveBeenCalledWith('Selfie::promotion', { promotion: undefined }, {
+                            localSync: true,
+                            validateLocal: jasmine.any(Function)
+                        });
+                    });
+                });
             });
 
             describe('model()', function() {
                 describe('there is a referral code', function() {
                     it('should add it to the model', function() {
-                        SettingsService.getReadOnly.and.returnValue({ referral: 'testcode' });
+                        SettingsService.getReadOnly.and.returnValue({ referral: 'testcode', promotion: 'promotest' });
 
                         var result = signUp.model();
 
@@ -73,7 +99,8 @@ define(['app'], function(appModule) {
                             company: '',
                             firstName: '',
                             lastName: '',
-                            referralCode: 'testcode'
+                            referralCode: 'testcode',
+                            promotion: 'promotest'
                         });
                     });
                 });
@@ -90,7 +117,8 @@ define(['app'], function(appModule) {
                             company: '',
                             firstName: '',
                             lastName: '',
-                            referralCode: undefined
+                            referralCode: undefined,
+                            promotion: undefined
                         });
                     });
                 });
