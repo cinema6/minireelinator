@@ -1,5 +1,12 @@
 # MiniReelinator
 
+* *[v1.42.0.rc1]*
+  * [FEATURE]: Display account balance in the header of campaign list,
+    campaign editor and campaign manager
+  * [FEATURE]: Add ability to fund account when submitting campaigns
+  * [FEATURE]: Remove payment method tab from manage campaign screen
+  * [DEV]: Remove payment method from campaign entity
+
 ## v1.41.2 (April 6, 2016)
 * *[v1.41.2.rc1]*
   * [FIX]: Fix for an issue where the sign up success page did not fit
