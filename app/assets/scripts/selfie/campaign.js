@@ -1011,8 +1011,16 @@ function( angular , c6State  , PaginatedListState                    ,
                     .then(createUpdateRequest)
                     .then(setPending)
                     .then(returnToDashboard)
-                    .catch(function() {
-                        self.confirmationError = true;
+                    .catch(function(err) {
+                        var updateError,
+                            paymentError;
+
+                        if (!err || !err.config) { return; }
+
+                        updateError = (err.config.url || '').indexOf('updates') > -1;
+                        paymentError = (err.config.url || '').indexOf('payments') > -1;
+
+                        self.confirmationError = (updateError && 1) || (paymentError && 2);
                     })
                     .finally(function() {
                         self.confirmationPending = false;
@@ -1795,7 +1803,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function(model) {
-                    var hasPaymentMethods = model.paymentMethods.length,
+                    var hasPaymentMethods = !!model.paymentMethods.length,
+                        available = model.balance.remainingFunds,
                         CampaignState = this.cParent,
                         self = this;
 
@@ -1813,6 +1822,10 @@ function( angular , c6State  , PaginatedListState                    ,
                     this.budgetChange = !this.isDraft ?
                         this.newBudget - this.oldBudget :
                         this.newBudget;
+                    this.accounting = PaymentService.balance;
+                    this.minDeposit = available < this.budgetChange ?
+                        Math.abs(available - this.budgetChange) : 0;
+                    this.skipDeposit = hasPaymentMethods && !this.minDeposit;
 
                     return $q.all((!hasPaymentMethods ? {
                         token: PaymentService.getToken(),
@@ -1824,17 +1837,15 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.enter = function() {
-                    c6State.goTo(!!this.budgetChange ?
-                        'Selfie:Campaign:Fund:Deposit' :
-                        'Selfie:Campaign:Fund:Confirm');
+                    c6State.goTo(this.skipDeposit ?
+                        'Selfie:Campaign:Fund:Confirm' :
+                        'Selfie:Campaign:Fund:Deposit');
                 };
             }]);
         }])
 
         .controller('SelfieCampaignFundController', ['cState','c6State','CampaignService',
-                                                     'PaymentService',
-        function                                    ( cState , c6State , CampaignService ,
-                                                      PaymentService ) {
+        function                                    ( cState , c6State , CampaignService ) {
             var self = this;
 
             Object.defineProperties(this, {
@@ -1880,8 +1891,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = cState.campaign;
                 this.newPaymentType = 'creditcard';
                 this.budgetChange = cState.budgetChange;
-                this.accounting = PaymentService.balance;
-                this.minDeposit = this.calculateMinDeposit();
+                this.skipDeposit = cState.skipDeposit;
+                this.accounting = cState.accounting;
+                this.minDeposit = cState.minDeposit;
                 this.deposit = this.minDeposit;
 
                 this.cpv = CampaignService.getCpv(this.campaign, this.schema);
@@ -1889,13 +1901,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     campaign: this.campaign,
                     interests: cState.interests
                 }));
-            };
-
-            this.calculateMinDeposit = function() {
-                var availableFunds = this.accounting.remainingFunds;
-
-                return this.budgetChange > 0 && availableFunds < this.budgetChange ?
-                    Math.abs(availableFunds - this.budgetChange) : 0;
             };
 
             this.confirm = function() {
@@ -1946,9 +1951,9 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.goBack = function() {
-                c6State.goTo(!!this.budgetChange ?
-                    'Selfie:Campaign:Fund:Deposit' :
-                    cState.cParent.cName);
+                c6State.goTo(this.skipDeposit ?
+                    cState.cParent.cName :
+                    'Selfie:Campaign:Fund:Deposit');
             };
         }])
 

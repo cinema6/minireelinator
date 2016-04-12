@@ -1,3 +1,3 @@
 <a c6-sref="Selfie:Account:Payment:History" c6-params="{}" title="Balance" class="action__btn action__btn--small action__btn--balance">
-    <span style="border-bottom:none" class="hint--bottom hint--item" data-hint="This is your account balance. Your remaining funds are ${{SelfieCtrl.accounting.remainingFunds}}.">Balance: ${{SelfieCtrl.accounting.balance | number}}</span>
+    <span style="border-bottom:none" class="hint--bottom hint--item" data-hint="This is your account balance. Your remaining funds are {{SelfieCtrl.accounting.remainingFunds | dollars}}.">Balance: {{SelfieCtrl.accounting.balance | dollars}}</span>
 </a>

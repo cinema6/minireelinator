@@ -529,7 +529,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         describe('when payment fails', function() {
                                             beforeEach(function() {
                                                 $scope.$apply(function() {
-                                                    makePaymentDeferred.reject('BAD');
+                                                    makePaymentDeferred.reject({config: {url: 'api/payments'}});
                                                 });
                                             });
 
@@ -539,7 +539,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                             });
 
                                             it('should set confirmationError and unset confirmationPending', function() {
-                                                expect(SelfieCampaignCtrl.confirmationError).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationError).toBe(2);
                                                 expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
                                             });
                                         });
@@ -643,7 +643,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         describe('when update request fails', function() {
                                             beforeEach(function() {
                                                 $rootScope.$apply(function() {
-                                                    updateRequestDeferred.reject({data:'Error!'});
+                                                    updateRequestDeferred.reject({config: {url: 'api/updates'}});
                                                 });
                                             });
 
@@ -653,7 +653,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                                             it('should not return to dashboard and should set confirmationError and unset confirmationPending', function() {
                                                 expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                                                expect(SelfieCampaignCtrl.confirmationError).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationError).toBe(1);
                                                 expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
                                             });
                                         });
@@ -705,7 +705,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         describe('when payment fails', function() {
                                             beforeEach(function() {
                                                 $scope.$apply(function() {
-                                                    makePaymentDeferred.reject('BAD');
+                                                    makePaymentDeferred.reject({config: {url: 'api/payments'}});
                                                 });
                                             });
 
@@ -715,7 +715,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                             });
 
                                             it('should set confirmationError and unset confirmationPending', function() {
-                                                expect(SelfieCampaignCtrl.confirmationError).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationError).toBe(2);
                                                 expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
                                             });
                                         });
@@ -785,7 +785,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         describe('when update request fails', function() {
                                             beforeEach(function() {
                                                 $rootScope.$apply(function() {
-                                                    updateRequestDeferred.reject({data:'Error!'});
+                                                    updateRequestDeferred.reject({config: {url: 'api/updates'}});
                                                 });
                                             });
 
@@ -795,7 +795,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                                             it('should not return to dashboard and should set confirmationError and unset confirmationPending', function() {
                                                 expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
-                                                expect(SelfieCampaignCtrl.confirmationError).toBe(true);
+                                                expect(SelfieCampaignCtrl.confirmationError).toBe(1);
                                                 expect(SelfieCampaignCtrl.confirmationPending).toBe(false);
                                             });
                                         });
