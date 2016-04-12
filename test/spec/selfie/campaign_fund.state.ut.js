@@ -279,39 +279,67 @@ define(['app'], function(appModule) {
                 });
 
                 describe('calculating minDeposit', function() {
-                    describe('when budget change is > 0', function() {
-                        describe('when available funds is < budget change', function() {
-                            it('should equal available funds minus budget change', function() {
-                                FundState.cParent._campaign.status = 'active';
-                                FundState.cParent._campaign.pricing.budget = 500;
-                                FundState.cParent.campaign.pricing.budget = 800;
+                    describe('when available funds is < budget change', function() {
+                        it('should equal available funds minus budget change', function() {
+                            FundState.cParent._campaign.status = 'active';
 
-                                FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 800;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
 
-                                expect(FundState.minDeposit).toBe(200);
-                            });
-                        });
+                            expect(FundState.minDeposit).toBe(200);
 
-                        describe('when available funds are >= budget change', function() {
-                            it('should be 0', function() {
-                                FundState.cParent._campaign.status = 'active';
-                                FundState.cParent._campaign.pricing.budget = 500;
-                                FundState.cParent.campaign.pricing.budget = 550;
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 800;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -100 } });
 
-                                FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
+                            expect(FundState.minDeposit).toBe(400);
 
-                                expect(FundState.minDeposit).toBe(0);
-                            });
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 500;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -100 } });
+
+                            expect(FundState.minDeposit).toBe(100);
+
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 400;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -100 } });
+
+                            expect(FundState.minDeposit).toBe(0);
+
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 400;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -200 } });
+
+                            expect(FundState.minDeposit).toBe(100);
                         });
                     });
 
-                    describe('when budget change is <= 0', function() {
+                    describe('when available funds are >= budget change', function() {
                         it('should be 0', function() {
                             FundState.cParent._campaign.status = 'active';
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 500;
 
-                            FundState.afterModel({ paymentMethods: [], balance: {} });
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 550;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
+
+                            expect(FundState.minDeposit).toBe(0);
+
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 400;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
+
+                            expect(FundState.minDeposit).toBe(0);
+
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 400;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 0 } });
+
+                            expect(FundState.minDeposit).toBe(0);
+
+                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent.campaign.pricing.budget = 300;
+                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -100 } });
 
                             expect(FundState.minDeposit).toBe(0);
                         });

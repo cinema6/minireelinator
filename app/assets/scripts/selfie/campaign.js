@@ -1823,7 +1823,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         this.newBudget - this.oldBudget :
                         this.newBudget;
                     this.accounting = PaymentService.balance;
-                    this.minDeposit = (this.budgetChange > 0) && (available < this.budgetChange) ?
+                    this.minDeposit = available < this.budgetChange ?
                         Math.abs(available - this.budgetChange) : 0;
                     this.skipDeposit = hasPaymentMethods && !this.minDeposit;
 
