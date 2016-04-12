@@ -1803,7 +1803,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function(model) {
-                    var hasPaymentMethods = model.paymentMethods.length,
+                    var hasPaymentMethods = !!model.paymentMethods.length,
                         available = model.balance.remainingFunds,
                         CampaignState = this.cParent,
                         self = this;
@@ -1827,7 +1827,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         Math.abs(available - this.budgetChange) : 0;
                     this.skipDeposit = hasPaymentMethods && !this.minDeposit;
 
-                    return $q.all((!this.hasPaymentMethods ? {
+                    return $q.all((!hasPaymentMethods ? {
                         token: PaymentService.getToken(),
                         newMethod: cinema6.db.create('paymentMethod', {})
                     } : {})).then(function(promises) {

@@ -9,7 +9,6 @@ define(['app'], function(appModule) {
             $scope,
             $q,
             cinema6,
-            PaymentService,
             CampaignService,
             SelfieCampaignFundCtrl;
 
@@ -29,14 +28,6 @@ define(['app'], function(appModule) {
                 cinema6 = $injector.get('cinema6');
                 CampaignService = $injector.get('CampaignService');
             });
-
-            PaymentService = {
-                balance: {
-                    remainingFunds: 50,
-                    outstandingBudget: 550,
-                    balance: 600
-                }
-            };
 
             paymentMethods = [
                 {
@@ -70,7 +61,10 @@ define(['app'], function(appModule) {
                 budgetChange: 80,
                 campaign: {},
                 schema: {},
-                interests: {}
+                interests: {},
+                skipDeposit: false,
+                accounting: {},
+                minDeposit: 80
             };
 
             spyOn(CampaignService, 'getCpv').and.returnValue(0.08);
@@ -79,7 +73,7 @@ define(['app'], function(appModule) {
 
             $scope = $rootScope.$new();
             $scope.$apply(function() {
-                SelfieCampaignFundCtrl = $controller('SelfieCampaignFundController', {cState: cState, $scope: $scope, PaymentService: PaymentService});
+                SelfieCampaignFundCtrl = $controller('SelfieCampaignFundController', {cState: cState, $scope: $scope});
             });
         });
 
@@ -167,8 +161,6 @@ define(['app'], function(appModule) {
         describe('methods', function() {
             describe('initWithModel()', function() {
                 it('add the model and the token', function() {
-                    spyOn(SelfieCampaignFundCtrl, 'calculateMinDeposit').and.callThrough();
-
                     SelfieCampaignFundCtrl.initWithModel({
                         paymentMethods: paymentMethods
                     });
@@ -184,57 +176,15 @@ define(['app'], function(appModule) {
                     expect(SelfieCampaignFundCtrl.campaign).toBe(cState.campaign);
                     expect(SelfieCampaignFundCtrl.newPaymentType).toEqual('creditcard');
                     expect(SelfieCampaignFundCtrl.budgetChange).toEqual(cState.budgetChange);
-                    expect(SelfieCampaignFundCtrl.accounting).toBe(PaymentService.balance);
-                    expect(SelfieCampaignFundCtrl.minDeposit).toEqual(30);
+                    expect(SelfieCampaignFundCtrl.accounting).toBe(cState.accounting);
+                    expect(SelfieCampaignFundCtrl.minDeposit).toEqual(80);
                     expect(SelfieCampaignFundCtrl.cpv).toEqual(0.08);
                     expect(SelfieCampaignFundCtrl).toEqual(jasmine.objectContaining(summary));
 
-                    expect(SelfieCampaignFundCtrl.calculateMinDeposit).toHaveBeenCalled();
                     expect(CampaignService.getCpv).toHaveBeenCalledWith(cState.campaign, cState.schema);
                     expect(CampaignService.getSummary).toHaveBeenCalledWith({
                         campaign: cState.campaign,
                         interests: cState.interests
-                    });
-                });
-            });
-
-            describe('calculateMinDeposit()', function() {
-                describe('when budget change is greater than 0', function() {
-                    describe('when availableFunds are less than budget change', function() {
-                        it('should be the difference', function() {
-                            SelfieCampaignFundCtrl.budgetChange = 100;
-                            SelfieCampaignFundCtrl.accounting = {
-                                remainingFunds: 20
-                            };
-
-                            expect(SelfieCampaignFundCtrl.calculateMinDeposit()).toEqual(80);
-                        });
-                    });
-
-                    describe('when availableFunds are greater than budget change', function() {
-                        it('should be the difference', function() {
-                            SelfieCampaignFundCtrl.budgetChange = 100;
-                            SelfieCampaignFundCtrl.accounting = {
-                                remainingFunds: 200
-                            };
-
-                            expect(SelfieCampaignFundCtrl.calculateMinDeposit()).toEqual(0);
-                        });
-                    });
-                });
-
-                describe('when budget change is less than or equal to 0', function() {
-                    it('should be 0', function() {
-                        SelfieCampaignFundCtrl.budgetChange = 0;
-                        SelfieCampaignFundCtrl.accounting = {
-                            remainingFunds: 100
-                        };
-
-                        expect(SelfieCampaignFundCtrl.calculateMinDeposit()).toEqual(0);
-
-                        SelfieCampaignFundCtrl.budgetChange = -50;
-
-                        expect(SelfieCampaignFundCtrl.calculateMinDeposit()).toEqual(0);
                     });
                 });
             });
@@ -384,7 +334,7 @@ define(['app'], function(appModule) {
             describe('goBack()', function() {
                 describe('when budget has not changed', function() {
                     it('should go to Selfie:Campaign state', function() {
-                        SelfieCampaignFundCtrl.budgetChange = 0;
+                        SelfieCampaignFundCtrl.skipDeposit = true;
 
                         SelfieCampaignFundCtrl.goBack();
 
@@ -394,7 +344,7 @@ define(['app'], function(appModule) {
 
                 describe('when budget has changed', function() {
                     it('should go to Selfie:Campaign:Fund:Deposit state', function() {
-                        SelfieCampaignFundCtrl.budgetChange = 100;
+                        SelfieCampaignFundCtrl.skipDeposit = false;
 
                         SelfieCampaignFundCtrl.goBack();
 
