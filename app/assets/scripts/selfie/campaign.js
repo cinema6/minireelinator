@@ -1011,8 +1011,16 @@ function( angular , c6State  , PaginatedListState                    ,
                     .then(createUpdateRequest)
                     .then(setPending)
                     .then(returnToDashboard)
-                    .catch(function() {
-                        self.confirmationError = true;
+                    .catch(function(err) {
+                        var updateError,
+                            paymentError;
+
+                        if (!err || !err.config) { return; }
+
+                        updateError = (err.config.url || '').indexOf('updates') > -1;
+                        paymentError = (err.config.url || '').indexOf('payments') > -1;
+
+                        self.confirmationError = (updateError && 1) || (paymentError && 2);
                     })
                     .finally(function() {
                         self.confirmationPending = false;
