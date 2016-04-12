@@ -1684,6 +1684,27 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
+        .filter('status', [function() {
+            return function(service) {
+                switch (service) {
+                case 'draft':
+                    return 'Draft';
+                case 'pending':
+                    return 'Pending';
+                case 'active':
+                    return 'Active';
+                case 'paused':
+                    return 'Paused';
+                case 'canceled':
+                    return 'Canceled';
+                case 'outOfBudget':
+                    return 'Out of Budget';
+                case 'expired':
+                    return 'Expired';
+                }
+            };
+        }])
+
         .filter('videoService', [function() {
             return function(service) {
                 switch (service) {
