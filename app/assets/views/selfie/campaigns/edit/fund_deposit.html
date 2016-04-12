@@ -36,7 +36,8 @@
                             <li ng-if="!SelfieCampaignFundCtrl.isDraft">
                                 <div class="grid__item two-thirds orderItem__label">Budget Change</div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">{{SelfieCampaignFundCtrl.budgetChange | dollars}}</div>
+                                    <div ng-if="SelfieCampaignFundCtrl.budgetChange > 0" class="text--right">+{{SelfieCampaignFundCtrl.budgetChange | dollars}}</div>
+                                    <div ng-if="SelfieCampaignFundCtrl.budgetChange <= 0" class="text--right">{{SelfieCampaignFundCtrl.budgetChange | dollars}}</div>
                                 </div>
                             </li>
                         </ul>
@@ -70,12 +71,12 @@
                                                 </p>
                                             </div>
                                         </fieldset>
-                                        <span class="alertMessage alert__success text--left" ng-show="SelfieCampaignFundCtrl.budgetChange && SelfieCampaignFundCtrl.budgetChange > 0 && SelfieCampaignFundCtrl.budgetChange <= SelfieCampaignFundCtrl.accounting.remainingFunds">
+                                        <span class="alertMessage alert__success text--center" ng-show="SelfieCampaignFundCtrl.budgetChange && SelfieCampaignFundCtrl.budgetChange > 0 && SelfieCampaignFundCtrl.budgetChange <= SelfieCampaignFundCtrl.accounting.remainingFunds">
                                             <strong>You have enough funds to run your campaign!</strong>
                                             <span ng-if="!SelfieCampaignFundCtrl.paymentMethods.length">We need a payment method on file to approve your campaign.</span>
                                         </span>
 
-                                        <span class="alertMessage text--left" ng-show="SelfieCampaignFundCtrl.budgetChange > SelfieCampaignFundCtrl.accounting.remainingFunds">You need to deposit at least {{SelfieCampaignFundCtrl.minDeposit | dollars}} into your account to run this campaign.</span>
+                                        <span class="alertMessage text--center" ng-show="SelfieCampaignFundCtrl.budgetChange > SelfieCampaignFundCtrl.accounting.remainingFunds && SelfieCampaignFundCtrl.minDeposit">You need to deposit at least {{SelfieCampaignFundCtrl.minDeposit | dollars}} into your account to run this campaign.</span>
                                     </div>
                                 </div>
                             </li>
@@ -114,6 +115,7 @@
                                         </div>
                                     </div>
 
+                                    <span ng-if="SelfieCampaignFundCtrl.paymentMethodError" class="alertMessage alert__failure text--center">There was a problem saving your payment method. Please try again or use another payment method.</span>
 
                                     <div class="payment__seals grid__item one-whole">
                                         <div class="payment__sealItem braintree--seal">
@@ -128,7 +130,6 @@
                         </ul>
                     </div>
 
-                    <span ng-if="SelfieCampaignFundCtrl.paymentMethodError" class="alertMessage alert__failure text--center">There was a problem saving your payment method.</span>
                 </div>
             </div>
         </div>
