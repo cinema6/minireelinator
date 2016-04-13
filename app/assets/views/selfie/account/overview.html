@@ -54,11 +54,14 @@
                         <ul ng-if="!AccountCtrl.primaryMethod" class="paymentOptions__box-item"> 
                             <li><h3 class="tk--hdr">You don't have any payment methods setup</h3></li>
                         </ul>
-                        <ul class="paymentOptions__box-item"> 
+                        <ul class="paymentOptions__box-item paymentOptions__box-third">
                             <li><a c6-sref="Selfie:Account:Payment">Manage Payment Options</a></li>
                         </ul>
-                        <ul class="paymentOptions__box-item"> 
-                            <li><a c6-sref="Selfie:Account:Payment:History">Payment History</a></li>
+                        <ul class="paymentOptions__box-item paymentOptions__box-third">
+                            <li><a c6-sref="Selfie:Account:Payment:History">Payment Details</a></li>
+                        </ul>
+                        <ul class="paymentOptions__box-item paymentOptions__box-third">
+                            <li><button ng-click="AccountCtrl.addFunds()">Add Funds</button></li>
                         </ul>
                     </div>
                 </div>

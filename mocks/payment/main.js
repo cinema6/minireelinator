@@ -143,13 +143,14 @@ module.exports = function(http) {
         var token = genId('pay'),
             // type = ['creditCard', 'paypal'][randomNum(0,1)],
             type = 'creditCard',
+            allPayments = grunt.file.expand(path.resolve(__dirname, './methods/*.json')),
             currentTime = (new Date()).toISOString(),
             paymentMethod = {
                 token: token,
                 createdAt: currentTime,
                 updatedAt: currentTime,
                 imageUrl: null,
-                default: request.body.makeDefault,
+                default: request.body.makeDefault || !allPayments.length,
                 type: type
             };
 

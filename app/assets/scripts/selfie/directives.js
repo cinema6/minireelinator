@@ -1376,6 +1376,137 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
+        .directive('addFundsModal', [function() {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/add_funds.html',
+                controller: 'AddFundsModalController',
+                controllerAs: 'AddFundsModalCtrl'
+            };
+        }])
+
+        .controller('AddFundsModalController', ['AddFundsModalService','PaymentService','cinema6',
+        function                               ( AddFundsModalService , PaymentService , cinema6 ) {
+            var self = this;
+
+            this.newPaymentType = 'creditcard';
+            this.model = AddFundsModalService.model;
+
+            Object.defineProperties(this, {
+                canSubmit: {
+                    get: function() {
+                        var deposit = this.model.deposit;
+
+                        return (!!this.model.chosenMethod || !(this.model.methods || []).length) &&
+                            !!deposit && deposit >= 1;
+                    }
+                },
+                validDeposit: {
+                    get: function() {
+                        var deposit = this.model.deposit;
+
+                        return (!deposit && deposit !== 0) || (!!deposit && deposit >= 1);
+                    }
+                }
+            });
+
+            this.makeDeposit = function() {
+                if (this.model.showCreditCardForm) {
+                    this.pendingConfirmation = true;
+                } else {
+                    this.makePayment();
+                }
+            };
+
+            this.makePayment = function() {
+                return PaymentService.makePayment(this.model.chosenMethod.token, this.model.deposit)
+                    .then(PaymentService.getBalance)
+                    .then(this.close);
+            };
+
+            this.addCreditCard = function() {
+                this.model.showCreditCardForm = true;
+            };
+
+            this.success = function(method) {
+                extend(this.model.newMethod, {
+                    cardholderName: method.cardholderName,
+                    paymentMethodNonce: method.nonce
+                });
+
+                return this.model.newMethod.save()
+                    .then(function(newMethod) {
+                        self.model.methods.unshift(newMethod);
+                        self.model.chosenMethod = newMethod;
+                        self.model.newMethod = cinema6.db.create('paymentMethod', {});
+
+                        if (newMethod.type === 'creditCard' && self.canSubmit) {
+                            return self.makePayment();
+                        }
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+
+                        self.paymentMethodError = true;
+                    })
+                    .finally(function() {
+                        self.pendingConfirmation = false;
+                    });
+            };
+
+            this.failure = function() {
+                this.pendingConfirmation = false;
+            };
+
+            this.close = function() {
+                self.model.show = false;
+                self.paymentMethodError = false;
+                self.pendingConfirmation = false;
+                AddFundsModalService.close();
+            };
+        }])
+
+        .service('AddFundsModalService', ['$rootScope','cinema6','$q','PaymentService',
+        function                         ( $rootScope , cinema6 , $q , PaymentService ) {
+            var model = {},
+                deferred;
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.display = function() {
+                model.show = true;
+                model.pending = true;
+
+                deferred = $q.defer();
+
+                $q.all({
+                    paymentMethods: cinema6.db.findAll('paymentMethod'),
+                    newMethod: cinema6.db.create('paymentMethod', {}),
+                    token: PaymentService.getToken()
+                }).then(function(promises) {
+                    model.deposit = null;
+                    model.pending = false;
+                    model.token = promises.token;
+                    model.newMethod = promises.newMethod;
+                    model.methods = promises.paymentMethods;
+                    model.showCreditCardForm = !promises.paymentMethods.length;
+                    model.chosenMethod = model.methods.filter(function(method) {
+                        return !!method.default;
+                    })[0];
+                });
+
+                return deferred.promise;
+            };
+
+            this.close = function() {
+                deferred.resolve();
+            };
+        }])
+
         .directive('braintreeCreditCard', [function() {
             return {
                 restrict: 'E',
@@ -1514,12 +1645,11 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
         .controller('SelfiePaymentMethodsController', ['$scope',
         function                                      ( $scope ) {
-            var methods = $scope.methods;
-
             Object.defineProperties(this, {
                 methods: {
                     get: function() {
-                        var current = $scope.chosenMethod || {};
+                        var methods = $scope.methods,
+                            current = $scope.chosenMethod || {};
 
                         return (methods || []).filter(function(method) {
                             return method.token !== current.token;
@@ -1530,11 +1660,12 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
             this.setChosenMethod = function(method) {
                 $scope.chosenMethod = method;
+
                 this.showDropdown = false;
             };
 
             this.toggleDropdown = function() {
-                if (methods.length < 2) { return; }
+                if ($scope.methods.length < 2) { return; }
 
                 this.showDropdown = !this.showDropdown;
             };

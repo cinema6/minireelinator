@@ -251,8 +251,10 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieAccountController', ['cState',
-        function                               ( cState ) {
+        .controller('SelfieAccountController', ['cState','AddFundsModalService','cinema6',
+        function                               ( cState , AddFundsModalService , cinema6 ) {
+            var self = this;
+
             this.initWithModel = function(model) {
                 this.model = model;
                 this.paymentMethods = cState.paymentMethods;
@@ -267,6 +269,17 @@ function( angular , c6State  ) {
                     }
                 }
             });
+
+            this.addFunds = function() {
+                AddFundsModalService.display()
+                    .then(function() {
+                        return cinema6.db.findAll('paymentMethod');
+                    })
+                    .then(function(paymentMethods) {
+                        self.paymentMethods = paymentMethods;
+                        cState.paymentMethods = paymentMethods;
+                    });
+            };
         }])
 
         .config(['c6StateProvider',
