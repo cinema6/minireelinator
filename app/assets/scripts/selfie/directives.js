@@ -1809,6 +1809,35 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
+        .filter('dollars', ['$filter',function($filter) {
+            return function(number, decimals) {
+                return (number < 0 ? '-$' : '$') + $filter('number')(Math.abs(number), decimals);
+            };
+        }])
+
+        .filter('status', [function() {
+            return function(service) {
+                switch (service) {
+                case 'draft':
+                    return 'Draft';
+                case 'pending':
+                    return 'Pending';
+                case 'active':
+                    return 'Active';
+                case 'paused':
+                    return 'Paused';
+                case 'canceled':
+                    return 'Canceled';
+                case 'outOfBudget':
+                    return 'Out of Budget';
+                case 'expired':
+                    return 'Expired';
+                default:
+                    return service.charAt(0).toUpperCase() + service.slice(1);
+                }
+            };
+        }])
+
         .filter('videoService', [function() {
             return function(service) {
                 switch (service) {

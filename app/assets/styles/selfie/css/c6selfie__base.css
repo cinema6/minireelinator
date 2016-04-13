@@ -1397,6 +1397,19 @@ fa,
                 top:0.5em; right:1em;
             }
 
+                .pageHeader__actions .btnGroup .btn {
+                    border-top: 2px solid rgba(0, 0, 0, 0.25);
+                    border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+                }
+                .pageHeader__actions .btnGroup .btn:first-child:not(:last-child),
+                .pageHeader__actions .btnGroup .btn--first {
+                    border-left: 2px solid rgba(0, 0, 0, 0.25);
+                }
+                .pageHeader__actions .btnGroup .btn:last-child:not(:first-child),
+                .pageHeader__actions .btnGroup .btn--last {
+                    border-right: 2px solid rgba(0, 0, 0, 0.25);
+                }
+
         .pageHeader__group .sortBar__group {
             border-right: 0;
             border-top: 0;

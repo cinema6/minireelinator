@@ -1,5 +1,24 @@
 # MiniReelinator
 
+## v1.42.1 (April 13, 2016)
+* *[v1.42.1.rc2]*
+  * [FIX]: Show correctly formatted status in manage campaign tab
+  * [FIX]: Fix header button styles for proper alignment
+  * [FIX]: Stop showing "Total Charge: $0" in confirmation modal when
+    no payment is being made
+  * [FIX]: Show better error messages when a payment fails or when an
+    update request fails
+  * [FEATURE]: Add input for placement label
+* *[/v1.42.1.rc2]*
+
+* *[v1.42.1.rc1]*
+  * [FIX]: Display better error messages in funding confirmation modal
+  * [FIX]: Skip deposit funds modal if user has existing payment methods
+  * [FIX]: Do not show payment method info in confirmation modal if
+    no payment is being made
+  * [FIX]: Format negative dollar amounts correctly
+* *[/v1.42.1.rc1]*
+
 ## v1.42.0 (April 11, 2016)
 * *[v1.42.0.rc1]*
   * [FEATURE]: Display account balance in the header of campaign list,

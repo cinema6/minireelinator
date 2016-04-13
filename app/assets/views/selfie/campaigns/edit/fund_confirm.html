@@ -40,13 +40,13 @@
                                     <h1 class="tk--hdr">Total Budget</h1>
                                 </div><!--
                                 --><div class="grid__item one-third orderItem__label">
-                                    <h1 class="tk--hdr">${{SelfieCampaignFundCtrl.campaign.pricing.budget | number}}</h1>
+                                    <h1 class="tk--hdr">{{SelfieCampaignFundCtrl.campaign.pricing.budget | dollars}}</h1>
                                 </div>
                             </li>
                             <li>
                                 <div class="grid__item one-third orderItem__label">Daily Budget</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div ng-if="SelfieCampaignFundCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">${{SelfieCampaignFundCtrl.campaign.pricing.dailyLimit | number}}</div>
+                                    <div ng-if="SelfieCampaignFundCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">{{SelfieCampaignFundCtrl.campaign.pricing.dailyLimit | dollars}}</div>
                                     <div ng-if="!SelfieCampaignFundCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">No limit</div>
                                 </div>
                             </li>
@@ -63,20 +63,20 @@
                                     <h1 class="tk--hdr">Total CPV</h1>
                                 </div><!--
                                 --><div class="grid__item one-third orderItem__label">
-                                    <h1 class="tk--hdr">${{SelfieCampaignFundCtrl.cpv | number:2}}</h1>
+                                    <h1 class="tk--hdr">{{SelfieCampaignFundCtrl.cpv | dollars:2}}</h1>
                                 </div>
 
                             </li>
                             <li class="orderItem__subHdr">
                                 <div class="grid__item one-third orderItem__label">Base CPV</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">${{SelfieCampaignFundCtrl.schema.pricing.cost.__base | number}}</div>
+                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__base | dollars}}</div>
                                 </div>
                             </li>
                             <li ng-show="SelfieCampaignFundCtrl.interests">
                                 <div class="grid__item one-third orderItem__label">Interests:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">${{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForInterests | number}}</div>
+                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForInterests | dollars}}</div>
                                 </div>
                             </li>
                             <li ng-show="SelfieCampaignFundCtrl.interests" class="orderItem__subItem">
@@ -85,7 +85,7 @@
                             <li ng-show="SelfieCampaignFundCtrl.demographics.age.list || SelfieCampaignFundCtrl.demographics.gender.list || SelfieCampaignFundCtrl.demographics.income.list">
                                 <div class="grid__item one-third orderItem__label">Demographics:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">${{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForDemoTargeting | number}}</div>
+                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForDemoTargeting | dollars}}</div>
                                 </div>
                             </li>
                             <li ng-show="SelfieCampaignFundCtrl.demographics.age.list || SelfieCampaignFundCtrl.demographics.gender.list || SelfieCampaignFundCtrl.demographics.income.list" class="orderItem__subItem">
@@ -94,7 +94,7 @@
                             <li ng-show="SelfieCampaignFundCtrl.geo.states.list || SelfieCampaignFundCtrl.geo.dmas.list || SelfieCampaignFundCtrl.geo.zipcodes.list">
                                 <div class="grid__item one-third orderItem__label">Location:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">${{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForGeoTargeting | number}}</div>
+                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForGeoTargeting | dollars}}</div>
                                 </div>
                             </li>
                             <li ng-show="SelfieCampaignFundCtrl.geo.states.list || SelfieCampaignFundCtrl.geo.dmas.list || SelfieCampaignFundCtrl.geo.zipcodes.list" class="orderItem__subItem">
@@ -117,31 +117,30 @@
                                     <span ng-if="!SelfieCampaignFundCtrl.isDraft">Total Campaign Budget Change</span>
                                 </div><!--
                                 --><div class="grid__item one-third">
-                                    <div ng-if="SelfieCampaignFundCtrl.budgetChange >= 0" class="text--right">${{SelfieCampaignFundCtrl.budgetChange | number}}</div>
-                                    <div ng-if="SelfieCampaignFundCtrl.budgetChange < 0" class="text--right">-${{SelfieCampaignFundCtrl.budgetChange | abs | number}}</div>
+                                    <div class="text--right">{{SelfieCampaignFundCtrl.budgetChange | dollars}}</div>
                                 </div>
                             </li>
                             <li>
                                 <div class="grid__item two-thirds orderItem__label">Available Funds</div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">${{SelfieCampaignFundCtrl.accounting.remainingFunds | number}}</div>
+                                    <div class="text--right">{{SelfieCampaignFundCtrl.accounting.remainingFunds | dollars}}</div>
                                 </div>
                             </li>
                             <li ng-if="SelfieCampaignFundCtrl.deposit > SelfieCampaignFundCtrl.minDeposit">
                                 <div class="grid__item two-thirds orderItem__label">Additional Funds</div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">${{SelfieCampaignFundCtrl.deposit - SelfieCampaignFundCtrl.minDeposit | number}}</div>
+                                    <div class="text--right">{{SelfieCampaignFundCtrl.deposit - SelfieCampaignFundCtrl.minDeposit | dollars}}</div>
                                 </div>
                             </li>
 
                         </ul>
-                        <ul ng-if="SelfieCampaignFundCtrl.paymentMethod" c6-alias="SelfieCampaignFundCtrl.paymentMethod as method">
+                        <ul ng-if="SelfieCampaignFundCtrl.paymentMethod && SelfieCampaignFundCtrl.deposit" c6-alias="SelfieCampaignFundCtrl.paymentMethod as method">
                             <li>
                                 <div class="grid__item two-thirds orderItem__label">
                                     <h1 class="tk--hdr">Total Charge:</h1>
                                 </div><!--
                                 --><div class="grid__item one-third orderItem__label">
-                                    <h1 class="tk--hdr">${{SelfieCampaignFundCtrl.deposit | number}}</h1>
+                                    <h1 class="tk--hdr">{{SelfieCampaignFundCtrl.deposit | dollars}}</h1>
                                 </div>
                             </li>
                             <li>
@@ -152,7 +151,9 @@
                                 </div>
                             </li>
                             <li>
-                            <div class="grid__item one-third orderItem__label"><i ng-if="method.type === 'creditCard'">{{method.cardholderName}}</i></div><!--
+                            <div class="grid__item one-third orderItem__label">
+                                <i ng-if="method.type === 'creditCard'">{{method.cardholderName}}</i>
+                            </div><!--
                             --><div class="grid__item two-thirds">
                                     <div ng-if="method.type === 'creditCard'" class="text--right"><i>Exp. {{method.expirationDate}}</i></div>
                                     <div ng-if="method.type === 'paypal'" class="text--right"><i>{{method.email}}</i></div>
@@ -161,7 +162,18 @@
                         </ul>
                     </div>
 
-                    <span ng-if="SelfieCampaignCtrl.confirmationError" class="alertMessage alert__failure text--center">The was a problem submitting your campaign.</span>
+                    <span class="alertMessage alert__success text--center" ng-show="!SelfieCampaignFundCtrl.deposit">
+                        <strong>You have enough funds to run your campaign!</strong>
+                    </span>
+
+                    <span ng-if="SelfieCampaignCtrl.confirmationError" ng-switch="SelfieCampaignCtrl.confirmationError" class="alertMessage alert__failure text--center">
+                        <span ng-switch-when="1">
+                            We're sorry, there was a problem submitting your campaign. Please contact <a href="mailto:support@reelcontent.com?Subject=Trouble%20submitting%20campaign" target="_top">support@reelcontent.com</a> for assistance.
+                        </span>
+                        <span ng-switch-when="2">
+                            The payment was declined. Please try again or <a c6-sref="Selfie:Campaign:Fund:Deposit">go back</a> and choose a different payment method.
+                        </span>
+                    </span>
                 </div>
             </div>
         </div>

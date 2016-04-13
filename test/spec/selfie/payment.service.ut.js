@@ -193,7 +193,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 it('will post a payment method and amount to be paid',function(){
-                    $httpBackend.expectPOST('/api/payment', postData)
+                    $httpBackend.expectPOST('/api/payments', postData)
                         .respond(201, transaction);
 
                     PaymentService.makePayment(postData.paymentMethod, postData.amount)
@@ -206,7 +206,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 it('will reject promise if not successful',function(){
-                    $httpBackend.expectPOST('/api/payment', postData)
+                    $httpBackend.expectPOST('/api/payments', postData)
                         .respond(500, 'Server Error');
 
                     PaymentService.makePayment(postData.paymentMethod, postData.amount)

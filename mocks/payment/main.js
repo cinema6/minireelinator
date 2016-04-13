@@ -73,13 +73,18 @@ module.exports = function(http) {
             return result;
         }, 0);
 
+        // return this.respond(200, {
+        //     balance: -8779,
+        //     outstandingBudget: 1764
+        // });
+
         return this.respond(200, {
             balance: credits,
             outstandingBudget: campaignBudget + updateRequestBudget
         });
     });
 
-    http.whenPOST('/api/payment', function(request) {
+    http.whenPOST('/api/payments', function(request) {
         var id = genId('trans'),
             currentTime = (new Date()).toISOString(),
             method = grunt.file.expand(path.resolve(__dirname, './methods/*.json'))

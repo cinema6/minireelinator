@@ -14,6 +14,25 @@
                             </h1>
                         </div>
                         <fieldset class="form__item">
+                            <div class="field--inline">
+                                <input c6-fill-check ng-model="placement.model.label" class="form__textBox form__fillCheck" type="text" id="c6-placement-label-{{$index}}">
+                                <label class="form__label" for="c6-placement-label-{{$index}}">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Label
+                                </label>
+                                <div class="form__helpBox form__helpBox--right">
+                                    <div class="form__helpText">
+                                        User-friendly label to help with reporting.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Invalid Value
+                                    </p>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form__item">
                             <select c6-select-box data-options="SelfieManageCampaignPlacementsCtrl.containers" ng-options="container.label for container in SelfieManageCampaignPlacementsCtrl.containers" ng-model="placement.container" ng-change="SelfieManageCampaignPlacementsCtrl.setContainer(placement, placement.container)" class="form__selectBox form__selectBox--single" id="c6-placement-dsp-{{$index}}">
                                 <option value="">-- Select --</option>
                             </select>

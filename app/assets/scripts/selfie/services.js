@@ -495,7 +495,7 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
             };
 
             this.makePayment = function(token, amount) {
-                return $http.post(c6UrlMaker('payment', 'api'), {
+                return $http.post(c6UrlMaker('payments', 'api'), {
                     paymentMethod: token,
                     amount: amount
                 }).then(function(response) {
