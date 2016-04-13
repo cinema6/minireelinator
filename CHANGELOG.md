@@ -8,6 +8,7 @@
     no payment is being made
   * [FIX]: Show better error messages when a payment fails or when an
     update request fails
+  * [FEATURE]: Add input for placement label
 * *[/v1.42.1.rc2]*
 
 * *[v1.42.1.rc1]*
