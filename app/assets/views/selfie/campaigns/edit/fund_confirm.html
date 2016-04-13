@@ -134,7 +134,7 @@
                             </li>
 
                         </ul>
-                        <ul ng-if="SelfieCampaignFundCtrl.paymentMethod" c6-alias="SelfieCampaignFundCtrl.paymentMethod as method">
+                        <ul ng-if="SelfieCampaignFundCtrl.paymentMethod && SelfieCampaignFundCtrl.deposit" c6-alias="SelfieCampaignFundCtrl.paymentMethod as method">
                             <li>
                                 <div class="grid__item two-thirds orderItem__label">
                                     <h1 class="tk--hdr">Total Charge:</h1>
@@ -143,7 +143,7 @@
                                     <h1 class="tk--hdr">{{SelfieCampaignFundCtrl.deposit | dollars}}</h1>
                                 </div>
                             </li>
-                            <li ng-if="SelfieCampaignFundCtrl.deposit">
+                            <li>
                                 <div class="grid__item two-thirds orderItem__label">Payment Method</div><!--
                                 --><div class="grid__item one-third">
                                     <div ng-if="method.type === 'creditCard'" class="text--right">{{method.cardType | paymentType}} **** {{method.last4}}</div>
@@ -151,10 +151,10 @@
                                 </div>
                             </li>
                             <li>
-                            <div ng-if="SelfieCampaignFundCtrl.deposit" class="grid__item one-third orderItem__label">
+                            <div class="grid__item one-third orderItem__label">
                                 <i ng-if="method.type === 'creditCard'">{{method.cardholderName}}</i>
                             </div><!--
-                            --><div ng-if="SelfieCampaignFundCtrl.deposit" class="grid__item two-thirds">
+                            --><div class="grid__item two-thirds">
                                     <div ng-if="method.type === 'creditCard'" class="text--right"><i>Exp. {{method.expirationDate}}</i></div>
                                     <div ng-if="method.type === 'paypal'" class="text--right"><i>{{method.email}}</i></div>
                                 </div>
@@ -162,9 +162,13 @@
                         </ul>
                     </div>
 
+                    <span class="alertMessage alert__success text--center" ng-show="!SelfieCampaignFundCtrl.deposit">
+                        <strong>You have enough funds to run your campaign!</strong>
+                    </span>
+
                     <span ng-if="SelfieCampaignCtrl.confirmationError" ng-switch="SelfieCampaignCtrl.confirmationError" class="alertMessage alert__failure text--center">
                         <span ng-switch-when="1">
-                            There was a problem submitting your campaign. Our system might be busy or you might not have enough available funds. Please try again later.
+                            We're sorry, there was a problem submitting your campaign. Please contact <a href="mailto:support@reelcontent.com?Subject=Trouble%20submitting%20campaign" target="_top">support@reelcontent.com</a> for assistance.
                         </span>
                         <span ng-switch-when="2">
                             The payment was declined. Please try again or <a c6-sref="Selfie:Campaign:Fund:Deposit">go back</a> and choose a different payment method.
