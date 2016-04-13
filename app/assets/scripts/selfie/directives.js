@@ -1701,6 +1701,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     return 'Out of Budget';
                 case 'expired':
                     return 'Expired';
+                default:
+                    return service.charAt(0).toUpperCase() + service.slice(1);
                 }
             };
         }])
