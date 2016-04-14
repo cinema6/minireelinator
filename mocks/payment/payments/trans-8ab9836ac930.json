@@ -1,12 +1,10 @@
 {
     "id": "trans-8ab9836ac930",
     "status": "settled",
-    "type": "sale",
+    "type": "credit",
     "amount": 211.43,
     "createdAt": "2015-10-02T22:34:28.229Z",
     "updatedAt": "2015-10-02T22:34:28.229Z",
-    "campaignId": "c-4fa2227f1fd0b1",
-    "campaignName": "Diageo, Q4",
     "method": {
         "token": "pay-a3fbcb1775823a",
         "createdAt": "2015-10-19T22:04:34.842Z",

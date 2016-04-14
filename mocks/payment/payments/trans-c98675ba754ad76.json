@@ -1,12 +1,10 @@
 {
     "id": "trans-c98675ba754ad76",
     "status": "settled",
-    "type": "sale",
+    "type": "credit",
     "amount": 100.00,
     "createdAt": "2015-10-11T22:34:28.229Z",
     "updatedAt": "2015-10-11T22:34:28.229Z",
-    "campaignId": "c-ebf9e9285c0f6c",
-    "campaignName": "American Airlines Q1",
     "method": {
         "token": "pay-733569ee634394",
         "createdAt": "2015-10-19T15:38:46.153Z",

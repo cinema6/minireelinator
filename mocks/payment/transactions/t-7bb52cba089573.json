@@ -1,0 +1,13 @@
+{
+    "id": "t-7bb52cba089573",
+    "created": "2016-01-12T22:34:28.229Z",
+    "transactionTS": "2016-01-12T22:34:28.229Z",
+    "amount": 50,
+    "sign": 1,
+    "units": 1,
+    "org": "o-a6fd7298acb6fa",
+    "campaign": null,
+    "braintreeId": null,
+    "promotion": "promo-123",
+    "description": "some label"
+}

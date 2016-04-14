@@ -94,7 +94,10 @@
 
                             <div ng-if="AddFundsModalCtrl.model.newMethod" class="form__items addPayment__method">
                                 <div ng-show="AddFundsModalCtrl.newPaymentType === 'creditcard' && AddFundsModalCtrl.model.showCreditCardForm">
-                                    <span ng-if="AddFundsModalCtrl.model.methods.length">Credit Card Details</span>
+                                    <div class="paymentMethod__optionTypes"
+                                        ng-if="AddFundsModalCtrl.model.methods.length">
+                                        Credit Card Details
+                                    </div>
                                     <braintree-credit-card
                                         hide-save-button="true"
                                         client-token="{{AddFundsModalCtrl.model.token}}"
