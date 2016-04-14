@@ -27,7 +27,11 @@
                         <div class="depositFunds text--center">
                             <div class="form__items">
                                 <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !AddFundsModalCtrl.validDeposit }">
-                                    <input c6-fill-check ng-model="AddFundsModalCtrl.model.deposit" class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-deposit-amount">
+                                    <input c6-fill-check
+                                        ng-model="AddFundsModalCtrl.model.deposit"
+                                        class="form__textBox form__textBox--units form__fillCheck"
+                                        id="c6-deposit-amount"
+                                        type="number">
                                     <span class="input__unit">$</span>
                                     <label class="form__label" for="c6-deposit-amount">
                                         <i class="fa fa-times ui--error"></i>
@@ -59,32 +63,63 @@
                             <div ng-if="!AddFundsModalCtrl.model.methods.length">
                                 <div class="paymentMethod__options">
                                     <div class="paymentMethod__optionTypes">
-                                        <input type="radio" name="paymentType" id="paymentType__auto" value="creditcard" ng-model="AddFundsModalCtrl.newPaymentType"> <label for="paymentType__auto"><span class="radio__input"></span>Credit Card</label>
-                                        <input type="radio" name="paymentType" id="paymentType__selected" value="paypal" ng-model="AddFundsModalCtrl.newPaymentType" hidden-input-click="braintree-paypal-button"> <label for="paymentType__selected"><span class="radio__input"></span>PayPal</label>
+                                        <input type="radio"
+                                            ng-model="AddFundsModalCtrl.newPaymentType"
+                                            value="creditcard"
+                                            name="paymentType"
+                                            id="paymentType__auto">
+                                        <label for="paymentType__auto">
+                                            <span class="radio__input"></span>Credit Card
+                                        </label>
+                                        <input type="radio"
+                                            ng-model="AddFundsModalCtrl.newPaymentType"
+                                            hidden-input-click="braintree-paypal-button"
+                                            value="paypal"
+                                            name="paymentType"
+                                            id="paymentType__selected">
+                                        <label for="paymentType__selected">
+                                            <span class="radio__input"></span>PayPal
+                                        </label>
                                     </div>
                                 </div>
                             </div>
 
                             <div ng-show="AddFundsModalCtrl.model.methods.length && !AddFundsModalCtrl.model.showCreditCardForm">
-                                <selfie-payment-methods chosen-method="AddFundsModalCtrl.model.chosenMethod" methods="AddFundsModalCtrl.model.methods"></selfie-payment-methods>
+                                <selfie-payment-methods
+                                    chosen-method="AddFundsModalCtrl.model.chosenMethod"
+                                    methods="AddFundsModalCtrl.model.methods">
+                                </selfie-payment-methods>
                             </div>
 
 
                             <div ng-if="AddFundsModalCtrl.model.newMethod" class="form__items addPayment__method">
                                 <div ng-show="AddFundsModalCtrl.newPaymentType === 'creditcard' && AddFundsModalCtrl.model.showCreditCardForm">
                                     <span ng-if="AddFundsModalCtrl.model.methods.length">Credit Card Details</span>
-                                    <braintree-credit-card hide-save-button="true" client-token="{{AddFundsModalCtrl.model.token}}" method="AddFundsModalCtrl.model.newMethod" on-success="AddFundsModalCtrl.success(method)" on-failure="AddFundsModalCtrl.failure()"></braintree-credit-card>
+                                    <braintree-credit-card
+                                        hide-save-button="true"
+                                        client-token="{{AddFundsModalCtrl.model.token}}"
+                                        method="AddFundsModalCtrl.model.newMethod"
+                                        on-success="AddFundsModalCtrl.success(method)"
+                                        on-failure="AddFundsModalCtrl.failure()">
+                                    </braintree-credit-card>
                                 </div>
                             </div>
 
                             <div ng-if="AddFundsModalCtrl.model.methods.length && !AddFundsModalCtrl.model.showCreditCardForm">
-                                <button class="action__btnSecondary action__btnSecondary--big palm--one-whole" hidden-input-click="braintree-paypal-button">
+                                <button hidden-input-click="braintree-paypal-button"
+                                    class="action__btnSecondary action__btnSecondary--big palm--one-whole">
                                     <i class="faa fa-plus"></i> PayPal
                                 </button><!--
-                                --><button ng-click="AddFundsModalCtrl.addCreditCard()" class="action__btnSecondary action__btnSecondary--big palm--one-whole">
+                                --><button ng-click="AddFundsModalCtrl.addCreditCard()"
+                                    class="action__btnSecondary action__btnSecondary--big palm--one-whole">
                                     <i class="faa fa-plus"></i> Credit Card
                                 </button>
                             </div>
+
+                            <span ng-if="AddFundsModalCtrl.paymentMethodError"
+                                class="alertMessage alert__failure text--center">
+                                There was a problem processing your request. Please try again or use a different payment method.
+                            </span>
 
                             <div class="payment__seals grid__item one-whole">
                                 <div class="payment__sealItem braintree--seal">
@@ -95,8 +130,6 @@
                                 </div>
                             </div>
 
-                            <span ng-if="AddFundsModalCtrl.paymentMethodError" class="alertMessage alert__failure text--center">There was a problem saving your payment method.</span>
-
                         </div>
                     </div>
                 </div>
@@ -104,9 +137,27 @@
         </div>
 
         <footer ng-show="!AddFundsModalCtrl.model.pending" class="modalFooter__group">
-            <button ng-show="!AddFundsModalCtrl.model.methods.length || !AddFundsModalCtrl.model.showCreditCardForm" class="btnAction btnAction btnAction--first" ng-click="AddFundsModalCtrl.close()" title="Cancel">Cancel</button>
-            <button ng-show="AddFundsModalCtrl.model.methods.length && AddFundsModalCtrl.model.showCreditCardForm" class="btnAction btnAction btnAction--first" ng-click="AddFundsModalCtrl.model.showCreditCardForm = false" title="Back">Back</button>
-            <button hidden-input-click="credit-card-submit" ng-click="AddFundsModalCtrl.makeDeposit()" ng-disabled="!AddFundsModalCtrl.canSubmit" ng-class="{ 'btn--disabled' : !AddFundsModalCtrl.canSubmit, 'btnSpinner__waiting' : AddFundsModalCtrl.pendingConfirmation }" title="Deposit" class="btnAction btnAction--success btnAction--last" type="button">Deposit <span ng-if="AddFundsModalCtrl.model.deposit >= 1">${{AddFundsModalCtrl.model.deposit | number:2}}</span></button>
+            <button ng-show="!AddFundsModalCtrl.model.methods.length || !AddFundsModalCtrl.model.showCreditCardForm"
+                class="btnAction btnAction btnAction--first"
+                ng-click="AddFundsModalCtrl.close()"
+                title="Cancel">
+                Cancel
+            </button>
+            <button ng-show="AddFundsModalCtrl.model.methods.length && AddFundsModalCtrl.model.showCreditCardForm"
+                class="btnAction btnAction btnAction--first"
+                ng-click="AddFundsModalCtrl.model.showCreditCardForm = false"
+                title="Back">
+                Back
+            </button>
+            <button hidden-input-click="credit-card-submit"
+                ng-click="AddFundsModalCtrl.makeDeposit()"
+                ng-disabled="!AddFundsModalCtrl.canSubmit"
+                ng-class="{ 'btn--disabled' : !AddFundsModalCtrl.canSubmit, 'btnSpinner__waiting' : AddFundsModalCtrl.pendingConfirmation }"
+                title="Deposit"
+                class="btnAction btnAction--success btnAction--last"
+                type="button">
+                Deposit <span ng-if="AddFundsModalCtrl.model.deposit >= 1">${{AddFundsModalCtrl.model.deposit | number:2}}</span>
+            </button>
         </footer>
     </div>
     <div class="modal__overlay modal__overlay--confirm">&nbsp;</div>

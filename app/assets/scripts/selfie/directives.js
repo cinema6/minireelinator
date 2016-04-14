@@ -1421,10 +1421,17 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             this.makePayment = function() {
                 return PaymentService.makePayment(this.model.chosenMethod.token, this.model.deposit)
                     .then(PaymentService.getBalance)
-                    .then(this.close);
+                    .then(this.close)
+                    .catch(function() {
+                        self.paymentMethodError = true;
+                    })
+                    .finally(function() {
+                        self.pendingConfirmation = false;
+                    });
             };
 
             this.addCreditCard = function() {
+                this.newPaymentType = 'creditcard';
                 this.model.showCreditCardForm = true;
             };
 
@@ -1436,6 +1443,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
                 return this.model.newMethod.save()
                     .then(function(newMethod) {
+                        self.model.showCreditCardForm = false;
                         self.model.methods.unshift(newMethod);
                         self.model.chosenMethod = newMethod;
                         self.model.newMethod = cinema6.db.create('paymentMethod', {});
@@ -1444,9 +1452,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                             return self.makePayment();
                         }
                     })
-                    .catch(function(err) {
-                        console.log(err);
-
+                    .catch(function() {
                         self.paymentMethodError = true;
                     })
                     .finally(function() {
