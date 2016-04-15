@@ -1,5 +1,12 @@
 # MiniReelinator
 
+## v1.42.2 (April 15, 2016)
+* *[v1.42.2.rc1]*
+  * [FIX]: Skip Deposit modal for user's who do not have any payment
+    methods but do have the "payment optional" entitlement and enough
+    avilable funds to run the campaign
+* *[/v1.42.1.rc1]*
+
 ## v1.42.1 (April 13, 2016)
 * *[v1.42.1.rc2]*
   * [FIX]: Show correctly formatted status in manage campaign tab
