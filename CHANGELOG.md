@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.42.3.rc1]*
+  * [FIX]: Add message to show preferred video length to users under Add Your Video
+
 ## v1.42.2 (April 15, 2016)
 * *[v1.42.2.rc1]*
   * [FIX]: Skip Deposit modal for user's who do not have any payment
