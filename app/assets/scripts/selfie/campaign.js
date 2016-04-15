@@ -1803,7 +1803,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function(model) {
-                    var hasPaymentMethods = !!model.paymentMethods.length,
+                    var SelfieUser = c6State.get('Selfie').cModel,
+                        paymentOptional = SelfieUser.entitlements.paymentOptional,
+                        hasPaymentMethods = !!model.paymentMethods.length,
                         available = model.balance.remainingFunds,
                         CampaignState = this.cParent,
                         self = this;
@@ -1825,7 +1827,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     this.accounting = PaymentService.balance;
                     this.minDeposit = available < this.budgetChange ?
                         Math.abs(available - this.budgetChange) : 0;
-                    this.skipDeposit = hasPaymentMethods && !this.minDeposit;
+                    this.skipDeposit = (hasPaymentMethods || paymentOptional) && !this.minDeposit;
 
                     return $q.all((!hasPaymentMethods ? {
                         token: PaymentService.getToken(),

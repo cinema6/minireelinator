@@ -10,7 +10,8 @@ define(['app'], function(appModule) {
                 cinema6,
                 PaymentService,
                 paymentModel,
-                paymentMethods;
+                paymentMethods,
+                SelfieState;
 
             var success,
                 failure,
@@ -40,6 +41,13 @@ define(['app'], function(appModule) {
                 spyOn(cinema6.db, 'findAll').and.returnValue(paymentMethodsDeferred.promise);
                 spyOn(PaymentService, 'getToken').and.returnValue($q.when('1234-4321'));
                 spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
+
+                SelfieState = c6State.get('Selfie');
+                SelfieState.cModel = {
+                    entitlements: {
+                        paymentOptional: false
+                    }
+                };
 
                 FundState = c6State.get(stateName);
                 FundState.cParent = {
@@ -186,6 +194,46 @@ define(['app'], function(appModule) {
                     expect(FundState.schema).toBe(FundState.cParent.schema);
                     expect(FundState.interests).toBe(FundState.cParent.cModel.categories);
                     expect(FundState.accounting).toBe(PaymentService.balance);
+                });
+
+                describe('when user has no payment methods and paymentOptional entitlement', function() {
+                    describe('when there is a minDeposit required', function() {
+                        it('should set skipDeposit to false', function() {
+                            $rootScope.$apply(function() {
+                                SelfieState.cModel.entitlements.paymentOptional = true;
+
+                                FundState.cParent._campaign.status = 'draft';
+                                FundState.cParent._campaign.pricing.budget = 500;
+                                FundState.cParent.campaign.pricing.budget = 500;
+
+                                FundState.afterModel({
+                                    paymentMethods: [],
+                                    balance: { remainingFunds: 300 }
+                                });
+                            });
+
+                            expect(FundState.skipDeposit).toBe(false);
+                        });
+                    });
+
+                    describe('when there is no minDeposit', function() {
+                        it('should set the skipDposit to true even when there are no paymentMethods', function() {
+                            $rootScope.$apply(function() {
+                                SelfieState.cModel.entitlements.paymentOptional = true;
+
+                                FundState.cParent._campaign.status = 'draft';
+                                FundState.cParent._campaign.pricing.budget = 500;
+                                FundState.cParent.campaign.pricing.budget = 500;
+
+                                FundState.afterModel({
+                                    paymentMethods: [],
+                                    balance: { remainingFunds: 500 }
+                                });
+                            });
+
+                            expect(FundState.skipDeposit).toBe(true);
+                        });
+                    });
                 });
 
                 describe('when there are no paymentMethods', function() {
