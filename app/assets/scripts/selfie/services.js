@@ -475,6 +475,7 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                         accounting.balance = balance;
                         accounting.outstandingBudget = outstandingBudget;
                         accounting.remainingFunds = balance - outstandingBudget;
+                        accounting.totalSpend = response.data.totalSpend;
 
                         return accounting;
                     });
@@ -492,6 +493,14 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     .then(function(response) {
                         return response.data;
                     });
+            };
+
+            this.getPayments = function(ids) {
+                return $http.get(c6UrlMaker('payments', 'api'), {
+                    params: { ids: ids }
+                }).then(function(response) {
+                    return response.data;
+                });
             };
 
             this.makePayment = function(token, amount) {

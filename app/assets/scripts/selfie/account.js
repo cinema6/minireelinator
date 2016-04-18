@@ -1,5 +1,7 @@
-define( ['angular','c6_state'],
-function( angular , c6State  ) {
+define( ['angular','c6_state','../minireel/mixins/PaginatedListState',
+         '../minireel/mixins/PaginatedListController'],
+function( angular , c6State  , PaginatedListState                    ,
+          PaginatedListController ) {
     'use strict';
 
     var extend = angular.extend;
@@ -557,15 +559,43 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account:Payment:History', ['PaymentService',
-            function                                                ( PaymentService ) {
+            c6StateProvider.state('Selfie:Account:Payment:History', ['$injector','paginatedDbList',
+                                                                     'PaymentService',
+            function                                                ( $injector , paginatedDbList ,
+                                                                      PaymentService ) {
+                var self = this;
+
+                $injector.invoke(PaginatedListState, this);
+
                 this.templateUrl = 'views/selfie/account/payment/history.html';
-                this.controller = 'GenericController';
+                this.controller = 'SelfieAccountPaymentHistoryController';
                 this.controllerAs = 'SelfieAccountPaymentHistoryCtrl';
 
                 this.model = function() {
-                    return PaymentService.getHistory();
+                    return paginatedDbList('transaction', {
+                        sort: 'created,-1'
+                    }, this.limit, this.page).ensureResolution();
+                };
+
+                this.afterModel = function() {
+                    return PaymentService.getBalance()
+                        .then(function(accounting) {
+                            self.accounting = accounting;
+                        });
                 };
             }]);
+        }])
+
+        .controller('SelfieAccountPaymentHistoryController', ['$injector','cState','$scope',
+        function                                             ( $injector , cState , $scope ) {
+            $injector.invoke(PaginatedListController, this, {
+                cState: cState,
+                $scope: $scope
+            });
+
+            this.initWithModel = function(model) {
+                this.model = model;
+                this.accounting = cState.accounting;
+            };
         }]);
 });
