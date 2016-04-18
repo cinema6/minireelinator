@@ -13,6 +13,7 @@
         "type": "creditCard",
         "cardType": "Visa",
         "expirationDate": "11/2019",
+        "cardholderName": "Scott Munson",
         "last4": 2037,
         "default": false
     }
