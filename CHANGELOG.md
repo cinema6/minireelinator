@@ -1,7 +1,9 @@
 # MiniReelinator
 
+## v1.42.3 (April 18, 2016)
 * *[v1.42.3.rc1]*
   * [FIX]: Add message to show preferred video length to users under Add Your Video
+* *[/v1.42.3.rc1]*
 
 ## v1.42.2 (April 15, 2016)
 * *[v1.42.2.rc1]*
