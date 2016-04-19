@@ -1,8 +1,8 @@
-define( ['angular','c6_state','c6uilib','c6_defines','./selfie/account'],
-function( angular , c6State  , c6uilib , c6Defines , account   ) {
+define( ['angular','c6_state','c6uilib','c6_defines','./selfie/account','./selfie/demo'],
+function( angular , c6State  , c6uilib , c6Defines ,  account          , demo) {
     'use strict';
 
-    return angular.module('c6.app.selfie', [c6State.name, c6uilib.name, account.name])
+    return angular.module('c6.app.selfie', [c6State.name, c6uilib.name, account.name, demo.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie', ['$q','cinema6','c6State','AuthService','$location',

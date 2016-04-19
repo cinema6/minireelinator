@@ -2713,10 +2713,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.create = function(toCopy) {
                 var userSettings = SettingsService.getReadOnly('MR::user'),
                     orgSettings = SettingsService.getReadOnly('MR::org'),
-                    user = application.cModel;
+                    user = application.cModel || { };
 
                 function fetchTemplate(user) {
-                    var org = user.org;
+                    var org = user.org || { };
 
                     return $q.when(toCopy ? toCopy.pojoify() :
                         {
