@@ -227,8 +227,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account', ['c6State','cinema6',
-            function                                ( c6State , cinema6 ) {
+            c6StateProvider.state('Selfie:Account', ['c6State','cinema6','$q','PaymentService',
+            function                                ( c6State , cinema6 , $q , PaymentService ) {
                 var SelfieAccountState = this;
 
                 this.templateUrl = 'views/selfie/account.html';
@@ -241,10 +241,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function() {
-                    return cinema6.db.findAll('paymentMethod')
-                        .then(function(methods) {
-                            SelfieAccountState.paymentMethods = methods;
-                        });
+                    return $q.all({
+                        methods: cinema6.db.findAll('paymentMethod'),
+                        balance: PaymentService.getBalance()
+                    }).then(function(promises) {
+                        SelfieAccountState.paymentMethods = promises.methods;
+                    });
                 };
 
                 this.enter = function() {
@@ -561,8 +563,10 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Account:Payment:History', ['$injector','paginatedDbList',
                                                                      'PaymentService',
+                                                                     'SpinnerService',
             function                                                ( $injector , paginatedDbList ,
-                                                                      PaymentService ) {
+                                                                      PaymentService ,
+                                                                      SpinnerService ) {
                 var self = this;
 
                 $injector.invoke(PaginatedListState, this);
@@ -572,9 +576,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controllerAs = 'SelfieAccountPaymentHistoryCtrl';
 
                 this.model = function() {
+                    SpinnerService.display();
+
                     return paginatedDbList('transaction', {
                         sort: 'created,-1'
-                    }, this.limit, this.page).ensureResolution();
+                    }, this.limit, this.page).ensureResolution()
+                        .finally(function() {
+                            SpinnerService.close();
+                        });
                 };
 
                 this.afterModel = function() {

@@ -9,6 +9,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             $injector,
             PaymentHistoryState,
             PaymentService,
+            SpinnerService,
             transactions;
 
         var dbList,
@@ -41,6 +42,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
                 c6State = $injector.get('c6State');
                 PaymentService = $injector.get('PaymentService');
+                SpinnerService = $injector.get('SpinnerService');
             });
 
             transactions = [
@@ -69,6 +71,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             };
 
             spyOn(PaymentService, 'getBalance').and.returnValue($q.when(balance));
+            spyOn(SpinnerService, 'display');
+            spyOn(SpinnerService, 'close');
 
             PaymentHistoryState = c6State.get('Selfie:Account:Payment:History');
         });
@@ -82,13 +86,16 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
         });
 
         describe('model()', function() {
-            it('should return a paginatedDbList', function() {
+            it('should return a paginatedDbList and should display a spinner while waiting', function() {
                 var success = jasmine.createSpy('success()'),
                     list = [];
 
                 $rootScope.$apply(function() {
                     PaymentHistoryState.model().then(success);
                 });
+
+                expect(SpinnerService.display).toHaveBeenCalled();
+                expect(SpinnerService.close).not.toHaveBeenCalled();
 
                 expect(paginatedDbList).toHaveBeenCalledWith('transaction', {
                     sort: 'created,-1'
@@ -97,6 +104,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 $rootScope.$apply(function() {
                     deferred.resolve(list);
                 });
+
+                expect(SpinnerService.close).toHaveBeenCalled();
 
                 expect(success).toHaveBeenCalledWith(list);
             });
