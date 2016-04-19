@@ -1138,33 +1138,33 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             cinema6.db.findAll('promotion', {
                                 ids: decoration.promotions.join(',')
                             }) : []
-                    }).then(function(data) {
-                        var payments = data.payments
-                                .reduce(function(result, payment) {
-                                    result[payment.id] = payment;
-                                    return result;
-                                }, {}),
-                            promotions = data.promotions
-                                .reduce(function(result, promotion) {
-                                    result[promotion.id] = promotion;
-                                    return result;
-                                }, {});
+                        }).then(function(data) {
+                            var payments = data.payments
+                                    .reduce(function(result, payment) {
+                                        result[payment.id] = payment;
+                                        return result;
+                                    }, {}),
+                                promotions = data.promotions
+                                    .reduce(function(result, promotion) {
+                                        result[promotion.id] = promotion;
+                                        return result;
+                                    }, {});
 
-                        transactions.forEach(function(transaction) {
-                            var paymentId = transaction.braintreeId,
-                                promoId = transaction.promotion;
+                            transactions.forEach(function(transaction) {
+                                var paymentId = transaction.braintreeId,
+                                    promoId = transaction.promotion;
 
-                            if (paymentId) {
-                                transaction.payment = payments[paymentId];
-                            }
+                                if (paymentId) {
+                                    transaction.payment = payments[paymentId];
+                                }
 
-                            if (promoId) {
-                                transaction.promotion = promotions[promoId];
-                            }
+                                if (promoId) {
+                                    transaction.promotion = promotions[promoId];
+                                }
+                            });
+
+                            return transactions;
                         });
-
-                        return transactions;
-                    });
                 };
 
                 this.findAll = function() {

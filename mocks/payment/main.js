@@ -87,6 +87,8 @@ module.exports = function(http) {
 
     http.whenPOST('/api/payments', function(request) {
         var id = genId('trans'),
+            transId = genId('t'),
+            user = require('../auth/user_cache').user,
             currentTime = (new Date()).toISOString(),
             method = grunt.file.expand(path.resolve(__dirname, './methods/*.json'))
                 .map(function(path) {
@@ -95,22 +97,33 @@ module.exports = function(http) {
                 .filter(function(method) {
                     return request.body.paymentMethod === method.token;
                 })[0],
-            transaction = {
+            payment = {
                 createdAt: currentTime,
                 updatedAt: currentTime,
                 method: method,
                 amount: request.body.amount,
                 type: 'credit',
                 status: 'settled'
+            },
+            transaction = {
+                id: transId,
+                created: currentTime,
+                transactionTS: currentTime,
+                braintreeId: id,
+                amount: request.body.amount,
+                org: user.org,
+                sign: 1,
+                units: 1
             };
 
             if (!method || !request.body.amount || request.body.amount < 1) {
                 return this.respond(400, 'Bad request');
             }
 
-            grunt.file.write(objectPath('payments', id), JSON.stringify(transaction, null, '    '));
+            grunt.file.write(objectPath('payments', id), JSON.stringify(payment, null, '    '));
+            grunt.file.write(objectPath('transactions', transId), JSON.stringify(transaction, null, '    '));
 
-            this.respond(200, extend(transaction, {id: id}));
+            this.respond(200, extend(payment, {id: id}));
     });
 
     http.whenGET('/api/payments/clientToken', function(request) {
@@ -254,8 +267,10 @@ module.exports = function(http) {
     http.whenGET('/api/payments', function(request) {
         var allTransactions = grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
             .map(function(path) {
-                    return grunt.file.readJSON(path);
-                });
+                var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                return extend(grunt.file.readJSON(path), { id: id });
+            });
 
         this.respond(200, allTransactions);
     });
