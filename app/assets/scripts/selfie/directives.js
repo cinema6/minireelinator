@@ -1472,8 +1472,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             };
         }])
 
-        .service('AddFundsModalService', ['$rootScope','cinema6','$q','PaymentService',
-        function                         ( $rootScope , cinema6 , $q , PaymentService ) {
+        .service('AddFundsModalService', ['cinema6','$q','PaymentService',
+        function                         ( cinema6 , $q , PaymentService ) {
             var model = {},
                 deferred;
 

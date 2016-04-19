@@ -1115,9 +1115,62 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     return config.apiBase + '/transactions';
                 }
 
+                this.decorateTransactions = function(transactions) {
+                    var decoration = transactions.reduce(function(result, transaction) {
+                        var paymentId = transaction.braintreeId,
+                            promoId = transaction.promotion;
+
+                        if (paymentId) {
+                            result.payments.push(paymentId);
+                        }
+
+                        if (promoId) {
+                            result.promotions.push(promoId);
+                        }
+
+                        return result;
+                    }, { payments: [], promotions: [] });
+
+                    return $q.all({
+                        payments: decoration.payments.length ?
+                            PaymentService.getPayments(decoration.payments.join(',')) : [],
+                        promotions: decoration.promotions.length ?
+                            cinema6.db.findAll('promotion', {
+                                ids: decoration.promotions.join(',')
+                            }) : []
+                    }).then(function(data) {
+                        var payments = data.payments
+                                .reduce(function(result, payment) {
+                                    result[payment.id] = payment;
+                                    return result;
+                                }, {}),
+                            promotions = data.promotions
+                                .reduce(function(result, promotion) {
+                                    result[promotion.id] = promotion;
+                                    return result;
+                                }, {});
+
+                        transactions.forEach(function(transaction) {
+                            var paymentId = transaction.braintreeId,
+                                promoId = transaction.promotion;
+
+                            if (paymentId) {
+                                transaction.payment = payments[paymentId];
+                            }
+
+                            if (promoId) {
+                                transaction.promotion = promotions[promoId];
+                            }
+                        });
+
+                        return transactions;
+                    });
+                };
+
                 this.findAll = function() {
                     return $http.get(url())
-                        .then(pick('data'));
+                        .then(pick('data'))
+                        .then(this.decorateTransactions);
                 };
 
                 this.findQuery = function(type, query, meta) {
@@ -1127,46 +1180,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             return response.status === 404 ?
                                 [] : $q.reject(response);
                         })
-                        .then(function(data) {
-                            var decoration = data.reduce(function(result, transaction) {
-                                if (transaction.braintreeId) {
-                                    result.payments.push(transaction.braintreeId);
-                                }
-                                if (transaction.promotion) {
-                                    result.promotions.push(transaction.promotion);
-                                }
-                                return result;
-                            }, { payments: [], promotions: [] });
-
-                            return $q.all({
-                                transactions: data,
-                                payments: PaymentService.getPayments(decoration.payments.join(',')),
-                                promotions: cinema6.db.findAll('promotion', {
-                                    ids: decoration.promotions.join(',')
-                                })
-                            });
-                        })
-                        .then(function(data) {
-                            var payments = data.payments.reduce(function(result, payment) {
-                                    result[payment.id] = payment;
-                                    return result;
-                                }, {}),
-                                promotions = data.promotions.reduce(function(result, promotion) {
-                                    result[promotion.id] = promotion;
-                                    return result;
-                                }, {});
-
-                            data.transactions.forEach(function(transaction) {
-                                if (transaction.braintreeId) {
-                                    transaction.payment = payments[transaction.braintreeId];
-                                }
-                                if (transaction.promotion) {
-                                    transaction.promotion = promotions[transaction.promotion];
-                                }
-                            });
-
-                            return data.transactions;
-                        });
+                        .then(this.decorateTransactions);
                 };
 
                 ['find', 'create', 'update', 'erase'].forEach(function(method) {

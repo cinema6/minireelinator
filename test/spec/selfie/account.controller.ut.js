@@ -8,7 +8,9 @@ define(['app'], function(appModule) {
             cState,
             $scope,
             $q,
-            SelfieAccountCtrl;
+            SelfieAccountCtrl,
+            AddFundsModalService,
+            cinema6;
 
         var user,
             paymentMethods;
@@ -21,6 +23,8 @@ define(['app'], function(appModule) {
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
+                cinema6 = $injector.get('cinema6');
+                AddFundsModalService = $injector.get('AddFundsModalService');
             });
 
             user = {
@@ -81,6 +85,57 @@ define(['app'], function(appModule) {
 
                     expect(SelfieAccountCtrl.model).toBe(user);
                     expect(SelfieAccountCtrl.paymentMethods).toBe(paymentMethods);
+                });
+            });
+
+            describe('addFunds()', function() {
+                var addFundsDeferred,
+                    paymentMethodsDeferred;
+
+                beforeEach(function() {
+                    addFundsDeferred = $q.defer();
+                    paymentMethodsDeferred = $q.defer();
+
+                    spyOn(AddFundsModalService, 'display').and.returnValue(addFundsDeferred.promise);
+                    spyOn(cinema6.db, 'findAll').and.returnValue(paymentMethodsDeferred.promise);
+
+                    SelfieAccountCtrl.addFunds();
+                });
+
+                it('should call display on the add funds modal', function() {
+                    expect(AddFundsModalService.display).toHaveBeenCalled();
+                });
+
+                describe('when the promise resolves', function() {
+                    beforeEach(function() {
+                         $scope.$apply(function() {
+                            addFundsDeferred.resolve();
+                        });
+                    });
+
+                    it('should refetch all payment methods', function() {
+                        expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
+                    });
+
+                    describe('when payment methods are resolved', function() {
+                        it('should put them on the Ctrl and cState', function() {
+                            var paymentMethods = [
+                                {
+                                    id: 'pay-111'
+                                },
+                                {
+                                    id: 'pay-222'
+                                }
+                            ];
+
+                            $scope.$apply(function() {
+                                paymentMethodsDeferred.resolve(paymentMethods);
+                            });
+
+                            expect(cState.paymentMethods).toBe(paymentMethods);
+                            expect(SelfieAccountCtrl.paymentMethods).toBe(paymentMethods);
+                        });
+                    });
                 });
             });
         });

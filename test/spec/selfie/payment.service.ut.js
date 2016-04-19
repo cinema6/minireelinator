@@ -54,13 +54,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 it('will request and return account balance info from the API and populate a computed balance object on the service',function(){
                     var response = {
                         balance: 1000,
-                        outstandingBudget: 300
+                        outstandingBudget: 300,
+                        totalSpend: 150
                     };
 
                     var calculatedResponse = {
                         balance: 1000,
                         outstandingBudget: 300,
-                        remainingFunds: 700
+                        remainingFunds: 700,
+                        totalSpend: 150
                     };
 
                     $httpBackend.expectGET('/api/accounting/balance')
@@ -163,6 +165,58 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         .respond(500, 'Server Error');
 
                     PaymentService.getHistory().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
+            describe('getPayments(ids)', function() {
+                var payments;
+
+                beforeEach(function(){
+                    success = jasmine.createSpy('get().success');
+                    failure = jasmine.createSpy('get().failure');
+
+                    payments = [
+                        {
+                            id: 'trans-111',
+                            method: {}
+                        },
+                        {
+                            id: 'trans-222',
+                            method: {}
+                        },
+                        {
+                            id: 'trans-333',
+                            method: {}
+                        },
+                        {
+                            id: 'trans-444',
+                            method: {}
+                        }
+                    ];
+                });
+
+                it('will request payments by ids', function() {
+                    $httpBackend.expectGET('/api/payments?ids=trans-111,trans-222,trans-333')
+                        .respond(200, payments);
+
+                    PaymentService.getPayments('trans-111,trans-222,trans-333').then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith(payments);
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('will reject promise if not successful',function(){
+                    $httpBackend.expectGET('/api/payments?ids=trans-111,trans-222,trans-333')
+                        .respond(500, 'Server Error');
+
+                    PaymentService.getPayments('trans-111,trans-222,trans-333').then(success, failure);
 
                     $httpBackend.flush();
 
