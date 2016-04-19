@@ -1107,6 +1107,132 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
+            $provide.constant('TransactionAdapter', ['config','$http','$q','cinema6',
+                                                     'PaymentService',
+            function                                ( config , $http , $q , cinema6 ,
+                                                      PaymentService ) {
+                function url() {
+                    return config.apiBase + '/transactions';
+                }
+
+                this.decorateTransactions = function(transactions) {
+                    var decoration = transactions.reduce(function(result, transaction) {
+                        var paymentId = transaction.braintreeId,
+                            promoId = transaction.promotion;
+
+                        if (paymentId) {
+                            result.payments.push(paymentId);
+                        }
+
+                        if (promoId) {
+                            result.promotions.push(promoId);
+                        }
+
+                        return result;
+                    }, { payments: [], promotions: [] });
+
+                    return $q.all({
+                        payments: decoration.payments.length ?
+                            PaymentService.getPayments(decoration.payments.join(',')) : [],
+                        promotions: decoration.promotions.length ?
+                            cinema6.db.findAll('promotion', {
+                                ids: decoration.promotions.join(',')
+                            }) : []
+                        }).then(function(data) {
+                            var payments = data.payments
+                                    .reduce(function(result, payment) {
+                                        result[payment.id] = payment;
+                                        return result;
+                                    }, {}),
+                                promotions = data.promotions
+                                    .reduce(function(result, promotion) {
+                                        result[promotion.id] = promotion;
+                                        return result;
+                                    }, {});
+
+                            transactions.forEach(function(transaction) {
+                                var paymentId = transaction.braintreeId,
+                                    promoId = transaction.promotion;
+
+                                if (paymentId) {
+                                    transaction.payment = payments[paymentId];
+                                }
+
+                                if (promoId) {
+                                    transaction.promotion = promotions[promoId];
+                                }
+                            });
+
+                            return transactions;
+                        });
+                };
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'))
+                        .then(this.decorateTransactions);
+                };
+
+                this.findQuery = function(type, query, meta) {
+                    return $http.get(url(), { params: query })
+                        .then(fillMeta(meta))
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        })
+                        .then(this.decorateTransactions);
+                };
+
+                ['find', 'create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('TransactionAdapter.' + method + '() is not implemented.');
+                    };
+                }, this);
+            }]);
+
+            $provide.constant('PromotionAdapter', ['config','$http','$q',
+            function                              ( config , $http , $q ) {
+                function url(end) {
+                    return config.apiBase + '/promotions' + (end || '');
+                }
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'));
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('/' + id))
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url(), data)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, promotion) {
+                    return $http.delete(url('/' + promotion.id))
+                        .then(value(null));
+                };
+
+                this.update = function(type, promotion) {
+                    return $http.put(url('/' + promotion.id), promotion)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+            }]);
+
             $provide.constant('CWRXAdapter', ['config','$injector',
             function                         ( config , $injector ) {
                 var self = this,
@@ -1133,12 +1259,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                  'VoteAdapter','OrgAdapter','UserAdapter','CategoryAdapter',
                  'AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
                  'PaymentMethodAdapter','UpdateRequestAdapter','ContainerAdapter',
-                 'PlacementAdapter',
+                 'PlacementAdapter','TransactionAdapter','PromotionAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
                   VoteAdapter , OrgAdapter , UserAdapter , CategoryAdapter ,
                   AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
                   PaymentMethodAdapter , UpdateRequestAdapter , ContainerAdapter ,
-                  PlacementAdapter ) {
+                  PlacementAdapter , TransactionAdapter , PromotionAdapter ) {
 
             [
                 ContentAdapter,
@@ -1153,7 +1279,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 AdvertiserAdapter,
                 UpdateRequestAdapter,
                 ContainerAdapter,
-                PlacementAdapter
+                PlacementAdapter,
+                TransactionAdapter,
+                PromotionAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
@@ -1173,7 +1301,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 paymentMethod: PaymentMethodAdapter,
                 updateRequest: UpdateRequestAdapter,
                 container: ContainerAdapter,
-                placement: PlacementAdapter
+                placement: PlacementAdapter,
+                transaction: TransactionAdapter,
+                promotion: PromotionAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);

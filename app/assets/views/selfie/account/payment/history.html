@@ -2,83 +2,110 @@
     <div class="pageHeader__group">
         <div class="mainHeader__group">
             <h1 class="mainHeader__breadcrumbs tk--hdr">
-                <a c6-sref="Selfie:Account">Settings</a>  /  Payment History
+                <a c6-sref="Selfie:Account">Settings</a>  /  Payment Details
             </h1>
+
+            <div class="pageHeader__actions">
+                <account-balance></account-balance>
+                <button ng-click="AccountCtrl.addFunds()" class="action__btn action__btn--small">
+                    <i class="fa fa-plus"></i> Add Funds
+                </button>
+            </div>
         </div><!--.mainHeader__group-->
     </div><!--.pageHeader__group-->
 
     <div class="grid grid--center">
         <div class="grid__item">
             <header class="settingsContent__header">
-                <h2 class="settingsContent__title tk--hdr">Payment History</h2>
-                <span class="settingsContent__subtitle">List of all the transactions on your account for all campaigns</span>
+                <h2 class="settingsContent__title tk--hdr">Payment Details</h2>
             </header>
         </div>
     </div>
 
-    <div class="settingsContent__gridHolder paymentHistory__group">
+    <div class="tabContent__gridHolder">
         <div class="grid grid--center">
             <div class="grid__item one-whole">
-                <div class="sortBar__group">
-                    <ul class="sortBar__list clearfix">
-                        <li class="sortBar__item column__paymentDate">
-                            <button class="sortBar__btn sortBar__btn--asc" type="button">Date</button>
-                        </li>
-                        <li class="sortBar__item column__paymentCampaign">
-                            <button class="sortBar__btn" type="button">Campaign Name</button>
-                        </li>
-                        <li class="sortBar__item column__paymentMethod">
-                            <button class="sortBar__btn" type="button">Payment Method</button>
-                        </li>
-                        <li class="sortBar__item column__discountAmount">
-                            <button class="sortBar__btn" type="button">Discount</button>
-                        </li>
-                        <li class="sortBar__item column__paymentAmount text--center">
-                            <button class="sortBar__btn" type="button">Total</button>
-                        </li>
-                    </ul><!--.sortBar__list-->
-                </div><!--.sortBar__group-->
+                <div class="grid">
+                    <div class="grid__item one-quarter">
+                        <div class="statsChart__infoBox paymentChart__infoBox">
+                            <span class="hint--top hint--text-wrap" data-hint="This is the balance of how much money your campaigns have spent and how much money you have deposited into your account.">
+                                <h3 class="stats__icon"><i class="fa fa-calculator"></i></h3>
+                                <h1 class="stats__infoNumber tk--hdr">{{SelfieAccountPaymentHistoryCtrl.accounting.balance | dollars:2}}</h1>
+                                <h3 class="stats__label">Balance</h3>
+                            </span>
+                        </div>
+                    </div><!--
+                    --><div class="grid__item one-quarter">
+                        <div class="statsChart__infoBox paymentChart__infoBox">
+                            <span class="hint--top hint--text-wrap" data-hint="This is money that you have deposited into your account that won't be spent by any of your campaigns unless you create a new campaign or change any of your campaigns' budgets/timelines.">
+                                <h3 class="stats__icon"><i class="fa fa-money"></i></h3>
+                                <h1 class="stats__infoNumber tk--hdr">{{SelfieAccountPaymentHistoryCtrl.accounting.remainingFunds | dollars:2}}</h1>
+                                <h3 class="stats__label">Available Funds</h3>
+                            </span>
+                        </div>
+                    </div><!--
+                    --><div class="grid__item one-quarter">
+                        <div class="statsChart__infoBox paymentChart__infoBox">
+                            <span class="hint--top hint--text-wrap" data-hint="This is how much all of your campaigns have spent.">
+                                <h3 class="stats__icon"><i class="fa fa-dollar"></i></h3>
+                                <h1 class="stats__infoNumber tk--hdr">{{SelfieAccountPaymentHistoryCtrl.accounting.totalSpend | dollars:2}}</h1>
+                                <h3 class="stats__label">Total Spend</h3>
+                            </span>
+                        </div>
+                    </div><!--
+                    --><div class="grid__item one-quarter">
+                        <div class="statsChart__infoBox paymentChart__infoBox">
+                            <span c6-alias="SelfieAccountPaymentHistoryCtrl.model.items.value[0] as recent" class="hint--top hint--text-wrap" data-hint="This is your most recent deposit.">
+                                <h3 class="stats__icon"><i class="fa fa-credit-card"></i></h3>
+                                <h1 class="stats__infoNumber tk--hdr">{{recent.amount | dollars:2}}</h1>
+                                <h3 class="stats__label">Last Deposit: {{recent.created | date:'MM/dd/yyyy'}}</h3>
+                                <h3 ng-if="recent.promotion.type === 'signUpReward'" class="stats__label">Reward Credit</h3>
+                                <h3 ng-if="recent.payment.method.type === 'paypal'" class="stats__label">PayPal: <span>{{recent.payment.method.email}}</span></h3>
+                                <h3 ng-if="recent.payment.method.type === 'creditCard'" class="stats__label">{{recent.payment.method.cardType | paymentType}}: <span>**** {{recent.payment.method.last4}}</span>span></h3>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div><!--.grid__item .one-whole--><!--.grid__item .three-quarters-->
+        </div>
+    </div>
 
-                <ul class="paymentHistory__list">
-                    <li ng-repeat="transaction in SelfieAccountPaymentHistoryCtrl.model" ng-class="{ 'creditTransaction' : transaction.type === 'credit' }" class="paymentHistory__item clearfix">
-                        <div class="paymentHistory__column column__paymentDate">
-                            <span class="paymentHistory__date tk--hdr">{{transaction.updatedAt | date:'MM/dd/yyyy'}}</span>
-                            <span class="paymentHistory__time">{{transaction.updatedAt | date:'h:mma'}}</span>
-                        </div><!--.column__paymentDate-->
+    <div class="settingsContent__gridHolder paymentHistory__group">
+        <div class="grid eps">
+            <h1 class="tk--hdr stats__hdr payment__table"><span class="hint--top hint--text-wrap" data-hint="Below is a history of deposits for your account.">Deposits</span></h1>
 
-                        <div class="paymentHistory__column column__paymentCampaign">
-                            <h1 class="paymentHistory__campaign tk--hdr">
-                                {{transaction.campaignName}}
-                            </h1>
-                            <span ng-if="transaction.type === 'credit'" class="creditTransaction__type">Credit/Refund</span>
-                            <span ng-if="transaction.type === 'credit'" class="creditTransaction__note">This is a credit transaction</span>
-                        </div><!--.column__paymentCampaign-->
-
-                        <div class="paymentHistory__column column__paymentMethod">
-                            <span ng-if="transaction.method.type === 'creditCard'" class="paymentHistory__method tk--hdr">{{transaction.method.cardType | paymentType}} *** {{transaction.method.last4}}</span>
-                            <span ng-if="transaction.method.type === 'creditCard'" class="paymentHistory__methodOwner">{{transaction.method.cardholderName}}</span>
-                            <span ng-if="transaction.method.type === 'paypal'" class="paymentHistory__method tk--hdr">PayPal</span>
-                            <span ng-if="transaction.method.type === 'paypal'" class="paymentHistory__methodOwner">{{transaction.method.email}}</span>
-                        </div><!--.column__paymentMethod-->
-
-                       <div class="paymentHistory__column column__discountAmount">
-                            <div class="paymentHistory__paymentInfo">
-                                <span class="paymentInfo__discountNumbers">
-                                    <span class="paymentInfo__discount">$0</span>
-                            </span></div>
-                        </div><!--.column__paymentAmount-->
-                        <div class="paymentHistory__column column__paymentAmount">
-                            <div class="paymentHistory__paymentInfo">
-                                <span class="paymentInfo__paymentNumbers">
-                                    <span class="paymentInfo__total tk--hdr">${{transaction.amount}}</span>
-                                </span>
-                            </div>
-                        </div><!--.column__paymentAmount-->
-                    </li><!--.paymentHistory__item-->
-                </ul>
-
+            <div class="grid__item one-whole">
+                <div class="row__group">
+                    <div class="stats__row stats__sub-hdr">
+                        <h3 class="stats__label">Date</h3>
+                        <h3 class="stats__rowData">Amount</h3>
+                        <h3 class="stats__rowData stats__rowMethod">Payment Method</h3>
+                    </div>
+                    <div ng-repeat="transaction in SelfieAccountPaymentHistoryCtrl.model.items.value" class="stats__row" ng-class="{ 'stats__reward' : transaction.promotion.type === 'signUpReward' }">
+                        <h3 class="stats__label">{{transaction.created | date:'MM/dd/yyyy'}}</h3>
+                        <h2 class="stats__rowData stats__rowSpend">{{transaction.amount | dollars:2}}</h2>
+                        <h2 ng-if="transaction.promotion.type === 'signUpReward'" class="stats__rowData stats__rowMethod">
+                            <i class="fa fa-star"></i>Reward Credit<i class="fa fa-star"></i>
+                        </h2>
+                        <h2 ng-if="transaction.payment.method.type === 'paypal'" class="stats__rowData stats__rowMethod">
+                            PayPal: <span>{{transaction.payment.method.email}}</span>
+                        </h2>
+                        <h2 ng-if="transaction.payment.method.type === 'creditCard'" class="stats__rowData stats__rowMethod">
+                            {{transaction.payment.method.cardType | paymentType}}: <span>{{transaction.payment.method.cardholderName}}, **** {{transaction.payment.method.last4}}</span>
+                        </h2>
+                    </div>
+                </div>
             </div>
         </div>
-    </div><!-- .settingsContent__gridHolder -->
+
+        <!-- <div class="paginator__group clearfix">
+            <paginator-controls page="SelfieAccountPaymentHistoryCtrl.model.page" limit="SelfieAccountPaymentHistoryCtrl.limit" limits="SelfieAccountPaymentHistoryCtrl.limits" total="SelfieAccountPaymentHistoryCtrl.model.items.page.total"></paginator-controls>
+
+            <div class="paginator__readout" c6-alias="SelfieAccountPaymentHistoryCtrl.model.items.value.meta.items as items">
+                <span ng-show="SelfieAccountPaymentHistoryCtrl.model.items.value.length">Displaying <strong>{{items.start}} &ndash; {{items.end}}</strong> &nbsp;of&nbsp; {{items.total}} Transactions</span>
+                <span ng-show="!SelfieAccountPaymentHistoryCtrl.model.items.value.length">0 Transactions</span>
+            </div>
+        </div> -->
+    </div>
 
 </div>

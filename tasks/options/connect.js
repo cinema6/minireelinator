@@ -52,10 +52,12 @@
                             '/api/expgroup': 'mocks/expgroup/main.js',
                             '/api/payment': 'mocks/payment/main.js',
                             '/api/payments': 'mocks/payment/main.js',
+                            '/api/transactions':'mocks/payment/main.js',
                             '/api/analytics':'mocks/analytic/main.js',
                             '/api/collateral':'mocks/collateral/main.js',
                             '/api/containers':'mocks/container/main.js',
                             '/api/placements':'mocks/placement/main.js',
+                            '/api/promotions':'mocks/promotion/main.js',
                             '@verbosity': verbosity
                         }),
                         require('grunt-connect-proxy/lib/utils').proxyRequest,

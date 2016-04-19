@@ -80,12 +80,15 @@ module.exports = function(http) {
 
         return this.respond(200, {
             balance: credits,
-            outstandingBudget: campaignBudget + updateRequestBudget
+            outstandingBudget: campaignBudget + updateRequestBudget,
+            totalSpend: 567.87
         });
     });
 
     http.whenPOST('/api/payments', function(request) {
         var id = genId('trans'),
+            transId = genId('t'),
+            user = require('../auth/user_cache').user,
             currentTime = (new Date()).toISOString(),
             method = grunt.file.expand(path.resolve(__dirname, './methods/*.json'))
                 .map(function(path) {
@@ -94,22 +97,33 @@ module.exports = function(http) {
                 .filter(function(method) {
                     return request.body.paymentMethod === method.token;
                 })[0],
-            transaction = {
+            payment = {
                 createdAt: currentTime,
                 updatedAt: currentTime,
                 method: method,
                 amount: request.body.amount,
                 type: 'credit',
                 status: 'settled'
+            },
+            transaction = {
+                id: transId,
+                created: currentTime,
+                transactionTS: currentTime,
+                braintreeId: id,
+                amount: request.body.amount,
+                org: user.org,
+                sign: 1,
+                units: 1
             };
 
             if (!method || !request.body.amount || request.body.amount < 1) {
                 return this.respond(400, 'Bad request');
             }
 
-            grunt.file.write(objectPath('payments', id), JSON.stringify(transaction, null, '    '));
+            grunt.file.write(objectPath('payments', id), JSON.stringify(payment, null, '    '));
+            grunt.file.write(objectPath('transactions', transId), JSON.stringify(transaction, null, '    '));
 
-            this.respond(200, extend(transaction, {id: id}));
+            this.respond(200, extend(payment, {id: id}));
     });
 
     http.whenGET('/api/payments/clientToken', function(request) {
@@ -146,15 +160,16 @@ module.exports = function(http) {
 
     http.whenPOST('/api/payments/methods', function(request) {
         var token = genId('pay'),
-            type = ['creditCard', 'paypal'][randomNum(0,1)],
-            // type = 'creditCard',
+            // type = ['creditCard', 'paypal'][randomNum(0,1)],
+            type = 'creditCard',
+            allPayments = grunt.file.expand(path.resolve(__dirname, './methods/*.json')),
             currentTime = (new Date()).toISOString(),
             paymentMethod = {
                 token: token,
                 createdAt: currentTime,
                 updatedAt: currentTime,
                 imageUrl: null,
-                default: request.body.makeDefault,
+                default: request.body.makeDefault || !allPayments.length,
                 type: type
             };
 
@@ -252,9 +267,90 @@ module.exports = function(http) {
     http.whenGET('/api/payments', function(request) {
         var allTransactions = grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
             .map(function(path) {
-                    return grunt.file.readJSON(path);
-                });
+                var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                return extend(grunt.file.readJSON(path), { id: id });
+            });
 
         this.respond(200, allTransactions);
+    });
+
+    http.whenGET('/api/transactions', function(request) {
+        var filters = pluckExcept(request.query, ['sort','limit','skip','fields']),
+            page = withDefaults(mapObject(pluck(request.query, ['limit','skip']), parseFloat), {
+                limit: Infinity,
+                skip: 0
+            }),
+            sort = (request.query.sort || null) && request.query.sort.split(','),
+            allTransactions = grunt.file.expand(path.resolve(__dirname, './transactions/*.json'))
+                .map(function(path) {
+                    var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                    return extend(grunt.file.readJSON(path), { id: id });
+                })
+                .filter(function(transaction) {
+                    return Object.keys(filters)
+                        .every(function(key) {
+                            return !!filters[key].split(',').filter(function(val) {
+                                return val === transaction[key];
+                            })[0];
+                        });
+                })
+                .filter(function(transaction) {
+                    var ids = request.query.ids,
+                        idArray = (ids || '').split(','),
+                        id = transaction.id;
+
+                    return !ids || idArray.indexOf(id) > -1;
+                }),
+            transactions = allTransactions
+                .filter(function(transaction, index) {
+                    var startIndex = page.skip,
+                        endIndex = (startIndex + page.limit) - 1;
+
+                    return index >= startIndex && index <= endIndex;
+                })
+                .sort(function(a, b) {
+                    var prop = sort && sort[0],
+                        directionInt = parseInt(sort && sort[1]),
+                        isDate = ['lastUpdated', 'created'].indexOf(prop) > -1,
+                        aProp, bProp;
+
+                    if (!sort) {
+                        return 0;
+                    }
+
+                    aProp = isDate ? new Date(a[prop]) : a[prop];
+                    bProp = isDate ? new Date(b[prop]) : b[prop];
+
+                    if (aProp < bProp) {
+                        return directionInt * -1;
+                    } else if (bProp < aProp) {
+                        return directionInt;
+                    }
+
+                    return 0;
+                })
+                .map(function(transaction) {
+                    var fields = request.query.fields,
+                        fieldsArray = (fields || '').split(',');
+
+                    if (!fields) { return transaction; }
+
+                    for (var key in transaction) {
+                        if (fieldsArray.indexOf(key) === -1 && key !== 'id') {
+                            delete transaction[key];
+                        }
+                    }
+
+                    return transaction;
+                }),
+            startPosition = page.skip + 1,
+            endPosition = page.skip + Math.min(page.limit, transactions.length);
+
+        return this.respond(200, Q.when(transactions).delay(request.query.limit !== '1' ? 1000 : 0))
+            .setHeaders({
+                'Content-Range': startPosition + '-' + endPosition + '/' + allTransactions.length
+            });
     });
 };

@@ -1,0 +1,10 @@
+{
+    "id": "t-e2dd41d0a3ae2e",
+    "created": "2015-10-02T22:34:28.229Z",
+    "transactionTS": "2015-10-02T22:34:28.229Z",
+    "amount": 211.43,
+    "sign": 1,
+    "units": 1,
+    "org": "o-a6fd7298acb6fa",
+    "braintreeId": "trans-8ab9836ac930"
+}

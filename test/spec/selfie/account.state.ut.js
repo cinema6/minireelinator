@@ -9,7 +9,8 @@ define(['app'], function(appModule) {
             SelfieState,
             cinema6,
             user,
-            paymentMethods;
+            paymentMethods,
+            PaymentService;
 
         beforeEach(function() {
             module(appModule.name);
@@ -19,6 +20,7 @@ define(['app'], function(appModule) {
                 c6State = $injector.get('c6State');
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
+                PaymentService = $injector.get('PaymentService');
             });
 
             user = {
@@ -57,11 +59,14 @@ define(['app'], function(appModule) {
         });
 
         describe('afterModel()', function() {
-            it('should fetch all payment methods', function() {
+            it('should fetch all payment methods and get account balance', function() {
+                spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
+
                 $rootScope.$apply(function() {
                     AccountState.afterModel();
                 });
                 expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
+                expect(PaymentService.getBalance).toHaveBeenCalled();
                 expect(AccountState.paymentMethods).toBe(paymentMethods);
             });
         });

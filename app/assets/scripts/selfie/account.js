@@ -1,5 +1,7 @@
-define( ['angular','c6_state'],
-function( angular , c6State  ) {
+define( ['angular','c6_state','../minireel/mixins/PaginatedListState',
+         '../minireel/mixins/PaginatedListController'],
+function( angular , c6State  , PaginatedListState                    ,
+          PaginatedListController ) {
     'use strict';
 
     var extend = angular.extend;
@@ -225,8 +227,8 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account', ['c6State','cinema6',
-            function                                ( c6State , cinema6 ) {
+            c6StateProvider.state('Selfie:Account', ['c6State','cinema6','$q','PaymentService',
+            function                                ( c6State , cinema6 , $q , PaymentService ) {
                 var SelfieAccountState = this;
 
                 this.templateUrl = 'views/selfie/account.html';
@@ -239,10 +241,12 @@ function( angular , c6State  ) {
                 };
 
                 this.afterModel = function() {
-                    return cinema6.db.findAll('paymentMethod')
-                        .then(function(methods) {
-                            SelfieAccountState.paymentMethods = methods;
-                        });
+                    return $q.all({
+                        methods: cinema6.db.findAll('paymentMethod'),
+                        balance: PaymentService.getBalance()
+                    }).then(function(promises) {
+                        SelfieAccountState.paymentMethods = promises.methods;
+                    });
                 };
 
                 this.enter = function() {
@@ -251,8 +255,10 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieAccountController', ['cState',
-        function                               ( cState ) {
+        .controller('SelfieAccountController', ['cState','AddFundsModalService','cinema6',
+        function                               ( cState , AddFundsModalService , cinema6 ) {
+            var self = this;
+
             this.initWithModel = function(model) {
                 this.model = model;
                 this.paymentMethods = cState.paymentMethods;
@@ -267,6 +273,17 @@ function( angular , c6State  ) {
                     }
                 }
             });
+
+            this.addFunds = function() {
+                AddFundsModalService.display()
+                    .then(function() {
+                        return cinema6.db.findAll('paymentMethod');
+                    })
+                    .then(function(paymentMethods) {
+                        self.paymentMethods = paymentMethods;
+                        cState.paymentMethods = paymentMethods;
+                    });
+            };
         }])
 
         .config(['c6StateProvider',
@@ -544,15 +561,50 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account:Payment:History', ['PaymentService',
-            function                                                ( PaymentService ) {
+            c6StateProvider.state('Selfie:Account:Payment:History', ['$injector','paginatedDbList',
+                                                                     'PaymentService',
+                                                                     'SpinnerService',
+            function                                                ( $injector , paginatedDbList ,
+                                                                      PaymentService ,
+                                                                      SpinnerService ) {
+                var self = this;
+
+                $injector.invoke(PaginatedListState, this);
+
                 this.templateUrl = 'views/selfie/account/payment/history.html';
-                this.controller = 'GenericController';
+                this.controller = 'SelfieAccountPaymentHistoryController';
                 this.controllerAs = 'SelfieAccountPaymentHistoryCtrl';
 
                 this.model = function() {
-                    return PaymentService.getHistory();
+                    SpinnerService.display();
+
+                    return paginatedDbList('transaction', {
+                        sort: 'created,-1'
+                    }, this.limit, this.page).ensureResolution()
+                        .finally(function() {
+                            SpinnerService.close();
+                        });
+                };
+
+                this.afterModel = function() {
+                    return PaymentService.getBalance()
+                        .then(function(accounting) {
+                            self.accounting = accounting;
+                        });
                 };
             }]);
+        }])
+
+        .controller('SelfieAccountPaymentHistoryController', ['$injector','cState','$scope',
+        function                                             ( $injector , cState , $scope ) {
+            $injector.invoke(PaginatedListController, this, {
+                cState: cState,
+                $scope: $scope
+            });
+
+            this.initWithModel = function(model) {
+                this.model = model;
+                this.accounting = cState.accounting;
+            };
         }]);
 });

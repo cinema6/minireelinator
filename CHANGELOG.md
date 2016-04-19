@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[v1.43.0.rc1]*
+  * [FEATURE]: Add ability to deposit funds in Account Settings area
+  * [FEATURE]: Show account balance info on payment history page and
+    update transaction list
+
 ## v1.42.3 (April 18, 2016)
 * *[v1.42.3.rc1]*
   * [FIX]: Add message to show preferred video length to users under Add Your Video

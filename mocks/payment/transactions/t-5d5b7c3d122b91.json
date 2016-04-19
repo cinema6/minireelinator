@@ -1,0 +1,10 @@
+{
+    "id": "t-5d5b7c3d122b91",
+    "created": "2016-02-07T22:34:28.229Z",
+    "transactionTS": "2016-02-07T22:34:28.229Z",
+    "amount": 5000,
+    "sign": 1,
+    "units": 1,
+    "org": "o-a6fd7298acb6fa",
+    "braintreeId": "trans-b26c6s987c56c7"
+}
