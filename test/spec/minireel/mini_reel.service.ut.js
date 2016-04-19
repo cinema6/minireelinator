@@ -3056,6 +3056,38 @@
                                 expect(newModel.status).toBe('pending');
                                 expect(newModel.access).toBe('public');
                             });
+
+                            it('should support apps without a user', function() {
+                                portal.cModel = null;
+                                $rootScope.$apply(function() {
+                                    result = MiniReelService.create();
+                                });
+                                expect(cinema6.db.create).toHaveBeenCalledWith('experience', {
+                                    type: 'minireel',
+                                    org: undefined,
+                                    appUri: 'mini-reel-player',
+                                    categories: [],
+                                    data: {
+                                        title: null,
+                                        mode: 'lightbox-ads',
+                                        autoplay: true,
+                                        autoadvance: true,
+                                        sponsored: false,
+                                        campaign: {},
+                                        splash: {
+                                            source: 'generated',
+                                            ratio: '3-2',
+                                            theme: 'img-text-overlay'
+                                        },
+                                        collateral: {
+                                            splash: null
+                                        },
+                                        params: {},
+                                        links: {},
+                                        deck: []
+                                    }
+                                });
+                            });
                         });
                     });
 

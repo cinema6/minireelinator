@@ -18,7 +18,7 @@
             c6uilib: 'https://lib.reelcontent.com/c6ui/v3.7.4-0-g734d5f3/c6uilib.min',
             c6log: 'https://lib.reelcontent.com/c6ui/v3.7.4-0-g734d5f3/c6log.min',
             c6embed: 'https://lib.reelcontent.com/c6embed/v1/utils.min',
-            metagetta: 'https://lib.reelcontent.com/metagetta/v0.2.0-0-g8b51280/metagetta.min',
+            metagetta: 'https://lib.reelcontent.com/metagetta/v0.4.0-0-gb1cc671/metagetta.min',
             braintree: 'https://js.braintreegateway.com/v2/braintree',
             chartjs: [
                 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min',
