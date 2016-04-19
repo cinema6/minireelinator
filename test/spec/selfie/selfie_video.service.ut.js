@@ -120,7 +120,7 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                                 });
                             });
                         });
-                        
+
                         describe('when the url is http', function() {
                             it('should validate and save the url with a protocol of https', function() {
                                 $httpBackend.expect('GET', 'https://vasttag.com/vast.xml').respond(200, '<VAST></VAST>', {'content-type': 'text/xml'});
@@ -138,7 +138,7 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                                 });
                             });
                         });
-                        
+
                         describe('when the url is protocol relative', function() {
                             it('should validate and save the url with a protocol of https', function() {
                                 $httpBackend.expect('GET', 'https://vasttag.com/vast.xml').respond(200, '<VAST></VAST>', {'content-type': 'text/xml'});
@@ -186,13 +186,13 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                 it('should create an adUnit url', function() {
                     expect(fromData('adUnit', '{"vast":"http://vasttag.com/vast.xml"}')).toBe('http://vasttag.com/vast.xml');
                 });
-                
+
                 it('should create a wistia url', function() {
                     expect(fromData('wistia', 'a401lat6bl', {
                         hostname: 'ezra.wistia.com'
                     })).toBe('https://ezra.wistia.com/medias/a401lat6bl?preview=true');
                 });
-                
+
                 it('should create a brightcove url', function() {
                     expect(fromData('brightcove', '4655415742001', {
                         accountid: '4652941506001',
@@ -232,70 +232,88 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
 
                 describe('YouTube data', function() {
                     beforeEach(function() {
-                        spyOn(YouTubeDataService.videos, 'list').and.returnValue(deferred.promise);
-
+                        metagetta.and.returnValue(deferred.promise);
+                        c6Defines.kYouTubeDataApiKey = 'you_key';
                         $rootScope.$apply(function() {
                             statsFromService('youtube', 'xKLRGJYna-8');
                         });
                     });
 
-                    it('should query the YouTubeDataService', function() {
-                        expect(YouTubeDataService.videos.list).toHaveBeenCalledWith({
-                            part: ['snippet','statistics','contentDetails'],
-                            id: 'xKLRGJYna-8'
+                    it('should query metagetta', function() {
+                        expect(metagetta).toHaveBeenCalledWith({
+                            type: 'youtube',
+                            id: 'xKLRGJYna-8',
+                            fields: ['title', 'duration', 'views', 'uri', 'thumbnails', 'description'],
+                            youtube: {
+                                key: 'you_key'
+                            }
                         });
                     });
 
                     it('should resolve with a data object', function() {
                         deferred.resolve({
-                            snippet: {
-                                title: 'Video Title'
+                            title: 'Youtube title',
+                            duration: 10,
+                            views: 1000,
+                            uri: 'https://www.youtube.com/watch?v=xKLRGJYna-8',
+                            thumbnails: {
+                                small: 'small.jpg',
+                                large: 'large.jpg'
                             },
-                            contentDetails: {
-                                duration: 200
-                            },
-                            statistics: {
-                                viewCount: 3000
-                            }
+                            description: 'hello there'
                         });
 
                         $rootScope.$digest();
 
                         expect(success).toHaveBeenCalledWith({
-                            title: 'Video Title',
-                            duration: 200,
-                            views: 3000,
-                            href: SelfieVideoService.urlFromData('youtube', 'xKLRGJYna-8')
+                            title: 'Youtube title',
+                            duration: 10,
+                            views: 1000,
+                            href: 'https://www.youtube.com/watch?v=xKLRGJYna-8',
+                            thumbnails: {
+                                small: 'small.jpg',
+                                large: 'large.jpg'
+                            },
+                            description: 'hello there'
                         });
+                        expect(failure).not.toHaveBeenCalled();
                     });
 
                     it('should reject the promise if query fails', function() {
-                        deferred.reject();
+                        deferred.reject('epic fail');
                         $rootScope.$digest();
-
                         expect(success).not.toHaveBeenCalled();
-                        expect(failure).toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalledWith('epic fail');
                     });
                 });
 
                 describe('Vimeo data', function() {
                     beforeEach(function() {
-                        spyOn(VimeoDataService, 'getVideo').and.returnValue(deferred.promise);
-
+                        metagetta.and.returnValue(deferred.promise);
                         $rootScope.$apply(function() {
                             statsFromService('vimeo', '83486021');
                         });
                     });
 
-                    it('should query the VimeoDataService', function() {
-                        expect(VimeoDataService.getVideo).toHaveBeenCalledWith('83486021');
+                    it('should query metagetta', function() {
+                        expect(metagetta).toHaveBeenCalledWith({
+                            type: 'vimeo',
+                            id: '83486021',
+                            fields: ['title', 'duration', 'views', 'uri', 'thumbnails', 'description']
+                        });
                     });
 
                     it('should resolve with a data object', function() {
                         deferred.resolve({
                             title: 'Vimeo Video Title',
                             duration: 100,
-                            statsNumberOfPlays: 1000
+                            views: 1000,
+                            uri: 'https://vimeo.com/83486021',
+                            thumbnails: {
+                                small: 'small.jpg',
+                                large: 'large.jpg'
+                            },
+                            description: 'hello there'
                         });
 
                         $rootScope.$digest();
@@ -304,16 +322,21 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                             title: 'Vimeo Video Title',
                             duration: 100,
                             views: 1000,
-                            href: SelfieVideoService.urlFromData('vimeo', '83486021')
+                            href: 'https://vimeo.com/83486021',
+                            thumbnails: {
+                                small: 'small.jpg',
+                                large: 'large.jpg'
+                            },
+                            description: 'hello there'
                         });
+                        expect(failure).not.toHaveBeenCalled();
                     });
 
                     it('should reject the promise if query fails', function() {
-                        deferred.reject();
+                        deferred.reject('epic fail');
                         $rootScope.$digest();
-
                         expect(success).not.toHaveBeenCalled();
-                        expect(failure).toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalledWith('epic fail');
                     });
                 });
 
@@ -365,7 +388,7 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                         expect(failure).toHaveBeenCalled();
                     });
                 });
-                
+
                 describe('Instagram data', function() {
                     beforeEach(function() {
                         metagetta.and.returnValue(deferred.promise);
@@ -374,7 +397,7 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                             statsFromService('instagram', '6DD1crjvG7');
                         });
                     });
-                    
+
                     it('should query metagetta', function() {
                         expect(metagetta).toHaveBeenCalledWith({
                             type: 'instagram',
@@ -385,7 +408,7 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                             }
                         });
                     });
-                    
+
                     it('should resolve with a data object', function() {
                         deferred.resolve({
                             title: 'Instagram title',
@@ -393,9 +416,9 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                             views: 1000,
                             uri: 'https://instagram.com/p/6DD1crjvG7'
                         });
-                        
+
                         $rootScope.$digest();
-                        
+
                         expect(success).toHaveBeenCalledWith({
                             title: 'Instagram title',
                             duration: 10,
@@ -404,14 +427,14 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                         });
                         expect(failure).not.toHaveBeenCalled();
                     });
-                    
+
                     it('should reject the promise if query fails', function() {
                         deferred.reject('epic fail');
                         $rootScope.$digest();
                         expect(success).not.toHaveBeenCalled();
                         expect(failure).toHaveBeenCalledWith('epic fail');
                     });
-                    
+
                     it('should reject the promise if it is not a video', function() {
                         deferred.resolve({
                             description: 'Once upon a time there was an Instagram',
@@ -419,9 +442,9 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                             views: 1000,
                             uri: 'https://instagram.com/p/6DD1crjvG7'
                         });
-                        
+
                         $rootScope.$digest();
-                        
+
                         expect(success).not.toHaveBeenCalled();
                         expect(failure).toHaveBeenCalledWith(new Error('not an Instagram video'));
                     });
