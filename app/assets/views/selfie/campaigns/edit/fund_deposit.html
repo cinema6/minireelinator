@@ -1,11 +1,27 @@
 <div class="modalDialog__group modalDialog__group--confirm modalBody__group--tall selfieModal">
     <header class="modalHeader__group">
-        <h1 class="modal__title">Make a Deposit</h1>
-        <h3 class="modal__subTitle tk--subHdr">Deposit funds into your account to fund your campaign.</h3>
-        <button class="modal__closeBtn btnInvis" ng-click="SelfieCampaignFundCtrl.cancel()"><span class="ir">Close</span>
-            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
-                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
-                L18,1.5L16.5,0z"></path>
+        <h1 class="modal__title">
+            Make a Deposit
+        </h1>
+        <h3 class="modal__subTitle tk--subHdr">
+            Deposit funds into your account to fund your campaign.
+        </h3>
+        <button class="modal__closeBtn btnInvis"
+            ng-click="SelfieCampaignFundCtrl.cancel()">
+            <span class="ir">Close</span>
+            <svg class="ui__iconHolder18"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px" y="0px"
+                viewBox="0 0 18 18"
+                enable-background="new 0 0 18 18"
+                xml:space="preserve">
+                <path class="ui__icon"
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9L18,1.5L16.5,0z">
+                </path>
             </svg>
         </button>
     </header>
@@ -22,22 +38,38 @@
                                 </div>
                             </li>
                             <li>
-                                <div class="grid__item two-thirds orderItem__label">Total Campaign Budget</div><!--
+                                <div class="grid__item two-thirds orderItem__label">
+                                    Total Campaign Budget
+                                </div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">{{SelfieCampaignFundCtrl.campaign.pricing.budget | dollars}}</div>
+                                    <div class="text--right">
+                                        {{SelfieCampaignFundCtrl.campaign.pricing.budget | dollars:2}}
+                                    </div>
                                 </div>
                             </li>
                             <li>
-                                <div class="grid__item two-thirds orderItem__label">Available Funds</div><!--
+                                <div class="grid__item two-thirds orderItem__label">
+                                    Available Funds
+                                </div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">{{SelfieCampaignFundCtrl.accounting.remainingFunds | dollars}}</div>
+                                    <div class="text--right">
+                                        {{SelfieCampaignFundCtrl.accounting.remainingFunds | dollars:2}}
+                                    </div>
                                 </div>
                             </li>
                             <li ng-if="!SelfieCampaignFundCtrl.isDraft">
-                                <div class="grid__item two-thirds orderItem__label">Budget Change</div><!--
+                                <div class="grid__item two-thirds orderItem__label">
+                                    Budget Change
+                                </div><!--
                                 --><div class="grid__item one-third">
-                                    <div ng-if="SelfieCampaignFundCtrl.budgetChange > 0" class="text--right">+{{SelfieCampaignFundCtrl.budgetChange | dollars}}</div>
-                                    <div ng-if="SelfieCampaignFundCtrl.budgetChange <= 0" class="text--right">{{SelfieCampaignFundCtrl.budgetChange | dollars}}</div>
+                                    <div ng-if="SelfieCampaignFundCtrl.budgetChange > 0"
+                                        class="text--right">
+                                        +{{SelfieCampaignFundCtrl.budgetChange | dollars:2}}
+                                    </div>
+                                    <div ng-if="SelfieCampaignFundCtrl.budgetChange <= 0"
+                                        class="text--right">
+                                        {{SelfieCampaignFundCtrl.budgetChange | dollars:2}}
+                                    </div>
                                 </div>
                             </li>
                         </ul>
@@ -50,8 +82,13 @@
                             <li>
                                 <div class="depositFunds text--center">
                                     <div class="form__items">
-                                        <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieCampaignFundCtrl.depositError }">
-                                            <input c6-fill-check ng-model="SelfieCampaignFundCtrl.deposit" class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-fund-campaign">
+                                        <fieldset class="form__item form__item--shortInput"
+                                            ng-class="{ 'ui--hasError': SelfieCampaignFundCtrl.depositError }">
+                                            <input c6-fill-check
+                                                ng-model="SelfieCampaignFundCtrl.deposit"
+                                                class="form__textBox form__textBox--units form__fillCheck"
+                                                type="number"
+                                                id="c6-fund-campaign">
                                             <span class="input__unit">$</span>
                                             <label class="form__label" for="c6-fund-campaign">
                                                 <i class="fa fa-times ui--error"></i>
@@ -61,22 +98,31 @@
                                                 <div class="form__helpText">
                                                     Please enter the amount you want to add to your Balance.
                                                 </div>
-
                                             </div>-->
                                             <div class="form__errorBox">
                                                 <p class="form__errorMsg">
                                                     <i class="fa fa-exclamation-triangle"></i>
-                                                    <span ng-if="SelfieCampaignFundCtrl.depositError === 1">A deposit of at least {{SelfieCampaignFundCtrl.minDeposit | dollars}} is required</span>
-                                                    <span ng-if="SelfieCampaignFundCtrl.depositError === 2">Deposits must be at least $1</span>
+                                                    <span ng-if="SelfieCampaignFundCtrl.depositError === 1">
+                                                        A deposit of at least {{SelfieCampaignFundCtrl.minDeposit | dollars:2}} is required
+                                                    </span>
+                                                    <span ng-if="SelfieCampaignFundCtrl.depositError === 2">
+                                                        Deposits must be at least $1
+                                                    </span>
                                                 </p>
                                             </div>
                                         </fieldset>
-                                        <span class="alertMessage alert__success text--center" ng-show="SelfieCampaignFundCtrl.budgetChange && SelfieCampaignFundCtrl.budgetChange > 0 && SelfieCampaignFundCtrl.budgetChange <= SelfieCampaignFundCtrl.accounting.remainingFunds">
+                                        <span class="alertMessage alert__success text--center"
+                                            ng-show="SelfieCampaignFundCtrl.budgetChange && SelfieCampaignFundCtrl.budgetChange > 0 && SelfieCampaignFundCtrl.budgetChange <= SelfieCampaignFundCtrl.accounting.remainingFunds">
                                             <strong>You have enough funds to run your campaign!</strong>
-                                            <span ng-if="!SelfieCampaignFundCtrl.paymentMethods.length">We need a payment method on file to approve your campaign.</span>
+                                            <span ng-if="!SelfieCampaignFundCtrl.paymentMethods.length">
+                                                We need a payment method on file to approve your campaign.
+                                            </span>
                                         </span>
 
-                                        <span class="alertMessage text--center" ng-show="SelfieCampaignFundCtrl.budgetChange > SelfieCampaignFundCtrl.accounting.remainingFunds && SelfieCampaignFundCtrl.minDeposit">You need to deposit at least {{SelfieCampaignFundCtrl.minDeposit | dollars}} into your account to run this campaign.</span>
+                                        <span class="alertMessage text--center"
+                                            ng-show="SelfieCampaignFundCtrl.budgetChange > SelfieCampaignFundCtrl.accounting.remainingFunds && SelfieCampaignFundCtrl.minDeposit">
+                                            You need to deposit at least {{SelfieCampaignFundCtrl.minDeposit | dollars:2}} into your account to run this campaign.
+                                        </span>
                                     </div>
                                 </div>
                             </li>
@@ -88,40 +134,96 @@
                         <ul>
                             <li>
                                 <div class="grid__item two-thirds orderItem__label">
-                                    <h1 ng-if="!SelfieCampaignFundCtrl.paymentMethods.length" class="tk--hdr">Add a Payment Method</h1>
-                                    <h1 ng-if="SelfieCampaignFundCtrl.paymentMethods.length" class="tk--hdr">Choose a Payment Method</h1>
+                                    <h1 ng-if="!SelfieCampaignFundCtrl.paymentMethods.length"
+                                        class="tk--hdr">
+                                        Add a Payment Method
+                                    </h1>
+                                    <h1 ng-if="SelfieCampaignFundCtrl.paymentMethods.length"
+                                        class="tk--hdr">
+                                        Choose a Payment Method
+                                    </h1>
                                 </div>
                             </li>
                             <li>
                                 <div class="paymentForm">
-                                    <div ng-if="!SelfieCampaignFundCtrl.paymentMethods.length" class="paymentMethod__options">
-                                        <braintree-paypal on-success="SelfieCampaignFundCtrl.success(method)">
-                                            <div id="c6-paypal"></div>
-                                        </braintree-paypal>
 
+                                    <!-- HIDDEN PAYPAL DIRECTIVE -->
+                                    <braintree-paypal on-success="SelfieCampaignFundCtrl.success(method)">
+                                        <div id="c6-paypal"></div>
+                                    </braintree-paypal>
+
+                                    <!-- IF PAYMENT METHODS LENGTH === 0, SHOW RADIO BUTTONS -->
+                                    <div ng-if="!SelfieCampaignFundCtrl.paymentMethods.length" class="paymentMethod__options">
                                         <div class="paymentMethod__optionTypes">
-                                            <input type="radio" name="paymentType" id="paymentType__auto" value="creditcard" ng-model="SelfieCampaignFundCtrl.newPaymentType"> <label for="paymentType__auto"><span class="radio__input"></span>Credit Card</label>
-                                            <input type="radio" name="paymentType" id="paymentType__selected" value="paypal" ng-model="SelfieCampaignFundCtrl.newPaymentType" hidden-input-click="braintree-paypal-button"> <label for="paymentType__selected"><span class="radio__input"></span>PayPal</label>
+                                            <input type="radio"
+                                                name="paymentType"
+                                                id="paymentType__auto"
+                                                value="creditcard"
+                                                ng-model="SelfieCampaignFundCtrl.newPaymentType">
+                                            <label for="paymentType__auto">
+                                                <span class="radio__input"></span>Credit Card
+                                            </label>
+                                            <input type="radio"
+                                                name="paymentType"
+                                                id="paymentType__selected"
+                                                value="paypal"
+                                                ng-model="SelfieCampaignFundCtrl.newPaymentType"
+                                                hidden-input-click="braintree-paypal-button">
+                                            <label for="paymentType__selected">
+                                                <span class="radio__input"></span>PayPal
+                                            </label>
                                         </div>
                                     </div>
 
-                                    <selfie-payment-methods chosen-method="SelfieCampaignFundCtrl.paymentMethod" methods="SelfieCampaignFundCtrl.paymentMethods"></selfie-payment-methods>
-
+                                    <div ng-show="SelfieCampaignFundCtrl.paymentMethods.length && !SelfieCampaignFundCtrl.showCreditCardForm">
+                                        <selfie-payment-methods
+                                            chosen-method="SelfieCampaignFundCtrl.paymentMethod"
+                                            methods="SelfieCampaignFundCtrl.paymentMethods">
+                                        </selfie-payment-methods>
+                                    </div>
 
                                     <!-- BRAINTREE CREDIT CARD FORM -->
-                                    <div ng-if="!SelfieCampaignFundCtrl.paymentMethods.length">
-                                        <div ng-show="SelfieCampaignFundCtrl.newPaymentType === 'creditcard'">
-                                            <braintree-credit-card hide-save-button="true" client-token="{{SelfieCampaignFundCtrl.token}}" method="SelfieCampaignFundCtrl.newMethod" on-success="SelfieCampaignFundCtrl.success(method)" on-cancel="SelfieCampaignFundCtrl.cancel()" on-failure="SelfieCampaignFundCtrl.failure()"></braintree-credit-card>
+                                    <div ng-if="SelfieCampaignFundCtrl.newMethod">
+                                        <div ng-show="SelfieCampaignFundCtrl.newPaymentType === 'creditcard' && SelfieCampaignFundCtrl.showCreditCardForm">
+                                            <button class="paymentMethod__optionTypes"
+                                                ng-if="SelfieCampaignFundCtrl.paymentMethods.length"
+                                                ng-click="SelfieCampaignFundCtrl.showCreditCardForm = false">
+                                                <i class="fa fa-chevron-left" aria-hidden="true"></i> Use existing payment method
+                                            </button>
+                                            <braintree-credit-card
+                                                hide-save-button="true"
+                                                client-token="{{SelfieCampaignFundCtrl.token}}"
+                                                method="SelfieCampaignFundCtrl.newMethod"
+                                                on-success="SelfieCampaignFundCtrl.success(method)"
+                                                on-cancel="SelfieCampaignFundCtrl.cancel()"
+                                                on-failure="SelfieCampaignFundCtrl.failure()">
+                                            </braintree-credit-card>
                                         </div>
                                     </div>
 
-                                    <span ng-if="SelfieCampaignFundCtrl.paymentMethodError" class="alertMessage alert__failure text--center">There was a problem saving your payment method. Please try again or use another payment method.</span>
+                                    <div ng-if="SelfieCampaignFundCtrl.paymentMethods.length && !SelfieCampaignFundCtrl.showCreditCardForm">
+                                        <button hidden-input-click="braintree-paypal-button"
+                                            class="action__btnSecondary action__btnSecondary--big palm--one-whole">
+                                            <i class="faa fa-plus"></i> PayPal
+                                        </button><!--
+                                        --><button ng-click="SelfieCampaignFundCtrl.showCreditCardForm = true"
+                                            class="action__btnSecondary action__btnSecondary--big palm--one-whole">
+                                            <i class="faa fa-plus"></i> Credit Card
+                                        </button>
+                                    </div>
+
+                                    <span ng-if="SelfieCampaignFundCtrl.paymentMethodError"
+                                        class="alertMessage alert__failure text--center">
+                                        There was a problem saving your payment method. Please try again or use another payment method.
+                                    </span>
 
                                     <div class="payment__seals grid__item one-whole">
                                         <div class="payment__sealItem braintree--seal">
-                                            <span class="payment__itemText text--left"><i class="fa fa-lock"></i> Secure payments</span>
+                                            <span class="payment__itemText text--left">
+                                                <i class="fa fa-lock"></i> Secure payments
+                                            </span>
                                             <a href="https://www.braintreegateway.com/merchants/hrmsqg32vjw32sjz/verified" target="_blank">
-                                              <img src="img/credit-cards-transparent.png" border="0"/>
+                                                <img src="img/credit-cards-transparent.png" border="0"/>
                                             </a>
                                         </div>
                                     </div>
@@ -136,8 +238,18 @@
 
     </div>
     <footer class="modalFooter__group">
-        <button class="btnAction btnAction btnAction--first" ng-click="SelfieCampaignFundCtrl.cancel()" title="Cancel">Cancel</button>
-        <button ng-click="SelfieCampaignFundCtrl.confirm()" hidden-input-click="credit-card-submit" ng-class="{ 'btnSpinner__waiting' : SelfieCampaignFundCtrl.pending, 'btn--disabled': SelfieCampaignFundCtrl.depositError }" ng-disabled="SelfieCampaignFundCtrl.depositError" title="Yes" class="btnAction btnAction--success btnAction--last" type="button">Review</button>
+        <button class="btnAction btnAction btnAction--first"
+            ng-click="SelfieCampaignFundCtrl.cancel()"
+            title="Cancel">
+            Cancel
+        </button>
+        <button ng-click="SelfieCampaignFundCtrl.confirm()"
+            hidden-input-click="credit-card-submit"
+            ng-class="{ 'btnSpinner__waiting' : SelfieCampaignFundCtrl.pending, 'btn--disabled': SelfieCampaignFundCtrl.depositError }"
+            ng-disabled="SelfieCampaignFundCtrl.depositError"
+            class="btnAction btnAction--success btnAction--last"
+            type="button"
+            title="Yes">Review</button>
     </footer>
 
 </div>

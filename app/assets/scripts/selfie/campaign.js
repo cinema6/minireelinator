@@ -1826,13 +1826,13 @@ function( angular , c6State  , PaginatedListState                    ,
                         this.newBudget;
                     this.accounting = PaymentService.balance;
                     this.minDeposit = available < this.budgetChange ?
-                        Math.abs(available - this.budgetChange) : 0;
+                        (Math.round(Math.abs(available - this.budgetChange)*100)/100) : 0;
                     this.skipDeposit = (hasPaymentMethods || paymentOptional) && !this.minDeposit;
 
-                    return $q.all((!hasPaymentMethods ? {
+                    return $q.all({
                         token: PaymentService.getToken(),
                         newMethod: cinema6.db.create('paymentMethod', {})
-                    } : {})).then(function(promises) {
+                    }).then(function(promises) {
                         self.token = promises.token;
                         self.newMethod = promises.newMethod;
                     });
@@ -1846,8 +1846,10 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignFundController', ['cState','c6State','CampaignService',
-        function                                    ( cState , c6State , CampaignService ) {
+        .controller('SelfieCampaignFundController', ['cState','c6State','cinema6',
+                                                     'CampaignService',
+        function                                    ( cState , c6State , cinema6 ,
+                                                      CampaignService ) {
             var self = this;
 
             Object.defineProperties(this, {
@@ -1879,12 +1881,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 })[0];
 
                 // this is a new payment method model and token.
-                // only defined if user has no payment methods.
                 // We'll need to create new payment method models
                 // in the success() method if we allow users to
                 // always be able to add new methods.
-                // Currently they can only add a new method once,
-                // when they don't have any set up already
                 this.newMethod = cState.newMethod;
                 this.token = cState.token;
 
@@ -1897,6 +1896,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.accounting = cState.accounting;
                 this.minDeposit = cState.minDeposit;
                 this.deposit = this.minDeposit;
+                this.showCreditCardForm = !model.paymentMethods.length;
 
                 this.cpv = CampaignService.getCpv(this.campaign, this.schema);
                 extend(this, CampaignService.getSummary({
@@ -1910,7 +1910,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 // form will be submitted and the state transition is
                 // handled in the success() method
 
-                if (!this.paymentMethod) {
+                if (this.showCreditCardForm) {
                     this.pending = true;
                 } else {
                     this.deposit = this.deposit || 0;
@@ -1928,8 +1928,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 return this.newMethod.save()
                     .then(function(method) {
+                        self.showCreditCardForm = false;
                         self.paymentMethods.unshift(method);
                         self.paymentMethod = method;
+                        self.newMethod = cinema6.db.create('paymentMethod', {});
                         self.deposit = self.deposit || 0;
 
                         if (method.type === 'creditCard') {
