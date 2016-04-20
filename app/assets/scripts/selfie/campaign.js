@@ -1891,12 +1891,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.isDraft = cState.isDraft;
                 this.campaign = cState.campaign;
                 this.newPaymentType = 'creditcard';
+                this.showCreditCardForm = !model.paymentMethods.length;
                 this.budgetChange = cState.budgetChange;
                 this.skipDeposit = cState.skipDeposit;
                 this.accounting = cState.accounting;
                 this.minDeposit = cState.minDeposit;
                 this.deposit = this.minDeposit;
-                this.showCreditCardForm = !model.paymentMethods.length;
 
                 this.cpv = CampaignService.getCpv(this.campaign, this.schema);
                 extend(this, CampaignService.getSummary({

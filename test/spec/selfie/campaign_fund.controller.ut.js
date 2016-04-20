@@ -1,5 +1,7 @@
-define(['app'], function(appModule) {
+define(['app','angular'], function(appModule, angular) {
     'use strict';
+
+    var copy = angular.copy;
 
     describe('SelfieCampaignFundController', function() {
         var $rootScope,
@@ -160,7 +162,7 @@ define(['app'], function(appModule) {
 
         describe('methods', function() {
             describe('initWithModel()', function() {
-                it('add the model and the token', function() {
+                it('should add the token and payment methods from the model and add lots of cState props', function() {
                     SelfieCampaignFundCtrl.initWithModel({
                         paymentMethods: paymentMethods
                     });
@@ -187,12 +189,32 @@ define(['app'], function(appModule) {
                         interests: cState.interests
                     });
                 });
+
+                describe('when there are multiple payment methods', function() {
+                    it('should set the showCreditCardForm flag to false', function() {
+                        SelfieCampaignFundCtrl.initWithModel({
+                            paymentMethods: paymentMethods
+                        });
+
+                        expect(SelfieCampaignFundCtrl.showCreditCardForm).toBe(false);
+                    });
+                });
+
+                describe('when there are multiple payment methods', function() {
+                    it('should set the showCreditCardForm flag to false', function() {
+                        SelfieCampaignFundCtrl.initWithModel({
+                            paymentMethods: []
+                        });
+
+                        expect(SelfieCampaignFundCtrl.showCreditCardForm).toBe(true);
+                    });
+                });
             });
 
             describe('confirm()', function() {
-                describe('when there is no paymentMethod', function() {
+                describe('when showCreditCardForm is true', function() {
                     it('should set pending to true', function() {
-                        SelfieCampaignFundCtrl.paymentMethod = undefined;
+                        SelfieCampaignFundCtrl.showCreditCardForm = true;
 
                         expect(SelfieCampaignFundCtrl.pending).toBeFalsy();
 
@@ -202,9 +224,9 @@ define(['app'], function(appModule) {
                     });
                 });
 
-                describe('when there is a paymentMethod', function() {
+                describe('when showCreditCardForm is false', function() {
                     it('should ensure deposit is set and should go to Selfie:Campaign:Fund:Confirm state', function() {
-                        SelfieCampaignFundCtrl.paymentMethod = paymentMethods[0];
+                        SelfieCampaignFundCtrl.showCreditCardForm = false;
                         SelfieCampaignFundCtrl.deposit = undefined;
 
                         SelfieCampaignFundCtrl.confirm();
@@ -216,7 +238,7 @@ define(['app'], function(appModule) {
             });
 
             describe('success(method)', function() {
-                var braintreeObject;
+                var braintreeObject, newMethod, savedMethod;
 
                 beforeEach(function() {
                     braintreeObject = {
@@ -226,9 +248,14 @@ define(['app'], function(appModule) {
 
                     SelfieCampaignFundCtrl.paymentMethodError = true;
                     SelfieCampaignFundCtrl.pending = true;
+                    SelfieCampaignFundCtrl.showCreditCardForm = true;
 
                     SelfieCampaignFundCtrl.newMethod = cState.newMethod;
                     SelfieCampaignFundCtrl.paymentMethods = paymentMethods;
+
+                    newMethod = {};
+                    spyOn(cinema6.db, 'create').and.returnValue(newMethod);
+                    savedMethod = copy(SelfieCampaignFundCtrl.newMethod);
 
                     $scope.$apply(function() {
                         SelfieCampaignFundCtrl.success(braintreeObject);
@@ -253,16 +280,25 @@ define(['app'], function(appModule) {
                 describe('when save succeeds', function() {
                     describe('when type is creditCard', function() {
                         beforeEach(function() {
-                            SelfieCampaignFundCtrl.newMethod.type = 'creditCard';
+                            savedMethod.type = 'creditCard';
 
                             $rootScope.$apply(function() {
-                                saveDeferred.resolve(SelfieCampaignFundCtrl.newMethod)
+                                saveDeferred.resolve(savedMethod);
                             });
                         });
 
+                        it('should set showCreditCardForm to false', function() {
+                            expect(SelfieCampaignFundCtrl.showCreditCardForm).toBe(false);
+                        });
+
+                        it('should create a new payment method and add it to Ctrl', function() {
+                            expect(cinema6.db.create).toHaveBeenCalledWith('paymentMethod', {});
+                            expect(SelfieCampaignFundCtrl.newMethod).toBe(newMethod);
+                        });
+
                         it('should add the method to the payment methods array and set it as the chosen payment method', function() {
-                            expect(SelfieCampaignFundCtrl.paymentMethods).toContain(SelfieCampaignFundCtrl.newMethod);
-                            expect(SelfieCampaignFundCtrl.paymentMethod).toBe(SelfieCampaignFundCtrl.newMethod);
+                            expect(SelfieCampaignFundCtrl.paymentMethods).toContain(savedMethod);
+                            expect(SelfieCampaignFundCtrl.paymentMethod).toBe(savedMethod);
                         });
 
                         it('should ensure that deposit is defaulted to 0 if undefined', function() {
@@ -280,16 +316,25 @@ define(['app'], function(appModule) {
 
                     describe('when type is paypal', function() {
                         beforeEach(function() {
-                            SelfieCampaignFundCtrl.newMethod.type = 'paypal';
+                            savedMethod.type = 'paypal';
 
                             $rootScope.$apply(function() {
-                                saveDeferred.resolve(SelfieCampaignFundCtrl.newMethod)
+                                saveDeferred.resolve(savedMethod);
                             });
                         });
 
+                        it('should set showCreditCardForm to false', function() {
+                            expect(SelfieCampaignFundCtrl.showCreditCardForm).toBe(false);
+                        });
+
+                        it('should create a new payment method and add it to Ctrl', function() {
+                            expect(cinema6.db.create).toHaveBeenCalledWith('paymentMethod', {});
+                            expect(SelfieCampaignFundCtrl.newMethod).toBe(newMethod);
+                        });
+
                         it('should add the method to the payment methods array and set it as the chosen payment method', function() {
-                            expect(SelfieCampaignFundCtrl.paymentMethods).toContain(SelfieCampaignFundCtrl.newMethod);
-                            expect(SelfieCampaignFundCtrl.paymentMethod).toBe(SelfieCampaignFundCtrl.newMethod);
+                            expect(SelfieCampaignFundCtrl.paymentMethods).toContain(savedMethod);
+                            expect(SelfieCampaignFundCtrl.paymentMethod).toBe(savedMethod);
                         });
 
                         it('should ensure that deposit is defaulted to 0 if undefined', function() {
