@@ -4,6 +4,7 @@
   * [FEATURE]: Add ability to deposit funds in Account Settings area
   * [FEATURE]: Show account balance info on payment history page and
     update transaction list
+  * [DESIGN]: Updated payment modal and payment detail styles
 
 ## v1.42.3 (April 18, 2016)
 * *[v1.42.3.rc1]*
