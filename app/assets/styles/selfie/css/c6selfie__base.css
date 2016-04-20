@@ -488,9 +488,17 @@ fa,
             font-size: 1.25rem;
             font-weight: 300;
         }
-        .btn--link:hover,
-        .btn--link:focus {
-            color: #0E7D81;
+            .btn--link:hover,
+            .btn--link:focus {
+                color: #0E7D81;
+            }
+        .btnText--plain {
+            font-family:inherit;
+            font-size:initial;
+            font-weight:initial;
+        }
+        .btn--half {
+            width: 48%;
         }
         .btn--small, .btn--small:focus {
             font-size:1em;
@@ -1408,6 +1416,9 @@ fa,
                 .pageHeader__actions .btnGroup .btn:last-child:not(:first-child),
                 .pageHeader__actions .btnGroup .btn--last {
                     border-right: 2px solid rgba(0, 0, 0, 0.25);
+                }
+                .pageHeader__actions .action__btn:focus {
+                    border: 2px solid #0E7D81;
                 }
 
         .pageHeader__group .sortBar__group {
@@ -6670,7 +6681,7 @@ div.tree-multiselect span.remove-selected {
           background:#4fc184;
           color:#fff;
           border-color:#4fc184;
- }
+    }
         .action__btn--balance span {
             font-weight:normal;
         }
@@ -6980,6 +6991,25 @@ div.tree-multiselect span.remove-selected {
         .paymentMethod__optionTypes label {
             margin-right:2em;
         }
+        .paymentOption__buttonGroup {
+            margin-top: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .paymentButton__divider {
+            border-top: 1px dotted #ccc;
+            padding-top: 1em;
+        }
+            .paymentButton__divider::before {
+                content: 'or';
+                position: absolute;
+                top: 185px;
+                margin-left: auto;
+                width: 3em;
+                text-align: center;
+                background: #fff;
+                left: calc(50% - 1.75em);
+            }
+
 /*** Replace existing styles ***/
     .modalDialog__group--confirm .payment__seals {
         padding-left: 0; /*<-- update this*/
