@@ -7,7 +7,7 @@
 
             <div class="pageHeader__actions">
                 <account-balance></account-balance>
-                <button ng-click="AccountCtrl.addFunds()" class="action__btn action__btn--small">
+                <button ng-click="SelfieAccountPaymentHistoryCtrl.addFunds()" class="action__btn action__btn--small">
                     <i class="fa fa-plus"></i> Add Funds
                 </button>
             </div>
@@ -28,7 +28,8 @@
                 <div class="grid">
                     <div class="grid__item one-quarter">
                         <div class="statsChart__infoBox paymentChart__infoBox">
-                            <span class="hint--top hint--text-wrap" data-hint="This is the balance of how much money your campaigns have spent and how much money you have deposited into your account.">
+                            <span class="hint--top hint--text-wrap"
+                                data-hint="The total unspent funds currently in your account.">
                                 <h3 class="stats__icon"><i class="fa fa-calculator"></i></h3>
                                 <h1 class="stats__infoNumber tk--hdr">{{SelfieAccountPaymentHistoryCtrl.accounting.balance | dollars:2}}</h1>
                                 <h3 class="stats__label">Balance</h3>
@@ -37,7 +38,8 @@
                     </div><!--
                     --><div class="grid__item one-quarter">
                         <div class="statsChart__infoBox paymentChart__infoBox">
-                            <span class="hint--top hint--text-wrap" data-hint="This is money that you have deposited into your account that won't be spent by any of your campaigns unless you create a new campaign or change any of your campaigns' budgets/timelines.">
+                            <span class="hint--top hint--text-wrap"
+                                data-hint="Funds from your account that have not yet been committed to a running campaign.">
                                 <h3 class="stats__icon"><i class="fa fa-money"></i></h3>
                                 <h1 class="stats__infoNumber tk--hdr">{{SelfieAccountPaymentHistoryCtrl.accounting.remainingFunds | dollars:2}}</h1>
                                 <h3 class="stats__label">Available Funds</h3>
@@ -46,7 +48,8 @@
                     </div><!--
                     --><div class="grid__item one-quarter">
                         <div class="statsChart__infoBox paymentChart__infoBox">
-                            <span class="hint--top hint--text-wrap" data-hint="This is how much all of your campaigns have spent.">
+                            <span class="hint--top hint--text-wrap"
+                                data-hint="Total amount spent on all past and current campaigns.">
                                 <h3 class="stats__icon"><i class="fa fa-dollar"></i></h3>
                                 <h1 class="stats__infoNumber tk--hdr">{{SelfieAccountPaymentHistoryCtrl.accounting.totalSpend | dollars:2}}</h1>
                                 <h3 class="stats__label">Total Spend</h3>
@@ -59,9 +62,24 @@
                                 <h3 class="stats__icon"><i class="fa fa-credit-card"></i></h3>
                                 <h1 class="stats__infoNumber tk--hdr">{{recent.amount | dollars:2}}</h1>
                                 <h3 class="stats__label">Last Deposit: {{recent.created | date:'MM/dd/yyyy'}}</h3>
-                                <h3 ng-if="recent.promotion.type === 'signUpReward'" class="stats__label">Reward Credit</h3>
-                                <h3 ng-if="recent.payment.method.type === 'paypal'" class="stats__label">PayPal: <span>{{recent.payment.method.email}}</span></h3>
-                                <h3 ng-if="recent.payment.method.type === 'creditCard'" class="stats__label">{{recent.payment.method.cardType | paymentType}}: <span>**** {{recent.payment.method.last4}}</span>span></h3>
+                                <h3 ng-if="recent.promotion.type === 'signupReward'" class="stats__label">
+                                    Sign-up Reward
+                                </h3>
+                                <h3 ng-if="recent.payment.method.type === 'paypal'" class="stats__label">
+                                    PayPal:
+                                    <span ng-show="recent.payment.method.email.length > 17"
+                                        class="hint--top hint--text-wrap"
+                                        data-hint="{{recent.payment.method.email}}">
+                                        {{recent.payment.method.email | limitTo:17}}...
+                                    </span>
+                                    <span ng-show="recent.payment.method.email.length <= 17">
+                                        {{recent.payment.method.email}}
+                                    </span>
+                                </h3>
+                                <h3 ng-if="recent.payment.method.type === 'creditCard'"
+                                    class="stats__label">
+                                    {{recent.payment.method.cardType | paymentType}}: <span>**** {{recent.payment.method.last4}}</span>
+                                </h3>
                             </span>
                         </div>
                     </div>
@@ -72,7 +90,12 @@
 
     <div class="settingsContent__gridHolder paymentHistory__group">
         <div class="grid eps">
-            <h1 class="tk--hdr stats__hdr payment__table"><span class="hint--top hint--text-wrap" data-hint="Below is a history of deposits for your account.">Deposits</span></h1>
+            <h1 class="tk--hdr stats__hdr payment__table">
+                <span class="hint--top hint--text-wrap"
+                    data-hint="Below is a history of deposits for your account.">
+                    Deposits
+                </span>
+            </h1>
 
             <div class="grid__item one-whole">
                 <div class="row__group">
@@ -81,16 +104,25 @@
                         <h3 class="stats__rowData">Amount</h3>
                         <h3 class="stats__rowData stats__rowMethod">Payment Method</h3>
                     </div>
-                    <div ng-repeat="transaction in SelfieAccountPaymentHistoryCtrl.model.items.value" class="stats__row" ng-class="{ 'stats__reward' : transaction.promotion.type === 'signUpReward' }">
+                    <div ng-repeat="transaction in SelfieAccountPaymentHistoryCtrl.model.items.value"
+                        ng-class="{ 'stats__reward' : transaction.promotion.type === 'signupReward' }"
+                        class="stats__row">
                         <h3 class="stats__label">{{transaction.created | date:'MM/dd/yyyy'}}</h3>
                         <h2 class="stats__rowData stats__rowSpend">{{transaction.amount | dollars:2}}</h2>
-                        <h2 ng-if="transaction.promotion.type === 'signUpReward'" class="stats__rowData stats__rowMethod">
-                            <i class="fa fa-star"></i>Reward Credit<i class="fa fa-star"></i>
+                        <h2 ng-if="transaction.promotion.type === 'signupReward'"
+                            class="stats__rowData stats__rowMethod">
+                            <i class="fa fa-star"></i>Sign-up Reward<i class="fa fa-star"></i>
                         </h2>
-                        <h2 ng-if="transaction.payment.method.type === 'paypal'" class="stats__rowData stats__rowMethod">
+                        <h2 ng-if="!!transaction.promotion && transaction.promotion.type !== 'signupReward'"
+                            class="stats__rowData stats__rowMethod">
+                            Credit
+                        </h2>
+                        <h2 ng-if="transaction.payment.method.type === 'paypal'"
+                            class="stats__rowData stats__rowMethod">
                             PayPal: <span>{{transaction.payment.method.email}}</span>
                         </h2>
-                        <h2 ng-if="transaction.payment.method.type === 'creditCard'" class="stats__rowData stats__rowMethod">
+                        <h2 ng-if="transaction.payment.method.type === 'creditCard'"
+                            class="stats__rowData stats__rowMethod">
                             {{transaction.payment.method.cardType | paymentType}}: <span>{{transaction.payment.method.cardholderName}}, **** {{transaction.payment.method.last4}}</span>
                         </h2>
                     </div>

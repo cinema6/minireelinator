@@ -596,7 +596,11 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieAccountPaymentHistoryController', ['$injector','cState','$scope',
-        function                                             ( $injector , cState , $scope ) {
+                                                              'AddFundsModalService',
+        function                                             ( $injector , cState , $scope ,
+                                                               AddFundsModalService ) {
+            var self = this;
+
             $injector.invoke(PaginatedListController, this, {
                 cState: cState,
                 $scope: $scope
@@ -605,6 +609,13 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.model = model;
                 this.accounting = cState.accounting;
+            };
+
+            this.addFunds = function() {
+                AddFundsModalService.display()
+                    .then(function() {
+                        self.model.refresh();
+                    });
             };
         }]);
 });

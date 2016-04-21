@@ -123,7 +123,7 @@ module.exports = function(http) {
             grunt.file.write(objectPath('payments', id), JSON.stringify(payment, null, '    '));
             grunt.file.write(objectPath('transactions', transId), JSON.stringify(transaction, null, '    '));
 
-            this.respond(200, extend(payment, {id: id}));
+            this.respond(200, Q.when(extend(payment, {id: id})).delay(1000));
     });
 
     http.whenGET('/api/payments/clientToken', function(request) {

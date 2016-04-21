@@ -1411,9 +1411,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             });
 
             this.makeDeposit = function() {
-                if (this.model.showCreditCardForm) {
-                    this.pendingConfirmation = true;
-                } else {
+                this.pendingConfirmation = true;
+
+                if (!this.model.showCreditCardForm) {
                     this.makePayment();
                 }
             };

@@ -92,8 +92,8 @@
                             </div>
 
 
-                            <div ng-if="AddFundsModalCtrl.model.newMethod" class="form__items addPayment__method">
-                                <div ng-show="AddFundsModalCtrl.newPaymentType === 'creditcard' && AddFundsModalCtrl.model.showCreditCardForm">
+                            <div ng-if="AddFundsModalCtrl.model.newMethod && AddFundsModalCtrl.model.showCreditCardForm" class="form__items addPayment__method">
+                                <div ng-show="AddFundsModalCtrl.newPaymentType === 'creditcard'">
                                     <div class="paymentMethod__optionTypes"
                                         ng-if="AddFundsModalCtrl.model.methods.length">
                                         Credit Card Details
@@ -158,9 +158,7 @@
                 ng-class="{ 'btn--disabled' : !AddFundsModalCtrl.canSubmit, 'btnSpinner__waiting' : AddFundsModalCtrl.pendingConfirmation }"
                 title="Deposit"
                 class="btnAction btnAction--success btnAction--last"
-                type="button">
-                Deposit <span ng-if="AddFundsModalCtrl.model.deposit >= 1">${{AddFundsModalCtrl.model.deposit | number:2}}</span>
-            </button>
+                type="button">Deposit<span ng-if="AddFundsModalCtrl.model.deposit >= 1"> ${{AddFundsModalCtrl.model.deposit | number:2}}</span></button>
         </footer>
     </div>
     <div class="modal__overlay modal__overlay--confirm">&nbsp;</div>
