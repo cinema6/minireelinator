@@ -9,6 +9,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             $q,
             cState,
             AddFundsModalService,
+            NotificationService,
             AccountPaymentHistoryCtrl;
 
         var model;
@@ -23,6 +24,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 AddFundsModalService = $injector.get('AddFundsModalService');
+                NotificationService = $injector.get('NotificationService');
             });
 
             model = {
@@ -77,6 +79,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     addFundsDeferred = $q.defer();
 
                     spyOn(AddFundsModalService, 'display').and.returnValue(addFundsDeferred.promise);
+                    spyOn(NotificationService, 'display');
 
                     AccountPaymentHistoryCtrl.initWithModel(model);
                     AccountPaymentHistoryCtrl.addFunds();
@@ -87,11 +90,12 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 });
 
                 describe('when funds are added', function() {
-                    it('should refresh the model', function() {
+                    it('should refresh the model and notify the user', function() {
                         $rootScope.$apply(function() {
                             addFundsDeferred.resolve();
                         });
 
+                        expect(NotificationService.display).toHaveBeenCalledWith(jasmine.any(String));
                         expect(AccountPaymentHistoryCtrl.model.refresh).toHaveBeenCalled();
                     });
                 });

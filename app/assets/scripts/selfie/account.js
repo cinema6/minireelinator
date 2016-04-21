@@ -255,8 +255,10 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieAccountController', ['cState','AddFundsModalService','cinema6',
-        function                               ( cState , AddFundsModalService , cinema6 ) {
+        .controller('SelfieAccountController', ['cState','AddFundsModalService',
+                                                'cinema6','NotificationService',
+        function                               ( cState , AddFundsModalService ,
+                                                 cinema6 , NotificationService ) {
             var self = this;
 
             this.initWithModel = function(model) {
@@ -277,6 +279,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.addFunds = function() {
                 AddFundsModalService.display()
                     .then(function() {
+                        NotificationService.display('You successfully added funds to your account');
                         return cinema6.db.findAll('paymentMethod');
                     })
                     .then(function(paymentMethods) {
@@ -616,7 +619,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.addFunds = function() {
                 AddFundsModalService.display()
                     .then(function() {
-                        NotificationService.display('Successfully added funds');
+                        NotificationService.display('You successfully added funds to your account');
                         self.model.refresh();
                     });
             };

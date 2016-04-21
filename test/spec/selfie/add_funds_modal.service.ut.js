@@ -171,19 +171,41 @@ define(['app'], function(appModule) {
                 });
             });
 
-            describe('close()', function() {
-                it('should resolve the promise returned by display()', function() {
-                    var success = jasmine.createSpy('success()');
+            describe('cancel()', function() {
+                it('should reject the promise returned by display()', function() {
+                    var success = jasmine.createSpy('success()'),
+                        failure = jasmine.createSpy('failure()');
 
-                    AddFundsModalService.display().then(success);
+                    AddFundsModalService.display().then(success, failure);
 
                     expect(success).not.toHaveBeenCalled();
+                    expect(failure).not.toHaveBeenCalled();
 
                     $rootScope.$apply(function() {
-                        AddFundsModalService.close();
+                        AddFundsModalService.cancel();
+                    });
+
+                    expect(failure).toHaveBeenCalled();
+                    expect(success).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('resolve()', function() {
+                it('should resolve the promise returned by display()', function() {
+                    var success = jasmine.createSpy('success()'),
+                        failure = jasmine.createSpy('failure()');
+
+                    AddFundsModalService.display().then(success, failure);
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).not.toHaveBeenCalled();
+
+                    $rootScope.$apply(function() {
+                        AddFundsModalService.resolve();
                     });
 
                     expect(success).toHaveBeenCalled();
+                    expect(failure).not.toHaveBeenCalled();
                 });
             });
         });

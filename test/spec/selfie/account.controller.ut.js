@@ -10,6 +10,7 @@ define(['app'], function(appModule) {
             $q,
             SelfieAccountCtrl,
             AddFundsModalService,
+            NotificationService,
             cinema6;
 
         var user,
@@ -25,6 +26,7 @@ define(['app'], function(appModule) {
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
                 AddFundsModalService = $injector.get('AddFundsModalService');
+                NotificationService = $injector.get('NotificationService');
             });
 
             user = {
@@ -98,6 +100,7 @@ define(['app'], function(appModule) {
 
                     spyOn(AddFundsModalService, 'display').and.returnValue(addFundsDeferred.promise);
                     spyOn(cinema6.db, 'findAll').and.returnValue(paymentMethodsDeferred.promise);
+                    spyOn(NotificationService, 'display');
 
                     SelfieAccountCtrl.addFunds();
                 });
@@ -115,6 +118,10 @@ define(['app'], function(appModule) {
 
                     it('should refetch all payment methods', function() {
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
+                    });
+
+                    it('should show the user a notification', function() {
+                        expect(NotificationService.display).toHaveBeenCalledWith(jasmine.any(String));
                     });
 
                     describe('when payment methods are resolved', function() {
