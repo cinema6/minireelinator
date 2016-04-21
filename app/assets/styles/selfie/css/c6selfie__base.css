@@ -794,6 +794,28 @@ fa,
                         width: 1.25em;
                         text-align: center;
                     }
+            .softAlert--center {
+                position: absolute;
+                margin-left: auto;
+                margin-right: auto;
+                float: left;
+                left: 4.5em;
+                right: 0;
+                width: 30%;
+                text-align: left;
+                padding: 10px;
+                margin-top: 5em;
+            }
+            .softAlert__closeBtn {
+                color: #fff;
+                margin: 0 10px;
+                float: right;
+                display: inline-block;
+                vertical-align: top;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
             .softAlert__failure {
                 background: #ed0000;
                 color: #fff;
@@ -6998,17 +7020,23 @@ div.tree-multiselect span.remove-selected {
         .paymentButton__divider {
             border-top: 1px dotted #ccc;
             padding-top: 1em;
+            position: relative;
         }
             .paymentButton__divider::before {
                 content: 'or';
                 position: absolute;
-                top: 185px;
+                top: -12px;
                 margin-left: auto;
                 width: 3em;
                 text-align: center;
                 background: #fff;
-                left: calc(50% - 1.75em);
+                left: calc(50% - 1.5em);
             }
+        .paymentButton__divider .action__btnSecondary--big {
+            padding: 0.75rem 1.5rem 0.625rem;
+            font-size: 1.125em;
+            width: 180px;
+        }
 
 /*** Replace existing styles ***/
     .modalDialog__group--confirm .payment__seals {
