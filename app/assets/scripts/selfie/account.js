@@ -597,8 +597,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieAccountPaymentHistoryController', ['$injector','cState','$scope',
                                                               'AddFundsModalService',
+                                                              'NotificationService',
         function                                             ( $injector , cState , $scope ,
-                                                               AddFundsModalService ) {
+                                                               AddFundsModalService ,
+                                                               NotificationService ) {
             var self = this;
 
             $injector.invoke(PaginatedListController, this, {
@@ -614,6 +616,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.addFunds = function() {
                 AddFundsModalService.display()
                     .then(function() {
+                        NotificationService.display('Successfully added funds');
                         self.model.refresh();
                     });
             };

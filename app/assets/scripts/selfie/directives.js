@@ -1421,7 +1421,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             this.makePayment = function() {
                 return PaymentService.makePayment(this.model.chosenMethod.token, this.model.deposit)
                     .then(PaymentService.getBalance)
-                    .then(this.close)
+                    .then(this.resolve)
                     .catch(function() {
                         self.paymentMethodError = true;
                     })
@@ -1464,11 +1464,20 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 this.pendingConfirmation = false;
             };
 
+            this.resolve = function() {
+                self.close();
+                AddFundsModalService.resolve();
+            };
+
+            this.cancel = function() {
+                self.close();
+                AddFundsModalService.cancel();
+            };
+
             this.close = function() {
                 self.model.show = false;
                 self.paymentMethodError = false;
                 self.pendingConfirmation = false;
-                AddFundsModalService.close();
             };
         }])
 
@@ -1508,7 +1517,11 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 return deferred.promise;
             };
 
-            this.close = function() {
+            this.cancel = function() {
+                deferred.reject();
+            };
+
+            this.resolve = function() {
                 deferred.resolve();
             };
         }])
@@ -1674,6 +1687,25 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 if ($scope.methods.length < 2) { return; }
 
                 this.showDropdown = !this.showDropdown;
+            };
+        }])
+
+        .directive('selfieNotification', [function() {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/notification.html',
+                controller: 'SelfieNotificationController',
+                controllerAs: 'SelfieNotificationCtrl'
+            };
+        }])
+
+        .controller('SelfieNotificationController', ['NotificationService',
+        function                                    ( NotificationService ) {
+            this.model = NotificationService.model;
+
+            this.close = function() {
+                this.model.text = null;
+                this.model.show = false;
             };
         }])
 
