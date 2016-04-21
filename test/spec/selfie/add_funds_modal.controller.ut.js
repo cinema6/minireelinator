@@ -179,9 +179,11 @@ define(['app','angular'], function(appModule, angular) {
                 describe('when credit card form is not in view', function() {
                     it('should make the payment', function() {
                         AddFundsModalCtrl.model.showCreditCardForm = false;
+                        AddFundsModalCtrl.pendingConfirmation = false;
 
                         AddFundsModalCtrl.makeDeposit();
 
+                        expect(AddFundsModalCtrl.pendingConfirmation).toBe(true);
                         expect(AddFundsModalCtrl.makePayment).toHaveBeenCalled();
                     });
                 });
