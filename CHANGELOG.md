@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.43.0 (April 21, 2016)
+* *[v1.43.0.rc2]*
+  * [FIX]: Fix Paypal button container CSS class
+* *[v1.43.0.rc1]*
+
 * *[v1.43.0.rc1]*
   * [FEATURE]: Add ability to deposit funds in Account Settings area
   * [FEATURE]: Show account balance info on payment history page and
