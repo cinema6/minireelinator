@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.43.0.rc3]*
+  * [DESIGN]: Added styles for soft alerts with close button in center
+  * [FIX]: Fixed payment buttons and dropdown issue
+  
 ## v1.43.0 (April 21, 2016)
 * *[v1.43.0.rc2]*
   * [FIX]: Fix Paypal button container CSS class
