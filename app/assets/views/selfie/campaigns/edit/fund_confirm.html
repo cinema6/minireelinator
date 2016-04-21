@@ -40,13 +40,13 @@
                                     <h1 class="tk--hdr">Total Budget</h1>
                                 </div><!--
                                 --><div class="grid__item one-third orderItem__label">
-                                    <h1 class="tk--hdr">{{SelfieCampaignFundCtrl.campaign.pricing.budget | dollars}}</h1>
+                                    <h1 class="tk--hdr">{{SelfieCampaignFundCtrl.campaign.pricing.budget | dollars:2}}</h1>
                                 </div>
                             </li>
                             <li>
                                 <div class="grid__item one-third orderItem__label">Daily Budget</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div ng-if="SelfieCampaignFundCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">{{SelfieCampaignFundCtrl.campaign.pricing.dailyLimit | dollars}}</div>
+                                    <div ng-if="SelfieCampaignFundCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">{{SelfieCampaignFundCtrl.campaign.pricing.dailyLimit | dollars:2}}</div>
                                     <div ng-if="!SelfieCampaignFundCtrl.campaign.pricing.dailyLimit" class="orderItem__label text--right">No limit</div>
                                 </div>
                             </li>
@@ -70,13 +70,13 @@
                             <li class="orderItem__subHdr">
                                 <div class="grid__item one-third orderItem__label">Base CPV</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__base | dollars}}</div>
+                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__base | dollars:2}}</div>
                                 </div>
                             </li>
                             <li ng-show="SelfieCampaignFundCtrl.interests">
                                 <div class="grid__item one-third orderItem__label">Interests:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForInterests | dollars}}</div>
+                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForInterests | dollars:2}}</div>
                                 </div>
                             </li>
                             <li ng-show="SelfieCampaignFundCtrl.interests" class="orderItem__subItem">
@@ -85,7 +85,7 @@
                             <li ng-show="SelfieCampaignFundCtrl.demographics.age.list || SelfieCampaignFundCtrl.demographics.gender.list || SelfieCampaignFundCtrl.demographics.income.list">
                                 <div class="grid__item one-third orderItem__label">Demographics:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForDemoTargeting | dollars}}</div>
+                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForDemoTargeting | dollars:2}}</div>
                                 </div>
                             </li>
                             <li ng-show="SelfieCampaignFundCtrl.demographics.age.list || SelfieCampaignFundCtrl.demographics.gender.list || SelfieCampaignFundCtrl.demographics.income.list" class="orderItem__subItem">
@@ -94,7 +94,7 @@
                             <li ng-show="SelfieCampaignFundCtrl.geo.states.list || SelfieCampaignFundCtrl.geo.dmas.list || SelfieCampaignFundCtrl.geo.zipcodes.list">
                                 <div class="grid__item one-third orderItem__label">Location:</div><!--
                                 --><div class="grid__item two-thirds">
-                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForGeoTargeting | dollars}}</div>
+                                    <div class="orderItem__label text--right">{{SelfieCampaignFundCtrl.schema.pricing.cost.__priceForGeoTargeting | dollars:2}}</div>
                                 </div>
                             </li>
                             <li ng-show="SelfieCampaignFundCtrl.geo.states.list || SelfieCampaignFundCtrl.geo.dmas.list || SelfieCampaignFundCtrl.geo.zipcodes.list" class="orderItem__subItem">
@@ -117,19 +117,19 @@
                                     <span ng-if="!SelfieCampaignFundCtrl.isDraft">Total Campaign Budget Change</span>
                                 </div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">{{SelfieCampaignFundCtrl.budgetChange | dollars}}</div>
+                                    <div class="text--right">{{SelfieCampaignFundCtrl.budgetChange | dollars:2}}</div>
                                 </div>
                             </li>
                             <li>
                                 <div class="grid__item two-thirds orderItem__label">Available Funds</div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">{{SelfieCampaignFundCtrl.accounting.remainingFunds | dollars}}</div>
+                                    <div class="text--right">{{SelfieCampaignFundCtrl.accounting.remainingFunds | dollars:2}}</div>
                                 </div>
                             </li>
                             <li ng-if="SelfieCampaignFundCtrl.deposit > SelfieCampaignFundCtrl.minDeposit">
                                 <div class="grid__item two-thirds orderItem__label">Additional Funds</div><!--
                                 --><div class="grid__item one-third">
-                                    <div class="text--right">{{SelfieCampaignFundCtrl.deposit - SelfieCampaignFundCtrl.minDeposit | dollars}}</div>
+                                    <div class="text--right">{{SelfieCampaignFundCtrl.deposit - SelfieCampaignFundCtrl.minDeposit | dollars:2}}</div>
                                 </div>
                             </li>
 
@@ -140,7 +140,7 @@
                                     <h1 class="tk--hdr">Total Charge:</h1>
                                 </div><!--
                                 --><div class="grid__item one-third orderItem__label">
-                                    <h1 class="tk--hdr">{{SelfieCampaignFundCtrl.deposit | dollars}}</h1>
+                                    <h1 class="tk--hdr">{{SelfieCampaignFundCtrl.deposit | dollars:2}}</h1>
                                 </div>
                             </li>
                             <li>

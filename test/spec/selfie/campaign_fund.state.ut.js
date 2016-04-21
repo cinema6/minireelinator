@@ -196,6 +196,30 @@ define(['app'], function(appModule) {
                     expect(FundState.accounting).toBe(PaymentService.balance);
                 });
 
+                it('should fetch a payment token', function() {
+                    $rootScope.$apply(function() {
+                        FundState.afterModel({
+                            paymentMethods: [],
+                            balance: {}
+                        });
+                    });
+
+                    expect(PaymentService.getToken).toHaveBeenCalled();
+                    expect(FundState.token).toEqual('1234-4321');
+                });
+
+                it('should create a payment method', function() {
+                    $rootScope.$apply(function() {
+                        FundState.afterModel({
+                            paymentMethods: [],
+                            balance: {}
+                        });
+                    });
+
+                    expect(cinema6.db.create).toHaveBeenCalledWith('paymentMethod', {});
+                    expect(FundState.newMethod).toEqual(paymentModel);
+                });
+
                 describe('when user has no payment methods and paymentOptional entitlement', function() {
                     describe('when there is a minDeposit required', function() {
                         it('should set skipDeposit to false', function() {
@@ -250,16 +274,6 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should fetch a payment token', function() {
-                        expect(PaymentService.getToken).toHaveBeenCalled();
-                        expect(FundState.token).toEqual('1234-4321');
-                    });
-
-                    it('should create a payment method', function() {
-                        expect(cinema6.db.create).toHaveBeenCalledWith('paymentMethod', {});
-                        expect(FundState.newMethod).toEqual(paymentModel);
-                    });
-
                     it('should set skipDeposit flag to false even though there is no minDeposit', function() {
                         expect(FundState.minDeposit).toBeFalsy();
                         expect(FundState.skipDeposit).toBe(false);
@@ -267,30 +281,6 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when there are existing paymentMethods', function() {
-                    it('should not fetch a payment token', function() {
-                        $rootScope.$apply(function() {
-                            FundState.afterModel({
-                                paymentMethods: [{},{}],
-                                balance: {}
-                            });
-                        });
-
-                        expect(PaymentService.getToken).not.toHaveBeenCalled();
-                        expect(FundState.token).toEqual(undefined);
-                    });
-
-                    it('should create a payment method', function() {
-                        $rootScope.$apply(function() {
-                            FundState.afterModel({
-                                paymentMethods: [{},{}],
-                                balance: {}
-                            });
-                        });
-
-                        expect(cinema6.db.create).not.toHaveBeenCalledWith('paymentMethod', {});
-                        expect(FundState.newMethod).toEqual(undefined);
-                    });
-
                     describe('when there is no minDeposit', function() {
                         it('should set skipDeposit flag to true', function() {
                             $rootScope.$apply(function() {
@@ -331,11 +321,11 @@ define(['app'], function(appModule) {
                         it('should equal available funds minus budget change', function() {
                             FundState.cParent._campaign.status = 'active';
 
-                            FundState.cParent._campaign.pricing.budget = 500;
+                            FundState.cParent._campaign.pricing.budget = 500.59103476673;
                             FundState.cParent.campaign.pricing.budget = 800;
                             FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
 
-                            expect(FundState.minDeposit).toBe(200);
+                            expect(FundState.minDeposit).toBe(199.41);
 
                             FundState.cParent._campaign.pricing.budget = 500;
                             FundState.cParent.campaign.pricing.budget = 800;
