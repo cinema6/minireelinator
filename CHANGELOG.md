@@ -1,10 +1,15 @@
 # MiniReelinator
 
+## v1.43.0 (April 21, 2016)
 * *[v1.43.0.rc1]*
   * [FEATURE]: Add ability to deposit funds in Account Settings area
   * [FEATURE]: Show account balance info on payment history page and
     update transaction list
   * [DESIGN]: Updated payment modal and payment detail styles
+  * [FIX]: Ensure that minimum deposit is rounded to two decimal places
+  * [FEATURE]: Allow users to add new payment methods from the Deposit
+    modal when submitting campaigns
+* *[v1.43.0.rc1]*
 
 ## v1.42.3 (April 18, 2016)
 * *[v1.42.3.rc1]*
