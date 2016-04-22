@@ -48,7 +48,8 @@ define(['app','angular'], function(appModule, angular) {
 
             AddFundsModalService = {
                 model: model,
-                close: jasmine.createSpy('close()')
+                resolve: jasmine.createSpy('resolve()'),
+                cancel: jasmine.createSpy('cancel()')
             };
 
             compileCtrl();
@@ -179,9 +180,11 @@ define(['app','angular'], function(appModule, angular) {
                 describe('when credit card form is not in view', function() {
                     it('should make the payment', function() {
                         AddFundsModalCtrl.model.showCreditCardForm = false;
+                        AddFundsModalCtrl.pendingConfirmation = false;
 
                         AddFundsModalCtrl.makeDeposit();
 
+                        expect(AddFundsModalCtrl.pendingConfirmation).toBe(true);
                         expect(AddFundsModalCtrl.makePayment).toHaveBeenCalled();
                     });
                 });
@@ -196,7 +199,7 @@ define(['app','angular'], function(appModule, angular) {
 
                     spyOn(PaymentService, 'makePayment').and.returnValue(paymentDeferred.promise);
                     spyOn(PaymentService, 'getBalance').and.returnValue(balanceDeferred.promise);
-                    spyOn(AddFundsModalCtrl, 'close').and.callThrough();
+                    spyOn(AddFundsModalCtrl, 'resolve');
 
                     AddFundsModalCtrl.model.chosenMethod = { token: 'my-default-method' };
                     AddFundsModalCtrl.model.deposit = 50;
@@ -227,9 +230,9 @@ define(['app','angular'], function(appModule, angular) {
                         });
 
                         it('should close the modal', function() {
-                            expect(AddFundsModalCtrl.close).toHaveBeenCalled();
+                            expect(AddFundsModalCtrl.resolve).toHaveBeenCalled();
                             expect(AddFundsModalCtrl.pendingConfirmation).toBe(false);
-                            expect(AddFundsModalCtrl.paymentMethodError).toBe(false);
+                            expect(AddFundsModalCtrl.paymentMethodError).toBeFalsy();
                         });
                     });
                 });
@@ -246,7 +249,7 @@ define(['app','angular'], function(appModule, angular) {
                     });
 
                     it('should not close the modal', function() {
-                        expect(AddFundsModalCtrl.close).not.toHaveBeenCalled();
+                        expect(AddFundsModalCtrl.resolve).not.toHaveBeenCalled();
                     });
 
                     it('should set pending confirmation to false', function() {
@@ -415,6 +418,28 @@ define(['app','angular'], function(appModule, angular) {
                 });
             });
 
+            describe('resolve()', function() {
+                it('should close the modal and resolve the service', function() {
+                    spyOn(AddFundsModalCtrl, 'close');
+
+                    AddFundsModalCtrl.resolve();
+
+                    expect(AddFundsModalCtrl.close).toHaveBeenCalled();
+                    expect(AddFundsModalService.resolve).toHaveBeenCalled();
+                });
+            });
+
+            describe('cancel()', function() {
+                it('should close the modal and cancel the service', function() {
+                    spyOn(AddFundsModalCtrl, 'close');
+
+                    AddFundsModalCtrl.cancel();
+
+                    expect(AddFundsModalCtrl.close).toHaveBeenCalled();
+                    expect(AddFundsModalService.cancel).toHaveBeenCalled();
+                });
+            });
+
             describe('close()', function() {
                 it('should hide modal, reset error and pending flags and close the modal', function() {
                     AddFundsModalCtrl.model.show = true;
@@ -426,7 +451,6 @@ define(['app','angular'], function(appModule, angular) {
                     expect(AddFundsModalCtrl.model.show).toBe(false);
                     expect(AddFundsModalCtrl.paymentMethodError).toBe(false);
                     expect(AddFundsModalCtrl.pendingConfirmation).toBe(false);
-                    expect(AddFundsModalService.close).toHaveBeenCalled();
                 });
             });
         });

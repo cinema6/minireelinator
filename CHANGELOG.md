@@ -1,13 +1,29 @@
 # MiniReelinator
 
+## v1.43.0 (April 21, 2016)
 * *[v1.43.0.rc3]*
   * [DESIGN]: Added styles for soft alerts with close button in center
   * [FIX]: Fixed payment buttons and dropdown issue
-  
-## v1.43.0 (April 21, 2016)
+  * [FEATURE]: Show floating notification when funds are deposited
+  * [FIX]: Fix for an issue where the payment history list didn't update
+    after making successful deposit
+  * [FIX]: Fix for an issue where unknown promotion types left the
+    payment method label blank in the payment history list
+  * [FIX]: Fix for an issue where long paypal addresses broke the layout
+    of the Last Deposit box on payment history page
+  * [FIX]: Updated payment history tooltips to be more concise
+  * [FIX]: Fix for an issue where the "Deposit" button didn't show a
+    spinner while waiting for payment request
+  * [FIX]: Fix for an issue where a failed deposit caused the credit card
+    form to show error messages on inputs
+  * [FIX]: Changed "remaining funds" to "available funds" in the balance
+    button in page header
+  * [FIX]: Changed "Edit" button to "Back" on confirmation modal
+* *[/v1.43.0.rc3]*
+
 * *[v1.43.0.rc2]*
   * [FIX]: Fix Paypal button container CSS class
-* *[v1.43.0.rc1]*
+* *[/v1.43.0.rc2]*
 
 * *[v1.43.0.rc1]*
   * [FEATURE]: Add ability to deposit funds in Account Settings area
@@ -17,7 +33,7 @@
   * [FIX]: Ensure that minimum deposit is rounded to two decimal places
   * [FEATURE]: Allow users to add new payment methods from the Deposit
     modal when submitting campaigns
-* *[v1.43.0.rc1]*
+* *[/v1.43.0.rc1]*
 
 ## v1.42.3 (April 18, 2016)
 * *[v1.42.3.rc1]*

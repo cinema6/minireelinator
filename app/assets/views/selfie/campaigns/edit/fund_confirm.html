@@ -111,7 +111,7 @@
                                     <h1 class="tk--hdr">Deposit Details</h1>
                                 </div>
                             </li>
-                            <li>
+                            <li ng-if="!!SelfieCampaignFundCtrl.budgetChange">
                                 <div class="grid__item two-thirds orderItem__label">
                                     <span ng-if="SelfieCampaignFundCtrl.isDraft">Total Campaign Budget</span>
                                     <span ng-if="!SelfieCampaignFundCtrl.isDraft">Total Campaign Budget Change</span>
@@ -180,7 +180,7 @@
 
     </div>
     <footer class="modalFooter__group">
-        <button class="btnAction btnAction btnAction--first" ng-click="SelfieCampaignFundCtrl.goBack()" title="Edit">Edit</button>
+        <button class="btnAction btnAction btnAction--first" ng-click="SelfieCampaignFundCtrl.goBack()" title="Back">Back</button>
         <button ng-click="SelfieCampaignCtrl.confirmSubmission(SelfieCampaignFundCtrl.paymentMethod, SelfieCampaignFundCtrl.deposit)" title="Confirm" ng-class="{ 'btnSpinner__waiting' : SelfieCampaignCtrl.confirmationPending }" class="btnAction btnAction--success btnAction--last" type="button">Confirm</button>
     </footer>
 </div>

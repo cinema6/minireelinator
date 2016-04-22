@@ -6,7 +6,10 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             $injector,
             $scope,
             $controller,
+            $q,
             cState,
+            AddFundsModalService,
+            NotificationService,
             AccountPaymentHistoryCtrl;
 
         var model;
@@ -19,12 +22,16 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 spyOn($injector, 'invoke').and.callThrough();
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                $q = $injector.get('$q');
+                AddFundsModalService = $injector.get('AddFundsModalService');
+                NotificationService = $injector.get('NotificationService');
             });
 
             model = {
                 items: {
                     value: []
-                }
+                },
+                refresh: jasmine.createSpy('model.refresh()')
             };
 
             cState = {
@@ -62,6 +69,35 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                     expect(AccountPaymentHistoryCtrl.model).toBe(model);
                     expect(AccountPaymentHistoryCtrl.accounting).toBe(cState.accounting);
+                });
+            });
+
+            describe('addFunds()', function() {
+                var addFundsDeferred;
+
+                beforeEach(function() {
+                    addFundsDeferred = $q.defer();
+
+                    spyOn(AddFundsModalService, 'display').and.returnValue(addFundsDeferred.promise);
+                    spyOn(NotificationService, 'display');
+
+                    AccountPaymentHistoryCtrl.initWithModel(model);
+                    AccountPaymentHistoryCtrl.addFunds();
+                });
+
+                it('should show the add funds modal', function() {
+                    expect(AddFundsModalService.display).toHaveBeenCalled();
+                });
+
+                describe('when funds are added', function() {
+                    it('should refresh the model and notify the user', function() {
+                        $rootScope.$apply(function() {
+                            addFundsDeferred.resolve();
+                        });
+
+                        expect(NotificationService.display).toHaveBeenCalledWith(jasmine.any(String));
+                        expect(AccountPaymentHistoryCtrl.model.refresh).toHaveBeenCalled();
+                    });
                 });
             });
         });

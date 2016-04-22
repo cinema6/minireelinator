@@ -255,8 +255,10 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieAccountController', ['cState','AddFundsModalService','cinema6',
-        function                               ( cState , AddFundsModalService , cinema6 ) {
+        .controller('SelfieAccountController', ['cState','AddFundsModalService',
+                                                'cinema6','NotificationService',
+        function                               ( cState , AddFundsModalService ,
+                                                 cinema6 , NotificationService ) {
             var self = this;
 
             this.initWithModel = function(model) {
@@ -277,6 +279,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.addFunds = function() {
                 AddFundsModalService.display()
                     .then(function() {
+                        NotificationService.display('You successfully added funds to your account');
                         return cinema6.db.findAll('paymentMethod');
                     })
                     .then(function(paymentMethods) {
@@ -596,7 +599,13 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieAccountPaymentHistoryController', ['$injector','cState','$scope',
-        function                                             ( $injector , cState , $scope ) {
+                                                              'AddFundsModalService',
+                                                              'NotificationService',
+        function                                             ( $injector , cState , $scope ,
+                                                               AddFundsModalService ,
+                                                               NotificationService ) {
+            var self = this;
+
             $injector.invoke(PaginatedListController, this, {
                 cState: cState,
                 $scope: $scope
@@ -605,6 +614,14 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.model = model;
                 this.accounting = cState.accounting;
+            };
+
+            this.addFunds = function() {
+                AddFundsModalService.display()
+                    .then(function() {
+                        NotificationService.display('You successfully added funds to your account');
+                        self.model.refresh();
+                    });
             };
         }]);
 });

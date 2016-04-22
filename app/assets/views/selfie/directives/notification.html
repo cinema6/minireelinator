@@ -1,0 +1,11 @@
+<div ng-show="SelfieNotificationCtrl.model.show" class="softAlert softAlert--center">
+    <span>
+        <span class="softAlert__success--icon">
+            <i class="fa fa-check"></i>
+        </span>
+        {{SelfieNotificationCtrl.model.text}}
+    </span>
+    <button ng-click="SelfieNotificationCtrl.close()" class="softAlert__closeBtn">
+        <i class="fa fa-times" aria-hidden="true"></i>
+    </button>
+</div>

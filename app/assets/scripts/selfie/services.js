@@ -729,6 +729,33 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
             };
         }])
 
+        .service('NotificationService', ['$timeout',
+        function                        ( $timeout ) {
+            var self = this,
+                model = {};
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.display = function(text, timer) {
+                timer = timer || 3000;
+                model.text = text;
+                model.show = true;
+
+                $timeout(function() {
+                    self.close();
+                }, timer);
+            };
+
+            this.close = function() {
+                model.text = null;
+                model.show = false;
+            };
+        }])
+
         .service('PlacementService', ['c6State',
         function                     ( c6State ) {
             this.generateParamsModel = function(params, ui) {
