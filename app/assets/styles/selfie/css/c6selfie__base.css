@@ -801,10 +801,11 @@ fa,
                 float: left;
                 left: 4.5em;
                 right: 0;
-                width: 30%;
+                width: 400px;
                 text-align: left;
                 padding: 10px;
                 margin-top: 5em;
+                max-width: 90%;
             }
             .softAlert__closeBtn {
                 color: #fff;
