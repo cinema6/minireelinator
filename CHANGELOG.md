@@ -1,6 +1,11 @@
 # MiniReelinator
 
-## v1.43.0 (April 21, 2016)
+## v1.43.0 (April 22, 2016)
+* *[v1.43.0.rc4]*
+  * [DESIGN]: Change width of floating notification message
+  * [DESIGN]: Change "Payment Details" to "Payment History"
+* *[/v1.43.0.rc4]*
+
 * *[v1.43.0.rc3]*
   * [DESIGN]: Added styles for soft alerts with close button in center
   * [FIX]: Fixed payment buttons and dropdown issue
