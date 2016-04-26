@@ -833,7 +833,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
 
                 campaign = extend((isDraft ? cState._campaign.pojoify() : copy(cState.campaign)), {
-                    status: (/draft|expired|canceled|outOfBudget/).test(status) ? 'active' : status
+                    status: (/draft|expired|canceled|outOfBudget/).test(status) ? 'pending' : status
                 });
 
                 return cinema6.db.create('updateRequest', {
@@ -2594,6 +2594,17 @@ function( angular , c6State  , PaginatedListState                    ,
                     hasDuration: !!updatedCampaign.cards[0].data.duration &&
                         updatedCampaign.cards[0].data.duration !== -1
                 });
+            };
+
+            this.setActive = function() {
+                cState._campaign.status = 'active';
+                cState._campaign.save()
+                    .then(function() {
+                        c6State.goTo.apply(null, dashboardStateArgs(cState));
+                    })
+                    .catch(function(error) {
+                        self.error = 'There was a problem activating the campaign: ' + error.data;
+                    });
             };
 
             this.approveCampaign = function() {

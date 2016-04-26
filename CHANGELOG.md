@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.44.0.rc1]*
+  * [FEATURE]: Add "Set Active" button to Admin tab that allows admins
+    to set campaigns to "active" separately from approving changes
+
 ## v1.43.0 (April 22, 2016)
 * *[v1.43.0.rc4]*
   * [DESIGN]: Change width of floating notification message

@@ -6,6 +6,13 @@
                 Campaign ID: {{campaign.id}}<br>
                 Card ID: {{campaign.cards[0].id}}
         </h3>
+
+        <div class="action__btnGroup" ng-show="!Ctrl.showApproval && Ctrl.campaign.status === 'pending'">
+            <button ng-click="Ctrl.setActive()" class="action__btnSecondary action__btnSecondary--small">Set Active</button>
+            <div ng-show="Ctrl.error" class="alertMessage alert__failure text--center" style="width:400px">
+                {{Ctrl.error}}
+            </div>
+        </div>
     </header>
 
     <div class="tabContent__gridHolder">
