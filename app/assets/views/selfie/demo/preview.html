@@ -1,57 +1,79 @@
 <div  c6-alias="SelfieDemoPreviewCtrl.card as card">
 
-    <div class="grid__item one-third">
+    <div class="demoWrap">
 
-        <section class="formSection__group">
+        <div class="grid">
+            <div class="grid__item one-whole text--center formSection__group">
+                <h1 class="formSection__title">            
+                    <span class="formSection__titleText tk--hdr">Your Video Ad Preview</span>
+                </h1>
+                <p class="formSection__introText">We create multiple formats and layouts for your ads and run accordingly on various platforms.</p>
+            </div>
+        </div>
+        <div class="grid">
 
-            <div class="form__items">
+            
+            <div class="grid__item two-thirds palm--one-whole">
 
-                <fieldset class="form__item form__item--stackedInput">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-trim="false" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" maxlength="{{SelfieDemoPreviewCtrl.maxHeadlineLength}}">
-                    <label class="form__label" for="c6-video-title">
-                        <i class="fa fa-times ui--error"></i>
-                        Headline <span class="text--small form__counter item--right">{{SelfieDemoPreviewCtrl.maxHeadlineLength - card.title.length}}</span>
-                    </label>
-                </fieldset>
+                <section id="demoPreview">
 
-                <fieldset class="form__item form__item--stackedInput">
-                    <textarea c6-fill-check class="form__textBox form__textArea form__textArea--large form__fillCheck" id="c6-video-description" ng-trim="false" ng-model="card.note" maxlength="{{SelfieDemoPreviewCtrl.maxDescriptionLength}}"></textarea>
-                    <label class="form__label" for="c6-video-description">
-                        <i class="fa fa-times ui--error"></i>
-                        Description <span class="text--small form__counter item--right">{{SelfieDemoPreviewCtrl.maxDescriptionLength - card.note.length}}</span>
-                    </label>
-                </fieldset>
+                    <selfie-preview card="card"></selfie-preview>
 
-                <fieldset class="form__item form__item--stackedInput">
-                    <select c6-select-box data-options="SelfieDemoPreviewCtrl.actionLabelOptions" ng-options="option for option in SelfieDemoPreviewCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="SelfieDemoPreviewCtrl.card.params.action.label"></select>
-                    <label class="form__label" for="c6-video-ctaPresetText">
-                        <i class="fa fa-times ui--error"></i>
-                        Call To Action Button
-                    </label>
-                </fieldset>
+                </section><!--.formSection__group-->
 
-                <fieldset class="form__item form__item--stackedInput">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="SelfieDemoPreviewCtrl.actionLink" ng-blur="SelfieDemoPreviewCtrl.updateActionLink()">
-                    <label class="form__label" for="c6-video-ctaUrl">
-                        <i class="fa fa-times ui--error"></i>
-                        Call To Action URL
-                    </label>
-                </fieldset>
+            </div><!--.grid__item--><!--
 
-            </div><!-- .form__items -->
+            --><div class="grid__item one-third palm--one-whole">
 
-        </section><!--.formSection__group-->
+                <section class="formSection__group">
 
-    </div><!--.grid__item--><!--
+                    <div class="form__items">
 
-    --><div class="grid__item two-thirds">
+                        <fieldset class="form__item form__item--stackedInput">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-trim="false" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" maxlength="{{SelfieDemoPreviewCtrl.maxHeadlineLength}}">
+                            <label class="form__label" for="c6-video-title">
+                                <i class="fa fa-times ui--error"></i>
+                                Headline <span class="text--small form__counter item--right">{{SelfieDemoPreviewCtrl.maxHeadlineLength - card.title.length}}</span>
+                            </label>
+                        </fieldset>
 
-        <section class="formSection__group">
+                        <fieldset class="form__item form__item--stackedInput">
+                            <textarea c6-fill-check class="form__textBox form__textArea form__textArea--large form__fillCheck" id="c6-video-description" ng-trim="false" ng-model="card.note" maxlength="{{SelfieDemoPreviewCtrl.maxDescriptionLength}}"></textarea>
+                            <label class="form__label" for="c6-video-description">
+                                <i class="fa fa-times ui--error"></i>
+                                Description <span class="text--small form__counter item--right">{{SelfieDemoPreviewCtrl.maxDescriptionLength - card.note.length}}</span>
+                            </label>
+                        </fieldset>
 
-            <selfie-preview card="card"></selfie-preview>
+                        <fieldset class="form__item form__item--stackedInput">
+                            <select c6-select-box data-options="SelfieDemoPreviewCtrl.actionLabelOptions" ng-options="option for option in SelfieDemoPreviewCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="SelfieDemoPreviewCtrl.card.params.action.label"></select>
+                            <label class="form__label" for="c6-video-ctaPresetText">
+                                <i class="fa fa-times ui--error"></i>
+                                Call To Action Button
+                            </label>
+                        </fieldset>
 
-        </section><!--.formSection__group-->
+                        <fieldset class="form__item form__item--stackedInput">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="SelfieDemoPreviewCtrl.actionLink" ng-blur="SelfieDemoPreviewCtrl.updateActionLink()">
+                            <label class="form__label" for="c6-video-ctaUrl">
+                                <i class="fa fa-times ui--error"></i>
+                                Call To Action URL
+                            </label>
+                        </fieldset>
 
-    </div><!--.grid__item-->
+                    </div><!-- .form__items -->
+
+                </section><!--.formSection__group-->
+                
+                <div class="text--center">
+                    <span>Like your demo? <br>Join now to create an ad like this<br></span><br>
+                    <button class="action__btn action__btn--wide action__btn--big" ng-click="SelfieDemoInputCtrl.gotoPreview()" ng-disabled="!SelfieDemoInputCtrl.canContinue()" hidden-input-click="hiddenContinue">Sign up for FREE</button>
+                </div>
+
+            </div><!--.grid__item-->
+
+        </div><!--.grid-->
+
+    </div><!--.gridHolder-->
 
 </div>

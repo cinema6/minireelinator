@@ -7079,3 +7079,25 @@ div.tree-multiselect span.remove-selected {
         font-size:1rem;
         margin:0.125em 0 0;
     }
+/*  ================================================
+    Creative Preview Demo Pages (pre-signup campaign demo)
+    ================================================ */
+    .demoWrap {
+        background: transparent;
+        padding: 1em;
+        margin-top: 6em;
+        width: 90%;
+        max-width: 64em;
+        margin-left: auto;
+        margin-right: auto;
+    }
+        .demoWrap .select2-container--default .select2-selection--single,
+        .demoWrap .select2-container--default .select2-selection--multiple {
+            background: #fff;
+        }
+        .demoWrap .adPreview__desktop {
+            width: 100%;
+            background-color: #fff;
+            position: relative;
+            min-height: 555px;
+        }
