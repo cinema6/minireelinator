@@ -122,7 +122,7 @@ module.exports = function(http) {
             updateRequest.status = 'approved';
         } else {
             campaign.updateRequest = id;
-            campaign.status = campaign.status === 'draft' ? 'pending' : campaign.status;
+            campaign.status = (/draft|canceled|expired|outOfBudget/).test(campaign.status) ? 'pending' : campaign.status;
         }
 
         campaign.lastUpdated = currentTime;

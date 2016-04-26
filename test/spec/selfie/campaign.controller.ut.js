@@ -486,7 +486,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 describe('when the campaign does not have a pending update request', function() {
                     // this means cState.updateRequest is null
 
-                    ['draft','expired','canceled','outOfBudget','paused','active'].forEach(function(status) {
+                    ['draft','expired','canceled','outOfBudget','paused','active','pending'].forEach(function(status) {
                         // does not include pending because pending campaigns always have update requests
 
                         describe('when campaign has status of ' + status, function() {
@@ -506,7 +506,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         }
 
                                         expectedData = status === 'draft' ? cState._campaign.pojoify() : copy(cState.campaign);
-                                        expectedData.status = (/draft|expired|canceled|outOfBudget/).test(status) ? 'active' : status;
+                                        expectedData.status = (/draft|expired|canceled|outOfBudget/).test(status) ? 'pending' : status;
 
                                         $scope.$apply(function() {
                                             SelfieCampaignCtrl.confirmSubmission({token: 'pay-123'}, amount);
