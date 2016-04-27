@@ -7084,6 +7084,19 @@ div.tree-multiselect span.remove-selected {
 /*  ================================================
     Creative Preview Demo Pages (pre-signup campaign demo)
     ================================================ */
+    .bgClear .demoForm {
+        padding-top: 4em;
+    }
+        .bgClear .demoForm .one-half {
+            max-width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .bgClear .demoForm .form--narrow {
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
     .demoPage {
         display: block;
     }
@@ -7121,6 +7134,16 @@ div.tree-multiselect span.remove-selected {
             position: relative;
             min-height: 555px;
         }
+    @media only screen and (min-width: 769px){
+        .demoWrap__holder .hide--desktop {
+            display: none;
+        }
+        .bgClear .demoForm .one-half {
+            max-width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
     @media only screen and (max-width: 768px){
         .demoPage .signup__header .signup__gridHolder .three-quarters {
             display: none;
@@ -7151,8 +7174,24 @@ div.tree-multiselect span.remove-selected {
             height: 560px;
             padding-bottom: 0;
         }
+        .demoWrap__holder .hide--mobile {
+            display: none;
+        }
+        .form__textBox:focus ~ .form__label, .form__fillCheck--filled ~ .form__label {
+            -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0);
+            opacity: 0;
+            text-align: right;
+            left: 0;
+        }
     }
-    
+    @media only screen and (min-width: 480px) and (max-width: 768px) { 
+        .bgClear .demoForm .one-half {
+            max-width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
     .demoFooter{
         margin-top: -40px;
         min-height: 40px;
