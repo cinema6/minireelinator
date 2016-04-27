@@ -313,8 +313,9 @@ function( angular , c6State  ) {
                 self.actionLink = link;
             };
 
-            self.signUp = function() {
-                c6State.goTo('Selfie:SignUp:Form');
+            self.signUp = function(device) {
+                var state = (device === 'mobile') ? 'Selfie:SignUp:Form' : 'Selfie:SignUp:Full';
+                c6State.goTo(state);
             };
         }]);
 });
