@@ -84,6 +84,7 @@ define(['app'], function(appModule) {
                     });
 
                     expect(FundState.campaign).toEqual(FundState.cParent.campaign)
+                    expect(FundState._campaign).toEqual(FundState.cParent._campaign)
                 });
             });
 
@@ -100,7 +101,7 @@ define(['app'], function(appModule) {
                 });
 
                 it('should check credit for campaign', function() {
-                    expect(PaymentService.creditCheck).toHaveBeenCalledWith(FundState.campaign);
+                    expect(PaymentService.creditCheck).toHaveBeenCalledWith(FundState._campaign);
                 });
 
                 it('should find all paymentMethods', function() {
