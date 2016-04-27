@@ -34,6 +34,7 @@ define(['app'], function(appModule) {
                 $scope: $scope
             });
             spyOn(ctrl._private, 'updateModel');
+            spyOn(ctrl, 'checkVideoText');
         });
 
         it('should exist', function() {
@@ -54,8 +55,7 @@ define(['app'], function(appModule) {
                 videoText: ''
             });
             expect(ctrl.showEmailField).toBe(true);
-            expect(ctrl._private.videoData).toBeNull();
-            expect(ctrl._private.videoStats).toBeNull();
+            expect(ctrl._private.video).toBeNull();
         });
 
         describe('initializing the email field', function() {
@@ -136,8 +136,10 @@ define(['app'], function(appModule) {
                     website: 'value',
                     videoText: 'value'
                 };
-                ctrl._private.videoData = { };
-                ctrl._private.videoStats = { };
+                ctrl._private.video = {
+                    data: { },
+                    stats: { }
+                };
             });
 
             describe('when there are missing inputs', function() {
@@ -160,13 +162,9 @@ define(['app'], function(appModule) {
                 });
             });
 
-            describe('when something is missing from the video data', function() {
+            describe('when there is no video', function() {
                 it('should return false', function() {
-                    ctrl._private.videoData = { };
-                    ctrl._private.videoStats = null;
-                    expect(ctrl.canContinue()).toBe(false);
-                    ctrl._private.videoData = null;
-                    ctrl._private.videoStats = { };
+                    ctrl._private.video = null;
                     expect(ctrl.canContinue()).toBe(false);
                 });
             });
@@ -178,50 +176,50 @@ define(['app'], function(appModule) {
             });
         });
 
-        describe('checkVideoText', function() {
-            var check;
+        describe('fetchVideo', function() {
+            var fetch;
 
             beforeEach(function() {
-                check = function() {
-                    ctrl.checkVideoText();
-                    mockDebounce.calls.mostRecent().args[0]();
+                spyOn($scope, '$apply');
+                fetch = function(text) {
+                    ctrl._private.fetchVideo();
+                    mockDebounce.calls.mostRecent().args[0]([text]);
                     $scope.$digest();
                 };
             });
 
             it('should be debounced', function() {
-                expect(ctrl.checkVideoText).toBe(debounceFn);
+                expect(ctrl._private.fetchVideo).toBe(debounceFn);
                 expect(mockDebounce).toHaveBeenCalledWith(jasmine.any(Function), 1000);
             });
 
             describe('getting video data', function() {
-                it('should work and be able to modify the card', function() {
+                it('should work', function() {
                     SelfieVideoService.dataFromText.and.returnValue($q.when('video data'));
-                    ctrl.inputs.videoText = 'video url';
-                    check();
+                    SelfieVideoService.statsFromService.and.returnValue($q.when());
+                    fetch('video url');
                     expect(SelfieVideoService.dataFromText).toHaveBeenCalledWith('video url');
-                    expect(ctrl._private.videoData).toBe('video data');
                 });
 
                 it('should handle a failure', function() {
                     SelfieVideoService.dataFromText.and.returnValue($q.reject('epic fail'));
-                    ctrl.inputs.videoText = 'video url';
-                    check();
+                    fetch('video url');
                     expect(ctrl.errors.videoText).toBe(true);
                 });
             });
 
             describe('getting video stats', function() {
-                it('should work and set the videoData', function() {
-                    SelfieVideoService.dataFromText.and.returnValue($q.when({
+                it('should work and set the video data', function() {
+                    var data = {
                         service: 'service',
                         id: 'id'
-                    }));
-                    SelfieVideoService.statsFromService.and.returnValue('video stats');
-                    ctrl.inputs.videoText = 'video url';
-                    check();
+                    };
+                    SelfieVideoService.dataFromText.and.returnValue($q.when(data));
+                    SelfieVideoService.statsFromService.and.returnValue($q.when('video stats'));
+                    fetch('video url');
                     expect(SelfieVideoService.statsFromService).toHaveBeenCalledWith('service', 'id');
-                    expect(ctrl._private.videoStats).toBe('video stats');
+                    expect(ctrl._private.video.data).toBe(data);
+                    expect(ctrl._private.video.stats).toBe('video stats');
                 });
 
                 it('should reset the video text error if it succeeds', function() {
@@ -236,8 +234,7 @@ define(['app'], function(appModule) {
                         title: 'hello this is a title'
                     }));
                     ctrl.errors.videoText = true;
-                    ctrl.inputs.videoText = 'video url';
-                    check();
+                    fetch('video url');
                     expect(ctrl.errors.videoText).toBe(false);
                 });
 
@@ -250,9 +247,41 @@ define(['app'], function(appModule) {
                         }
                     }));
                     SelfieVideoService.statsFromService.and.returnValue($q.reject('epic fail'));
-                    ctrl.inputs.videoText = 'video url';
-                    check();
+                    fetch('video url');
                     expect(ctrl.errors.videoText).toBe(true);
+                });
+            });
+        });
+
+        describe('checkVideoText', function() {
+            beforeEach(function() {
+                ctrl.checkVideoText.and.callThrough();
+            });
+
+            it('should set the video to null', function() {
+                ctrl._private.video = 'video';
+                ctrl.checkVideoText();
+                expect(ctrl._private.video).toBeNull();
+            });
+
+            describe('if there is video text', function() {
+                it('should fetch the video', function() {
+                    ctrl.inputs.videoText = 'video text';
+                    ctrl.checkVideoText();
+                    expect(debounceFn).toHaveBeenCalledWith('video text');
+                });
+            });
+
+            describe('if there is no video text', function() {
+                it('should not fetch the video', function() {
+                    ctrl.checkVideoText();
+                    expect(debounceFn).not.toHaveBeenCalled();
+                });
+
+                it('should clear any video text errors', function() {
+                    ctrl.errors.videoText = true;
+                    ctrl.checkVideoText();
+                    expect(ctrl.errors.videoText).toBe(false);
                 });
             });
         });
@@ -264,15 +293,7 @@ define(['app'], function(appModule) {
             });
 
             it('should create a new card for the model', function() {
-                var campaign = {
-                    cards: [{
-                        links: {
-                            Action: {
-
-                            }
-                        }
-                    }]
-                };
+                var campaign = { cards: [ { links: { Action: { } } } ] };
                 CampaignService.create.and.returnValue(campaign);
                 ctrl._private.updateModel();
                 expect(CampaignService.create).toHaveBeenCalledWith(null, { }, null);
@@ -280,6 +301,7 @@ define(['app'], function(appModule) {
             });
 
             it('should default title, note, and cta link', function() {
+                ctrl._private.video = null;
                 ctrl._private.updateModel();
                 expect(ctrl.model.card.title).toBe('Your Title Here!');
                 expect(ctrl.model.card.note).toBe('Your Description Here!');
@@ -287,12 +309,15 @@ define(['app'], function(appModule) {
             });
 
             it('should be able to set card properties from video data', function() {
-                ctrl._private.videoData = {
-                    service: 'service',
-                    id: 'id',
+                ctrl._private.video = {
                     data: {
-                        foo: 'bar'
-                    }
+                        service: 'service',
+                        id: 'id',
+                        data: {
+                            foo: 'bar'
+                        }
+                    },
+                    stats: null
                 };
                 ctrl._private.updateModel();
                 var card = ctrl.model.card;
@@ -302,13 +327,16 @@ define(['app'], function(appModule) {
             });
 
             it('should be able to set card properties from video stats', function() {
-                ctrl._private.videoStats = {
-                    title: 'hello this is a title',
-                    thumbnails: {
-                        small: 'small.jpg',
-                        large: 'large.jpg'
-                    },
-                    description: 'message in a bottle'
+                ctrl._private.video = {
+                    data: null,
+                    stats: {
+                        title: 'hello this is a title',
+                        thumbnails: {
+                            small: 'small.jpg',
+                            large: 'large.jpg'
+                        },
+                        description: 'message in a bottle'
+                    }
                 };
                 ctrl._private.updateModel();
                 var card = ctrl.model.card;

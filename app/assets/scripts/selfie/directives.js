@@ -257,7 +257,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     input.on('blur', function() {
                         var value = $(this).val();
 
-                        if (!value) {
+                        if (!value || input.hasClass('ng-invalid')) {
                             $element.addClass('ui--hasError');
                         } else if (input.hasClass('ng-valid')) {
                             $element.removeClass('ui--hasError');

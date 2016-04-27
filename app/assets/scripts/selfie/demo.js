@@ -54,10 +54,14 @@ function( angular , c6State  ) {
             var MAX_DESCRIPTION_LENGTH = 400;
             var DEFAULT_TITLE = 'Your Title Here!';
             var DEFAULT_NOTE = 'Your Description Here!';
+            var DEFAULT_LINK = 'https://www.reelcontent.com';
 
             var self = this;
             var _private = { };
             if (window.c6.kHasKarma) { self._private = _private; }
+
+            // Allows query param 'email=false' to hide the email field
+            self.showEmailField = ($location.search().email !== 'false');
 
             self.errors = {
                 company: false,
@@ -71,10 +75,7 @@ function( angular , c6State  ) {
                 website: '',
                 videoText: ''
             };
-            self.showEmailField = ($location.search().email !== 'false');
-            self.videoError = false;
-            _private.videoData = null;
-            _private.videoStats = null;
+            _private.video = null;
 
             _private.updateModel = function() {
                 extend(self.model, {
@@ -83,29 +84,49 @@ function( angular , c6State  ) {
                     website: self.inputs.website
                 });
 
+                // Create a card and add it to the model
                 var campaign = CampaignService.create(null, { }, null);
                 var card = campaign.cards[0];
                 card.title = DEFAULT_TITLE;
                 card.note = DEFAULT_NOTE;
                 card.links.Action = {
-                    uri: 'https://www.reelcontent.com'
+                    uri: DEFAULT_LINK
                 };
-                if(_private.videoData) {
-                    card.data.service = _private.videoData.service;
-                    card.data.videoid = _private.videoData.id;
-                    extend(card.data, _private.videoData.data);
+                if(_private.video && _private.video.data) {
+                    var data = _private.video.data;
+                    card.data.service = data.service;
+                    card.data.videoid = data.id;
+                    extend(card.data, data.data);
                 }
-                if(_private.videoStats) {
-                    var title = (_private.videoStats.title || '').slice(0, MAX_HEADLINE_LENGTH);
+                if(_private.video && _private.video.stats) {
+                    var stats = _private.video.stats;
+                    var title = (stats.title || '').slice(0, MAX_HEADLINE_LENGTH);
                     card.title = (title.length && title) || undefined;
-                    var thumbs = (_private.videoStats.thumbnails || { small: null, large: null });
+                    var thumbs = (stats.thumbnails || { small: null, large: null });
                     card.data.thumbs = thumbs;
-                    var note = (_private.videoStats.description || '')
-                        .slice(0, MAX_DESCRIPTION_LENGTH);
+                    var note = (stats.description || '').slice(0, MAX_DESCRIPTION_LENGTH);
                     card.note = note;
                 }
                 self.model.card = card;
             };
+
+            _private.fetchVideo = c6Debounce(function(args) {
+                var text = args[0];
+
+                return SelfieVideoService.dataFromText(text).then(function(data) {
+                    return SelfieVideoService.statsFromService(data.service, data.id)
+                    .then(function(stats) {
+                        _private.video = {
+                            data: data,
+                            stats: stats
+                        };
+                        self.errors.videoText = false;
+                        $scope.$apply();
+                    });
+                }).catch(function() {
+                    self.errors.videoText = true;
+                });
+            }, 1000);
 
             self.initWithModel = function(model) {
                 var data = model.card.data;
@@ -129,7 +150,7 @@ function( angular , c6State  ) {
                 var hasInputs = Object.keys(self.inputs).every(function(key) {
                     return self.inputs[key] || (key === 'email' && !self.showEmailField);
                 });
-                var hasVideo = !!_private.videoData && !!_private.videoStats;
+                var hasVideo = !!_private.video;
                 return !hasError && hasInputs && hasVideo;
             };
 
@@ -154,23 +175,16 @@ function( angular , c6State  ) {
                 }
             };
 
-            self.checkVideoText = c6Debounce(function() {
+            self.checkVideoText = function() {
                 var text = self.inputs.videoText;
 
+                _private.video = null;
                 if(text) {
-                    _private.videoData = null;
-                    _private.videoStats = null;
-                    return SelfieVideoService.dataFromText(text).then(function(data) {
-                        _private.videoData = data;
-                        return SelfieVideoService.statsFromService(data.service, data.id);
-                    }).then(function(data) {
-                        _private.videoStats = data;
-                        self.errors.videoText = false;
-                    }).catch(function() {
-                        self.errors.videoText = true;
-                    });
+                    _private.fetchVideo(text);
+                } else {
+                    self.errors.videoText = false;
                 }
-            }, 1000);
+            };
 
             self.gotoPreview = function() {
                 _private.updateModel();
