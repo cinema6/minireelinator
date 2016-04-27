@@ -112,7 +112,7 @@
                                             </div>
                                         </fieldset>
                                         <span class="alertMessage alert__success text--center"
-                                            ng-show="SelfieCampaignFundCtrl.budgetChange && SelfieCampaignFundCtrl.budgetChange > 0 && SelfieCampaignFundCtrl.budgetChange <= SelfieCampaignFundCtrl.accounting.remainingFunds">
+                                            ng-show="!SelfieCampaignFundCtrl.minDeposit">
                                             <strong>You have enough funds to run your campaign!</strong>
                                             <span ng-if="!SelfieCampaignFundCtrl.paymentMethods.length">
                                                 We need a payment method on file to approve your campaign.
@@ -120,7 +120,7 @@
                                         </span>
 
                                         <span class="alertMessage text--center"
-                                            ng-show="SelfieCampaignFundCtrl.budgetChange > SelfieCampaignFundCtrl.accounting.remainingFunds && SelfieCampaignFundCtrl.minDeposit">
+                                            ng-show="SelfieCampaignFundCtrl.minDeposit">
                                             You need to deposit at least {{SelfieCampaignFundCtrl.minDeposit | dollars:2}} into your account to run this campaign.
                                         </span>
                                     </div>

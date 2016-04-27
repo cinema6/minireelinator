@@ -1799,12 +1799,17 @@ function( angular , c6State  , PaginatedListState                    ,
                     // this could be the pojoified campaign
                     // or pojoified updateRequest.data
                     this.campaign = this.cParent.campaign;
+
+                    // this is the campaign DB model and will
+                    // have the campaign and org id needed
+                    // in credit check in model() hook
+                    this._campaign = this.cParent._campaign;
                 };
 
                 this.model = function() {
                     return $q.all({
                         balance: PaymentService.getBalance(),
-                        creditCheck: PaymentService.creditCheck(this.campaign),
+                        creditCheck: PaymentService.creditCheck(this._campaign),
                         paymentMethods: cinema6.db.findAll('paymentMethod')
                     });
                 };
