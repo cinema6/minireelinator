@@ -454,8 +454,8 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
             };
         }])
 
-        .service('PaymentService', ['$http','c6UrlMaker',
-        function                   ( $http , c6UrlMaker ) {
+        .service('PaymentService', ['$http','$q','c6UrlMaker',
+        function                   ( $http , $q , c6UrlMaker ) {
             var accounting = {};
 
             Object.defineProperties(this, {
@@ -479,6 +479,20 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
 
                         return accounting;
                     });
+            };
+
+            this.creditCheck = function(campaign) {
+                return $http.post(c6UrlMaker('accounting/credit-check', 'api'), {
+                    org: campaign.org,
+                    campaign: campaign.id,
+                    newBudget: campaign.pricing.budget
+                }).then(function() {
+                    return { depositAmount: 0 };
+                }).catch(function(err) {
+                    if (err.status !== 402) { return $q.reject(err); }
+
+                    return { depositAmount: err.data.depositAmount };
+                });
             };
 
             this.getToken = function() {
