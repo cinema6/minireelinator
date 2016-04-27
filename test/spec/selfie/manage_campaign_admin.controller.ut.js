@@ -184,6 +184,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     cName: 'Selfie:All:CampaignDashboard'
                 },
                 campaign: campaign,
+                _campaign: campaign,
                 updateRequest: updateRequest,
                 saveUpdateRequest: jasmine.createSpy('saveUpdateRequest()').and.returnValue($q.when())
             };
@@ -263,6 +264,64 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                             expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(true);
                         });
+                    });
+                });
+            });
+
+            describe('setActive()', function() {
+                var saveDeferred;
+
+                beforeEach(function() {
+                    saveDeferred = $q.defer();
+
+                    spyOn(campaign, 'save').and.returnValue(saveDeferred.promise);
+
+                    cState._campaign.status = 'draft';
+
+                    SelfieManageCampaignAdminCtrl.setActive();
+                });
+
+                it('should set the campaign status to "active"', function() {
+                    expect(cState._campaign.status).toBe('active');
+                });
+
+                it('should save the campaign', function() {
+                    expect(campaign.save).toHaveBeenCalled();
+                });
+
+                describe('when save fulfills', function() {
+                    describe('when parent dashboard state is Pending', function() {
+                        it('should go to Selfie:Pending:CampaignDashboard', function() {
+                            cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve();
+                            });
+
+                            expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
+                        });
+                    });
+
+                    describe('when parent dashboard state is All', function() {
+                        it('should go to Selfie:All:CampaignDashboard', function() {
+                            cState.cParent.cName = 'Selfie:All:CampaignDashboard';
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve();
+                            });
+
+                            expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
+                        });
+                    });
+                });
+
+                describe('when save rejects', function() {
+                    it('should put error on the Ctrl', function() {
+                        $scope.$apply(function() {
+                            saveDeferred.reject('BAD');
+                        });
+
+                        expect(SelfieManageCampaignAdminCtrl.error).toContain('There was a problem activating the campaign');
                     });
                 });
             });

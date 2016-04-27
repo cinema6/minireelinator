@@ -55,6 +55,24 @@ define(['app'], function(appModule) {
             });
         });
 
+        describe('when the input loses focus and has the "ng-invalid" class', function() {
+            it('should add the "ui--hasError" class', function() {
+                var $input = $fieldset.find('#my-input');
+
+                $scope.$apply(function() {
+                    $input.focus();
+                    $input.val('something');
+                    $input.addClass('ng-invalid');
+                });
+
+                $scope.$apply(function() {
+                    $input.blur();
+                });
+
+                expect($fieldset.hasClass('ui--hasError')).toBe(true);
+            });
+        });
+
         describe('when the input loses focus and has a value in it', function() {
             describe('when the input is valid', function() {
                 it('should not remove the "ui--hasError" class if ng-valid', function() {

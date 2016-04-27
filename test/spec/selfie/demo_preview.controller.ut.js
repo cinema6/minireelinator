@@ -192,8 +192,13 @@ define(['app'], function(appModule) {
         });
 
         describe('signUp', function() {
-            it('should go to the signup form', function() {
-                ctrl.signUp();
+            it('should go to the signup form for desktop', function() {
+                ctrl.signUp('desktop');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Full');
+            });
+
+            it('should go to the signup form for mobile', function() {
+                ctrl.signUp('mobile');
                 expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Form');
             });
         });

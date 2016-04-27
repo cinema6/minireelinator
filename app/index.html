@@ -29,7 +29,8 @@
         <!--C6INJECT-->
         <c6-title></c6-title>
     </head>
-    <body ng-class="{'bgClear': ['Selfie:SignUp:Form', 'Selfie:SignUpSuccess:Frame', 'Selfie:Demo:Input:Frame'].indexOf(currentState) !== -1}">
+
+    <body ng-class="{'bgClear': ['Selfie:SignUp:Form', 'Selfie:SignUpSuccess:Frame', 'Selfie:Demo:Input:Frame'].indexOf(currentState) !== -1, demoPage: ['Selfie:Demo:Preview', 'Selfie:Demo:Preview:Frame'].indexOf(currentState) !== -1}">
         <c6-view></c6-view>
 
         <script data-main="scripts/main" src="//lib.reelcontent.com/require/2.1.5/require.min.js"> </script>
