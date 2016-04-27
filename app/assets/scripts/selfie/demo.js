@@ -46,33 +46,47 @@ function( angular , c6State  ) {
 
         .controller('SelfieDemoInputController', ['c6Debounce', '$scope', 'SelfieVideoService',
                                                   'CampaignService', 'SettingsService', 'c6State',
+                                                  '$location',
         function                                 ( c6Debounce ,  $scope ,  SelfieVideoService ,
-                                                   CampaignService ,  SettingsService ,  c6State ) {
+                                                   CampaignService ,  SettingsService ,  c6State ,
+                                                   $location ) {
             var MAX_HEADLINE_LENGTH = 40;
             var MAX_DESCRIPTION_LENGTH = 400;
+            var DEFAULT_TITLE = 'Your Title Here!';
+            var DEFAULT_NOTE = 'Your Description Here!';
 
             var self = this;
             var _private = { };
             if (window.c6.kHasKarma) { self._private = _private; }
 
-            self.videoText = '';
-            self.company = '';
-            self.email = '';
-            self.website = '';
+            self.errors = {
+                company: false,
+                email: false,
+                website: false,
+                videoText: false
+            };
+            self.inputs = {
+                company: '',
+                email: '',
+                website: '',
+                videoText: ''
+            };
+            self.showEmailField = ($location.search().email !== 'false');
             self.videoError = false;
-            self.validWebsite = false;
-            self.validVideoText = false;
             _private.videoData = null;
             _private.videoStats = null;
 
             _private.updateModel = function() {
-                self.model.company = self.company;
-                self.model.email = self.email;
-                self.model.website = self.website;
+                extend(self.model, {
+                    company: self.inputs.company,
+                    email: self.inputs.email,
+                    website: self.inputs.website
+                });
 
                 var campaign = CampaignService.create(null, { }, null);
                 var card = campaign.cards[0];
-                card.title = 'Your Title Here!';
+                card.title = DEFAULT_TITLE;
+                card.note = DEFAULT_NOTE;
                 card.links.Action = {
                     uri: 'https://www.reelcontent.com'
                 };
@@ -95,53 +109,67 @@ function( angular , c6State  ) {
 
             self.initWithModel = function(model) {
                 var data = model.card.data;
+                var text = SelfieVideoService.urlFromData(data.service, data.videoid, data);
 
                 self.model = model;
-                self.company = model.company;
-                self.website = model.website;
-                self.videoText = SelfieVideoService.urlFromData(data.service, data.videoid, data);
-                self.checkWebsite();
+                extend(self.inputs, {
+                    company: model.company,
+                    email: model.email,
+                    website: model.website,
+                    videoText: text
+                });
+
                 self.checkVideoText();
             };
 
             self.canContinue = function() {
-                return self.validWebsite && self.validVideoText;
-            };
-
-            self.checkWebsite = function() {
-                self.validWebsite = (!!self.website);
+                var hasError = Object.keys(self.errors).some(function(key) {
+                    return self.errors[key];
+                });
+                var hasInputs = Object.keys(self.inputs).every(function(key) {
+                    return self.inputs[key] || (key === 'email' && !self.showEmailField);
+                });
+                var hasVideo = !!_private.videoData && !!_private.videoStats;
+                return !hasError && hasInputs && hasVideo;
             };
 
             self.formatWebsite = function () {
-                if (!self.website) { return; }
+                var website = self.inputs.website;
 
-                if (!(/^http:\/\/|https:\/\//).test(self.website)) {
-                    self.website = 'http://' + self.website;
+                if(website && !(/^http:\/\/|https:\/\//).test(website)) {
+                    self.inputs.website = 'http://' + website;
+                }
+            };
+
+            self.getPreviewHref = function() {
+                var base = '/#/demo/frame/preview';
+                var params = $location.search();
+                var keys = Object.keys(params);
+                if(keys.length === 0) {
+                    return base;
+                } else {
+                    return base + '?' + keys.map(function(key) {
+                        return key + '=' + encodeURIComponent(params[key]);
+                    }).join('&');
                 }
             };
 
             self.checkVideoText = c6Debounce(function() {
-                var text = self.videoText;
+                var text = self.inputs.videoText;
 
-                if(!text) {
-                    self.videoError = false;
-                    self.validVideoText = false;
-                    return;
-                }
-
-                return SelfieVideoService.dataFromText(text).then(function(data) {
-                    _private.videoData = data;
-                    return SelfieVideoService.statsFromService(data.service, data.id);
-                }).then(function(data) {
-                    _private.videoStats = data;
-                    self.videoError = false;
-                    self.validVideoText = true;
-                }).catch(function() {
+                if(text) {
                     _private.videoData = null;
                     _private.videoStats = null;
-                    self.videoError = true;
-                    self.validVideoText = false;
-                });
+                    return SelfieVideoService.dataFromText(text).then(function(data) {
+                        _private.videoData = data;
+                        return SelfieVideoService.statsFromService(data.service, data.id);
+                    }).then(function(data) {
+                        _private.videoStats = data;
+                        self.errors.videoText = false;
+                    }).catch(function() {
+                        self.errors.videoText = true;
+                    });
+                }
             }, 1000);
 
             self.gotoPreview = function() {
@@ -190,8 +218,10 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieDemoPreviewController', ['CollateralService',
-        function                                   ( CollateralService ) {
+        .controller('SelfieDemoPreviewController', ['CollateralService', 'c6State',
+                                                    'SpinnerService',
+        function                                   ( CollateralService ,  c6State ,
+                                                     SpinnerService ) {
             var MAX_HEADLINE_LENGTH = 40;
             var MAX_DESCRIPTION_LENGTH = 400;
             var CTA_OPTIONS = [
@@ -253,17 +283,24 @@ function( angular , c6State  ) {
             };
 
             self.initWithModel = function(model) {
+                SpinnerService.display();
                 self.model = model;
                 self.card = model.card;
                 self.actionLink = model.website;
                 self.updateActionLink();
-                _private.getWebsiteData(model.website);
+                _private.getWebsiteData(model.website).finally(function() {
+                    SpinnerService.close();
+                });
             };
 
             self.updateActionLink = function() {
                 var link = _private.generateLink(self.actionLink);
                 self.card.links.Action.uri = link;
                 self.actionLink = link;
+            };
+
+            self.signUp = function() {
+                c6State.goTo('Selfie:SignUp:Form');
             };
         }]);
 });

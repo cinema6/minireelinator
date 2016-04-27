@@ -7101,3 +7101,7 @@ div.tree-multiselect span.remove-selected {
             position: relative;
             min-height: 555px;
         }
+        .spinnerWrap {
+            left: 0;
+            width: 100%;
+        }

@@ -2,7 +2,7 @@ define(['app'], function(appModule) {
     'use strict';
 
     describe('SelfieDemoInputController', function() {
-        var ctrl, $scope, mockDebounce, debounceFn, SelfieVideoService, $q, CampaignService, SettingsService, c6State;
+        var ctrl, $controller, $scope, mockDebounce, debounceFn, SelfieVideoService, $q, CampaignService, SettingsService, c6State, $location;
 
         beforeEach(function() {
             module(appModule.name);
@@ -11,7 +11,7 @@ define(['app'], function(appModule) {
             module(function($provide) {
                 $provide.value('c6Debounce', mockDebounce);
             });
-            var $controller, $rootScope;
+            var $rootScope;
             inject(function($injector) {
                 $controller = $injector.get('$controller');
                 $rootScope = $injector.get('$rootScope');
@@ -20,6 +20,7 @@ define(['app'], function(appModule) {
                 CampaignService = $injector.get('CampaignService');
                 SettingsService = $injector.get('SettingsService');
                 c6State = $injector.get('c6State');
+                $location = $injector.get('$location');
             });
             $scope = $rootScope.$new();
             spyOn(SelfieVideoService, 'dataFromText');
@@ -28,11 +29,11 @@ define(['app'], function(appModule) {
             spyOn(CampaignService, 'create').and.callThrough();
             spyOn(SettingsService, 'register');
             spyOn(c6State, 'goTo');
+            spyOn($location, 'search').and.returnValue({ });
             ctrl = $controller('SelfieDemoInputController', {
                 $scope: $scope
             });
             spyOn(ctrl._private, 'updateModel');
-            spyOn(ctrl, 'checkWebsite');
         });
 
         it('should exist', function() {
@@ -40,15 +41,45 @@ define(['app'], function(appModule) {
         });
 
         it('should initialize properties', function() {
-            expect(ctrl.videoText).toBe('');
-            expect(ctrl.website).toBe('');
-            expect(ctrl.company).toBe('');
-            expect(ctrl.email).toBe('');
-            expect(ctrl.videoError).toBe(false);
-            expect(ctrl.validWebsite).toBe(false);
-            expect(ctrl.validVideoText).toBe(false);
+            expect(ctrl.errors).toEqual({
+                company: false,
+                email: false,
+                website: false,
+                videoText: false
+            });
+            expect(ctrl.inputs).toEqual({
+                company: '',
+                email: '',
+                website: '',
+                videoText: ''
+            });
+            expect(ctrl.showEmailField).toBe(true);
             expect(ctrl._private.videoData).toBeNull();
             expect(ctrl._private.videoStats).toBeNull();
+        });
+
+        describe('initializing the email field', function() {
+            it('should be hidden if the email query param is false', function() {
+                $location.search.and.returnValue({ email: 'false' });
+                ctrl = $controller('SelfieDemoInputController', {
+                    $scope: $scope
+                });
+                expect(ctrl.showEmailField).toBe(false);
+            });
+
+            it('should be shown if the email query param is not false', function() {
+                ['true', 'null', 'random'].forEach(function(param) {
+                    $location.search.and.returnValue({ email: param });
+                    ctrl = $controller('SelfieDemoInputController', {
+                        $scope: $scope
+                    });
+                    expect(ctrl.showEmailField).toBe(true);
+                });
+            });
+
+            it('should show the email field by default', function() {
+                expect(ctrl.showEmailField).toBe(true);
+            });
         });
 
         describe('initWithModel', function() {
@@ -57,6 +88,7 @@ define(['app'], function(appModule) {
             beforeEach(function() {
                 model = {
                     company: 'company',
+                    email: 'email',
                     website: 'website',
                     card: {
                         data: {
@@ -72,40 +104,77 @@ define(['app'], function(appModule) {
                 expect(ctrl.model).toBe(model);
             });
 
-            it('should set the company', function() {
-                ctrl.initWithModel(model);
-                expect(ctrl.company).toBe('company');
-            });
-
-            it('should set the website and validate it', function() {
-                ctrl.initWithModel(model);
-                expect(ctrl.website).toBe('website');
-                expect(ctrl.checkWebsite).toHaveBeenCalledWith();
-            });
-
-            it('should set the video text and validate it', function() {
+            it('should set the inputs from the model', function() {
                 SelfieVideoService.urlFromData.and.returnValue('video url');
                 ctrl.initWithModel(model);
                 expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith('service', 'videoid', model.card.data);
-                expect(ctrl.videoText).toBe('video url');
+                expect(ctrl.inputs).toEqual({
+                    company: 'company',
+                    email: 'email',
+                    website: 'website',
+                    videoText: 'video url'
+                });
+            });
+
+            it('should check the video text', function() {
+                ctrl.initWithModel(model);
                 expect(ctrl.checkVideoText).toHaveBeenCalledWith();
             });
         });
 
         describe('canContinue', function() {
-            it('should be true if there are valid inputs', function() {
-                ctrl.validWebsite = true;
-                ctrl.validVideoText = true;
-                expect(ctrl.canContinue()).toBe(true);
+            beforeEach(function() {
+                ctrl.errors = {
+                    company: false,
+                    email: false,
+                    website: false,
+                    videoText: false
+                };
+                ctrl.inputs = {
+                    company: 'value',
+                    email: 'value',
+                    website: 'value',
+                    videoText: 'value'
+                };
+                ctrl._private.videoData = { };
+                ctrl._private.videoStats = { };
             });
 
-            it('should be false if any input is invalid', function() {
-                ctrl.validWebsite = true;
-                ctrl.validVideoText = false;
-                expect(ctrl.canContinue()).toBe(false);
-                ctrl.validWebsite = false;
-                ctrl.validVideoText = true;
-                expect(ctrl.canContinue()).toBe(false);
+            describe('when there are missing inputs', function() {
+                it('should return false', function() {
+                    Object.keys(ctrl.inputs).forEach(function(key) {
+                        ctrl.inputs[key] = '';
+                        expect(ctrl.canContinue()).toBe(false);
+                        ctrl.inputs[key] = 'value';
+                    });
+                });
+            });
+
+            describe('when there are some errors', function() {
+                it('should return false', function() {
+                    Object.keys(ctrl.errors).forEach(function(key) {
+                        ctrl.errors[key] = true;
+                        expect(ctrl.canContinue()).toBe(false);
+                        ctrl.errors[key] = false;
+                    });
+                });
+            });
+
+            describe('when something is missing from the video data', function() {
+                it('should return false', function() {
+                    ctrl._private.videoData = { };
+                    ctrl._private.videoStats = null;
+                    expect(ctrl.canContinue()).toBe(false);
+                    ctrl._private.videoData = null;
+                    ctrl._private.videoStats = { };
+                    expect(ctrl.canContinue()).toBe(false);
+                });
+            });
+
+            describe('when all is well', function() {
+                it('should return true', function() {
+                    expect(ctrl.canContinue()).toBe(true);
+                });
             });
         });
 
@@ -125,30 +194,10 @@ define(['app'], function(appModule) {
                 expect(mockDebounce).toHaveBeenCalledWith(jasmine.any(Function), 1000);
             });
 
-            describe('if the provided text is falsy', function() {
-                it('should reset the video error', function() {
-                    ['', null, undefined].forEach(function(text) {
-                        ctrl.videoError = true;
-                        ctrl.videoText = text;
-                        check();
-                        expect(ctrl.videoError).toBe(false);
-                    });
-                });
-
-                it('should indicate that this is not valid video text', function() {
-                    ['', null, undefined].forEach(function(text) {
-                        ctrl.validVideoText = true;
-                        ctrl.videoText = text;
-                        check();
-                        expect(ctrl.validVideoText).toBe(false);
-                    });
-                });
-            });
-
             describe('getting video data', function() {
                 it('should work and be able to modify the card', function() {
                     SelfieVideoService.dataFromText.and.returnValue($q.when('video data'));
-                    ctrl.videoText = 'video url';
+                    ctrl.inputs.videoText = 'video url';
                     check();
                     expect(SelfieVideoService.dataFromText).toHaveBeenCalledWith('video url');
                     expect(ctrl._private.videoData).toBe('video data');
@@ -156,10 +205,9 @@ define(['app'], function(appModule) {
 
                 it('should handle a failure', function() {
                     SelfieVideoService.dataFromText.and.returnValue($q.reject('epic fail'));
-                    ctrl.videoText = 'video url';
+                    ctrl.inputs.videoText = 'video url';
                     check();
-                    expect(ctrl.videoError).toBe(true);
-                    expect(ctrl.validVideoText).toBe(false);
+                    expect(ctrl.errors.videoText).toBe(true);
                 });
             });
 
@@ -170,13 +218,13 @@ define(['app'], function(appModule) {
                         id: 'id'
                     }));
                     SelfieVideoService.statsFromService.and.returnValue('video stats');
-                    ctrl.videoText = 'video url';
+                    ctrl.inputs.videoText = 'video url';
                     check();
                     expect(SelfieVideoService.statsFromService).toHaveBeenCalledWith('service', 'id');
                     expect(ctrl._private.videoStats).toBe('video stats');
                 });
 
-                it('should reset the video error if it succeeds', function() {
+                it('should reset the video text error if it succeeds', function() {
                     SelfieVideoService.dataFromText.and.returnValue($q.when({
                         service: 'service',
                         id: 'id',
@@ -187,21 +235,10 @@ define(['app'], function(appModule) {
                     SelfieVideoService.statsFromService.and.returnValue($q.when({
                         title: 'hello this is a title'
                     }));
-                    ctrl.videoError = true;
-                    ctrl.videoText = 'video url';
+                    ctrl.errors.videoText = true;
+                    ctrl.inputs.videoText = 'video url';
                     check();
-                    expect(ctrl.videoError).toBe(false);
-                });
-
-                it('should be able to indicate valid video text', function() {
-                    SelfieVideoService.dataFromText.and.returnValue($q.when({
-                        service: 'service',
-                        id: 'id'
-                    }));
-                    SelfieVideoService.statsFromService.and.returnValue('video stats');
-                    ctrl.videoText = 'video url';
-                    check();
-                    expect(ctrl.validVideoText).toBe(true);
+                    expect(ctrl.errors.videoText).toBe(false);
                 });
 
                 it('should handle a failure', function() {
@@ -213,10 +250,9 @@ define(['app'], function(appModule) {
                         }
                     }));
                     SelfieVideoService.statsFromService.and.returnValue($q.reject('epic fail'));
-                    ctrl.videoText = 'video url';
+                    ctrl.inputs.videoText = 'video url';
                     check();
-                    expect(ctrl.videoError).toBe(true);
-                    expect(ctrl.validVideoText).toBe(false);
+                    expect(ctrl.errors.videoText).toBe(true);
                 });
             });
         });
@@ -243,9 +279,10 @@ define(['app'], function(appModule) {
                 expect(ctrl.model.card).toBe(campaign.cards[0]);
             });
 
-            it('should default title and cta link', function() {
+            it('should default title, note, and cta link', function() {
                 ctrl._private.updateModel();
                 expect(ctrl.model.card.title).toBe('Your Title Here!');
+                expect(ctrl.model.card.note).toBe('Your Description Here!');
                 expect(ctrl.model.card.links.Action.uri).toBe('https://www.reelcontent.com');
             });
 
@@ -284,19 +321,19 @@ define(['app'], function(appModule) {
             });
 
             it('should update the company', function() {
-                ctrl.company = 'company';
+                ctrl.inputs.company = 'company';
                 ctrl._private.updateModel();
                 expect(ctrl.model.company).toBe('company');
             });
 
             it('should update the website', function() {
-                ctrl.website = 'website';
+                ctrl.inputs.website = 'website';
                 ctrl._private.updateModel();
                 expect(ctrl.model.website).toBe('website');
             });
 
             it('should update the email', function() {
-                ctrl.email = 'email';
+                ctrl.inputs.email = 'email';
                 ctrl._private.updateModel();
                 expect(ctrl.model.email).toBe('email');
             });
@@ -341,47 +378,49 @@ define(['app'], function(appModule) {
         describe('formatWebsite', function() {
             describe('if the website is falsy', function() {
                 beforeEach(function() {
-                    ctrl.website = null;
+                    ctrl.inputs.website = null;
                 });
 
                 it('should not modify the webiste', function() {
                     ctrl.formatWebsite();
-                    expect(ctrl.website).toBeNull();
+                    expect(ctrl.inputs.website).toBeNull();
                 });
             });
 
             describe('if the website if truthy', function() {
                 it('should add a protocol if it is missing one', function() {
-                    ctrl.website = 'google.com';
+                    ctrl.inputs.website = 'google.com';
                     ctrl.formatWebsite();
-                    expect(ctrl.website).toBe('http://google.com');
+                    expect(ctrl.inputs.website).toBe('http://google.com');
                 });
 
                 it('should not a protocol if it has one', function() {
-                    ctrl.website = 'https://google.com';
+                    ctrl.inputs.website = 'https://google.com';
                     ctrl.formatWebsite();
-                    expect(ctrl.website).toBe('https://google.com');
+                    expect(ctrl.inputs.website).toBe('https://google.com');
                 });
             });
         });
 
-        describe('checkWebsite', function() {
-            beforeEach(function() {
-                ctrl.checkWebsite.and.callThrough();
+        describe('getPreviewHref', function() {
+            it('should work if there are no query params', function() {
+                $location.search.and.returnValue({ });
+                expect(ctrl.getPreviewHref()).toBe('/#/demo/frame/preview');
             });
 
-            it('should be able to determine if a website is invalid', function() {
-                ctrl.website = 'website';
-                ctrl.validWebsite = false;
-                ctrl.checkWebsite();
-                expect(ctrl.validWebsite).toBe(true);
+            it('should work if there is one query param', function() {
+                $location.search.and.returnValue({
+                    foo: 'bar'
+                });
+                expect(ctrl.getPreviewHref()).toBe('/#/demo/frame/preview?foo=bar');
             });
 
-            it('should be able to determine if a website is invalid', function() {
-                ctrl.website = null;
-                ctrl.validWebsite = true;
-                ctrl.checkWebsite();
-                expect(ctrl.validWebsite).toBe(false);
+            it('should work if there are multiple query params', function() {
+                $location.search.and.returnValue({
+                    foo: 'bar',
+                    money: '$$$'
+                });
+                expect(ctrl.getPreviewHref()).toBe('/#/demo/frame/preview?foo=bar&money=%24%24%24');
             });
         });
     });

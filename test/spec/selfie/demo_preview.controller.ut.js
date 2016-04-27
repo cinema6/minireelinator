@@ -2,7 +2,7 @@ define(['app'], function(appModule) {
     'use strict';
 
     describe('SelfieDemoPreviewController', function() {
-        var ctrl, $scope, CollateralService, $q;
+        var ctrl, $scope, CollateralService, $q, c6State, SpinnerService;
 
         beforeEach(function() {
             module(appModule.name);
@@ -12,9 +12,14 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 CollateralService = $injector.get('CollateralService');
                 $q = $injector.get('$q');
+                c6State = $injector.get('c6State');
+                SpinnerService = $injector.get('SpinnerService');
             });
             $scope = $rootScope.$new();
             spyOn(CollateralService, 'websiteData');
+            spyOn(c6State, 'goTo');
+            spyOn(SpinnerService, 'display');
+            spyOn(SpinnerService, 'close');
             ctrl = $controller('SelfieDemoPreviewController', {
                 $scope: $scope
             });
@@ -65,6 +70,15 @@ define(['app'], function(appModule) {
         });
 
         describe('initWithModel', function() {
+            beforeEach(function() {
+                ctrl._private.getWebsiteData.and.returnValue($q.when());
+            });
+
+            it('should display the spinner', function() {
+                ctrl.initWithModel({ });
+                expect(SpinnerService.display).toHaveBeenCalledWith();
+            });
+
             it('should set the model and card', function() {
                 var model = {
                     card: 'card'
@@ -89,6 +103,19 @@ define(['app'], function(appModule) {
                 ctrl.initWithModel(model);
                 expect(ctrl.actionLink).toBe('website');
                 expect(ctrl.updateActionLink).toHaveBeenCalledWith();
+            });
+
+            it('should close the spinner if getting website data succeeds', function() {
+                ctrl.initWithModel({ });
+                $scope.$digest();
+                expect(SpinnerService.close).toHaveBeenCalledWith();
+            });
+
+            it('should close the spinner if getting website data fails', function() {
+                ctrl._private.getWebsiteData.and.returnValue($q.reject('fail whale'));
+                ctrl.initWithModel({ });
+                $scope.$digest();
+                expect(SpinnerService.close).toHaveBeenCalledWith();
             });
         });
 
@@ -161,6 +188,13 @@ define(['app'], function(appModule) {
                     }).then(done, done.fail);
                     $scope.$digest();
                 });
+            });
+        });
+
+        describe('signUp', function() {
+            it('should go to the signup form', function() {
+                ctrl.signUp();
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Form');
             });
         });
     });
