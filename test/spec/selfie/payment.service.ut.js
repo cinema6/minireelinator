@@ -90,6 +90,74 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
             });
 
+            describe('creditCheck(campaign)', function() {
+                var campaign;
+
+                beforeEach(function(){
+                    success = jasmine.createSpy('get().success');
+                    failure = jasmine.createSpy('get().failure');
+
+                    campaign = {
+                        id: 'cam-123',
+                        org: 'org-123',
+                        pricing: {
+                            budget: 250
+                        }
+                    };
+                });
+
+                it('should return deposit amount of 0 if successful', function() {
+                    $httpBackend.expectPOST('/api/accounting/credit-check', {
+                        org: campaign.org,
+                        campaign: campaign.id,
+                        newBudget: campaign.pricing.budget
+                    }).respond(204, 'Success');
+
+                    PaymentService.creditCheck(campaign)
+                        .then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith({ depositAmount: 0 });
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should return the deposit amount if 402 response', function() {
+                    $httpBackend.expectPOST('/api/accounting/credit-check', {
+                        org: campaign.org,
+                        campaign: campaign.id,
+                        newBudget: campaign.pricing.budget
+                    }).respond(402, {
+                        message: 'Insufficient funds',
+                        depositAmount: 500
+                    });
+
+                    PaymentService.creditCheck(campaign)
+                        .then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith({ depositAmount: 500 });
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should reject if response is not 402', function() {
+                    $httpBackend.expectPOST('/api/accounting/credit-check', {
+                        org: campaign.org,
+                        campaign: campaign.id,
+                        newBudget: campaign.pricing.budget
+                    }).respond(400, 'Bad request');
+
+                    PaymentService.creditCheck(campaign)
+                        .then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
             describe('getToken()', function() {
                 beforeEach(function(){
                     success = jasmine.createSpy('get().success');

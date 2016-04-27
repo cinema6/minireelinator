@@ -1,8 +1,12 @@
 # MiniReelinator
 
+## v1.44.0 (April 27, 2016)
 * *[v1.44.0.rc1]*
   * [FEATURE]: Add "Set Active" button to Admin tab that allows admins
     to set campaigns to "active" separately from approving changes
+  * [DEV]: When submitting campaigns use the credit check endpoint to
+    determine the minimum deposit required to run the campaign
+* *[v1.44.0.rc1]*
 
 ## v1.43.0 (April 22, 2016)
 * *[v1.43.0.rc4]*
