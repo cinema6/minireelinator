@@ -1,61 +1,63 @@
 <div style="text-align: center;margin-top:30px;">
-    <div class="grid__item one-half" style="display: inline-block;">
+    <div class="grid">
+        <div class="grid__item one-third palm--one-whole" style="display: inline-block;">
 
-        <fieldset blur-validate="c6-company" ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.company }" class="form__item">
-            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-company" ng-model="SelfieDemoInputCtrl.inputs.company">
-            <label class="form__label" for="c6-company">
-                <i class="fa fa-times ui--error"></i>
-                Company Name*
-            </label>
-            <div class="form__errorBox">
-                <p class="form__errorMsg">
-                    <i class="fa fa-exclamation-triangle"></i> Company name is required
-                </p>
+            <fieldset blur-validate="c6-company" ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.company }" class="form__item">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-company" ng-model="SelfieDemoInputCtrl.inputs.company">
+                <label class="form__label" for="c6-company">
+                    <i class="fa fa-times ui--error"></i>
+                    Company Name*
+                </label>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Company name is required
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset ng-if="SelfieDemoInputCtrl.showEmailField" blur-validate="c6-username" ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.email }" class="form__item">
+                <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="email" id="c6-username" ng-model="SelfieDemoInputCtrl.inputs.email">
+                <label class="form__label" for="c6-username">
+                    <i class="fa fa-times ui--error"></i>
+                    Email*
+                </label>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Valid email is required
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset blur-validate="c6-website" ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.website }" class="form__item">
+                <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="text" id="c6-website" ng-model="SelfieDemoInputCtrl.inputs.website" ng-blur="SelfieDemoInputCtrl.formatWebsite()">
+                <label class="form__label" for="c6-website">
+                    <i class="fa fa-times ui--error"></i>
+                    Website*
+                </label>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Valid website is required
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.videoText }" class="form__item">
+                <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="text" id="c6-video-text" ng-model="SelfieDemoInputCtrl.inputs.videoText" ng-change="SelfieDemoInputCtrl.checkVideoText()">
+                <label class="form__label" for="c6-video-text">
+                    <i class="fa fa-times ui--error"></i>
+                    Video Link*
+                </label>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Valid video is required
+                    </p>
+                </div>
+            </fieldset>
+
+            <div class="ui__btnHolder two-thirds item--center">
+                <button class="action__btn action__btn--wide action__btn--big" ng-class="{ 'btn--disabled': !SelfieDemoInputCtrl.canContinue() }" ng-click="SelfieDemoInputCtrl.gotoPreview()" ng-disabled="!SelfieDemoInputCtrl.canContinue()" hidden-input-click="hiddenContinue">Generate a FREE demo</button>
+                <a ng-if="currentState.indexOf('Frame') !== -1" id="hiddenContinue" href="{{SelfieDemoInputCtrl.getPreviewHref()}}" target="_top"></a>
             </div>
-        </fieldset>
-
-        <fieldset ng-if="SelfieDemoInputCtrl.showEmailField" blur-validate="c6-username" ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.email }" class="form__item">
-            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="email" id="c6-username" ng-model="SelfieDemoInputCtrl.inputs.email">
-            <label class="form__label" for="c6-username">
-                <i class="fa fa-times ui--error"></i>
-                Email*
-            </label>
-            <div class="form__errorBox">
-                <p class="form__errorMsg">
-                    <i class="fa fa-exclamation-triangle"></i> Valid email is required
-                </p>
-            </div>
-        </fieldset>
-
-        <fieldset blur-validate="c6-website" ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.website }" class="form__item">
-            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="text" id="c6-website" ng-model="SelfieDemoInputCtrl.inputs.website" ng-blur="SelfieDemoInputCtrl.formatWebsite()">
-            <label class="form__label" for="c6-website">
-                <i class="fa fa-times ui--error"></i>
-                Website*
-            </label>
-            <div class="form__errorBox">
-                <p class="form__errorMsg">
-                    <i class="fa fa-exclamation-triangle"></i> Valid website is required
-                </p>
-            </div>
-        </fieldset>
-
-        <fieldset ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.videoText }" class="form__item">
-            <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="text" id="c6-video-text" ng-model="SelfieDemoInputCtrl.inputs.videoText" ng-change="SelfieDemoInputCtrl.checkVideoText()">
-            <label class="form__label" for="c6-video-text">
-                <i class="fa fa-times ui--error"></i>
-                Video Link*
-            </label>
-            <div class="form__errorBox">
-                <p class="form__errorMsg">
-                    <i class="fa fa-exclamation-triangle"></i> Valid video is required
-                </p>
-            </div>
-        </fieldset>
-
-        <div class="ui__btnHolder two-thirds item--center">
-            <button class="action__btn action__btn--wide action__btn--big" ng-class="{ 'btn--disabled': !SelfieDemoInputCtrl.canContinue() }" ng-click="SelfieDemoInputCtrl.gotoPreview()" ng-disabled="!SelfieDemoInputCtrl.canContinue()" hidden-input-click="hiddenContinue">Generate a FREE demo</button>
-            <a ng-if="currentState.indexOf('Frame') !== -1" id="hiddenContinue" href="{{SelfieDemoInputCtrl.getPreviewHref()}}" target="_top"></a>
         </div>
     </div>
 </div>
