@@ -1795,9 +1795,21 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controller = 'SelfieCampaignFundController';
                 this.controllerAs = 'SelfieCampaignFundCtrl';
 
+                this.beforeModel = function() {
+                    // this could be the pojoified campaign
+                    // or pojoified updateRequest.data
+                    this.campaign = this.cParent.campaign;
+
+                    // this is the campaign DB model and will
+                    // have the campaign and org id needed
+                    // in credit check in model() hook
+                    this._campaign = this.cParent._campaign;
+                };
+
                 this.model = function() {
                     return $q.all({
                         balance: PaymentService.getBalance(),
+                        creditCheck: PaymentService.creditCheck(this._campaign),
                         paymentMethods: cinema6.db.findAll('paymentMethod')
                     });
                 };
@@ -1806,13 +1818,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     var SelfieUser = c6State.get('Selfie').cModel,
                         paymentOptional = SelfieUser.entitlements.paymentOptional,
                         hasPaymentMethods = !!model.paymentMethods.length,
-                        available = model.balance.remainingFunds,
                         CampaignState = this.cParent,
                         self = this;
-
-                    // this could be the pojoified campaign
-                    // or pojoified updateRequest.data
-                    this.campaign = CampaignState.campaign;
 
                     this.schema = CampaignState.schema;
                     this.interests = CampaignState.cModel.categories;
@@ -1825,8 +1832,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         this.newBudget - this.oldBudget :
                         this.newBudget;
                     this.accounting = PaymentService.balance;
-                    this.minDeposit = available < this.budgetChange ?
-                        (Math.round(Math.abs(available - this.budgetChange)*100)/100) : 0;
+                    this.minDeposit = model.creditCheck.depositAmount;
                     this.skipDeposit = (hasPaymentMethods || paymentOptional) && !this.minDeposit;
 
                     return $q.all({

@@ -38,49 +38,89 @@ module.exports = function(http) {
             });
     }
 
-    http.whenGET('/api/accounting/balance', function(request) {
-        var allDeposits = grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+    function getAllCredit() {
+        return grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+            .map(function(path) {
+                return grunt.file.readJSON(path);
+            })
+            .filter(function(transaction) {
+                return transaction.type === 'credit';
+            })
+            .reduce(function(result, payment) {
+                return result + (payment.amount || 0);
+            }, 0);
+    }
+
+    function getTotalCampaignBudget() {
+        var noUpdateRequestTotal = grunt.file.expand(path.resolve(__dirname, '../campaign/campaigns/*.json'))
                 .map(function(path) {
                     return grunt.file.readJSON(path);
                 })
-                .filter(function(transaction) {
-                    return transaction.type === 'credit';
-                }),
-            allCampaigns = grunt.file.expand(path.resolve(__dirname, '../campaign/campaigns/*.json'))
+                .reduce(function(result, campaign) {
+                    if ((/active|paused|error|pending/).test(campaign.status) && !campaign.updateRequest) {
+                        return result + campaign.pricing.budget;
+                    }
+                    return result;
+                }, 0);
+        var updateRequestTotal = grunt.file.expand(path.resolve(__dirname, '../campaign/updates/*.json'))
                 .map(function(path) {
                     return grunt.file.readJSON(path);
-                }),
-            allUpdateRequests = grunt.file.expand(path.resolve(__dirname, '../campaign/updates/*.json'))
-                .map(function(path) {
-                    return grunt.file.readJSON(path);
-                });
+                })
+                .reduce(function(result, updateRequest) {
+                    if ((/active|paused|error|pending/).test(updateRequest.data.status)) {
+                        return result + ((updateRequest.data && updateRequest.data.pricing && updateRequest.data.pricing.budget) || 0);
+                    }
+                    return result;
+                }, 0);
 
-        var credits = allDeposits.reduce(function(result, payment) {
-            return result + (payment.amount || 0);
-        }, 0);
+        return noUpdateRequestTotal + updateRequestTotal;
+    }
 
-        var campaignBudget = allCampaigns.reduce(function(result, campaign) {
-            if ((/active|paused|error|pending/).test(campaign.status) && !campaign.updateRequest) {
-                return result + campaign.pricing.budget;
-            }
-            return result;
-        }, 0);
+    http.whenPOST('/api/accounting/credit-check', function(request) {
+        var totalCredit = getAllCredit(),
+            totalBudget = getTotalCampaignBudget(),
+            campaign, updateRequest, budgetChange, spent, deficit;
 
-        var updateRequestBudget = allUpdateRequests.reduce(function(result, updateRequest) {
-            if ((/active|paused|error|pending/).test(updateRequest.data.status)) {
-                return result + ((updateRequest.data && updateRequest.data.pricing && updateRequest.data.pricing.budget) || 0);
-            }
-            return result;
-        }, 0);
+        if (!request.body.org || !request.body.campaign) {
+            return this.respond(400, 'Bad request');
+        }
 
-        // return this.respond(200, {
-        //     balance: -8779,
-        //     outstandingBudget: 1764
-        // });
+        campaign = grunt.file.readJSON(
+            path.resolve(__dirname, '../campaign/campaigns/' + request.body.campaign + '.json')
+        );
 
+        budgetChange = (request.body.newBudget || campaign.pricing.budget) - campaign.pricing.budget;
+
+        if (campaign.updateRequest) {
+            updateRequest = grunt.file.readJSON(
+                path.resolve(__dirname, '../campaign/updates/' + campaign.updateRequest + '.json')
+            );
+
+            budgetChange = (request.body.newBudget || updateRequest.data.pricing.budget) - updateRequest.data.pricing.budget;
+        }
+
+        if ((/canceled|expired/).test(campaign.status)) {
+            spent = Math.floor(Math.random() * campaign.pricing.budget);
+        } else {
+            spent = (/draft|pending|active|paused/).test(campaign.status) ? 0 : campaign.pricing.budget;
+        }
+
+        deficit = (totalBudget + budgetChange - spent) - totalCredit;
+
+        if (deficit > 0) {
+            return this.respond(402, {
+                message: 'Insufficient funds for campaign',
+                depositAmount: (Math.round(Math.abs(deficit)*100)/100)
+            });
+        }
+
+        return this.respond(200, 'Success, ' + totalBudget + ', ' + budgetChange + ', ' + spent + ', ' + totalCredit);
+    });
+
+    http.whenGET('/api/accounting/balance', function(request) {
         return this.respond(200, {
-            balance: credits,
-            outstandingBudget: campaignBudget + updateRequestBudget,
+            balance: getAllCredit(),
+            outstandingBudget: getTotalCampaignBudget(),
             totalSpend: 567.87
         });
     });

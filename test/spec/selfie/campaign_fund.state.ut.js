@@ -15,7 +15,8 @@ define(['app'], function(appModule) {
 
             var success,
                 failure,
-                paymentMethodsDeferred;
+                paymentMethodsDeferred,
+                creditCheckDeferred;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -32,6 +33,7 @@ define(['app'], function(appModule) {
                 paymentMethods = [];
                 paymentMethodsDeferred = $q.defer();
                 paymentModel = cinema6.db.create('paymentMethod', {});
+                creditCheckDeferred = $q.defer();
 
                 success = jasmine.createSpy('success');
                 failure = jasmine.createSpy('failure');
@@ -41,6 +43,7 @@ define(['app'], function(appModule) {
                 spyOn(cinema6.db, 'findAll').and.returnValue(paymentMethodsDeferred.promise);
                 spyOn(PaymentService, 'getToken').and.returnValue($q.when('1234-4321'));
                 spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
+                spyOn(PaymentService, 'creditCheck').and.returnValue(creditCheckDeferred.promise);
 
                 SelfieState = c6State.get('Selfie');
                 SelfieState.cModel = {
@@ -74,9 +77,21 @@ define(['app'], function(appModule) {
                 expect(FundState).toEqual(jasmine.any(Object));
             });
 
+            describe('beforeModel()', function() {
+                it('should add the campaign from the parent state', function() {
+                    $rootScope.$apply(function() {
+                        FundState.beforeModel();
+                    });
+
+                    expect(FundState.campaign).toEqual(FundState.cParent.campaign)
+                    expect(FundState._campaign).toEqual(FundState.cParent._campaign)
+                });
+            });
+
             describe('model()', function() {
                 beforeEach(function() {
                     $rootScope.$apply(function() {
+                        FundState.beforeModel();
                         FundState.model().then(success, failure);
                     });
                 });
@@ -85,19 +100,25 @@ define(['app'], function(appModule) {
                     expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
+                it('should check credit for campaign', function() {
+                    expect(PaymentService.creditCheck).toHaveBeenCalledWith(FundState._campaign);
+                });
+
                 it('should find all paymentMethods', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
                 });
 
-                describe('when paymentMethods are found', function() {
+                describe('when paymentMethods are found and credit check fulfills', function() {
                     it('should resolve', function() {
                         $rootScope.$apply(function() {
                             paymentMethodsDeferred.resolve([]);
+                            creditCheckDeferred.resolve({});
                         });
 
                         expect(success).toHaveBeenCalledWith({
                             balance: {},
-                            paymentMethods: []
+                            paymentMethods: [],
+                            creditCheck: {}
                         });
                         expect(failure).not.toHaveBeenCalled();
                     });
@@ -107,6 +128,7 @@ define(['app'], function(appModule) {
                     it('should reject', function() {
                         $rootScope.$apply(function() {
                             paymentMethodsDeferred.reject();
+                            creditCheckDeferred.resolve({depositAmount: 0});
                         });
 
                         expect(success).not.toHaveBeenCalled();
@@ -122,7 +144,14 @@ define(['app'], function(appModule) {
                         FundState.cParent._campaign.pricing.budget = 500;
                         FundState.cParent.campaign.pricing.budget = 500;
 
-                        FundState.afterModel({ paymentMethods: [], balance: {} });
+                        FundState.beforeModel();
+                        FundState.afterModel({
+                            paymentMethods: [],
+                            balance: {},
+                            creditCheck: {
+                                depositAmount: 300
+                            }
+                        });
                     });
 
                     it('should set the budget change to the full campaign budget', function() {
@@ -131,8 +160,12 @@ define(['app'], function(appModule) {
                         expect(FundState.oldBudget).toBe(500);
                     });
 
-                    it('should set the idDraft flag to true', function() {
+                    it('should set the isDraft flag to true', function() {
                         expect(FundState.isDraft).toBe(true);
+                    });
+
+                    it('should set minDeposit to depositAmount', function() {
+                        expect(FundState.minDeposit).toBe(300);
                     });
                 });
 
@@ -141,11 +174,18 @@ define(['app'], function(appModule) {
                         FundState.cParent._campaign.status = 'active';
                         FundState.cParent._campaign.pricing.budget = 200;
                         FundState.cParent.campaign.pricing.budget = 400;
+                        FundState.beforeModel();
                     });
 
                     describe('when the campaign does not have a pending update request', function() {
                         beforeEach(function() {
-                            FundState.afterModel({ paymentMethods: [], balance: {} });
+                            FundState.afterModel({
+                                paymentMethods: [],
+                                balance: {},
+                                creditCheck: {
+                                    depositAmount: 100
+                                }
+                            });
                         });
 
                         it('should set the old budget to the budget from the original campaign', function() {
@@ -156,6 +196,10 @@ define(['app'], function(appModule) {
 
                         it('should set the isDraft flag to false', function() {
                             expect(FundState.isDraft).toBe(false);
+                        });
+
+                        it('should set minDeposit to depositAmount', function() {
+                            expect(FundState.minDeposit).toBe(100);
                         });
                     });
 
@@ -169,7 +213,13 @@ define(['app'], function(appModule) {
                                 }
                             };
 
-                            FundState.afterModel({ paymentMethods: [], balance: {} });
+                            FundState.afterModel({
+                                paymentMethods: [],
+                                balance: {},
+                                creditCheck: {
+                                    depositAmount: 50
+                                }
+                            });
                         });
 
                         it('should set the old budget to the budget from the update request', function() {
@@ -181,13 +231,21 @@ define(['app'], function(appModule) {
                         it('should set the isDraft flag to false', function() {
                             expect(FundState.isDraft).toBe(false);
                         });
+
+                        it('should set minDeposit to depositAmount', function() {
+                            expect(FundState.minDeposit).toBe(50);
+                        });
                     });
                 });
 
                 it('should add properties from the parent state', function() {
+                    FundState.beforeModel();
                     FundState.afterModel({
                         paymentMethods: [],
-                        balance: {}
+                        balance: {},
+                        creditCheck: {
+                            depositAmount: 0
+                        }
                     });
 
                     expect(FundState.campaign).toBe(FundState.cParent.campaign);
@@ -198,9 +256,13 @@ define(['app'], function(appModule) {
 
                 it('should fetch a payment token', function() {
                     $rootScope.$apply(function() {
+                        FundState.beforeModel();
                         FundState.afterModel({
                             paymentMethods: [],
-                            balance: {}
+                            balance: {},
+                            creditCheck: {
+                                depositAmount: 0
+                            }
                         });
                     });
 
@@ -210,9 +272,13 @@ define(['app'], function(appModule) {
 
                 it('should create a payment method', function() {
                     $rootScope.$apply(function() {
+                        FundState.beforeModel();
                         FundState.afterModel({
                             paymentMethods: [],
-                            balance: {}
+                            balance: {},
+                            creditCheck: {
+                                depositAmount: 0
+                            }
                         });
                     });
 
@@ -226,13 +292,13 @@ define(['app'], function(appModule) {
                             $rootScope.$apply(function() {
                                 SelfieState.cModel.entitlements.paymentOptional = true;
 
-                                FundState.cParent._campaign.status = 'draft';
-                                FundState.cParent._campaign.pricing.budget = 500;
-                                FundState.cParent.campaign.pricing.budget = 500;
-
+                                FundState.beforeModel();
                                 FundState.afterModel({
                                     paymentMethods: [],
-                                    balance: { remainingFunds: 300 }
+                                    balance: {},
+                                    creditCheck: {
+                                        depositAmount: 200
+                                    }
                                 });
                             });
 
@@ -245,13 +311,13 @@ define(['app'], function(appModule) {
                             $rootScope.$apply(function() {
                                 SelfieState.cModel.entitlements.paymentOptional = true;
 
-                                FundState.cParent._campaign.status = 'draft';
-                                FundState.cParent._campaign.pricing.budget = 500;
-                                FundState.cParent.campaign.pricing.budget = 500;
-
+                                FundState.beforeModel();
                                 FundState.afterModel({
                                     paymentMethods: [],
-                                    balance: { remainingFunds: 500 }
+                                    balance: {},
+                                    creditCheck: {
+                                        depositAmount: 0
+                                    }
                                 });
                             });
 
@@ -263,13 +329,13 @@ define(['app'], function(appModule) {
                 describe('when there are no paymentMethods', function() {
                     beforeEach(function() {
                         $rootScope.$apply(function() {
-                            FundState.cParent._campaign.status = 'active';
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 500;
-
+                            FundState.beforeModel();
                             FundState.afterModel({
                                 paymentMethods: [],
-                                balance: {}
+                                balance: {},
+                                creditCheck: {
+                                    depositAmount: 0
+                                }
                             });
                         });
                     });
@@ -284,13 +350,13 @@ define(['app'], function(appModule) {
                     describe('when there is no minDeposit', function() {
                         it('should set skipDeposit flag to true', function() {
                             $rootScope.$apply(function() {
-                                FundState.cParent._campaign.status = 'active';
-                                FundState.cParent._campaign.pricing.budget = 500;
-                                FundState.cParent.campaign.pricing.budget = 500;
-
+                                FundState.beforeModel();
                                 FundState.afterModel({
                                     paymentMethods: [{},{}],
-                                    balance: { remainingFunds: 800 }
+                                    balance: {},
+                                    creditCheck: {
+                                        depositAmount: 0
+                                    }
                                 });
                             });
 
@@ -301,85 +367,17 @@ define(['app'], function(appModule) {
                     describe('when there is a minDeposit', function() {
                         it('should set skipDeposit flag to false', function() {
                             $rootScope.$apply(function() {
-                                FundState.cParent._campaign.status = 'draft';
-                                FundState.cParent._campaign.pricing.budget = 500;
-                                FundState.cParent.campaign.pricing.budget = 500;
-
+                                FundState.beforeModel();
                                 FundState.afterModel({
                                     paymentMethods: [{},{}],
-                                    balance: { remainingFunds: 0 }
+                                    balance: {},
+                                    creditCheck: {
+                                        depositAmount: 800
+                                    }
                                 });
                             });
 
                             expect(FundState.skipDeposit).toBe(false);
-                        });
-                    });
-                });
-
-                describe('calculating minDeposit', function() {
-                    describe('when available funds is < budget change', function() {
-                        it('should equal available funds minus budget change', function() {
-                            FundState.cParent._campaign.status = 'active';
-
-                            FundState.cParent._campaign.pricing.budget = 500.59103476673;
-                            FundState.cParent.campaign.pricing.budget = 800;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
-
-                            expect(FundState.minDeposit).toBe(199.41);
-
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 800;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -100 } });
-
-                            expect(FundState.minDeposit).toBe(400);
-
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 500;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -100 } });
-
-                            expect(FundState.minDeposit).toBe(100);
-
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 400;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -100 } });
-
-                            expect(FundState.minDeposit).toBe(0);
-
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 400;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -200 } });
-
-                            expect(FundState.minDeposit).toBe(100);
-                        });
-                    });
-
-                    describe('when available funds are >= budget change', function() {
-                        it('should be 0', function() {
-                            FundState.cParent._campaign.status = 'active';
-
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 550;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
-
-                            expect(FundState.minDeposit).toBe(0);
-
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 400;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 100 } });
-
-                            expect(FundState.minDeposit).toBe(0);
-
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 400;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: 0 } });
-
-                            expect(FundState.minDeposit).toBe(0);
-
-                            FundState.cParent._campaign.pricing.budget = 500;
-                            FundState.cParent.campaign.pricing.budget = 300;
-                            FundState.afterModel({ paymentMethods: [], balance: { remainingFunds: -100 } });
-
-                            expect(FundState.minDeposit).toBe(0);
                         });
                     });
                 });

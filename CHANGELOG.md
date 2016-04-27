@@ -1,8 +1,19 @@
 # MiniReelinator
 
+## v1.44.0 (April 27, 2016)
+* *[v1.44.0.rc2]*
+  * [FIX]: Fix for an issue where the wrong message appeared in the
+    deposit funds modal when submitting a campaign
+  * [FIX]: Fix for an issue where a new campaign's credit check
+    failed because it didn't get the campaign and org IDs
+* *[v1.44.0.rc2]*
+
 * *[v1.44.0.rc1]*
   * [FEATURE]: Add "Set Active" button to Admin tab that allows admins
     to set campaigns to "active" separately from approving changes
+  * [DEV]: When submitting campaigns use the credit check endpoint to
+    determine the minimum deposit required to run the campaign
+* *[v1.44.0.rc1]*
 
 ## v1.43.0 (April 22, 2016)
 * *[v1.43.0.rc4]*
