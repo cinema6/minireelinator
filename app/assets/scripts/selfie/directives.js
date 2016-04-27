@@ -776,7 +776,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             // we allow the consumer to this, we default to desktop
             // we're watching this value so the consumer can change
             // outside the directive
-            $scope.device = $scope.device || 'desktop';
+            $scope.device = $scope.device || this.profile.device || 'desktop';
 
             // watch for changes to the campaign's card
             $scope.$watch('card', loadPreview, true);
