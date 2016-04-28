@@ -481,11 +481,11 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
                     });
             };
 
-            this.creditCheck = function(campaign) {
+            this.creditCheck = function(campId, orgId, budget) {
                 return $http.post(c6UrlMaker('accounting/credit-check', 'api'), {
-                    org: campaign.org,
-                    campaign: campaign.id,
-                    newBudget: campaign.pricing.budget
+                    org: orgId,
+                    campaign: campId,
+                    newBudget: budget
                 }).then(function() {
                     return { depositAmount: 0 };
                 }).catch(function(err) {
