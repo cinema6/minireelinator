@@ -720,111 +720,125 @@
                         deferred = $q.defer();
                     });
 
-                    describe('when request succeeds', function() {
-                        it('should reject promise if no data is found', function() {
-                            response = {
-                                links: {
-                                    facebook: null,
-                                    twitter: null,
-                                    instagram: null,
-                                    pinterest: null
-                                },
-                                images: {
-                                    profile: null
-                                }
-                            };
+                    [{
+                        desc: 'when using the public endpoint',
+                        endpoint: '/api/public/collateral/website-data',
+                        options: {
+                            publicEndpoint: true
+                        }
+                    }, {
+                        desc: 'when not using the public endpoint',
+                        endpoint: '/api/collateral/website-data',
+                        options: undefined
+                    }].forEach(function(blockConfig) {
+                        describe(blockConfig.desc, function() {
+                            describe('when request succeeds', function() {
+                                it('should reject promise if no data is found', function() {
+                                    response = {
+                                        links: {
+                                            facebook: null,
+                                            twitter: null,
+                                            instagram: null,
+                                            pinterest: null
+                                        },
+                                        images: {
+                                            profile: null
+                                        }
+                                    };
 
-                            $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
-                                .respond(200, response);
+                                    $httpBackend.expectGET(blockConfig.endpoint + '?uri=' + encodeURIComponent('http://mysite.com'))
+                                        .respond(200, response);
 
-                            CollateralService.websiteData('http://mysite.com')
-                                .then(success, failure);
+                                    CollateralService.websiteData('http://mysite.com', blockConfig.options)
+                                        .then(success, failure);
 
-                            $httpBackend.flush();
+                                    $httpBackend.flush();
 
-                            expect(failure).toHaveBeenCalled();
-                            expect(success).not.toHaveBeenCalled();
-                        });
+                                    expect(failure).toHaveBeenCalled();
+                                    expect(success).not.toHaveBeenCalled();
+                                });
 
-                        it('should resolve with whitelisted data if any links exist', function() {
-                            response = {
-                                links: {
-                                    facebook: null,
-                                    twitter: null,
-                                    instagram: 'http://instagram.com',
-                                    pinterest: null,
-                                    google: 'http://google.com',
-                                    tumblr: 'http://tumblr.com',
-                                    vimeo: 'http://vimeo.com'
-                                },
-                                images: {
-                                    profile: null
-                                }
-                            };
+                                it('should resolve with whitelisted data if any links exist', function() {
+                                    response = {
+                                        links: {
+                                            facebook: null,
+                                            twitter: null,
+                                            instagram: 'http://instagram.com',
+                                            pinterest: null,
+                                            google: 'http://google.com',
+                                            tumblr: 'http://tumblr.com',
+                                            vimeo: 'http://vimeo.com'
+                                        },
+                                        images: {
+                                            profile: null
+                                        }
+                                    };
 
-                            data = {
-                                links: {
-                                    facebook: null,
-                                    twitter: null,
-                                    instagram: 'http://instagram.com',
-                                    pinterest: null,
-                                    vimeo: 'http://vimeo.com'
-                                },
-                                images: {
-                                    profile: null
-                                }
-                            }
+                                    data = {
+                                        links: {
+                                            facebook: null,
+                                            twitter: null,
+                                            instagram: 'http://instagram.com',
+                                            pinterest: null,
+                                            vimeo: 'http://vimeo.com'
+                                        },
+                                        images: {
+                                            profile: null
+                                        }
+                                    }
 
-                            $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
-                                .respond(200, response);
+                                    $httpBackend.expectGET(blockConfig.endpoint + '?uri=' + encodeURIComponent('http://mysite.com'))
+                                        .respond(200, response);
 
-                            CollateralService.websiteData('http://mysite.com')
-                                .then(success, failure);
+                                    CollateralService.websiteData('http://mysite.com', blockConfig.options)
+                                        .then(success, failure);
 
-                            $httpBackend.flush();
+                                    $httpBackend.flush();
 
-                            expect(success).toHaveBeenCalledWith(data);
-                            expect(failure).not.toHaveBeenCalled();
-                        });
+                                    expect(success).toHaveBeenCalledWith(data);
+                                    expect(failure).not.toHaveBeenCalled();
+                                });
 
-                        it('should resolve with data if logo exists', function() {
-                            response = {
-                                links: {
-                                    facebook: null,
-                                    twitter: null,
-                                    instagram: null,
-                                    pinterest: null
-                                },
-                                images: {
-                                    profile: 'http://mysite.com/logo.jpg'
-                                }
-                            };
+                                it('should resolve with data if logo exists', function() {
+                                    response = {
+                                        links: {
+                                            facebook: null,
+                                            twitter: null,
+                                            instagram: null,
+                                            pinterest: null
+                                        },
+                                        images: {
+                                            profile: 'http://mysite.com/logo.jpg'
+                                        }
+                                    };
 
-                            $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
-                                .respond(200, response);
+                                    $httpBackend.expectGET(blockConfig.endpoint + '?uri=' + encodeURIComponent('http://mysite.com'))
+                                        .respond(200, response);
 
-                            CollateralService.websiteData('http://mysite.com')
-                                .then(success, failure);
+                                    CollateralService.websiteData('http://mysite.com', blockConfig.options)
+                                        .then(success, failure);
 
-                            $httpBackend.flush();
+                                    $httpBackend.flush();
 
-                            expect(success).toHaveBeenCalledWith(response);
-                            expect(failure).not.toHaveBeenCalled();
-                        });
-                    });
+                                    expect(success).toHaveBeenCalledWith(response);
+                                    expect(failure).not.toHaveBeenCalled();
+                                });
+                            });
 
-                    describe('when request fails', function() {
-                        it('should reject the promise', function() {
-                            $httpBackend.expectGET('/api/collateral/website-data?uri=' + encodeURIComponent('http://mysite.com'))
-                                .respond(404, 'NOT FOUND');
+                            describe('when request fails', function() {
+                                it('should reject the promise', function() {
+                                    $httpBackend.expectGET(blockConfig.endpoint + '?uri=' + encodeURIComponent('http://mysite.com'))
+                                        .respond(404, 'NOT FOUND');
 
-                            CollateralService.websiteData('http://mysite.com')
-                                .then(success, failure);
+                                    CollateralService.websiteData('http://mysite.com', blockConfig.options)
+                                        .then(success, failure);
 
-                            $httpBackend.flush();
+                                    $httpBackend.flush();
 
-                            expect(failure).toHaveBeenCalled();
-                            expect(success).not.toHaveBeenCalled();
+                                    expect(failure).toHaveBeenCalled();
+                                    expect(success).not.toHaveBeenCalled();
+                                });
+                            });
                         });
                     });
                 });

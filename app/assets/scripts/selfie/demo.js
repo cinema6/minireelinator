@@ -273,7 +273,9 @@ function( angular , c6State  ) {
             };
 
             _private.getWebsiteData = function(website) {
-                return CollateralService.websiteData(website).then(function(data) {
+                return CollateralService.websiteData(website, {
+                    publicEndpoint: true
+                }).then(function(data) {
                     if(data.images.profile) {
                         self.card.collateral = {
                             logo: data.images.profile,
