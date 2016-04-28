@@ -7100,17 +7100,27 @@ div.tree-multiselect span.remove-selected {
     .demoPage {
         display: block;
     }
-    .demoPage,
-    .demoPage.bgClear {
-        min-width: initial;
-    }
+        .demoPage,
+        .demoPage.bgClear {
+            min-width: initial;
+        }
         .demoPage .ui__viewHolder {
             height: 100%;
         }
-    .demoPage .spinnerWrap {
-        left: 0;
-        width: 100%;
-    }
+        .demoPage .spinnerWrap {
+            left: 0;
+            width: 100%;
+        }
+        .demoPage .action__btn {
+            border: 0;
+        }
+        .demoPage .signup__gridHolder .rc__logo {
+            height: 70px;
+            background-repeat: no-repeat;
+        }
+        .demoPage .signup__header .header__nav {
+            margin-top: 10px;
+        }
     .demoScreen {
         height: 100%;
     }
@@ -7155,6 +7165,7 @@ div.tree-multiselect span.remove-selected {
         .demoPage .signup__gridHolder .rc__logo {
             margin-left: auto;
             margin-right: auto;
+            margin-top: 10px;
         }
         .demoWrap__holder .palm--one-whole {
             width: 100%;
