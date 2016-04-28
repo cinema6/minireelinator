@@ -125,7 +125,7 @@ define(['app'], function(appModule) {
             });
 
             it('should format the link and update it on the model and controller', function() {
-                ctrl.card = { links: { Action: { } } };
+                ctrl.card = { links: { } };
                 ctrl.actionLink = 'link';
                 ctrl._private.generateLink.and.returnValue('formatted link');
                 ctrl.updateActionLink();

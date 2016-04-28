@@ -12,12 +12,8 @@ function( angular , c6State  ) {
                 this.model = function() {
                     var campaign = CampaignService.create(null, { }, null);
                     var card = campaign.cards[0];
-                    card.title = 'Your Title Here!';
-                    card.links.Action = {
-                        uri: 'https://www.reelcontent.com'
-                    };
-
                     var model = { };
+
                     SettingsService.register('Selfie::demo', model, {
                         defaults: {
                             company: '',
@@ -309,7 +305,9 @@ function( angular , c6State  ) {
 
             self.updateActionLink = function() {
                 var link = _private.generateLink(self.actionLink);
-                self.card.links.Action.uri = link;
+                self.card.links.Action = {
+                    uri: link
+                };
                 self.actionLink = link;
             };
 

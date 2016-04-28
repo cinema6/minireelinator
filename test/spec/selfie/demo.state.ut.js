@@ -20,7 +20,8 @@ define(['app'], function(appModule) {
 
         describe('model', function() {
             it('should register the model with the settings service', function() {
-                CampaignService.create.and.returnValue({ cards: [ { links:{ } } ] });
+                var campaign = { cards: [ { links:{ } } ] };
+                CampaignService.create.and.returnValue(campaign);
                 var model = state.model();
                 expect(CampaignService.create).toHaveBeenCalledWith(null, { }, null);
                 expect(SettingsService.register).toHaveBeenCalledWith('Selfie::demo', { }, {
@@ -28,14 +29,7 @@ define(['app'], function(appModule) {
                         company: '',
                         email: '',
                         website: '',
-                        card: {
-                            title: 'Your Title Here!',
-                            links: {
-                                Action: {
-                                    uri: 'https://www.reelcontent.com'
-                                }
-                            }
-                        }
+                        card: campaign.cards[0]
                     }
                 });
                 expect(model).toEqual({ });
