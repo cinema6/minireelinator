@@ -608,28 +608,41 @@ function( angular , c6uilib ,  c6Defines  , libs    ) {
             this.statsFromService = function(service, id) {
                 var fetch = {
                     youtube: function() {
-                        return YouTubeDataService.videos.list({
-                            part: ['snippet','statistics','contentDetails'],
-                            id: id
+                        return metagetta({
+                            type: 'youtube',
+                            id: id,
+                            fields: ['title', 'duration', 'views', 'uri', 'thumbnails',
+                                'description'],
+                            youtube: {
+                                key: c6Defines.kYouTubeDataApiKey
+                            }
                         }).then(function(data) {
                             return {
-                                title: data.snippet.title,
-                                duration: data.contentDetails.duration,
-                                views: data.statistics.viewCount,
-                                href: self.urlFromData(service, id)
+                                title: data.title,
+                                duration: data.duration,
+                                views: data.views,
+                                href: data.uri,
+                                thumbnails: data.thumbnails,
+                                description: data.description
                             };
                         });
                     },
                     vimeo: function() {
-                        return VimeoDataService.getVideo(id)
-                            .then(function(data) {
-                                return {
-                                    title: data.title,
-                                    duration: data.duration,
-                                    views: data.statsNumberOfPlays,
-                                    href: self.urlFromData(service, id)
-                                };
-                            });
+                        return metagetta({
+                            type: 'vimeo',
+                            id: id,
+                            fields: ['title', 'duration', 'views', 'uri', 'thumbnails',
+                                'description']
+                        }).then(function(data) {
+                            return {
+                                title: data.title,
+                                duration: data.duration,
+                                views: data.views,
+                                href: data.uri,
+                                thumbnails: data.thumbnails,
+                                description: data.description
+                            };
+                        });
                     },
                     dailymotion: function() {
                         return DailymotionDataService.video(id).get({

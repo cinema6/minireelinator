@@ -1,0 +1,100 @@
+<div  c6-alias="SelfieDemoPreviewCtrl.card as card" class="demoScreen">
+    <header class="signup__header grid" ng-if="!SelfieSignUpCtrl.formOnly">
+        <div class="signup__gridHolder grid grid--middle">
+            <div class="grid__item one-quarter">
+                <a href="https://www.reelcontent.com"><span class="rc__logo"></span><span class="ir">Reelcontent</span></h1></a>
+            </div><!--
+            --><div class="grid__item three-quarters text--right">
+                <ul class="header__nav">
+                    <li>
+                        <button class="action__btn action__btn--wide hide--mobile" ng-click="SelfieDemoPreviewCtrl.signUp('desktop')">SIGN UP FOR FREE</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <div class="demoWrap__holder">
+
+        <div class="grid">
+            <div class="grid__item one-whole text--center formSection__group">
+                <h1 class="formSection__title">            
+                    <span class="formSection__titleText tk--hdr">Here’s what your ad could look like - pretty great, huh?</span>
+                </h1>
+                <p class="formSection__introText">We don't just make it look good, we make it work for you. Join now to choose who gets to see it and when.</p>
+            </div>
+        </div>
+        <div class="grid">
+
+            
+            <div class="grid__item two-thirds palm--one-whole">
+
+                <section id="demoPreview">
+
+                    <selfie-preview card="card"></selfie-preview>
+
+                </section><!--.formSection__group-->
+
+            </div><!--.grid__item--><!--
+
+            --><div class="grid__item one-third palm--one-whole">
+
+                <section class="formSection__group">
+
+                    <div class="form__items">
+
+                        <fieldset class="form__item form__item--stackedInput">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-trim="false" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" maxlength="{{SelfieDemoPreviewCtrl.maxHeadlineLength}}">
+                            <label class="form__label" for="c6-video-title">
+                                <i class="fa fa-times ui--error"></i>
+                                Headline <span class="text--small form__counter item--right">{{SelfieDemoPreviewCtrl.maxHeadlineLength - card.title.length}}</span>
+                            </label>
+                        </fieldset>
+
+                        <fieldset class="form__item form__item--stackedInput">
+                            <textarea c6-fill-check class="form__textBox form__textArea form__textArea--large form__fillCheck" id="c6-video-description" ng-trim="false" ng-model="card.note" maxlength="{{SelfieDemoPreviewCtrl.maxDescriptionLength}}"></textarea>
+                            <label class="form__label" for="c6-video-description">
+                                <i class="fa fa-times ui--error"></i>
+                                Description <span class="text--small form__counter item--right">{{SelfieDemoPreviewCtrl.maxDescriptionLength - card.note.length}}</span>
+                            </label>
+                        </fieldset>
+
+                        <fieldset class="form__item form__item--stackedInput">
+                            <select c6-select-box data-options="SelfieDemoPreviewCtrl.actionLabelOptions" ng-options="option for option in SelfieDemoPreviewCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="SelfieDemoPreviewCtrl.card.params.action.label"></select>
+                            <label class="form__label" for="c6-video-ctaPresetText">
+                                <i class="fa fa-times ui--error"></i>
+                                Call To Action Button
+                            </label>
+                        </fieldset>
+
+                        <fieldset class="form__item form__item--stackedInput">
+                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="SelfieDemoPreviewCtrl.actionLink" ng-blur="SelfieDemoPreviewCtrl.updateActionLink()">
+                            <label class="form__label" for="c6-video-ctaUrl">
+                                <i class="fa fa-times ui--error"></i>
+                                Call To Action URL
+                            </label>
+                        </fieldset>
+
+                    </div><!-- .form__items -->
+
+                </section><!--.formSection__group-->
+                
+                <div class="text--center">
+                    <span>Like what you see? <br> Your future customers will too.<br></span><br>
+                    <!-- add /signup path to button below-->
+                    <button class="action__btn action__btn--wide action__btn--big hide--mobile" ng-click="SelfieDemoPreviewCtrl.signUp('desktop')">Get Started Now</button>
+                    <!-- add /singup/form path to button below-->
+                    <button class="action__btn action__btn--wide action__btn--big hide--desktop" ng-click="SelfieDemoPreviewCtrl.signUp('mobile')">Get Started Now</button>
+                </div>
+
+            </div><!--.grid__item-->
+
+        </div><!--.grid-->
+
+    </div><!--.gridHolder-->
+    <footer class="demoFooter">
+        <div class="copyright-info">
+            <span class="copyright">Copyright © 2016 Reelcontent. All Rights Reserved. <a href="#">Terms and Conditions.</a></span>
+        </div>
+    </footer>
+    <spinner></spinner>
+</div>

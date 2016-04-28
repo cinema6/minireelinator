@@ -257,7 +257,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     input.on('blur', function() {
                         var value = $(this).val();
 
-                        if (!value) {
+                        if (!value || input.hasClass('ng-invalid')) {
                             $element.addClass('ui--hasError');
                         } else if (input.hasClass('ng-valid')) {
                             $element.removeClass('ui--hasError');
@@ -776,7 +776,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             // we allow the consumer to this, we default to desktop
             // we're watching this value so the consumer can change
             // outside the directive
-            $scope.device = $scope.device || 'desktop';
+            $scope.device = $scope.device || this.profile.device || 'desktop';
 
             // watch for changes to the campaign's card
             $scope.$watch('card', loadPreview, true);

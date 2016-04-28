@@ -131,6 +131,16 @@ define(['app'], function(appModule) {
 
                         expect($scope.device).toBe('phone');
                     });
+
+                    it('should use try to use the profile before defaulting to desktop', function() {
+                        expect($scope.device).toBe('desktop');
+
+                        $scope.device = null;
+                        $scope.profile = { device: 'phone' };
+                        compileCtrl();
+
+                        expect($scope.device).toBe('phone');
+                    });
                 });
             });
         });
