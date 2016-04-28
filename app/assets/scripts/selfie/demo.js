@@ -184,7 +184,7 @@ function( angular , c6State  ) {
 
             self.gotoPreview = function() {
                 _private.updateModel();
-                if($scope.currentState.indexOf('Frame') === -1) {
+                if(c6State.current.indexOf('Frame') === -1) {
                     c6State.goTo('Selfie:Demo:Preview:Full');
                 }
             };

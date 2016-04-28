@@ -28,10 +28,13 @@ define(['app'], function(appModule) {
             spyOn(SelfieVideoService, 'urlFromData');
             spyOn(CampaignService, 'create').and.callThrough();
             spyOn(SettingsService, 'register');
-            spyOn(c6State, 'goTo');
             spyOn($location, 'search').and.returnValue({ });
+            c6State = {
+                goTo: jasmine.createSpy('c6State')
+            };
             ctrl = $controller('SelfieDemoInputController', {
-                $scope: $scope
+                $scope: $scope,
+                c6State: c6State
             });
             spyOn(ctrl._private, 'updateModel');
             spyOn(ctrl, 'checkVideoText');
@@ -370,7 +373,7 @@ define(['app'], function(appModule) {
         describe('gotoPreview', function() {
             describe('if the page is in an iframe', function() {
                 beforeEach(function() {
-                    $scope.currentState = 'Selfie:Demo:Input:Frame';
+                    c6State.current = 'Selfie:Demo:Input:Frame';
                 });
 
                 it('should direct the parent page to the correct preview state', function() {
@@ -387,7 +390,7 @@ define(['app'], function(appModule) {
 
             describe('if the page is not in an iframe', function() {
                 beforeEach(function() {
-                    $scope.currentState = 'Selfie:Demo:Input:Full';
+                    c6State.current = 'Selfie:Demo:Input:Full';
                 });
 
                 it('should navigate to the correct preview state', function() {

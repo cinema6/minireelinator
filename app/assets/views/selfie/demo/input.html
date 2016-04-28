@@ -54,7 +54,7 @@
 
                 <fieldset ng-class="{ 'ui--hasError': SelfieDemoInputCtrl.errors.videoText }" class="form__item">
                     <input c6-fill-check check-view="true" class="form__textBox form__fillCheck" type="text" id="c6-video-text" ng-model="SelfieDemoInputCtrl.inputs.videoText" ng-change="SelfieDemoInputCtrl.checkVideoText()">
-                    <label class="form__label" for="c6-video-text">                    
+                    <label class="form__label" for="c6-video-text">
                         <i class="fa fa-times ui--error"></i>
                         Video Link*
                     </label>
@@ -72,7 +72,7 @@
 
                 <div class="ui__btnHolder one-whole item--center">
                     <button class="action__btn action__btn--wide action__btn--big" ng-class="{ 'btn--disabled': !SelfieDemoInputCtrl.canContinue() }" ng-click="SelfieDemoInputCtrl.gotoPreview()" ng-disabled="!SelfieDemoInputCtrl.canContinue()" hidden-input-click="hiddenContinue">Generate a FREE demo</button>
-                    <a ng-if="currentState.indexOf('Frame') !== -1" id="hiddenContinue" href="{{SelfieDemoInputCtrl.getPreviewHref()}}" target="_top"></a>
+                    <a ng-if="currentState.indexOf('Frame') !== -1" id="hiddenContinue" ng-href="{{ SelfieDemoInputCtrl.getPreviewHref() }}" target="_top"></a>
                 </div>
 
             </div>
