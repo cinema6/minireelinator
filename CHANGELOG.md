@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.44.0 (April 28, 2016)
+* *[v1.44.0.rc4]*
+  * [FIX]: Use public endpoint when scraping website data for demo page
+  * Change CTA text on Selfie Demo page
+* *[/v1.44.0.rc4]*
+
 * *[v1.44.0.rc3]*
   * [FEATURE]: Added Selfie Demo pages
   * [FIX]: Fix for an issue where the campaign's credit check wasn't

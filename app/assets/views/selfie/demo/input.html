@@ -71,7 +71,7 @@
                 </fieldset>
 
                 <div class="ui__btnHolder one-whole item--center">
-                    <button class="action__btn action__btn--wide action__btn--big" ng-class="{ 'btn--disabled': !SelfieDemoInputCtrl.canContinue() }" ng-click="SelfieDemoInputCtrl.gotoPreview()" ng-disabled="!SelfieDemoInputCtrl.canContinue()" hidden-input-click="hiddenContinue">Generate a FREE demo</button>
+                    <button class="action__btn action__btn--wide action__btn--big" ng-class="{ 'btn--disabled': !SelfieDemoInputCtrl.canContinue() }" ng-click="SelfieDemoInputCtrl.gotoPreview()" ng-disabled="!SelfieDemoInputCtrl.canContinue()" hidden-input-click="hiddenContinue">Get My Instant Preview</button>
                     <a ng-if="currentState.indexOf('Frame') !== -1" id="hiddenContinue" ng-href="{{ SelfieDemoInputCtrl.getPreviewHref() }}" target="_top"></a>
                 </div>
 

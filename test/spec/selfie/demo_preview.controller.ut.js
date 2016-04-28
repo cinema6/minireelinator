@@ -141,6 +141,12 @@ define(['app'], function(appModule) {
                 ctrl.card = { links: { } };
             });
 
+            it('should use the collateral service', function() {
+                CollateralService.websiteData.and.returnValue($q.when());
+                ctrl._private.getWebsiteData('website');
+                expect(CollateralService.websiteData).toHaveBeenCalledWith('website', { publicEndpoint: true });
+            });
+
             describe('when it succeeds', function() {
                 beforeEach(function() {
                     CollateralService.websiteData.and.returnValue($q.when({

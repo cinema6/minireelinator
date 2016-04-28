@@ -553,12 +553,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             .then(generateCollage);
                     };
 
-                    this.websiteData = function(uri) {
+                    this.websiteData = function(uri, options) {
                         var encoded = encodeURIComponent(uri),
                             whitelist = ['facebook','twitter','instagram',
                                 'youtube','pinterest','vimeo'];
 
-                        return $http.get('/api/collateral/website-data?uri=' + encoded)
+                        options = options || { publicEndpoint: false };
+                        var endpoint = options.publicEndpoint ?
+                            '/api/public/collateral/website-data' :
+                            '/api/collateral/website-data';
+                        return $http.get(endpoint + '?uri=' + encoded)
                             .then(function(resp) {
                                 var data = resp.data,
                                     links = data.links,
