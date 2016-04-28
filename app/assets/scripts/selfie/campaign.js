@@ -1807,9 +1807,13 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.model = function() {
+                    var campId = this._campaign.id,
+                        orgId = this._campaign.org,
+                        budget = this.campaign.pricing.budget;
+
                     return $q.all({
                         balance: PaymentService.getBalance(),
-                        creditCheck: PaymentService.creditCheck(this._campaign),
+                        creditCheck: PaymentService.creditCheck(campId, orgId, budget),
                         paymentMethods: cinema6.db.findAll('paymentMethod')
                     });
                 };
