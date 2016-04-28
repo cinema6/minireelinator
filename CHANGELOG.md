@@ -2,8 +2,10 @@
 
 ## v1.44.0 (April 28, 2016)
 * *[v1.44.0.rc3]*
+  * [FEATURE]: Added Selfie Demo pages
   * [FIX]: Fix for an issue where the campaign's credit check wasn't
     using the latest budget
+* *[/v1.44.0.rc3]*
 
 * *[v1.44.0.rc2]*
   * [FIX]: Fix for an issue where the wrong message appeared in the
