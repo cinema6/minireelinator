@@ -113,7 +113,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         newBudget: campaign.pricing.budget
                     }).respond(204, 'Success');
 
-                    PaymentService.creditCheck(campaign)
+                    PaymentService.creditCheck(campaign.id, campaign.org, campaign.pricing.budget)
                         .then(success, failure);
 
                     $httpBackend.flush();
@@ -132,7 +132,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         depositAmount: 500
                     });
 
-                    PaymentService.creditCheck(campaign)
+                    PaymentService.creditCheck(campaign.id, campaign.org, campaign.pricing.budget)
                         .then(success, failure);
 
                     $httpBackend.flush();
@@ -148,7 +148,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         newBudget: campaign.pricing.budget
                     }).respond(400, 'Bad request');
 
-                    PaymentService.creditCheck(campaign)
+                    PaymentService.creditCheck(campaign.id, campaign.org, campaign.pricing.budget)
                         .then(success, failure);
 
                     $httpBackend.flush();

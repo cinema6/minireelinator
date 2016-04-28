@@ -59,9 +59,11 @@ define(['app'], function(appModule) {
                     },
                     _updateRequest: undefined,
                     _campaign: {
+                        id: 'cam-123',
+                        org: 'org-123',
                         status: 'draft',
                         pricing: {
-                            budget: 100
+                            budget: 50
                         }
                     },
                     campaign: {
@@ -101,7 +103,11 @@ define(['app'], function(appModule) {
                 });
 
                 it('should check credit for campaign', function() {
-                    expect(PaymentService.creditCheck).toHaveBeenCalledWith(FundState._campaign);
+                    expect(PaymentService.creditCheck).toHaveBeenCalledWith(
+                        FundState._campaign.id,
+                        FundState._campaign.org,
+                        FundState.campaign.pricing.budget
+                    );
                 });
 
                 it('should find all paymentMethods', function() {
