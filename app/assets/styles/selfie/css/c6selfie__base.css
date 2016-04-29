@@ -5804,7 +5804,7 @@ div.tree-multiselect span.remove-selected {
             text-align: left;
         }
         .column__DSPName {
-            width:calc(100% - 34em);            
+            width:calc(100% - 34em);
             padding:0 2em 0 0;
         }
         .column__tagTypes {
@@ -6561,7 +6561,7 @@ div.tree-multiselect span.remove-selected {
                 position:absolute;
                 width:20%;
                 text-align:center;
-            }            
+            }
 
             .chart__label--x {
                 left:44%;
@@ -6573,7 +6573,7 @@ div.tree-multiselect span.remove-selected {
                 transform:rotate(-90deg);
                 word-spacing:0.25em;
             }
-            
+
             .chart__key {
                 position: absolute;
                 top: 0.5em;
@@ -6645,7 +6645,7 @@ div.tree-multiselect span.remove-selected {
                         left: 20%;
                         right: 20%;
                         bottom: auto;
-                    }    
+                    }
                 }
                 body.bgClear .form__helpBox--right:after,
                 body.bgClear .form__helpBox--right:before {
@@ -6656,7 +6656,7 @@ div.tree-multiselect span.remove-selected {
                 body.bgClear .form__helpBox:before {
                     border-width: 11px;
                 }
-                body.bgClear .form__helpBox:after {                        
+                body.bgClear .form__helpBox:after {
                     border-width: 8px;
                 }
                 body.bgClear .form__helpBox--right:before {
@@ -6713,7 +6713,7 @@ div.tree-multiselect span.remove-selected {
 
 /*  ================================================
     Account Settings and Payment screen styles
-    ================================================ */    
+    ================================================ */
     .paymentOptions__box-item.paymentOptions__box-third {
         padding:0.1875em 1em 1em 1em;
     }
@@ -6776,7 +6776,7 @@ div.tree-multiselect span.remove-selected {
             height:100%;
             min-height:28.5rem;
         }
-    .reviewOrder__item h2, 
+    .reviewOrder__item h2,
     .campaignSummary__item h2 {
         margin-bottom: 0;
     }
@@ -6798,7 +6798,7 @@ div.tree-multiselect span.remove-selected {
             .orderItem__title {
                 font-weight: 700;
             }
-            .reviewOrder__item .orderItem__title, 
+            .reviewOrder__item .orderItem__title,
             .campaignSummary__item .campaignItem__title {
                 vertical-align: middle;
             }
@@ -6855,7 +6855,7 @@ div.tree-multiselect span.remove-selected {
         border: 1px solid #ddd;
         border-top:0;
     }
-    
+
 /*  ================================================
     Review Campaign and campaign summary modal styles
     ================================================ */
@@ -7008,7 +7008,7 @@ div.tree-multiselect span.remove-selected {
         margin-right:0;
         margin-bottom:0.5em;
         margin-left:auto;
-    } 
+    }
     .paymentMethod__optionTypes {
         margin-top:0.5em;
         margin-bottom:1em;
@@ -7142,7 +7142,7 @@ div.tree-multiselect span.remove-selected {
             width: 100%;
             background-color: #fff;
             position: relative;
-            min-height: 555px;
+            min-height: initial;
         }
     @media only screen and (min-width: 769px){
         .demoWrap__holder .hide--desktop {
@@ -7196,7 +7196,7 @@ div.tree-multiselect span.remove-selected {
             left: 0;
         }
     }
-    @media only screen and (min-width: 480px) and (max-width: 768px) { 
+    @media only screen and (min-width: 480px) and (max-width: 768px) {
         .bgClear .demoForm .one-half {
             max-width: 60%;
             margin-left: auto;

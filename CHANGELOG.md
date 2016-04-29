@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.44.0 (April 28, 2016)
+* *[v1.44.0.rc5]*
+  * Default logo and social links in the selfie demo when web scraping fails
+* *[/v1.44.0.rc5]*
+
 * *[v1.44.0.rc4]*
   * [FIX]: Use public endpoint when scraping website data for demo page
   * Change CTA text on Selfie Demo page
