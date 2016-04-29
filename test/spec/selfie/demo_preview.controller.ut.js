@@ -187,10 +187,17 @@ define(['app'], function(appModule) {
             });
 
             describe('when it fails', function() {
-                it('should return a rejected promise', function(done) {
+                beforeEach(function() {
                     CollateralService.websiteData.and.returnValue($q.reject('fail whale'));
-                    ctrl._private.getWebsiteData('website').then(done.fail).catch(function(error) {
-                        expect(error).toBe('fail whale');
+                });
+
+                it('should default logo and social links', function(done) {
+                    ctrl._private.getWebsiteData('website').then(function() {
+                        expect(ctrl.card.collateral.logo).toContain('reelcontent');
+                        expect(ctrl.card.collateral.logoType).toBe('website');
+                        expect(ctrl.card.links.Facebook).toContain('facebook');
+                        expect(ctrl.card.links.Twitter).toContain('twitter');
+                        expect(ctrl.card.links.YouTube).toContain('youtube');
                     }).then(done, done.fail);
                     $scope.$digest();
                 });

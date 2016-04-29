@@ -245,6 +245,10 @@ function( angular , c6State  ) {
                 'Sign Up',
                 'Watch More'
             ];
+            var DEFAULT_LOGO = 'https://reelcontent.com/landing-page/images/logo-blank.png';
+            var DEFAULT_FB_LINK = 'https://www.facebook.com/reelc';
+            var DEFAULT_TW_LINK = 'https://twitter.com/ReelContent';
+            var DEFAULT_YT_LINK = 'https://www.youtube.com/watch?v=KrcNeWIMjO0';
 
             var self = this;
             var _private = { };
@@ -291,6 +295,14 @@ function( angular , c6State  ) {
                             };
                         }
                     });
+                }).catch(function() {
+                    self.card.collateral = {
+                        logo: DEFAULT_LOGO,
+                        logoType: 'website'
+                    };
+                    self.card.links.Facebook = DEFAULT_FB_LINK;
+                    self.card.links.Twitter = DEFAULT_TW_LINK;
+                    self.card.links.YouTube = DEFAULT_YT_LINK;
                 });
             };
 
