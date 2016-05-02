@@ -2,11 +2,11 @@ define(['app'], function(appModule) {
     'use strict';
 
     describe('SelfieDemoPreviewController', function() {
-        var ctrl, $scope, CollateralService, $q, c6State, SpinnerService;
+        var ctrl, $controller, $scope, CollateralService, $q, c6State, SpinnerService, $location;
 
         beforeEach(function() {
             module(appModule.name);
-            var $controller, $rootScope;
+            var $rootScope;
             inject(function($injector) {
                 $controller = $injector.get('$controller');
                 $rootScope = $injector.get('$rootScope');
@@ -14,12 +14,14 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
                 SpinnerService = $injector.get('SpinnerService');
+                $location = $injector.get('$location');
             });
             $scope = $rootScope.$new();
             spyOn(CollateralService, 'websiteData');
             spyOn(c6State, 'goTo');
             spyOn(SpinnerService, 'display');
             spyOn(SpinnerService, 'close');
+            spyOn($location, 'search').and.returnValue({ });
             ctrl = $controller('SelfieDemoPreviewController', {
                 $scope: $scope
             });
@@ -49,6 +51,20 @@ define(['app'], function(appModule) {
             ]);
             expect(ctrl.actionLabelOptions).not.toContain('Custom');
             expect(ctrl.actionLink).toBe('');
+        });
+
+        describe('initializing the signup button title', function() {
+            it('should work if there is a promotion', function() {
+                $location.search.and.returnValue({ promotion: 'cats' });
+                ctrl = $controller('SelfieDemoPreviewController', {
+                    $scope: $scope
+                });
+                expect(ctrl.signUpTitle).toBe('Get My $50 Credit');
+            });
+
+            it('should work if there is not a promotion', function() {
+                expect(ctrl.signUpTitle).toBe('Get Started Now');
+            });
         });
 
         describe('generateLink', function() {
@@ -207,12 +223,21 @@ define(['app'], function(appModule) {
         describe('signUp', function() {
             it('should go to the signup form for desktop', function() {
                 ctrl.signUp('desktop');
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Full');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Full', null, { promotion: null });
             });
 
             it('should go to the signup form for mobile', function() {
                 ctrl.signUp('mobile');
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Form');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Form', null, { promotion: null });
+            });
+
+            it('should change any passed promotion to be the one for $50', function() {
+                $location.search.and.returnValue({ promotion: 'cats' });
+                ctrl = $controller('SelfieDemoPreviewController', {
+                    $scope: $scope
+                });
+                ctrl.signUp('desktop');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Full', null, { promotion: 'pro-0gW6Qt03q32WqsC-' });
             });
         });
     });

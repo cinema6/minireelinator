@@ -71,6 +71,7 @@ function( angular , c6State  ) {
                 website: '',
                 videoText: ''
             };
+            self.videoLoading = false;
             _private.video = null;
 
             _private.updateModel = function() {
@@ -109,6 +110,7 @@ function( angular , c6State  ) {
             _private.fetchVideo = c6Debounce(function(args) {
                 var text = args[0];
 
+                self.videoLoading = true;
                 return SelfieVideoService.dataFromText(text).then(function(data) {
                     return SelfieVideoService.statsFromService(data.service, data.id)
                     .then(function(stats) {
@@ -121,8 +123,21 @@ function( angular , c6State  ) {
                     });
                 }).catch(function() {
                     self.errors.videoText = true;
+                }).finally(function() {
+                    self.videoLoading = false;
                 });
             }, 1000);
+
+            _private.canContinue = function() {
+                var hasError = Object.keys(self.errors).some(function(key) {
+                    return self.errors[key];
+                });
+                var hasInputs = Object.keys(self.inputs).every(function(key) {
+                    return self.inputs[key] || (key === 'email' && !self.showEmailField);
+                });
+                var hasVideo = !!_private.video;
+                return !hasError && hasInputs && hasVideo;
+            };
 
             self.initWithModel = function(model) {
                 var data = model.card.data;
@@ -137,17 +152,6 @@ function( angular , c6State  ) {
                 });
 
                 self.checkVideoText();
-            };
-
-            self.canContinue = function() {
-                var hasError = Object.keys(self.errors).some(function(key) {
-                    return self.errors[key];
-                });
-                var hasInputs = Object.keys(self.inputs).every(function(key) {
-                    return self.inputs[key] || (key === 'email' && !self.showEmailField);
-                });
-                var hasVideo = !!_private.video;
-                return !hasError && hasInputs && hasVideo;
             };
 
             self.formatWebsite = function () {
@@ -183,9 +187,16 @@ function( angular , c6State  ) {
             };
 
             self.gotoPreview = function() {
-                _private.updateModel();
-                if(c6State.current.indexOf('Frame') === -1) {
-                    c6State.goTo('Selfie:Demo:Preview:Full');
+                if(_private.canContinue()) {
+                    _private.updateModel();
+                    if(c6State.current.indexOf('Frame') === -1) {
+                        c6State.goTo('Selfie:Demo:Preview:Full');
+                    }
+                } else {
+                    ['company', 'email', 'website'].forEach(function(input) {
+                        self.errors[input] = !self.inputs[input];
+                    });
+                    self.errors.videoText = !_private.video;
                 }
             };
         }])
@@ -229,9 +240,9 @@ function( angular , c6State  ) {
         }])
 
         .controller('SelfieDemoPreviewController', ['CollateralService', 'c6State',
-                                                    'SpinnerService',
+                                                    'SpinnerService', '$location',
         function                                   ( CollateralService ,  c6State ,
-                                                     SpinnerService ) {
+                                                     SpinnerService ,  $location ) {
             var MAX_HEADLINE_LENGTH = 40;
             var MAX_DESCRIPTION_LENGTH = 400;
             var CTA_OPTIONS = [
@@ -249,10 +260,13 @@ function( angular , c6State  ) {
             var DEFAULT_FB_LINK = 'https://www.facebook.com/reelc';
             var DEFAULT_TW_LINK = 'https://twitter.com/ReelContent';
             var DEFAULT_YT_LINK = 'https://www.youtube.com/watch?v=KrcNeWIMjO0';
+            var DEFAULT_PROMOTION = 'pro-0gW6Qt03q32WqsC-';
 
             var self = this;
             var _private = { };
             if (window.c6.kHasKarma) { self._private = _private; }
+
+            var hasPromotion = !!$location.search().promotion;
 
             self.card = null;
             self.maxHeadlineLength = MAX_HEADLINE_LENGTH;
@@ -260,6 +274,8 @@ function( angular , c6State  ) {
             self.actionLabelOptions = CTA_OPTIONS;
             self.actionLabelOptions = CTA_OPTIONS;
             self.actionLink = '';
+            self.signUpTitle = hasPromotion ? 'Get My $50 Credit' :
+                'Get Started Now';
 
             _private.generateLink = function(link) {
                 var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
@@ -327,7 +343,9 @@ function( angular , c6State  ) {
 
             self.signUp = function(device) {
                 var state = (device === 'mobile') ? 'Selfie:SignUp:Form' : 'Selfie:SignUp:Full';
-                c6State.goTo(state);
+                c6State.goTo(state, null, {
+                    promotion: hasPromotion ? DEFAULT_PROMOTION : null
+                });
             };
         }]);
 });
