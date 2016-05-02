@@ -74,12 +74,12 @@ define(['app'], function(appModule) {
         beforeEach(function() {
             module(appModule.name);
 
-            var c6State;
             inject(function($injector) {
                 c6State = $injector.get('c6State');
                 SettingsService = $injector.get('SettingsService');
             });
             spyOn(SettingsService, 'register').and.returnValue(SettingsService);
+            spyOn(c6State, 'goTo');
             state = c6State.get('Selfie:Demo:Preview:Frame');
         });
 
@@ -146,7 +146,7 @@ define(['app'], function(appModule) {
                     }
                 };
                 state.enter();
-                expect(c6State.goTo).toHaveBeenCalled('Selfie:Demo:Input:Full');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Demo:Input:Full');
             });
 
             it('should not redirect if there is video data', function() {
