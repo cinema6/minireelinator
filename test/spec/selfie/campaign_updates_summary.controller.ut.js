@@ -9,12 +9,14 @@ define(['app'], function(appModule) {
             Ctrl;
 
         var campaign,
-            updatedCampaign;
+            updatedCampaign,
+            updateRequest;
 
         function compileCtrl() {
             $scope = $rootScope.$new();
             $scope.campaign = campaign;
             $scope.updatedCampaign = updatedCampaign;
+            $scope.updateRequest = updateRequest;
 
             $scope.$apply(function() {
                 Ctrl = $controller('SelfieCampaignUpdatesSummaryController', {
@@ -67,6 +69,9 @@ define(['app'], function(appModule) {
                     ],
                     advertiserId: 'updated id'
                 };
+                updateRequest = {
+                    initialSubmit: false
+                };
             });
 
             spyOn(CampaignService, 'campaignDiffSummary').and.callThrough();
@@ -100,33 +105,33 @@ define(['app'], function(appModule) {
 
         describe('methods', function() {
             describe('_loadSummary', function() {
-                it('should set firstUpdate to true for pending campaigns', function() {
-                    campaign.status = 'pending';
-                    Ctrl._loadSummary(campaign, updatedCampaign);
+                it('should set firstUpdate to true for initial campaign submissions', function() {
+                    updateRequest.initialSubmit = true;
+                    Ctrl._loadSummary(campaign, updatedCampaign, updateRequest);
                     expect(Ctrl.firstUpdate).toBe(true);
                 });
 
                 it('should set firstUpdate to false for active campaigns', function() {
                     campaign.status = 'active';
-                    Ctrl._loadSummary(campaign, updatedCampaign);
+                    Ctrl._loadSummary(campaign, updatedCampaign, updateRequest);
                     expect(Ctrl.firstUpdate).toBe(false);
                 });
             });
 
             it('should get a campaign difference summary from the campaign service', function() {
                 campaign.status = 'active';
-                Ctrl._loadSummary(campaign, updatedCampaign);
+                Ctrl._loadSummary(campaign, updatedCampaign, updateRequest);
                 expect(CampaignService.campaignDiffSummary).toHaveBeenCalledWith(campaign, updatedCampaign, 'Campaign', 'Card');
             });
 
             it('should compare with an empty object for first-time update approvals', function() {
-                campaign.status = 'pending';
-                Ctrl._loadSummary(campaign, updatedCampaign);
+                updateRequest.initialSubmit = true;
+                Ctrl._loadSummary(campaign, updatedCampaign, updateRequest);
                 expect(CampaignService.campaignDiffSummary).toHaveBeenCalledWith({}, updatedCampaign, 'Campaign', 'Card');
             });
 
             it('should properly set the tableData property', function() {
-                Ctrl._loadSummary(campaign, updatedCampaign);
+                Ctrl._loadSummary(campaign, updatedCampaign, updateRequest);
                 var expected = [
                     {
                         originalValue: 'original name',
@@ -172,7 +177,7 @@ define(['app'], function(appModule) {
             });
 
             it('should initialize the edits object to have default values', function() {
-                Ctrl._loadSummary(campaign, updatedCampaign);
+                Ctrl._loadSummary(campaign, updatedCampaign, updateRequest);
                 expect(Ctrl.edits).toEqual({
                     'Campaign.name': 'updated name',
                     'Card.title': 'updated title'
@@ -181,7 +186,7 @@ define(['app'], function(appModule) {
 
             it('should check the campaign changes against a whitelist', function() {
                 spyOn(Ctrl, '_isWhitelisted').and.callThrough();
-                Ctrl._loadSummary(campaign, updatedCampaign);
+                Ctrl._loadSummary(campaign, updatedCampaign, updateRequest);
                 ['name', 'foo', 'title', 'advertiserId'].forEach(function(key) {
                     expect(Ctrl._isWhitelisted).toHaveBeenCalledWith(jasmine.any(Array), key);
                 });

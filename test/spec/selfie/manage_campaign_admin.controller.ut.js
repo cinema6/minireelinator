@@ -3,8 +3,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
     var forEach = angular.forEach,
         isObject = angular.isObject,
-        copy = angular.copy,
-        extend = angular.extend;
+        copy = angular.copy;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -206,6 +205,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toEqual(updateRequest.data);
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign.name).toBe('Updated Name');
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0].title).toBe('Updated Title');
+                        expect(SelfieManageCampaignAdminCtrl.updateRequest).toBe(updateRequest);
                         expect(SelfieManageCampaignAdminCtrl.previewCard).not.toBe(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0]);
                         expect(SelfieManageCampaignAdminCtrl.previewCard).toEqual(copy(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0]));
                         expect(SelfieManageCampaignAdminCtrl.rejectionReason).toBe('');
