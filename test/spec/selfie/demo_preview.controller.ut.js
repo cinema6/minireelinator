@@ -91,21 +91,37 @@ define(['app'], function(appModule) {
             });
 
             it('should display the spinner', function() {
-                ctrl.initWithModel({ });
+                var model = {
+                    card: {
+                        data: {
+                            videoid: 'videoid'
+                        }
+                    }
+                };
+                ctrl.initWithModel(model);
                 expect(SpinnerService.display).toHaveBeenCalledWith();
             });
 
             it('should set the model and card', function() {
                 var model = {
-                    card: 'card'
+                    card: {
+                        data: {
+                            videoid: 'videoid'
+                        }
+                    }
                 };
                 ctrl.initWithModel(model);
                 expect(ctrl.model).toBe(model);
-                expect(ctrl.card).toBe('card');
+                expect(ctrl.card).toBe(model.card);
             });
 
             it('should get website data', function() {
                 var model = {
+                    card: {
+                        data: {
+                            videoid: 'videoid'
+                        }
+                    },
                     website: 'website'
                 };
                 ctrl.initWithModel(model);
@@ -114,6 +130,11 @@ define(['app'], function(appModule) {
 
             it('should initialize the CTA url with a provided website', function() {
                 var model = {
+                    card: {
+                        data: {
+                            videoid: 'videoid'
+                        }
+                    },
                     website: 'website'
                 };
                 ctrl.initWithModel(model);
@@ -122,16 +143,44 @@ define(['app'], function(appModule) {
             });
 
             it('should close the spinner if getting website data succeeds', function() {
-                ctrl.initWithModel({ });
+                var model = {
+                    card: {
+                        data: {
+                            videoid: 'videoid'
+                        }
+                    }
+                };
+                ctrl.initWithModel(model);
                 $scope.$digest();
                 expect(SpinnerService.close).toHaveBeenCalledWith();
             });
 
             it('should close the spinner if getting website data fails', function() {
+                var model = {
+                    card: {
+                        data: {
+                            videoid: 'videoid'
+                        }
+                    },
+                    website: 'website'
+                };
                 ctrl._private.getWebsiteData.and.returnValue($q.reject('fail whale'));
-                ctrl.initWithModel({ });
+                ctrl.initWithModel(model);
                 $scope.$digest();
                 expect(SpinnerService.close).toHaveBeenCalledWith();
+            });
+
+            it('should redirect to the demo input form if there is no card data', function() {
+                var model = {
+                    card: {
+                        data: {
+                            videoid: null
+                        }
+                    },
+                    website: 'website'
+                };
+                ctrl.initWithModel(model);
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Demo:Input:Full');
             });
         });
 

@@ -323,14 +323,18 @@ function( angular , c6State  ) {
             };
 
             self.initWithModel = function(model) {
-                SpinnerService.display();
-                self.model = model;
-                self.card = model.card;
-                self.actionLink = model.website;
-                self.updateActionLink();
-                _private.getWebsiteData(model.website).finally(function() {
-                    SpinnerService.close();
-                });
+                if(model.card && model.card.data && model.card.data.videoid) {
+                    SpinnerService.display();
+                    self.model = model;
+                    self.card = model.card;
+                    self.actionLink = model.website;
+                    self.updateActionLink();
+                    _private.getWebsiteData(model.website).finally(function() {
+                        SpinnerService.close();
+                    });
+                } else {
+                    c6State.goTo('Selfie:Demo:Input:Full');
+                }
             };
 
             self.updateActionLink = function() {
