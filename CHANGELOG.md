@@ -2,6 +2,7 @@
 
 ## v1.44.1 (May 2, 2016)
 * *[v1.44.1.rc1]*
+  * Remove "no payment method" warning in campaign admin tab
   * [FIX]: Fix for an issue where the campaign admin tab would display update request information incorrectly
 * *[/v1.44.1.rc1]*
 
