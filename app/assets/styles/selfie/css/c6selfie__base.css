@@ -7075,6 +7075,9 @@ div.tree-multiselect span.remove-selected {
             max-height:30rem;
             overflow-y:auto;
         }
+        .bgClear.modalBody__one-col.modalBody__group--narrow .modalBody__group {
+            max-height: 34em;
+        }
     .modal__subTitle {
         text-align:center;
         color:#5c5c5c;
@@ -7143,7 +7146,7 @@ div.tree-multiselect span.remove-selected {
             width: 100%;
             background-color: #fff;
             position: relative;
-            min-height: initial;
+            min-height: 200px;
         }
     @media only screen and (min-width: 769px){
         .demoWrap__holder .hide--desktop {
