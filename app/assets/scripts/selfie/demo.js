@@ -229,9 +229,9 @@ function( angular , c6State  ) {
         }])
 
         .controller('SelfieDemoPreviewController', ['CollateralService', 'c6State',
-                                                    'SpinnerService',
+                                                    'SpinnerService','cState',
         function                                   ( CollateralService ,  c6State ,
-                                                     SpinnerService ) {
+                                                     SpinnerService , cState ) {
             var MAX_HEADLINE_LENGTH = 40;
             var MAX_DESCRIPTION_LENGTH = 400;
             var CTA_OPTIONS = [
@@ -326,7 +326,10 @@ function( angular , c6State  ) {
             };
 
             self.signUp = function(device) {
-                var state = (device === 'mobile') ? 'Selfie:SignUp:Form' : 'Selfie:SignUp:Full';
+                var state = (device === 'mobile') ?
+                    'Selfie:SignUp:Form' :
+                    cState.cName + ':SignUp';
+
                 c6State.goTo(state);
             };
         }]);
