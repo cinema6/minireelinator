@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    ['Selfie:SignUp:Full', 'Selfie:SignUp:Form'].forEach(function(stateName) {
+    ['Selfie:SignUp:Full','Selfie:SignUp:Form','Selfie:Demo:Preview:Full:SignUp','Selfie:Demo:Preview:Frame:SignUp'].forEach(function(stateName) {
         describe('Selfie:SignUp State', function() {
             var c6State,
                 $rootScope,
@@ -11,7 +11,16 @@ define(['app'], function(appModule) {
                 signUp;
 
             beforeEach(function() {
-                module(appModule.name);
+                module(appModule.name, function($provide) {
+                    $provide.decorator('c6State', function($delegate) {
+                        return {
+                            current: stateName,
+                            get: jasmine.createSpy('c6State.get()').and.callFake(function(state) {
+                                return $delegate.get.call(null, state);
+                            })
+                        };
+                    });
+                });
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
@@ -30,6 +39,24 @@ define(['app'], function(appModule) {
 
             it('should exist', function() {
                 expect(signUp).toEqual(jasmine.any(Object));
+            });
+
+            describe('templateUrl', function() {
+                describe('when state is Demo', function() {
+                    it('should be sign_up_modal.html', function() {
+                        if (stateName.indexOf('Demo') !== -1) {
+                            expect(signUp.templateUrl).toBe('views/selfie/sign_up_modal.html');
+                        }
+                    });
+                });
+
+                describe('when state is not Demo', function() {
+                    it('should be sign_up.html', function() {
+                        if (stateName.indexOf('Demo') === -1) {
+                            expect(signUp.templateUrl).toBe('views/selfie/sign_up.html');
+                        }
+                    });
+                });
             });
 
             describe('beforeModel()', function() {

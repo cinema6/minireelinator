@@ -1,9 +1,15 @@
 # MiniReelinator
 
+## v1.45.0 (May 2, 2016)
 * *[v1.45.0.rc1]*
   * Redirect demo preview page back to the form if there is no video to preview
   * Show different signup text on demo page if there is a promotion
   * Allow the button on the demo form to always be active
+  * [FEATURE]: Show sign up in a modal when clicking "sign up" button
+    on demo preview page
+  * [FIX]: Fix for an issue where a flash of unstyled content appears
+    when the page is first loaded
+* *[/v1.45.0.rc1]*
 
 ## v1.44.1 (May 2, 2016)
 * *[v1.44.1.rc1]*
