@@ -2,7 +2,7 @@ define(['app'], function(appModule) {
     'use strict';
 
     describe('SelfieDemoPreviewController', function() {
-        var ctrl, $scope, CollateralService, $q, c6State, SpinnerService, $location, cState;
+        var ctrl, $controller, $scope, CollateralService, $q, c6State, SpinnerService, $location, cState;
 
         beforeEach(function() {
             module(appModule.name);
@@ -61,7 +61,8 @@ define(['app'], function(appModule) {
             it('should work if there is a promotion', function() {
                 $location.search.and.returnValue({ promotion: 'pro-0gW6Qt03q32WqsC-' });
                 ctrl = $controller('SelfieDemoPreviewController', {
-                    $scope: $scope
+                    $scope: $scope,
+                    cState: cState
                 });
                 expect(ctrl.hasFiftyPromotion).toBe(true);
             });
