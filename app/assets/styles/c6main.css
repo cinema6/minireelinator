@@ -9,6 +9,7 @@
         font-size:100%; font-weight:300; line-height: 1.5;
         background:#fff; color:#626262;
         margin:0;
+        display: block;
     }
     ::-moz-selection {
         background: #328efe; text-shadow: none; color:#fff;
