@@ -203,8 +203,8 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider) {
-            c6StateProvider.state('Selfie:Demo:Preview', ['SettingsService',
-            function                                     ( SettingsService ) {
+            c6StateProvider.state('Selfie:Demo:Preview', ['SettingsService', 'c6State',
+            function                                     ( SettingsService ,  c6State ) {
                 this.templateUrl = 'views/selfie/demo/preview.html';
                 this.controller = 'SelfieDemoPreviewController';
                 this.controllerAs = 'SelfieDemoPreviewCtrl';
@@ -236,6 +236,13 @@ function( angular , c6State  ) {
                 this.model = function() {
                     return this.cParent.cModel;
                 };
+
+                this.enter = function() {
+                    var model = this.cParent.cModel;
+                    if(!model.card || !model.card.data || !model.card.data.videoid) {
+                        c6State.goTo('Selfie:Demo:Input:Full');
+                    }
+                };
             }]);
         }])
 
@@ -260,13 +267,11 @@ function( angular , c6State  ) {
             var DEFAULT_FB_LINK = 'https://www.facebook.com/reelc';
             var DEFAULT_TW_LINK = 'https://twitter.com/ReelContent';
             var DEFAULT_YT_LINK = 'https://www.youtube.com/watch?v=KrcNeWIMjO0';
-            var DEFAULT_PROMOTION = 'pro-0gW6Qt03q32WqsC-';
+            var FIFTY_PROMOTION = 'pro-0gW6Qt03q32WqsC-';
 
             var self = this;
             var _private = { };
             if (window.c6.kHasKarma) { self._private = _private; }
-
-            var hasPromotion = !!$location.search().promotion;
 
             self.card = null;
             self.maxHeadlineLength = MAX_HEADLINE_LENGTH;
@@ -274,8 +279,7 @@ function( angular , c6State  ) {
             self.actionLabelOptions = CTA_OPTIONS;
             self.actionLabelOptions = CTA_OPTIONS;
             self.actionLink = '';
-            self.signUpTitle = hasPromotion ? 'Get My $50 Credit' :
-                'Get Started Now';
+            self.hasFiftyPromotion = $location.search().promotion === FIFTY_PROMOTION;
 
             _private.generateLink = function(link) {
                 var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
@@ -323,18 +327,14 @@ function( angular , c6State  ) {
             };
 
             self.initWithModel = function(model) {
-                if(model.card && model.card.data && model.card.data.videoid) {
-                    SpinnerService.display();
-                    self.model = model;
-                    self.card = model.card;
-                    self.actionLink = model.website;
-                    self.updateActionLink();
-                    _private.getWebsiteData(model.website).finally(function() {
-                        SpinnerService.close();
-                    });
-                } else {
-                    c6State.goTo('Selfie:Demo:Input:Full');
-                }
+                SpinnerService.display();
+                self.model = model;
+                self.card = model.card;
+                self.actionLink = model.website;
+                self.updateActionLink();
+                _private.getWebsiteData(model.website).finally(function() {
+                    SpinnerService.close();
+                });
             };
 
             self.updateActionLink = function() {
@@ -347,9 +347,7 @@ function( angular , c6State  ) {
 
             self.signUp = function(device) {
                 var state = (device === 'mobile') ? 'Selfie:SignUp:Form' : 'Selfie:SignUp:Full';
-                c6State.goTo(state, null, {
-                    promotion: hasPromotion ? DEFAULT_PROMOTION : null
-                });
+                c6State.goTo(state);
             };
         }]);
 });

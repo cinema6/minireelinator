@@ -53,17 +53,17 @@ define(['app'], function(appModule) {
             expect(ctrl.actionLink).toBe('');
         });
 
-        describe('initializing the signup button title', function() {
+        describe('initializing the has promotion property', function() {
             it('should work if there is a promotion', function() {
-                $location.search.and.returnValue({ promotion: 'cats' });
+                $location.search.and.returnValue({ promotion: 'pro-0gW6Qt03q32WqsC-' });
                 ctrl = $controller('SelfieDemoPreviewController', {
                     $scope: $scope
                 });
-                expect(ctrl.signUpTitle).toBe('Get My $50 Credit');
+                expect(ctrl.hasFiftyPromotion).toBe(true);
             });
 
             it('should work if there is not a promotion', function() {
-                expect(ctrl.signUpTitle).toBe('Get Started Now');
+                expect(ctrl.hasFiftyPromotion).toBe(false);
             });
         });
 
@@ -169,19 +169,6 @@ define(['app'], function(appModule) {
                 $scope.$digest();
                 expect(SpinnerService.close).toHaveBeenCalledWith();
             });
-
-            it('should redirect to the demo input form if there is no card data', function() {
-                var model = {
-                    card: {
-                        data: {
-                            videoid: null
-                        }
-                    },
-                    website: 'website'
-                };
-                ctrl.initWithModel(model);
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Demo:Input:Full');
-            });
         });
 
         describe('updateActionLink', function() {
@@ -272,21 +259,12 @@ define(['app'], function(appModule) {
         describe('signUp', function() {
             it('should go to the signup form for desktop', function() {
                 ctrl.signUp('desktop');
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Full', null, { promotion: null });
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Full');
             });
 
             it('should go to the signup form for mobile', function() {
                 ctrl.signUp('mobile');
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Form', null, { promotion: null });
-            });
-
-            it('should change any passed promotion to be the one for $50', function() {
-                $location.search.and.returnValue({ promotion: 'cats' });
-                ctrl = $controller('SelfieDemoPreviewController', {
-                    $scope: $scope
-                });
-                ctrl.signUp('desktop');
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Full', null, { promotion: 'pro-0gW6Qt03q32WqsC-' });
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Form');
             });
         });
     });

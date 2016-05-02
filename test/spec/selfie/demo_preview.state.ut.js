@@ -1,18 +1,18 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    var state, SettingsService;
+    var state, SettingsService, c6State;
 
     describe('Selfie:Demo:Preview:Full', function() {
         beforeEach(function() {
             module(appModule.name);
 
-            var c6State;
             inject(function($injector) {
                 c6State = $injector.get('c6State');
                 SettingsService = $injector.get('SettingsService');
             });
             spyOn(SettingsService, 'register').and.returnValue(SettingsService);
+            spyOn(c6State, 'goTo');
             state = c6State.get('Selfie:Demo:Preview:Full');
         });
 
@@ -133,6 +133,32 @@ define(['app'], function(appModule) {
             it('should use the model of the parent', function() {
                 state.cParent.cModel = 'model';
                 expect(state.model()).toBe('model');
+            });
+        });
+
+        describe('enter', function() {
+            it('should redirect if there is no video data', function() {
+                state.cParent.cModel = {
+                    card: {
+                        data: {
+                            videoid: null
+                        }
+                    }
+                };
+                state.enter();
+                expect(c6State.goTo).toHaveBeenCalled('Selfie:Demo:Input:Full');
+            });
+
+            it('should not redirect if there is video data', function() {
+                state.cParent.cModel = {
+                    card: {
+                        data: {
+                            videoid: 'videoid'
+                        }
+                    }
+                };
+                state.enter();
+                expect(c6State.goTo).not.toHaveBeenCalled();
             });
         });
     });
