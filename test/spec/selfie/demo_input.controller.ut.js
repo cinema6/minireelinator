@@ -37,6 +37,7 @@ define(['app'], function(appModule) {
                 c6State: c6State
             });
             spyOn(ctrl._private, 'updateModel');
+            spyOn(ctrl._private, 'canContinue');
             spyOn(ctrl, 'checkVideoText');
         });
 
@@ -58,6 +59,7 @@ define(['app'], function(appModule) {
                 videoText: ''
             });
             expect(ctrl.showEmailField).toBe(true);
+            expect(ctrl.videoLoading).toBe(false);
             expect(ctrl._private.video).toBeNull();
         });
 
@@ -143,13 +145,14 @@ define(['app'], function(appModule) {
                     data: { },
                     stats: { }
                 };
+                ctrl._private.canContinue.and.callThrough();
             });
 
             describe('when there are missing inputs', function() {
                 it('should return false', function() {
                     Object.keys(ctrl.inputs).forEach(function(key) {
                         ctrl.inputs[key] = '';
-                        expect(ctrl.canContinue()).toBe(false);
+                        expect(ctrl._private.canContinue()).toBe(false);
                         ctrl.inputs[key] = 'value';
                     });
                 });
@@ -159,7 +162,7 @@ define(['app'], function(appModule) {
                 it('should return false', function() {
                     Object.keys(ctrl.errors).forEach(function(key) {
                         ctrl.errors[key] = true;
-                        expect(ctrl.canContinue()).toBe(false);
+                        expect(ctrl._private.canContinue()).toBe(false);
                         ctrl.errors[key] = false;
                     });
                 });
@@ -168,13 +171,13 @@ define(['app'], function(appModule) {
             describe('when there is no video', function() {
                 it('should return false', function() {
                     ctrl._private.video = null;
-                    expect(ctrl.canContinue()).toBe(false);
+                    expect(ctrl._private.canContinue()).toBe(false);
                 });
             });
 
             describe('when all is well', function() {
                 it('should return true', function() {
-                    expect(ctrl.canContinue()).toBe(true);
+                    expect(ctrl._private.canContinue()).toBe(true);
                 });
             });
         });
@@ -196,18 +199,27 @@ define(['app'], function(appModule) {
                 expect(mockDebounce).toHaveBeenCalledWith(jasmine.any(Function), 1000);
             });
 
+            it('should indicate that the video has begin loading', function() {
+                SelfieVideoService.dataFromText.and.returnValue($q.when('video data'));
+                ctrl._private.fetchVideo('video text');
+                mockDebounce.calls.mostRecent().args[0](['video text']);
+                expect(ctrl.videoLoading).toBe(true);
+            });
+
             describe('getting video data', function() {
                 it('should work', function() {
                     SelfieVideoService.dataFromText.and.returnValue($q.when('video data'));
                     SelfieVideoService.statsFromService.and.returnValue($q.when());
                     fetch('video url');
                     expect(SelfieVideoService.dataFromText).toHaveBeenCalledWith('video url');
+                    expect(ctrl.videoLoading).toBe(false);
                 });
 
                 it('should handle a failure', function() {
                     SelfieVideoService.dataFromText.and.returnValue($q.reject('epic fail'));
                     fetch('video url');
                     expect(ctrl.errors.videoText).toBe(true);
+                    expect(ctrl.videoLoading).toBe(false);
                 });
             });
 
@@ -223,6 +235,7 @@ define(['app'], function(appModule) {
                     expect(SelfieVideoService.statsFromService).toHaveBeenCalledWith('service', 'id');
                     expect(ctrl._private.video.data).toBe(data);
                     expect(ctrl._private.video.stats).toBe('video stats');
+                    expect(ctrl.videoLoading).toBe(false);
                 });
 
                 it('should reset the video text error if it succeeds', function() {
@@ -252,6 +265,7 @@ define(['app'], function(appModule) {
                     SelfieVideoService.statsFromService.and.returnValue($q.reject('epic fail'));
                     fetch('video url');
                     expect(ctrl.errors.videoText).toBe(true);
+                    expect(ctrl.videoLoading).toBe(false);
                 });
             });
         });
@@ -371,37 +385,72 @@ define(['app'], function(appModule) {
         });
 
         describe('gotoPreview', function() {
-            describe('if the page is in an iframe', function() {
+            describe('if we are allowed to continue', function() {
                 beforeEach(function() {
-                    c6State.current = 'Selfie:Demo:Input:Frame';
+                    ctrl._private.canContinue.and.returnValue(true);
                 });
 
-                it('should direct the parent page to the correct preview state', function() {
-                    ctrl.gotoPreview();
-                    expect(c6State.goTo).not.toHaveBeenCalled();
+                describe('if the page is in an iframe', function() {
+                    beforeEach(function() {
+                        c6State.current = 'Selfie:Demo:Input:Frame';
+                    });
+
+                    it('should direct the parent page to the correct preview state', function() {
+                        ctrl.gotoPreview();
+                        expect(c6State.goTo).not.toHaveBeenCalled();
+                    });
+
+                    it('should update the model', function() {
+                        ctrl.model = 'the model';
+                        ctrl.gotoPreview();
+                        expect(ctrl._private.updateModel).toHaveBeenCalledWith();
+                    });
                 });
 
-                it('should update the model', function() {
-                    ctrl.model = 'the model';
-                    ctrl.gotoPreview();
-                    expect(ctrl._private.updateModel).toHaveBeenCalledWith();
+                describe('if the page is not in an iframe', function() {
+                    beforeEach(function() {
+                        c6State.current = 'Selfie:Demo:Input:Full';
+                    });
+
+                    it('should navigate to the correct preview state', function() {
+                        ctrl.gotoPreview();
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Demo:Preview:Full');
+                    });
+
+                    it('should update the model', function() {
+                        ctrl.model = 'the model';
+                        ctrl.gotoPreview();
+                        expect(ctrl._private.updateModel).toHaveBeenCalledWith();
+                    });
                 });
             });
 
-            describe('if the page is not in an iframe', function() {
+            describe('if we are not allowed to continue', function() {
                 beforeEach(function() {
-                    c6State.current = 'Selfie:Demo:Input:Full';
+                    ctrl._private.canContinue.and.returnValue(false);
                 });
 
-                it('should navigate to the correct preview state', function() {
+                it('should show errors for any input without a model', function() {
+                    ctrl.errors = {
+                        company: false,
+                        email: false,
+                        website: false,
+                        videoText: false
+                    };
+                    ctrl.inputs = {
+                        company: null,
+                        email: null,
+                        website: null,
+                        videoText: 'video text'
+                    };
+                    ctrl._private.video = null;
                     ctrl.gotoPreview();
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Demo:Preview:Full');
-                });
-
-                it('should update the model', function() {
-                    ctrl.model = 'the model';
-                    ctrl.gotoPreview();
-                    expect(ctrl._private.updateModel).toHaveBeenCalledWith();
+                    expect(ctrl.errors).toEqual({
+                        company: true,
+                        email: true,
+                        website: true,
+                        videoText: true
+                    });
                 });
             });
         });

@@ -7,7 +7,7 @@
             --><div class="grid__item three-quarters text--right">
                 <ul class="header__nav">
                     <li>
-                        <button class="action__btn action__btn--wide hide--mobile" ng-click="SelfieDemoPreviewCtrl.signUp('desktop')">SIGN UP FOR FREE</button>
+                        <button class="action__btn action__btn--wide hide--mobile" ng-click="SelfieDemoPreviewCtrl.signUp('desktop')">{{SelfieDemoPreviewCtrl.hasFiftyPromotion ? 'SIGN UP NOW - $50 FREE' : 'SIGN UP FOR FREE'}}</button>
                     </li>
                 </ul>
             </div>
@@ -17,7 +17,7 @@
 
         <div class="grid">
             <div class="grid__item one-whole text--center formSection__group">
-                <h1 class="formSection__title">            
+                <h1 class="formSection__title">
                     <span class="formSection__titleText tk--hdr">Here’s what your ad could look like - pretty great, huh?</span>
                 </h1>
                 <p class="formSection__introText">We don't just make it look good, we make it work for you. Join now to choose who gets to see it and when.</p>
@@ -25,7 +25,7 @@
         </div>
         <div class="grid">
 
-            
+
             <div class="grid__item two-thirds palm--one-whole">
 
                 <section id="demoPreview">
@@ -77,13 +77,13 @@
                     </div><!-- .form__items -->
 
                 </section><!--.formSection__group-->
-                
+
                 <div class="text--center">
                     <span>Like what you see? <br> Your future customers will too.<br></span><br>
                     <!-- add /signup path to button below-->
-                    <button class="action__btn action__btn--wide action__btn--big hide--mobile" ng-click="SelfieDemoPreviewCtrl.signUp('desktop')">Get Started Now</button>
+                    <button class="action__btn action__btn--wide action__btn--big hide--mobile" ng-click="SelfieDemoPreviewCtrl.signUp('desktop')">{{SelfieDemoPreviewCtrl.hasFiftyPromotion ? 'Get My $50 Credit' : 'Get Started Now'}}</button>
                     <!-- add /singup/form path to button below-->
-                    <button class="action__btn action__btn--wide action__btn--big hide--desktop" ng-click="SelfieDemoPreviewCtrl.signUp('mobile')">Get Started Now</button>
+                    <button class="action__btn action__btn--wide action__btn--big hide--desktop" ng-click="SelfieDemoPreviewCtrl.signUp('mobile')">{{SelfieDemoPreviewCtrl.hasFiftyPromotion ? 'Get My $50 Credit' : 'Get Started Now'}}</button>
                 </div>
 
             </div><!--.grid__item-->
