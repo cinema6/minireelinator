@@ -29,8 +29,7 @@
                             <b>A duration is required:</b>
                             <input type="number" ng-model="Ctrl.updatedCampaign.cards[0].data.duration" class="form__textBox" style="width:12%">
                         </p>
-                        <p ng-if="!Ctrl.updatedCampaign.paymentMethod" class="grid__item grid--center"><b>There is no payment method for the proposed campaign.</b></p>
-                        <selfie-campaign-updates-summary campaign="Ctrl.campaign" updated-campaign="Ctrl.updatedCampaign"></selfie-campaign-updates-summary>
+                        <selfie-campaign-updates-summary campaign="Ctrl.campaign" updated-campaign="Ctrl.updatedCampaign" update-request="Ctrl.updateRequest"></selfie-campaign-updates-summary>
                         <div class="grid__item grid--center">
                             <div class="grid__item one--whole">
                             <selfie-preview card="Ctrl.previewCard"></selfie-preview>

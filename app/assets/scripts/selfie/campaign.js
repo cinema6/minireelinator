@@ -2588,16 +2588,16 @@ function( angular , c6State  , PaginatedListState                    ,
         function                                           ( c6State ,  cState ,  cinema6 ,
                                                              $scope ,  c6Debounce ){
             var self = this;
-            var updateRequest;
 
             this.initWithModel = function() {
                 var campaign = cState.campaign;
-                updateRequest = cState.updateRequest;
+                var updateRequest = cState.updateRequest;
                 var updatedCampaign = (updateRequest) ? updateRequest.data : campaign;
                 extend(self, {
                     showApproval: !!(updateRequest),
                     campaign: campaign,
                     updatedCampaign: updatedCampaign,
+                    updateRequest: updateRequest,
                     previewCard: (updateRequest) ? copy(updatedCampaign.cards[0]) : null,
                     rejectionReason: '',
                     error: null,

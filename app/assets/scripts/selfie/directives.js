@@ -1917,7 +1917,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                     campaign: '=',
                     card: '=',
                     updatedCampaign: '=',
-                    updatedCard: '='
+                    updatedCard: '=',
+                    updateRequest: '='
                 },
                 templateUrl: 'views/selfie/directives/updatesSummary.html',
                 controller: 'SelfieCampaignUpdatesSummaryController',
@@ -2018,8 +2019,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             ];
 
             // Constructs the summary object used to generate the table
-            this._loadSummary = function(campaign, updatedCampaign) {
-                var firstUpdate = (campaign.status === 'pending');
+            this._loadSummary = function(campaign, updatedCampaign, updateRequest) {
+                var firstUpdate = updateRequest.initialSubmit;
                 self.firstUpdate = firstUpdate;
                 var originalCampaign = (firstUpdate) ? {} : campaign;
                 var summary = CampaignService.campaignDiffSummary(
@@ -2083,6 +2084,6 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
                 }
             }, true);
 
-            this._loadSummary($scope.campaign, $scope.updatedCampaign);
+            this._loadSummary($scope.campaign, $scope.updatedCampaign, $scope.updateRequest);
         }]);
 });
