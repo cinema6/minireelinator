@@ -2,7 +2,7 @@ define(['app'], function(appModule) {
     'use strict';
 
     describe('SelfieDemoPreviewController', function() {
-        var ctrl, $scope, CollateralService, $q, c6State, SpinnerService;
+        var ctrl, $scope, CollateralService, $q, c6State, SpinnerService, cState;
 
         beforeEach(function() {
             module(appModule.name);
@@ -20,8 +20,12 @@ define(['app'], function(appModule) {
             spyOn(c6State, 'goTo');
             spyOn(SpinnerService, 'display');
             spyOn(SpinnerService, 'close');
+            cState = {
+                cName: 'Selfie:Demo:Preview'
+            };
             ctrl = $controller('SelfieDemoPreviewController', {
-                $scope: $scope
+                $scope: $scope,
+                cState: cState
             });
             spyOn(ctrl._private, 'generateLink');
             spyOn(ctrl._private, 'getWebsiteData');
@@ -205,9 +209,9 @@ define(['app'], function(appModule) {
         });
 
         describe('signUp', function() {
-            it('should go to the signup form for desktop', function() {
+            it('should go to the parent state + :SignUp form for desktop', function() {
                 ctrl.signUp('desktop');
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUp:Full');
+                expect(c6State.goTo).toHaveBeenCalledWith(cState.cName + ':SignUp');
             });
 
             it('should go to the signup form for mobile', function() {
