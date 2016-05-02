@@ -1484,10 +1484,19 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.state('Selfie:Demo', function() {
                     this.route('/demo', 'Selfie:Demo:Input', 'Selfie:Demo:Input:Full');
-                    this.route('/demo/preview', 'Selfie:Demo:Preview', 'Selfie:Demo:Preview:Full');
+                    this.route('/demo/preview',
+                        'Selfie:Demo:Preview',
+                        'Selfie:Demo:Preview:Full',
+                        function() {
+                            this.state('Selfie:SignUp', 'Selfie:Demo:Preview:Full:SignUp');
+                        });
                     this.route('/demo/frame', 'Selfie:Demo:Input', 'Selfie:Demo:Input:Frame');
-                    this.route('/demo/frame/preview', 'Selfie:Demo:Preview',
-                        'Selfie:Demo:Preview:Frame');
+                    this.route('/demo/frame/preview',
+                        'Selfie:Demo:Preview',
+                        'Selfie:Demo:Preview:Frame',
+                        function() {
+                            this.state('Selfie:SignUp', 'Selfie:Demo:Preview:Frame:SignUp');
+                        });
                 });
 
                 this.state('Login');

@@ -34,7 +34,11 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
             });
 
-            cState = {};
+            cState = {
+                cParent: {
+                    cName: 'Selfie:App'
+                }
+            };
 
             user = {
                 firstName: '',
@@ -55,6 +59,10 @@ define(['app'], function(appModule) {
             expect(SelfieSignUpCtrl.formOnly).toBe(false);
 
             initCtrl('Selfie:SignUp:Form');
+
+            expect(SelfieSignUpCtrl.formOnly).toBe(true);
+
+            initCtrl('Selfie:Demo:Preview');
 
             expect(SelfieSignUpCtrl.formOnly).toBe(true);
         });
@@ -172,6 +180,16 @@ define(['app'], function(appModule) {
                             expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUpSuccess:Full', [user]);
                         });
                     });
+                });
+            });
+
+            describe('cancel()', function() {
+                it('should go to cParent state', function() {
+                    spyOn(c6State, 'goTo');
+
+                    SelfieSignUpCtrl.cancel();
+
+                    expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName);
                 });
             });
         });

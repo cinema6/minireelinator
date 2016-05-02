@@ -101,7 +101,7 @@
                                 <i class="fa fa-times ui--error"></i>
                                 Email*
                             </label>
-                            <div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpBox" ng-class="{ 'form__helpBox--center' : SelfieSignUpCtrl.formOnly, 'form__helpBox--right' :  !SelfieSignUpCtrl.formOnly }">
                                 <div class="form__helpText">
                                     This will also be your username
                                 </div>
@@ -118,7 +118,7 @@
                                 <i class="fa fa-times ui--error"></i>
                                 Password*
                             </label>
-                            <div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpBox" ng-class="{ 'form__helpBox--center' : SelfieSignUpCtrl.formOnly, 'form__helpBox--right' :  !SelfieSignUpCtrl.formOnly }">
                                 <div class="form__helpText">
                                     Your password must be at least 8 characters and include 1 number
                                 </div>
