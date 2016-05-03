@@ -1,5 +1,10 @@
 # MiniReelinator
 
+## v1.45.1 (May 3, 2016)
+* *[v1.45.1.rc1]*
+  * [FIX]: Fix for an issue where the demo page button may not work when hiding the email field
+* *[/v1.45.1.rc1]*
+
 ## v1.45.0 (May 2, 2016)
 * *[v1.45.0.rc2]*
   * [FIX]: Fix for an issue where demo page in an iframe would not function correctly

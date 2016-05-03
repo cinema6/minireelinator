@@ -390,6 +390,40 @@ define(['app'], function(appModule) {
             describe('if we are allowed to continue', function() {
                 beforeEach(function() {
                     ctrl._private.canContinue.and.returnValue(true);
+                    c6State.current = 'Selfie:Demo:Input:Full';
+                });
+
+                describe('showing errors for incomplete fields', function() {
+                    it('should show errors for any input without a model', function() {
+                        ctrl.errors = {
+                            company: false,
+                            email: false,
+                            website: false,
+                            videoText: false
+                        };
+                        ctrl.inputs = {
+                            company: null,
+                            email: null,
+                            website: null,
+                            videoText: 'video text'
+                        };
+                        ctrl._private.video = null;
+                        ctrl.gotoPreview();
+                        expect(ctrl.errors).toEqual({
+                            company: true,
+                            email: true,
+                            website: true,
+                            videoText: true
+                        });
+                    });
+
+                    it('should not set an error for email if the email field is hidden', function() {
+                        ctrl.errors = { email: false };
+                        ctrl.inputs = { email: null };
+                        ctrl.showEmailField = false;
+                        ctrl.gotoPreview();
+                        expect(ctrl.errors.email).toBe(false);
+                    });
                 });
 
                 describe('if the page is in an iframe', function() {
@@ -425,35 +459,6 @@ define(['app'], function(appModule) {
                         ctrl.model = 'the model';
                         ctrl.gotoPreview();
                         expect(ctrl._private.updateModel).toHaveBeenCalledWith();
-                    });
-                });
-            });
-
-            describe('if we are not allowed to continue', function() {
-                beforeEach(function() {
-                    ctrl._private.canContinue.and.returnValue(false);
-                });
-
-                it('should show errors for any input without a model', function() {
-                    ctrl.errors = {
-                        company: false,
-                        email: false,
-                        website: false,
-                        videoText: false
-                    };
-                    ctrl.inputs = {
-                        company: null,
-                        email: null,
-                        website: null,
-                        videoText: 'video text'
-                    };
-                    ctrl._private.video = null;
-                    ctrl.gotoPreview();
-                    expect(ctrl.errors).toEqual({
-                        company: true,
-                        email: true,
-                        website: true,
-                        videoText: true
                     });
                 });
             });
