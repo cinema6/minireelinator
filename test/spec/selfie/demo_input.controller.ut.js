@@ -38,6 +38,8 @@ define(['app'], function(appModule) {
             });
             spyOn(ctrl._private, 'updateModel');
             spyOn(ctrl._private, 'canContinue');
+            spyOn(ctrl._private, 'getPreviewHref');
+            spyOn(ctrl._private, 'navigateTop');
             spyOn(ctrl, 'checkVideoText');
         });
 
@@ -396,8 +398,10 @@ define(['app'], function(appModule) {
                     });
 
                     it('should direct the parent page to the correct preview state', function() {
+                        ctrl._private.getPreviewHref.and.returnValue('href');
                         ctrl.gotoPreview();
                         expect(c6State.goTo).not.toHaveBeenCalled();
+                        expect(ctrl._private.navigateTop).toHaveBeenCalledWith('href');
                     });
 
                     it('should update the model', function() {
@@ -483,16 +487,20 @@ define(['app'], function(appModule) {
         });
 
         describe('getPreviewHref', function() {
+            beforeEach(function() {
+                ctrl._private.getPreviewHref.and.callThrough();
+            });
+
             it('should work if there are no query params', function() {
                 $location.search.and.returnValue({ });
-                expect(ctrl.getPreviewHref()).toBe('/#/demo/frame/preview');
+                expect(ctrl._private.getPreviewHref()).toBe('/#/demo/frame/preview');
             });
 
             it('should work if there is one query param', function() {
                 $location.search.and.returnValue({
                     foo: 'bar'
                 });
-                expect(ctrl.getPreviewHref()).toBe('/#/demo/frame/preview?foo=bar');
+                expect(ctrl._private.getPreviewHref()).toBe('/#/demo/frame/preview?foo=bar');
             });
 
             it('should work if there are multiple query params', function() {
@@ -500,7 +508,7 @@ define(['app'], function(appModule) {
                     foo: 'bar',
                     money: '$$$'
                 });
-                expect(ctrl.getPreviewHref()).toBe('/#/demo/frame/preview?foo=bar&money=%24%24%24');
+                expect(ctrl._private.getPreviewHref()).toBe('/#/demo/frame/preview?foo=bar&money=%24%24%24');
             });
         });
     });
