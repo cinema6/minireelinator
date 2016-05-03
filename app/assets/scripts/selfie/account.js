@@ -66,11 +66,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:SignUp', ['$location','SettingsService','c6State',
-            function                               ( $location , SettingsService , c6State ) {
-                this.templateUrl = (/Demo/).test(c6State.current) ?
-                    'views/selfie/sign_up_modal.html' :
-                    'views/selfie/sign_up.html';
+            c6StateProvider.state('Selfie:SignUp', ['$location','SettingsService',
+            function                               ( $location , SettingsService ) {
+                this.templateUrl = 'views/selfie/sign_up_modal.html';
                 this.controller = 'SelfieSignUpController';
                 this.controllerAs = 'SelfieSignUpCtrl';
 
