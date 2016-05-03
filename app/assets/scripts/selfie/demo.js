@@ -42,10 +42,10 @@ function( angular , c6State  ) {
 
         .controller('SelfieDemoInputController', ['c6Debounce', '$scope', 'SelfieVideoService',
                                                   'CampaignService', 'SettingsService', 'c6State',
-                                                  '$location',
+                                                  '$location', '$window',
         function                                 ( c6Debounce ,  $scope ,  SelfieVideoService ,
                                                    CampaignService ,  SettingsService ,  c6State ,
-                                                   $location ) {
+                                                   $location ,  $window ) {
             var MAX_HEADLINE_LENGTH = 40;
             var MAX_DESCRIPTION_LENGTH = 400;
             var DEFAULT_TITLE = 'Your Title Here!';
@@ -128,6 +128,19 @@ function( angular , c6State  ) {
                 });
             }, 1000);
 
+            _private.getPreviewHref = function() {
+                var base = '/#/demo/frame/preview';
+                var params = $location.search();
+                var keys = Object.keys(params);
+                if(keys.length === 0) {
+                    return base;
+                } else {
+                    return base + '?' + keys.map(function(key) {
+                        return key + '=' + encodeURIComponent(params[key]);
+                    }).join('&');
+                }
+            };
+
             _private.canContinue = function() {
                 var hasError = Object.keys(self.errors).some(function(key) {
                     return self.errors[key];
@@ -137,6 +150,10 @@ function( angular , c6State  ) {
                 });
                 var hasVideo = !!_private.video;
                 return !hasError && hasInputs && hasVideo;
+            };
+
+            _private.navigateTop = function(href) {
+                $window.parent.location = href;
             };
 
             self.initWithModel = function(model) {
@@ -162,19 +179,6 @@ function( angular , c6State  ) {
                 }
             };
 
-            self.getPreviewHref = function() {
-                var base = '/#/demo/frame/preview';
-                var params = $location.search();
-                var keys = Object.keys(params);
-                if(keys.length === 0) {
-                    return base;
-                } else {
-                    return base + '?' + keys.map(function(key) {
-                        return key + '=' + encodeURIComponent(params[key]);
-                    }).join('&');
-                }
-            };
-
             self.checkVideoText = function() {
                 var text = self.inputs.videoText;
 
@@ -191,6 +195,8 @@ function( angular , c6State  ) {
                     _private.updateModel();
                     if(c6State.current.indexOf('Frame') === -1) {
                         c6State.goTo('Selfie:Demo:Preview:Full');
+                    } else {
+                        _private.navigateTop(_private.getPreviewHref());
                     }
                 } else {
                     ['company', 'email', 'website'].forEach(function(input) {

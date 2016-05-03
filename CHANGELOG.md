@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.45.0 (May 2, 2016)
+* *[v1.45.0.rc2]*
+  * [FIX]: Fix for an issue where demo page in an iframe would not function correctly
+* *[/v1.45.0.rc2]*
+
 * *[v1.45.0.rc1]*
   * Redirect demo preview page back to the form if there is no video to preview
   * Show different signup text on demo page if there is a promotion

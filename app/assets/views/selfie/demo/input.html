@@ -71,8 +71,7 @@
                 </fieldset>
 
                 <div class="ui__btnHolder one-whole item--center">
-                    <button ng-class="{ btnSpinner__waiting: SelfieDemoInputCtrl.videoLoading }" class="action__btn action__btn--wide action__btn--big" ng-click="SelfieDemoInputCtrl.gotoPreview()" hidden-input-click="hiddenContinue">Get My Instant Preview</button>
-                    <a ng-if="currentState.indexOf('Frame') !== -1" id="hiddenContinue" ng-href="{{ SelfieDemoInputCtrl.getPreviewHref() }}" target="_top"></a>
+                    <button ng-class="{ btnSpinner__waiting: SelfieDemoInputCtrl.videoLoading }" class="action__btn action__btn--wide action__btn--big" ng-click="SelfieDemoInputCtrl.gotoPreview()">Get My Instant Preview</button>
                 </div>
 
             </div>
