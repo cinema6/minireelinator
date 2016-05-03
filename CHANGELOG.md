@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.46.0.rc1]*
+  * [FEATURE]: Fill in fields from the Selfie demo when a user first signs up and begins creating a campaign
+
 ## v1.45.2 (May 3, 2016)
 * *[v1.45.2.rc1]*
   * [FIX]: Fix for an issue where the sign up form always appeared in modal on demo page
