@@ -191,6 +191,11 @@ function( angular , c6State  ) {
             };
 
             self.gotoPreview = function() {
+                self.errors.company = !self.inputs.company;
+                self.errors.email = !self.inputs.email && self.showEmailField;
+                self.errors.website = !self.inputs.website;
+                self.errors.videoText = !_private.video;
+
                 if(_private.canContinue()) {
                     _private.updateModel();
                     if(c6State.current.indexOf('Frame') === -1) {
@@ -198,11 +203,6 @@ function( angular , c6State  ) {
                     } else {
                         _private.navigateTop(_private.getPreviewHref());
                     }
-                } else {
-                    ['company', 'email', 'website'].forEach(function(input) {
-                        self.errors[input] = !self.inputs[input];
-                    });
-                    self.errors.videoText = !_private.video;
                 }
             };
         }])
