@@ -1,5 +1,10 @@
 # MiniReelinator
 
+## v1.45.2 (May 3, 2016)
+* *[v1.45.2.rc1]*
+  * [FIX]: Fix for an issue where the sign up form always appeared in modal on demo page
+* *[/v1.45.2.rc1]*
+
 ## v1.45.1 (May 3, 2016)
 * *[v1.45.1.rc1]*
   * [FIX]: Fix for an issue where the demo page button may not work when hiding the email field
