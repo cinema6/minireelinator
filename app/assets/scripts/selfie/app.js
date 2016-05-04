@@ -163,9 +163,9 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:App', ['c6State','SettingsService','CampaignService',
-                                                 'intercom',
+                                                 'intercom', '$q', 'cinema6',
             function                            ( c6State , SettingsService , CampaignService ,
-                                                  intercom ) {
+                                                  intercom ,  $q ,  cinema6 ) {
                 this.templateUrl = 'views/selfie/app.html';
 
                 this.model = function() {
@@ -180,6 +180,8 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                             created_at: user.created
                         },
                         cState = this;
+
+                    cState.demoData = { };
 
                     intercom('boot', intercomSettings);
 
@@ -227,17 +229,37 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                             validateLocal: function(currentUserId, prevUserId) {
                                 return currentUserId === prevUserId;
                             }
-                        });
+                        })
+                        .register('Selfie::demo', cState.demoData);
                     return CampaignService.hasCampaigns()
                         .then(function(hasCampaigns) {
                             cState.hasCampaigns = hasCampaigns;
                         });
                 };
                 this.enter = function() {
-                    if (this.hasCampaigns) {
+                    var cState = this;
+
+                    if (cState.hasCampaigns) {
                         c6State.goTo('Selfie:CampaignDashboard', null, null, true);
+                    } else if(cState.demoData.card && cState.demoData.card.data &&
+                            cState.demoData.card.data.videoid) {
+                        var user = c6State.get('Selfie').cModel;
+                        cinema6.db.findAll('advertiser', { org: user.org.id })
+                        .then(function(advertisers) {
+                            var demo = cState.demoData;
+                            var baseCamp = { cards: [demo.card] };
+                            var campaign = CampaignService.create(baseCamp, user, advertisers[0]);
+                            Object.keys(demo).forEach(function(key) {
+                                delete demo[key];
+                            });
+                            return campaign.save().then(function() {
+                                c6State.goTo('Selfie:EditCampaign', [campaign], { }, true);
+                            }).catch(function() {
+                                c6State.goTo('Selfie:NewCampaign', [campaign], { }, true);
+                            });
+                        });
                     } else {
-                        c6State.goTo('Selfie:NewCampaign', null, {}, true);
+                        c6State.goTo('Selfie:NewCampaign', null, { }, true);
                     }
                 };
             }]);

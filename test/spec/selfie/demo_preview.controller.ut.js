@@ -187,7 +187,7 @@ define(['app'], function(appModule) {
                 ctrl._private.generateLink.and.returnValue('formatted link');
                 ctrl.updateActionLink();
                 expect(ctrl._private.generateLink).toHaveBeenCalledWith('link');
-                expect(ctrl.card.links.Action.uri).toBe('formatted link');
+                expect(ctrl.card.links.Action).toBe('formatted link');
                 expect(ctrl.actionLink).toBe('formatted link');
             });
         });
@@ -234,12 +234,8 @@ define(['app'], function(appModule) {
                 it('should be able to set links on the card', function() {
                     ctrl._private.getWebsiteData('website');
                     $scope.$digest();
-                    expect(ctrl.card.links.Facebook).toEqual({
-                        uri: 'facebook link'
-                    });
-                    expect(ctrl.card.links.Instagram).toEqual({
-                        uri: 'instagram link'
-                    });
+                    expect(ctrl.card.links.Facebook).toBe('facebook link');
+                    expect(ctrl.card.links.Instagram).toBe('instagram link');
                 });
             });
 
