@@ -248,32 +248,101 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     });
                                 });
 
-                                it('should set the service and videoid on the card', function() {
-                                    var data = {
-                                        title: 'New Video Title',
-                                        duration: 3000,
-                                        views: 123645
-                                    };
+                                describe('when null is returned', function() {
+                                    it('should set the service and videoid and undefine the duration', function() {
+                                        card.data.duration = 60;
 
-                                    $scope.$apply(function() {
-                                        statsDeferred.resolve(data);
+                                        $scope.$apply(function() {
+                                            statsDeferred.resolve(null);
+                                        });
+
+                                        expect(SelfieCampaignVideoCtrl.video).toEqual(null);
+                                        expect(SelfieCampaignVideoCtrl.videoError).toBe(false);
+                                        expect(card.data.service).toBe('youtube');
+                                        expect(card.data.videoid).toBe('12345');
+                                        expect(card.data.duration).toBe(undefined);
+                                        expect(card.data.hostname).toBe('company');
                                     });
+                                });
 
-                                    expect(SelfieCampaignVideoCtrl.video).toEqual(data);
-                                    expect(SelfieCampaignVideoCtrl.videoError).toBe(false);
-                                    expect(card.data.service).toBe('youtube');
-                                    expect(card.data.videoid).toBe('12345');
-                                    expect(card.data.hostname).toBe('company');
+                                describe('when no duration is returned', function() {
+                                    it('should set the service and videoid and undefine the duration', function() {
+                                        var data = {
+                                            title: 'New Video Title',
+                                            views: 123645
+                                        };
+
+                                        card.data.duration = 60;
+
+                                        $scope.$apply(function() {
+                                            statsDeferred.resolve(data);
+                                        });
+
+                                        expect(SelfieCampaignVideoCtrl.video).toEqual(data);
+                                        expect(SelfieCampaignVideoCtrl.videoError).toBe(false);
+                                        expect(card.data.service).toBe('youtube');
+                                        expect(card.data.videoid).toBe('12345');
+                                        expect(card.data.duration).toBe(undefined);
+                                        expect(card.data.hostname).toBe('company');
+                                    });
+                                });
+
+                                describe('when valid (under 60 seconds) duration is returned', function() {
+                                    it('should set the service, videoid and duration', function() {
+                                        var data = {
+                                            title: 'New Video Title',
+                                            views: 123645,
+                                            duration: 30
+                                        };
+
+                                        card.data.duration = 60;
+
+                                        $scope.$apply(function() {
+                                            statsDeferred.resolve(data);
+                                        });
+
+                                        expect(SelfieCampaignVideoCtrl.video).toEqual(data);
+                                        expect(SelfieCampaignVideoCtrl.videoError).toBe(false);
+                                        expect(card.data.service).toBe('youtube');
+                                        expect(card.data.videoid).toBe('12345');
+                                        expect(card.data.duration).toBe(30);
+                                        expect(card.data.hostname).toBe('company');
+                                    });
+                                });
+
+                                describe('when invalid (over 60 seconds) duration is returned', function() {
+                                    it('should not set the service, videoid or duration and should set the video error', function() {
+                                        var data = {
+                                            title: 'New Video Title',
+                                            views: 123645,
+                                            duration: 90
+                                        };
+
+                                        card.data.duration = 60;
+                                        card.data.service = 'vimeo';
+                                        card.data.videoid = '9999';
+
+                                        $scope.$apply(function() {
+                                            statsDeferred.resolve(data);
+                                        });
+
+                                        expect(SelfieCampaignVideoCtrl.video).toEqual(null);
+                                        expect(SelfieCampaignVideoCtrl.videoError).toBe('duration');
+                                        expect(card.data.service).toBe('vimeo');
+                                        expect(card.data.videoid).toBe('9999');
+                                        expect(card.data.duration).toBe(60);
+                                        expect(card.data.hostname).toBe(undefined);
+                                    });
                                 });
                             });
 
                             describe('if stats promise is rejected', function() {
                                 it('should display error', function() {
                                     $scope.$apply(function() {
-                                        statsDeferred.reject();
+                                        statsDeferred.reject('Error');
                                     });
 
-                                    expect(SelfieCampaignVideoCtrl.videoError).toBe(true);
+                                    expect(SelfieCampaignVideoCtrl.videoError).toBe('Error');
                                     expect(SelfieCampaignVideoCtrl.video).toBe(null);
                                 });
                             });
@@ -283,10 +352,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     describe('if data promise is rejected', function() {
                         it('should show error', function() {
                             $scope.$apply(function() {
-                                dataDeferred.reject();
+                                dataDeferred.reject('Failed');
                             });
 
-                            expect(SelfieCampaignVideoCtrl.videoError).toBe(true);
+                            expect(SelfieCampaignVideoCtrl.videoError).toBe('Failed');
                             expect(SelfieCampaignVideoCtrl.video).toBe(null);
                         });
                     });

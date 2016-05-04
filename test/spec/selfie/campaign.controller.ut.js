@@ -319,6 +319,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         cState.card.data.service = 'Youtube';
                         cState.card.data.videoid = 'xjh46ej';
                         expect(SelfieCampaignCtrl.validation.sections.section3).toBe(true);
+                        cState.card.data.duration = 90;
+                        expect(SelfieCampaignCtrl.validation.sections.section3).toBe(false);
+                        cState.card.data.duration = 60;
+                        expect(SelfieCampaignCtrl.validation.sections.section3).toBe(true);
+                        cState.card.data.duration = undefined;
+                        expect(SelfieCampaignCtrl.validation.sections.section3).toBe(true);
 
                         expect(SelfieCampaignCtrl.validation.sections.section4).toBe(false);
                         cState.card.title = 'My Headline!';
