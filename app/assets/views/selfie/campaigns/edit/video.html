@@ -25,7 +25,9 @@
                 </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> A valid link, embed code or VAST tag is required
+                        <i class="fa fa-exclamation-triangle"></i>
+                        <span ng-if="SelfieCampaignVideoCtrl.videoError !== 'duration'">A valid link, embed code or VAST tag is required</span>
+                        <span ng-if="SelfieCampaignVideoCtrl.videoError === 'duration'">Your video must be under 60 seconds</span>
                     </p>
                 </div>
             </fieldset>

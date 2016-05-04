@@ -915,7 +915,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         return {
                             section1: !!campaign.name,
                             section2: !!campaign.advertiserDisplayName && !!card.links.Website,
-                            section3: !!card.data.service && !!card.data.videoid,
+                            section3: !!card.data.service && !!card.data.videoid &&
+                                (!card.data.duration || card.data.duration <= 60),
                             section4: !!card.title && !!card.links.Action &&
                                 !!card.params.action.label,
                             section5: this.radius,
@@ -1623,9 +1624,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',
-                                                      'c6Debounce',
+                                                      'c6Debounce','$q',
         function                                     ( $injector , $scope , SelfieVideoService ,
-                                                       c6Debounce ) {
+                                                       c6Debounce , $q ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignVideoCtrl = this,
                 card = SelfieCampaignCtrl.card,
@@ -1634,8 +1635,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 id = data.videoid,
                 hasExistingVideo = !!service && !!id;
 
-            function handleVideoError() {
-                SelfieCampaignVideoCtrl.videoError = true;
+            function handleVideoError(err) {
+                SelfieCampaignVideoCtrl.videoError = err;
                 SelfieCampaignVideoCtrl.video = null;
             }
 
@@ -1678,12 +1679,17 @@ function( angular , c6State  , PaginatedListState                    ,
                         var title = ((data || {}).title || '')
                             .slice(0, SelfieCampaignCtrl.maxHeadlineLength);
 
+                        if (data && data.duration && data.duration > 60) {
+                            return $q.reject('duration');
+                        }
+
                         SelfieCampaignVideoCtrl.videoError = false;
                         SelfieCampaignVideoCtrl.video = data;
                         card.title = SelfieCampaignVideoCtrl.disableTitleOverwrite ?
                             card.title : (title.length && title) || undefined;
                         card.data.service = service;
                         card.data.videoid = id;
+                        card.data.duration = (data || {}).duration;
                         extend(card.data, otherParsedData);
                     })
                     .catch(handleVideoError);
