@@ -9,7 +9,8 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             CampaignService,
             selfie,
             selfieApps,
-            selfieApp;
+            selfieApp,
+            cinema6;
 
         var selfieExperience,
             user,
@@ -51,6 +52,7 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
                 c6State = $injector.get('c6State');
                 SettingsService = $injector.get('SettingsService');
                 CampaignService = $injector.get('CampaignService');
+                cinema6 = $injector.get('cinema6');
             });
 
             selfie = c6State.get('Selfie');
@@ -224,12 +226,68 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             });
 
             describe('if the user does not have campaigns', function() {
-                it('should go to New Campaign page', function() {
-                    $rootScope.$apply(function() {
-                        selfieApp.hasCampaigns = false;
-                        selfieApp.enter();
+                var campModel;
+
+                beforeEach(function() {
+                    campModel = {
+                        save: jasmine.createSpy('spy()').and.returnValue($q.when())
+                    };
+                    spyOn(cinema6.db, 'findAll').and.returnValue($q.when(['advertiser']));
+                    spyOn(CampaignService, 'create').and.returnValue(campModel);
+                    selfieApp.demoData = { };
+                });
+
+                describe('if there is some demo data', function() {
+                    beforeEach(function() {
+                        selfieApp.demoData = { card: { data: { videoid: 'videoid' } } };
                     });
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:NewCampaign', null, {}, true);
+
+                    it('should create a campaign', function() {
+                        $rootScope.$apply(function() {
+                            selfieApp.enter();
+                        });
+                        expect(CampaignService.create).toHaveBeenCalledWith({ cards: [{ data: { videoid: 'videoid' } }] }, user, 'advertiser');
+                    });
+
+                    it('should remove the data from local storage when complete', function() {
+                        $rootScope.$apply(function() {
+                            selfieApp.enter();
+                        });
+                        expect(selfieApp.demoData).toEqual({ });
+                    });
+
+                    it('should go to EditCampaign state if the campaign was able to save', function() {
+                        $rootScope.$apply(function() {
+                            selfieApp.hasCampaigns = false;
+                            selfieApp.enter();
+                        });
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:EditCampaign', [campModel], { }, true);
+                    });
+
+                    it('should go to NewCampaign state if the campaign failed to save', function() {
+                        $rootScope.$apply(function() {
+                            selfieApp.hasCampaigns = false;
+                            campModel.save.and.returnValue($q.reject());
+                            selfieApp.enter();
+                        });
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:NewCampaign', [campModel], { }, true);
+                    });
+                });
+
+                describe('if there is not any demo data', function() {
+                    it('should go to the new campaign state', function() {
+                        $rootScope.$apply(function() {
+                            selfieApp.enter();
+                        });
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:NewCampaign', null, { }, true);
+                    });
+
+                    it('should not create a campaign', function() {
+                        $rootScope.$apply(function() {
+                            selfieApp.enter();
+                        });
+                        expect(CampaignService.create).not.toHaveBeenCalled();
+                    });
                 });
             });
         });

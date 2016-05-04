@@ -86,9 +86,8 @@ function( angular , c6State  ) {
                 var card = campaign.cards[0];
                 card.title = DEFAULT_TITLE;
                 card.note = DEFAULT_NOTE;
-                card.links.Action = {
-                    uri: DEFAULT_LINK
-                };
+                card.links.Action = DEFAULT_LINK;
+                card.links.Website = self.inputs.website;
                 if(_private.video && _private.video.data) {
                     var data = _private.video.data;
                     card.data.service = data.service;
@@ -316,9 +315,7 @@ function( angular , c6State  ) {
                         var link = data.links[key];
                         var linkType = key[0].toUpperCase() + key.slice(1);
                         if(link) {
-                            self.card.links[linkType] = {
-                                uri: link
-                            };
+                            self.card.links[linkType] = link;
                         }
                     });
                 }).catch(function() {
@@ -345,9 +342,7 @@ function( angular , c6State  ) {
 
             self.updateActionLink = function() {
                 var link = _private.generateLink(self.actionLink);
-                self.card.links.Action = {
-                    uri: link
-                };
+                self.card.links.Action = link;
                 self.actionLink = link;
             };
 
