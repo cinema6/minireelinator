@@ -88,6 +88,9 @@ function( angular , c6State  ) {
                 card.note = DEFAULT_NOTE;
                 card.links.Action = DEFAULT_LINK;
                 card.links.Website = self.inputs.website;
+                ['facebook', 'twitter', 'pinterest'].forEach(function(key) {
+                    card.shareLinks[key] = self.inputs.website;
+                });
                 if(_private.video && _private.video.data) {
                     var data = _private.video.data;
                     card.data.service = data.service;
