@@ -312,7 +312,7 @@ define(['app'], function(appModule) {
             });
 
             it('should create a new card for the model', function() {
-                var campaign = { cards: [ { links: { Action: { } } } ] };
+                var campaign = { cards: [ { links: { Action: { } }, shareLinks: { } } ] };
                 CampaignService.create.and.returnValue(campaign);
                 ctrl._private.updateModel();
                 expect(CampaignService.create).toHaveBeenCalledWith(null, { }, null);
@@ -331,6 +331,9 @@ define(['app'], function(appModule) {
                 ctrl.inputs.website = 'website';
                 ctrl._private.updateModel();
                 expect(ctrl.model.card.links.Website).toBe('website');
+                expect(ctrl.model.card.shareLinks.facebook).toBe('website');
+                expect(ctrl.model.card.shareLinks.twitter).toBe('website');
+                expect(ctrl.model.card.shareLinks.pinterest).toBe('website');
             });
 
             it('should be able to set card properties from video data', function() {

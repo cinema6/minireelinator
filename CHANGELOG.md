@@ -1,5 +1,12 @@
 # MiniReelinator
 
+## v1.46.1 (May 5, 2016)
+* *[v1.46.1.rc1]*
+  * Update tooltip on pending updates to a campaign
+  * Show share button on the demo page preview
+  * When creating a campaign through the demo page, set its name to 'My First Campaign'
+* *[/v1.46.1.rc1]*
+
 ## v1.46.0 (May 4, 2016)
 * *[v1.46.0.rc1]*
   * [FEATURE]: Fill in fields from the Selfie demo when a user first signs up and begins creating a campaign

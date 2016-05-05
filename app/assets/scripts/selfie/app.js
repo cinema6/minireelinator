@@ -249,6 +249,7 @@ function( angular , c6State  , services   , directives   , campaign   , c6Define
                             var demo = cState.demoData;
                             var baseCamp = { cards: [demo.card] };
                             var campaign = CampaignService.create(baseCamp, user, advertisers[0]);
+                            campaign.name = 'My First Campaign';
                             Object.keys(demo).forEach(function(key) {
                                 delete demo[key];
                             });
