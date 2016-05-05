@@ -247,6 +247,7 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
                             selfieApp.enter();
                         });
                         expect(CampaignService.create).toHaveBeenCalledWith({ cards: [{ data: { videoid: 'videoid' } }] }, user, 'advertiser');
+                        expect(campModel.name).toBe('My First Campaign');
                     });
 
                     it('should remove the data from local storage when complete', function() {
