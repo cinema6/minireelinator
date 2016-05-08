@@ -33,7 +33,8 @@ define(['app'], function(appModule) {
                 MiniReelService = $injector.get('MiniReelService');
 
                 card = {
-                    data: {}
+                    data: {},
+                    params: {}
                 };
 
                 experience = {
@@ -182,6 +183,48 @@ define(['app'], function(appModule) {
                     it('should add a copy of the experience to the controller with the converted card in the deck', function() {
                         expect(SelfiePreviewCtrl.experience).not.toBe(experience);
                         expect(SelfiePreviewCtrl.experience.data.deck).toEqual([convertedCard]);
+                    });
+                });
+
+                describe('changing the device preview', function() {
+                    var convertedCard;
+
+                    function applyDeferreds() {
+                        $scope.$apply(function() {
+                            miniReelDeferred.resolve(experience);
+                        });
+
+                        $scope.$apply(function() {
+                            cardDeferred.resolve(convertedCard);
+                        });
+                    }
+
+                    beforeEach(function() {
+                        convertedCard = copy(card);
+                    });
+
+                    it('should always be "phone" on mobile devices', function() {
+                        convertedCard.params.action = { group: 'website' };
+                        c6BrowserInfo.profile = 'phone';
+                        applyDeferreds();
+                        expect($scope.device).toBe('phone');
+                        expect(SelfiePreviewCtrl.mobileOnly).toBe(false);
+                    });
+
+                    it('should be "phone" on desktop if the card is click-to-call', function() {
+                        convertedCard.params.action = { group: 'phone' };
+                        c6BrowserInfo.profile = 'desktop';
+                        applyDeferreds();
+                        expect($scope.device).toBe('phone');
+                        expect(SelfiePreviewCtrl.mobileOnly).toBe(true);
+                    });
+
+                    it('should sometimes be "desktop"', function() {
+                        convertedCard.params.action = { group: 'website' };
+                        c6BrowserInfo.profile = 'desktop';
+                        applyDeferreds();
+                        expect($scope.device).toBe('desktop');
+                        expect(SelfiePreviewCtrl.mobileOnly).toBe(false);
                     });
                 });
             });

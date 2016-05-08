@@ -52,9 +52,9 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignTextCtrl.actionLabel !== 'Custom' && SelfieCampaignCtrl.validation.show }">
+            <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignTextCtrl.actionLabel.label !== 'Custom' && SelfieCampaignCtrl.validation.show }">
                 <!--<input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPresetText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">-->
-                <select c6-select-box data-options="SelfieCampaignTextCtrl.actionLabelOptions" ng-options="option for option in SelfieCampaignTextCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="SelfieCampaignTextCtrl.actionLabel" ng-change="SelfieCampaignTextCtrl.updateActionLabel()"></select><!-- TO DO: big time selector customization -->
+                <select c6-select-box data-options="SelfieCampaignTextCtrl.actionLabelOptions" ng-options="option.label group by SelfieCampaignTextCtrl.groupLabels[option.group] for option in SelfieCampaignTextCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="SelfieCampaignTextCtrl.actionLabel" ng-change="SelfieCampaignTextCtrl.updateActionLabel()"></select><!-- TO DO: big time selector customization -->
                 <label class="form__label" for="c6-video-ctaPresetText">
                     <i class="fa fa-times ui--error"></i>
                     Call To Action Button <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxCallToActionLength - card.params.action.label.length}}</span>
@@ -70,7 +70,7 @@
                     </p>
                 </div>
             </fieldset>
-            <fieldset class="form__item form__item--stackedInput" ng-show="SelfieCampaignTextCtrl.actionLabel === 'Custom'" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignCtrl.validation.show }">
+            <fieldset class="form__item form__item--stackedInput" ng-show="SelfieCampaignTextCtrl.actionLabel.label === 'Custom'" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignCtrl.validation.show }">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaCustomText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">
                 <label class="form__label" for="c6-video-ctaCustomText">
                     <i class="fa fa-times ui--error"></i>
@@ -87,8 +87,8 @@
                     </p>
                 </div>
             </fieldset>
-            <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && SelfieCampaignCtrl.validation.show }">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="SelfieCampaignTextCtrl.actionLink" ng-focus="SelfieCampaignTextCtrl.bindLinkToWebsite = false" ng-blur="SelfieCampaignTextCtrl.updateActionLink(SelfieCampaignTextCtrl.actionLink)">
+            <fieldset ng-if="card.params.action.group === 'website'" class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && SelfieCampaignCtrl.validation.show }">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="SelfieCampaignTextCtrl.actionWebsite" ng-focus="SelfieCampaignTextCtrl.bindLinkToWebsite = false" ng-blur="SelfieCampaignTextCtrl.updateActionLink(SelfieCampaignTextCtrl.actionWebsite, 'website')">
                 <label class="form__label" for="c6-video-ctaUrl">
                     <i class="fa fa-times ui--error"></i>
                     Call To Action URL <span class="text--small"> (required) </span>
@@ -101,6 +101,23 @@
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
                         <i class="fa fa-exclamation-triangle"></i> Call to action URL is required
+                    </p>
+                </div>
+            </fieldset>
+            <fieldset ng-if="card.params.action.group === 'phone'" class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && SelfieCampaignCtrl.validation.show }">
+                <input input-mask="+1 (999) 999-9999" c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPhone" ng-model="SelfieCampaignTextCtrl.actionPhone" ng-blur="SelfieCampaignTextCtrl.updateActionLink(SelfieCampaignTextCtrl.actionPhone, 'phone')">
+                <label class="form__label" for="c6-video-ctaUrl">
+                    <i class="fa fa-times ui--error"></i>
+                    Click-To-Call Number <span class="text--small"> (required) </span>
+                </label>
+                <!--<div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                    Click-To-Call phone number for your company.
+                    </div>
+                </div>-->
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Click-To-Call Number is required
                     </p>
                 </div>
             </fieldset>

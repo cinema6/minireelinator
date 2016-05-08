@@ -1,5 +1,5 @@
-define( ['angular','select2','braintree','jqueryui','chartjs','c6_defines'],
-function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
+define( ['angular','select2','braintree','jqueryui','chartjs','jquerymasked','c6_defines'],
+function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6Defines  ) {
     'use strict';
 
     var $ = angular.element,
@@ -739,6 +739,12 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
 
                         SelfiePreviewCtrl.card = cardForPlayer;
                         SelfiePreviewCtrl.experience = newExperience;
+
+                        var mobileOnly = cardForPlayer.params.action &&
+                            cardForPlayer.params.action.group === 'phone';
+                        SelfiePreviewCtrl.mobileOnly = mobileOnly;
+                        $scope.device = (c6BrowserInfo.profile === 'phone' || mobileOnly) ?
+                            'phone' : 'desktop';
                     });
             }
 
@@ -2085,5 +2091,18 @@ function( angular , select2 , braintree , jqueryui , Chart   , c6Defines  ) {
             }, true);
 
             this._loadSummary($scope.campaign, $scope.updatedCampaign, $scope.updateRequest);
+        }])
+
+        .directive('inputMask', [function() {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+                    $($element).mask(attrs.inputMask, {
+                        completed: function() {
+                            scope.$eval(attrs.ngModel + '=\'' + $element.val() + '\'');
+                        }
+                    });
+                }
+            };
         }]);
 });

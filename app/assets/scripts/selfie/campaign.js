@@ -1,7 +1,7 @@
 define( ['angular','c6_state','../minireel/mixins/PaginatedListState',
-         '../minireel/mixins/PaginatedListController','c6_defines'],
-function( angular , c6State  , PaginatedListState                    ,
-          PaginatedListController                    , c6Defines  ) {
+         '../minireel/mixins/PaginatedListController', 'jquerymasked', 'c6_defines'],
+function( angular , c6State  , PaginatedListState,
+          PaginatedListController                    ,  jquerymasked ,  c6Defines  ) {
     /* jshint -W106 */
     'use strict';
 
@@ -1710,7 +1710,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 card = SelfieCampaignCtrl.card,
                 selfieApp = c6State.get('Selfie:App');
 
-            function generateLink(link) {
+            var _private = { };
+            if (window.c6.kHasKarma) { this._private = _private; }
+
+            _private.generateWebsiteLink = function(link) {
                 var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
                     hasSlashes = (/^\/\//).test(link);
 
@@ -1723,36 +1726,94 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
 
                 return link;
-            }
+            };
 
-            card.links.Action = card.links.Action || card.links.Website;
-            card.params.action = card.params.action || { type: 'button' };
-            card.params.action.label =  card.params.action.label || 'Learn More';
-
-            this.bindLinkToWebsite = !card.links.Action;
-            this.actionLink = card.links.Action;
-            this.actionLabelOptions = selfieApp.cModel.data.callToActionOptions;
-            this.actionLabel = this.actionLabelOptions.indexOf(card.params.action.label) > -1 ?
-                card.params.action.label : 'Custom';
-
-            this.updateActionLabel = function() {
-                if (this.actionLabel !== 'Custom') {
-                    card.params.action.label = this.actionLabel;
+            _private.generatePhoneLink = function(phoneNumber) {
+                if(phoneNumber) {
+                    return 'tel:' + phoneNumber.replace(/\D/g, '');
+                } else {
+                    return '';
                 }
             };
 
-            this.updateActionLink = function(link) {
-                link = generateLink(link);
+            _private.getActionLabel = function(card) {
+                var options = SelfieCampaignTextCtrl.actionLabelOptions;
+                var defaultOption;
+                var currentOption;
+                var action = card.params.action;
+                var found = options.some(function(option) {
+                    currentOption = option;
+                    if(option.label === 'Custom' && option.group === action.group) {
+                        defaultOption = option;
+                    }
+                    return (option.label === action.label && option.group === action.group);
+                });
+                return found ? currentOption : defaultOption;
+            };
+
+            _private.getActionWebsite = function(card) {
+                var actionLink = card.links.Action;
+                return (card.params.action.group === 'website' && actionLink) ? actionLink :
+                    card.links.Website || '';
+            };
+
+            _private.getActionPhone = function(card) {
+                var actionLink = card.links.Action;
+                if (card.params.action.group === 'phone' && actionLink) {
+                    var number = actionLink.slice(4, actionLink.length);
+                    return '+1 (' + number.slice(0, 3) + ') ' + number.slice(3, 6) + '-' +
+                        number.slice(6, number.length);
+                } else {
+                    return '';
+                }
+            };
+
+            card.params.action = card.params.action || { type: 'button' };
+            card.params.action.label =  card.params.action.label || 'Learn More';
+            card.params.action.group = card.params.action.group || 'website';
+
+            var ctaOptions = selfieApp.cModel.data.callToActionOptions;
+            this.bindLinkToWebsite = !card.links.Action;
+            this.actionWebsite = _private.getActionWebsite(card);
+            this.actionPhone = _private.getActionPhone(card);
+            this.groupLabels = ctaOptions.groupLabels;
+            this.actionLabelOptions = ctaOptions.options;
+            this.actionLabel = _private.getActionLabel(card);
+
+            this.updateActionLabel = function() {
+                var group = this.actionLabel.group;
+                var input = (group === 'website') ? this.actionWebsite : this.actionPhone;
+
+                if (this.actionLabel.label !== 'Custom') {
+                    card.params.action.label = this.actionLabel.label;
+                }
+                card.params.action.group = group;
+                this.updateActionLink(input, group);
+            };
+
+            this.updateActionLink = function(input, group) {
+                var link;
+                switch(group) {
+                case 'website':
+                    link = _private.generateWebsiteLink(input);
+                    this.actionWebsite = link;
+                    break;
+                case 'phone':
+                    link = _private.generatePhoneLink(input);
+                    break;
+                default:
+                    link = '';
+                }
 
                 card.links.Action = link;
-                SelfieCampaignTextCtrl.actionLink = link;
             };
 
             $scope.$watch(function() {
                 return card.links.Website;
             }, function(website) {
-                if (website && SelfieCampaignTextCtrl.bindLinkToWebsite) {
-                    SelfieCampaignTextCtrl.updateActionLink(website);
+                if (website && SelfieCampaignTextCtrl.bindLinkToWebsite &&
+                        SelfieCampaignTextCtrl.actionLabel.group === 'website') {
+                    SelfieCampaignTextCtrl.updateActionLink(website, 'website');
                 }
             });
 

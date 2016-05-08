@@ -2,18 +2,26 @@
   "appUri": "selfie",
   "data": {
     "title": "Selfie",
-    "callToActionOptions": [
-      "Apply Now",
-      "Book Now",
-      "Buy Now",
-      "Contact Us",
-      "Donate Now",
-      "Learn More",
-      "Shop Now",
-      "Sign Up",
-      "Watch More",
-      "Custom"
-    ],
+    "callToActionOptions": {
+        "groupLabels": {
+            "website": "Website Button",
+            "phone": "Click-to-call Button"
+        },
+        "options": [
+            { "label": "Learn More", "group": "website" },
+            { "label": "Watch More", "group": "website" },
+            { "label": "Contact Us", "group": "website" },
+            { "label": "Buy Now", "group": "website" },
+            { "label": "Book Now", "group": "website" },
+            { "label": "Sign Up", "group": "website" },
+            { "label": "Custom", "group": "website" },
+            { "label": "Call Us", "group": "phone" },
+            { "label": "Contact Us", "group": "phone" },
+            { "label": "Call Now", "group": "phone" },
+            { "label": "Call Toll-FREE", "group": "phone" },
+            { "label": "Custom", "group": "phone" }
+        ]
+    },
     "placement": {
       "params": [
         {
