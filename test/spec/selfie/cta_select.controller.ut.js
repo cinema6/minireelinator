@@ -127,7 +127,7 @@ define(['app'], function(appModule) {
             describe('actionPhone', function() {
                 it('should determine click-to-call input from the card', function() {
                     card.params.action.group = 'phone';
-                    card.links.Action = 'tel:1234567890';
+                    card.links.Action = 'tel:11234567890';
 
                     compileCtrl();
 
@@ -193,8 +193,8 @@ define(['app'], function(appModule) {
                     var fn = ctrl._private.generatePhoneLink;
                     expect(fn('')).toBe('');
                     expect(fn(false)).toBe('');
-                    expect(fn('1234567890')).toBe('tel:1234567890');
-                    expect(fn('(123) 456-7890')).toBe('tel:1234567890');
+                    expect(fn('11234567890')).toBe('tel:11234567890');
+                    expect(fn('+1 (123) 456-7890')).toBe('tel:11234567890');
                 });
             });
 
@@ -262,11 +262,11 @@ define(['app'], function(appModule) {
                 it('should be able to get what click-to-call input should be from a card', function() {
                     var fn = ctrl._private.getActionPhone;
 
-                    card.links.Action = 'tel:1234567890';
+                    card.links.Action = 'tel:11234567890';
                     card.params.action.group = 'phone';
                     expect(fn(card)).toBe('+1 (123) 456-7890');
 
-                    card.links.Action = 'tel:1234567890';
+                    card.links.Action = 'tel:11234567890';
                     card.params.action.group = 'website';
                     expect(fn(card)).toBe('');
 
@@ -299,13 +299,13 @@ define(['app'], function(appModule) {
 
                 describe('when given click-to-call input', function() {
                     beforeEach(function() {
-                        ctrl._private.generatePhoneLink.and.returnValue('tel:123');
+                        ctrl._private.generatePhoneLink.and.returnValue('tel:1123');
                         ctrl.updateActionLink('input', 'phone');
                     });
 
                     it('should update the action link', function() {
                         expect(ctrl._private.generatePhoneLink).toHaveBeenCalledWith('input');
-                        expect(card.links.Action).toBe('tel:123');
+                        expect(card.links.Action).toBe('tel:1123');
                     });
                 });
             });

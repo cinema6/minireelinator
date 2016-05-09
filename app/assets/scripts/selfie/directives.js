@@ -2099,7 +2099,14 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 link: function(scope, $element, attrs) {
                     $($element).mask(attrs.inputMask, {
                         completed: function() {
-                            scope.$eval(attrs.ngModel + '=\'' + $element.val() + '\'');
+                            if(attrs.ngModel) {
+                                scope.$eval(attrs.ngModel + '=\'' + $element.val() + '\'');
+                            }
+                        }
+                    }).blur(function() {
+                        // Note this jQuery plugin doesn't seem to play nicely with ngBlur
+                        if(attrs.maskBlur) {
+                            scope.$eval(attrs.maskBlur);
                         }
                     });
                 }
@@ -2175,8 +2182,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 var actionLink = card.links.Action;
                 if (card.params.action.group === 'phone' && actionLink) {
                     var number = actionLink.slice(4, actionLink.length);
-                    return '+1 (' + number.slice(0, 3) + ') ' + number.slice(3, 6) + '-' +
-                        number.slice(6, number.length);
+                    return '+1 (' + number.slice(1, 4) + ') ' + number.slice(4, 7) + '-' +
+                        number.slice(7, number.length);
                 } else {
                     return '';
                 }
