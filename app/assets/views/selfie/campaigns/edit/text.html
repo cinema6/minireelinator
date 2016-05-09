@@ -98,6 +98,9 @@
                     Link to your landing page or website.
                     </div>
                 </div>-->
+                <div class="form__helpText">
+                    This is the page your user will visit when they click on your CTA. This link is not visible to your viewers.
+                </div>
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
                         <i class="fa fa-exclamation-triangle"></i> Call to action URL is required
@@ -108,8 +111,11 @@
                 <input input-mask="+1 (999) 999-9999" c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPhone" ng-model="SelfieCampaignTextCtrl.actionPhone" ng-blur="SelfieCampaignTextCtrl.updateActionLink(SelfieCampaignTextCtrl.actionPhone, 'phone')">
                 <label class="form__label" for="c6-video-ctaUrl">
                     <i class="fa fa-times ui--error"></i>
-                    Click-To-Call Number <span class="text--small"> (required) </span>
+                    Phone Number <span class="text--small"> (required) </span>
                 </label>
+                <div class="form__helpText">
+                    Connect to your viewer right from your ad! Enter your US phone number to enable click to call.
+                </div>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
                     Click-To-Call phone number for your company.

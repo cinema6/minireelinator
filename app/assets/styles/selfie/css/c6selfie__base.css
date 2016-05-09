@@ -3682,7 +3682,13 @@ fa,
                 /*border:2px solid #e1e1e1;*/
                 z-index:5;
             }
-
+            .adPreview__desktop.adPreview__mobileOnly .adPreview__desktopFrame{
+                display: none;
+            }
+            .adPreview__desktop.adPreview__mobileOnly:before {
+                content: 'Click-To-Call feature is available on mobile devices only';
+                font-size: 1.25em;
+            }
     @media screen and (max-width:75em) {
         .adPreview__desktop {
             width:100%;
