@@ -57,21 +57,7 @@
                             </label>
                         </fieldset>
 
-                        <fieldset class="form__item form__item--stackedInput">
-                            <select c6-select-box data-options="SelfieDemoPreviewCtrl.actionLabelOptions" ng-options="option for option in SelfieDemoPreviewCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="SelfieDemoPreviewCtrl.card.params.action.label"></select>
-                            <label class="form__label" for="c6-video-ctaPresetText">
-                                <i class="fa fa-times ui--error"></i>
-                                Call To Action Button
-                            </label>
-                        </fieldset>
-
-                        <fieldset class="form__item form__item--stackedInput">
-                            <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="SelfieDemoPreviewCtrl.actionLink" ng-blur="SelfieDemoPreviewCtrl.updateActionLink()">
-                            <label class="form__label" for="c6-video-ctaUrl">
-                                <i class="fa fa-times ui--error"></i>
-                                Call To Action URL
-                            </label>
-                        </fieldset>
+                        <cta-select card="SelfieDemoPreviewCtrl.card" validation="SelfieDemoPreviewCtrl.validation" max-length="SelfieDemoPreviewCtrl.maxCallToActionLength" options="SelfieDemoPreviewCtrl.ctaOptions"></cta-select>
 
                     </div><!-- .form__items -->
 

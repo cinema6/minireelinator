@@ -2104,5 +2104,129 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                     });
                 }
             };
+        }])
+
+        .directive('ctaSelect', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    card: '=',
+                    validation: '=',
+                    maxLength: '=',
+                    options: '='
+                },
+                templateUrl: 'views/selfie/directives/cta_select.html',
+                controller: 'CtaSelectController',
+                controllerAs: 'CtaSelectCtrl'
+            };
+        }])
+
+        .controller('CtaSelectController', ['$scope', function($scope) {
+            var self = this;
+
+            var _private = { };
+            if (window.c6.kHasKarma) { self._private = _private; }
+
+            _private.generateWebsiteLink = function(link) {
+                var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
+                    hasSlashes = (/^\/\//).test(link);
+
+                if (hasProtocol) {
+                    return link;
+                }
+
+                if (link) {
+                    return (hasSlashes ? 'http:' : 'http://') + link;
+                }
+
+                return link;
+            };
+
+            _private.generatePhoneLink = function(phoneNumber) {
+                if(phoneNumber) {
+                    return 'tel:' + phoneNumber.replace(/\D/g, '');
+                } else {
+                    return '';
+                }
+            };
+
+            _private.getActionLabel = function(card) {
+                var options = self.actionLabelOptions;
+                var defaultOption;
+                var currentOption;
+                var action = card.params.action;
+                var found = options.some(function(option) {
+                    currentOption = option;
+                    if(option.label === 'Custom' && option.group === action.group) {
+                        defaultOption = option;
+                    }
+                    return (option.label === action.label && option.group === action.group);
+                });
+                return found ? currentOption : defaultOption;
+            };
+
+            _private.getActionWebsite = function(card) {
+                var actionLink = card.links.Action;
+                return (card.params.action.group === 'website' && actionLink) ? actionLink :
+                    card.links.Website || '';
+            };
+
+            _private.getActionPhone = function(card) {
+                var actionLink = card.links.Action;
+                if (card.params.action.group === 'phone' && actionLink) {
+                    var number = actionLink.slice(4, actionLink.length);
+                    return '+1 (' + number.slice(0, 3) + ') ' + number.slice(3, 6) + '-' +
+                        number.slice(6, number.length);
+                } else {
+                    return '';
+                }
+            };
+
+            $scope.card.params.action = $scope.card.params.action || { type: 'button' };
+            $scope.card.params.action.label = $scope.card.params.action.label || 'Learn More';
+            $scope.card.params.action.group = $scope.card.params.action.group || 'website';
+
+            self.bindLinkToWebsite = !$scope.card.links.Action;
+            self.actionWebsite = _private.getActionWebsite($scope.card);
+            self.actionPhone = _private.getActionPhone($scope.card);
+            self.groupLabels = $scope.options.groupLabels;
+            self.actionLabelOptions = $scope.options.options;
+            self.actionLabel = _private.getActionLabel($scope.card);
+
+            self.updateActionLabel = function() {
+                var group = self.actionLabel.group;
+                var input = (group === 'website') ? self.actionWebsite : self.actionPhone;
+
+                if (self.actionLabel.label !== 'Custom') {
+                    $scope.card.params.action.label = self.actionLabel.label;
+                }
+                $scope.card.params.action.group = group;
+                self.updateActionLink(input, group);
+            };
+
+            self.updateActionLink = function(input, group) {
+                var link;
+                switch(group) {
+                case 'website':
+                    link = _private.generateWebsiteLink(input);
+                    self.actionWebsite = link;
+                    break;
+                case 'phone':
+                    link = _private.generatePhoneLink(input);
+                    break;
+                default:
+                    link = '';
+                }
+
+                $scope.card.links.Action = link;
+            };
+
+            $scope.$watch(function() {
+                return $scope.card.links.Website;
+            }, function(website) {
+                if (website && self.bindLinkToWebsite && self.actionLabel.group === 'website') {
+                    self.updateActionLink(website, 'website');
+                }
+            });
         }]);
 });
