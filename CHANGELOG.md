@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.47.0.rc1]*
+  * [FEATURE]: Allow creating a campaign with a click-to-call CTA button
+
 ## v1.46.1 (May 5, 2016)
 * *[v1.46.1.rc1]*
   * Update tooltip on pending updates to a campaign
