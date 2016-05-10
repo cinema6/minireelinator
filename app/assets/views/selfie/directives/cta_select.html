@@ -50,11 +50,11 @@
         </p>
     </div>
     <div class="form__helpText">
-        This is the page your user will visit when they click on your CTA. This link is not visible to your viewers.
+        This is the web page your users will visit when clicking on the Call to Action button.
     </div>
 </fieldset>
 <fieldset ng-if="card.params.action.group === 'phone'" class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && validation.show }">
-    <input input-mask="+1 (999) 999-9999" c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPhone" ng-model="CtaSelectCtrl.actionPhone" mask-blur="CtaSelectCtrl.updateActionLink(CtaSelectCtrl.actionPhone, 'phone')">
+    <input input-mask="+1 (999) 999-9999" c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPhone" ng-model="CtaSelectCtrl.actionPhone" ng-change="CtaSelectCtrl.updateActionLink(CtaSelectCtrl.actionPhone, 'phone')">
     <label class="form__label" for="c6-video-ctaUrl">
         <i class="fa fa-times ui--error"></i>
         Phone Number <span class="text--small"> (required) </span>
@@ -70,6 +70,7 @@
         </p>
     </div>
     <div class="form__helpText">
-        Connect to your viewer right from your ad! Enter your US phone number to enable click to call.
+        This is the U.S. phone number your users will call when clicking on the Call to Action button.<br>
+        This feature works on mobile ads only.
     </div>
 </fieldset>

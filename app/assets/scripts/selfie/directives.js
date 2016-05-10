@@ -2097,18 +2097,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             return {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
-                    $($element).mask(attrs.inputMask, {
-                        completed: function() {
-                            if(attrs.ngModel) {
-                                scope.$eval(attrs.ngModel + '=\'' + $element.val() + '\'');
-                            }
-                        }
-                    }).blur(function() {
-                        // Note this jQuery plugin doesn't seem to play nicely with ngBlur
-                        if(attrs.maskBlur) {
-                            scope.$eval(attrs.maskBlur);
-                        }
-                    });
+                    var mask = attrs.inputMask;
+
+                    if(!mask) {
+                        return;
+                    }
+
+                    $($element).mask(mask);
                 }
             };
         }])
