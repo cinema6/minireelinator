@@ -324,7 +324,6 @@ define(['app'], function(appModule) {
                 ctrl._private.updateModel();
                 expect(ctrl.model.card.title).toBe('Your Title Here!');
                 expect(ctrl.model.card.note).toBe('Your Description Here!');
-                expect(ctrl.model.card.links.Action).toBe('https://www.reelcontent.com');
             });
 
             it('should set the website on the card', function() {

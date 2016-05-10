@@ -50,6 +50,7 @@
                 select2: 'lib/select2.min',
                 jquery: libUrl('jquery/2.0.3-0-gf576d00/jquery.min'),
                 jqueryui: 'lib/jquery-ui.min',
+                jquerymasked: 'lib/jquery.maskedinput.min',
                 hammer: libUrl('hammer.js/1.1.3-0-gc6a0b6f/hammer.min'),
                 modernizr: libUrl('modernizr/modernizr.custom.71747'),
                 cryptojs: libUrl('cryptojs/v3.1.2/sha1'),

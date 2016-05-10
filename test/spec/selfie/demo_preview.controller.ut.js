@@ -29,9 +29,7 @@ define(['app'], function(appModule) {
                 $scope: $scope,
                 cState: cState
             });
-            spyOn(ctrl._private, 'generateLink');
             spyOn(ctrl._private, 'getWebsiteData');
-            spyOn(ctrl, 'updateActionLink');
         });
 
         it('should exist', function() {
@@ -40,21 +38,15 @@ define(['app'], function(appModule) {
 
         it('should initialize properties', function() {
             expect(ctrl.card).toBeNull();
+            expect(ctrl.ctaOptions.groupLabels).toBeDefined();
+            expect(ctrl.ctaOptions.options.length).toBeDefined();
+            expect(ctrl.ctaOptions.options).not.toContain(jasmine.objectContaining({
+                label: 'Custom'
+            }));
+            expect(ctrl.maxCallToActionLength).toBe(25);
             expect(ctrl.maxHeadlineLength).toBe(40);
             expect(ctrl.maxDescriptionLength).toBe(400);
-            expect(ctrl.actionLabelOptions).toEqual([
-                'Apply Now',
-                'Book Now',
-                'Buy Now',
-                'Contact Us',
-                'Donate Now',
-                'Learn More',
-                'Shop Now',
-                'Sign Up',
-                'Watch More'
-            ]);
-            expect(ctrl.actionLabelOptions).not.toContain('Custom');
-            expect(ctrl.actionLink).toBe('');
+            expect(ctrl.validation).toEqual({ show: false });
         });
 
         describe('initializing the has promotion property', function() {
@@ -69,24 +61,6 @@ define(['app'], function(appModule) {
 
             it('should work if there is not a promotion', function() {
                 expect(ctrl.hasFiftyPromotion).toBe(false);
-            });
-        });
-
-        describe('generateLink', function() {
-            beforeEach(function() {
-                ctrl._private.generateLink.and.callThrough();
-            });
-
-            it('should return the link if it has a protocol', function() {
-                expect(ctrl._private.generateLink('https://google.com')).toBe('https://google.com');
-            });
-
-            it('should add the protocol if it is missing', function() {
-                expect(ctrl._private.generateLink('google.com')).toBe('http://google.com');
-            });
-
-            it('should add the protocol if it is missing but has the slashes', function() {
-                expect(ctrl._private.generateLink('//google.com')).toBe('http://google.com');
             });
         });
 
@@ -133,20 +107,6 @@ define(['app'], function(appModule) {
                 expect(ctrl._private.getWebsiteData).toHaveBeenCalledWith('website');
             });
 
-            it('should initialize the CTA url with a provided website', function() {
-                var model = {
-                    card: {
-                        data: {
-                            videoid: 'videoid'
-                        }
-                    },
-                    website: 'website'
-                };
-                ctrl.initWithModel(model);
-                expect(ctrl.actionLink).toBe('website');
-                expect(ctrl.updateActionLink).toHaveBeenCalledWith();
-            });
-
             it('should close the spinner if getting website data succeeds', function() {
                 var model = {
                     card: {
@@ -173,22 +133,6 @@ define(['app'], function(appModule) {
                 ctrl.initWithModel(model);
                 $scope.$digest();
                 expect(SpinnerService.close).toHaveBeenCalledWith();
-            });
-        });
-
-        describe('updateActionLink', function() {
-            beforeEach(function() {
-                ctrl.updateActionLink.and.callThrough();
-            });
-
-            it('should format the link and update it on the model and controller', function() {
-                ctrl.card = { links: { } };
-                ctrl.actionLink = 'link';
-                ctrl._private.generateLink.and.returnValue('formatted link');
-                ctrl.updateActionLink();
-                expect(ctrl._private.generateLink).toHaveBeenCalledWith('link');
-                expect(ctrl.card.links.Action).toBe('formatted link');
-                expect(ctrl.actionLink).toBe('formatted link');
             });
         });
 

@@ -1,7 +1,7 @@
 define( ['angular','c6_state','../minireel/mixins/PaginatedListState',
-         '../minireel/mixins/PaginatedListController','c6_defines'],
-function( angular , c6State  , PaginatedListState                    ,
-          PaginatedListController                    , c6Defines  ) {
+         '../minireel/mixins/PaginatedListController', 'jquerymasked', 'c6_defines'],
+function( angular , c6State  , PaginatedListState,
+          PaginatedListController                    ,  jquerymasked ,  c6Defines  ) {
     /* jshint -W106 */
     'use strict';
 
@@ -1703,59 +1703,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
         }])
 
-        .controller('SelfieCampaignTextController', ['$scope','c6State',
-        function                                    ( $scope , c6State ) {
-            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                SelfieCampaignTextCtrl = this,
-                card = SelfieCampaignCtrl.card,
+        .controller('SelfieCampaignTextController', ['c6State',
+        function                                    ( c6State ) {
+            var SelfieCampaignTextCtrl = this,
                 selfieApp = c6State.get('Selfie:App');
 
-            function generateLink(link) {
-                var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
-                    hasSlashes = (/^\/\//).test(link);
-
-                if (hasProtocol) {
-                    return link;
-                }
-
-                if (link) {
-                    return (hasSlashes ? 'http:' : 'http://') + link;
-                }
-
-                return link;
-            }
-
-            card.links.Action = card.links.Action || card.links.Website;
-            card.params.action = card.params.action || { type: 'button' };
-            card.params.action.label =  card.params.action.label || 'Learn More';
-
-            this.bindLinkToWebsite = !card.links.Action;
-            this.actionLink = card.links.Action;
-            this.actionLabelOptions = selfieApp.cModel.data.callToActionOptions;
-            this.actionLabel = this.actionLabelOptions.indexOf(card.params.action.label) > -1 ?
-                card.params.action.label : 'Custom';
-
-            this.updateActionLabel = function() {
-                if (this.actionLabel !== 'Custom') {
-                    card.params.action.label = this.actionLabel;
-                }
-            };
-
-            this.updateActionLink = function(link) {
-                link = generateLink(link);
-
-                card.links.Action = link;
-                SelfieCampaignTextCtrl.actionLink = link;
-            };
-
-            $scope.$watch(function() {
-                return card.links.Website;
-            }, function(website) {
-                if (website && SelfieCampaignTextCtrl.bindLinkToWebsite) {
-                    SelfieCampaignTextCtrl.updateActionLink(website);
-                }
-            });
-
+            SelfieCampaignTextCtrl.ctaOptions = selfieApp.cModel.data.callToActionOptions;
         }])
 
         .controller('SelfieCampaignPreviewController', ['$scope','c6Debounce','$log',

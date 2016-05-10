@@ -1,0 +1,76 @@
+<fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.params.action.label && CtaSelectCtrl.actionLabel.label !== 'Custom' && validation.show }">
+    <!--<input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPresetText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">-->
+    <select c6-select-box data-options="CtaSelectCtrl.actionLabelOptions" ng-options="option.label group by CtaSelectCtrl.groupLabels[option.group] for option in CtaSelectCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="CtaSelectCtrl.actionLabel" ng-change="CtaSelectCtrl.updateActionLabel()"></select><!-- TO DO: big time selector customization -->
+    <label class="form__label" for="c6-video-ctaPresetText">
+        <i class="fa fa-times ui--error"></i>
+        Call To Action Button <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{maxLength - card.params.action.label.length}}</span>
+    </label>
+    <!--<div class="form__helpBox form__helpBox--right">
+        <div class="form__helpText">
+            The text is what the link will be attached to for the button or the link.
+        </div>
+    </div>-->
+    <div class="form__errorBox">
+        <p class="form__errorMsg">
+            <i class="fa fa-exclamation-triangle"></i> Call to action text is required
+        </p>
+    </div>
+</fieldset>
+<fieldset class="form__item form__item--stackedInput" ng-show="CtaSelectCtrl.actionLabel.label === 'Custom'" ng-class="{'ui--hasError': !card.params.action.label && validation.show }">
+    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaCustomText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{maxLength}}">
+    <label class="form__label" for="c6-video-ctaCustomText">
+        <i class="fa fa-times ui--error"></i>
+        Custom Button Text <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{maxLength - card.params.action.label.length}}</span>
+    </label>
+    <!--<div class="form__helpBox form__helpBox--right">
+        <div class="form__helpText">
+            The text is what the link will be attached to for the button or the link.
+        </div>
+    </div>-->
+    <div class="form__errorBox">
+        <p class="form__errorMsg">
+            <i class="fa fa-exclamation-triangle"></i> Call to action text is required
+        </p>
+    </div>
+</fieldset>
+<fieldset ng-if="card.params.action.group === 'website'" class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && validation.show }">
+    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="CtaSelectCtrl.actionWebsite" ng-focus="CtaSelectCtrl.bindLinkToWebsite = false" ng-blur="CtaSelectCtrl.updateActionLink(CtaSelectCtrl.actionWebsite, 'website')">
+    <label class="form__label" for="c6-video-ctaUrl">
+        <i class="fa fa-times ui--error"></i>
+        Call To Action URL <span class="text--small"> (required) </span>
+    </label>
+    <!--<div class="form__helpBox form__helpBox--right">
+        <div class="form__helpText">
+        Link to your landing page or website.
+        </div>
+    </div>-->
+    <div class="form__errorBox">
+        <p class="form__errorMsg">
+            <i class="fa fa-exclamation-triangle"></i> Call to action URL is required
+        </p>
+    </div>
+    <div class="form__helpText">
+        This is the web page your users will visit when clicking on the Call to Action button.
+    </div>
+</fieldset>
+<fieldset ng-if="card.params.action.group === 'phone'" class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && validation.show }">
+    <input input-mask="+1 (999) 999-9999" c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPhone" ng-model="CtaSelectCtrl.actionPhone" ng-change="CtaSelectCtrl.updateActionLink(CtaSelectCtrl.actionPhone, 'phone')">
+    <label class="form__label" for="c6-video-ctaUrl">
+        <i class="fa fa-times ui--error"></i>
+        Phone Number <span class="text--small"> (required) </span>
+    </label>
+    <!--<div class="form__helpBox form__helpBox--right">
+        <div class="form__helpText">
+        Click-To-Call phone number for your company.
+        </div>
+    </div>-->
+    <div class="form__errorBox">
+        <p class="form__errorMsg">
+            <i class="fa fa-exclamation-triangle"></i> Click-To-Call Number is required
+        </p>
+    </div>
+    <div class="form__helpText">
+        This is the U.S. phone number your users will call when clicking on the Call to Action button.<br>
+        This feature works on mobile ads only.
+    </div>
+</fieldset>

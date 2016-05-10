@@ -50,7 +50,6 @@ function( angular , c6State  ) {
             var MAX_DESCRIPTION_LENGTH = 400;
             var DEFAULT_TITLE = 'Your Title Here!';
             var DEFAULT_NOTE = 'Your Description Here!';
-            var DEFAULT_LINK = 'https://www.reelcontent.com';
 
             var self = this;
             var _private = { };
@@ -86,7 +85,6 @@ function( angular , c6State  ) {
                 var card = campaign.cards[0];
                 card.title = DEFAULT_TITLE;
                 card.note = DEFAULT_NOTE;
-                card.links.Action = DEFAULT_LINK;
                 card.links.Website = self.inputs.website;
                 ['facebook', 'twitter', 'pinterest'].forEach(function(key) {
                     card.shareLinks[key] = self.inputs.website;
@@ -258,19 +256,27 @@ function( angular , c6State  ) {
                                                     'SpinnerService','$location',
         function                                   ( CollateralService , c6State , cState ,
                                                      SpinnerService , $location ) {
+            var CTA_OPTIONS = {
+                groupLabels: {
+                    website: 'Website Button',
+                    phone: 'Click-to-call Button'
+                },
+                options: [
+                    { label: 'Learn More', group: 'website' },
+                    { label: 'Watch More', group: 'website' },
+                    { label: 'Contact Us', group: 'website' },
+                    { label: 'Buy Now', group: 'website' },
+                    { label: 'Book Now', group: 'website' },
+                    { label: 'Sign Up', group: 'website' },
+                    { label: 'Call Us', group: 'phone' },
+                    { label: 'Contact Us', group: 'phone' },
+                    { label: 'Call Now', group: 'phone' },
+                    { label: 'Call Toll-FREE', group: 'phone' }
+                ]
+            };
+            var MAX_CTA_LENGTH = 25;
             var MAX_HEADLINE_LENGTH = 40;
             var MAX_DESCRIPTION_LENGTH = 400;
-            var CTA_OPTIONS = [
-                'Apply Now',
-                'Book Now',
-                'Buy Now',
-                'Contact Us',
-                'Donate Now',
-                'Learn More',
-                'Shop Now',
-                'Sign Up',
-                'Watch More'
-            ];
             var DEFAULT_LOGO = 'https://reelcontent.com/landing-page/images/logo-blank.png';
             var DEFAULT_FB_LINK = 'https://www.facebook.com/reelc';
             var DEFAULT_TW_LINK = 'https://twitter.com/ReelContent';
@@ -282,27 +288,12 @@ function( angular , c6State  ) {
             if (window.c6.kHasKarma) { self._private = _private; }
 
             self.card = null;
+            self.ctaOptions = CTA_OPTIONS;
+            self.hasFiftyPromotion = $location.search().promotion === FIFTY_PROMOTION;
             self.maxHeadlineLength = MAX_HEADLINE_LENGTH;
             self.maxDescriptionLength = MAX_DESCRIPTION_LENGTH;
-            self.actionLabelOptions = CTA_OPTIONS;
-            self.actionLabelOptions = CTA_OPTIONS;
-            self.actionLink = '';
-            self.hasFiftyPromotion = $location.search().promotion === FIFTY_PROMOTION;
-
-            _private.generateLink = function(link) {
-                var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
-                    hasSlashes = (/^\/\//).test(link);
-
-                if (hasProtocol) {
-                    return link;
-                }
-
-                if (link) {
-                    return (hasSlashes ? 'http:' : 'http://') + link;
-                }
-
-                return link;
-            };
+            self.maxCallToActionLength = MAX_CTA_LENGTH;
+            self.validation = { show: false };
 
             _private.getWebsiteData = function(website) {
                 return CollateralService.websiteData(website, {
@@ -336,17 +327,9 @@ function( angular , c6State  ) {
                 SpinnerService.display();
                 self.model = model;
                 self.card = model.card;
-                self.actionLink = model.website;
-                self.updateActionLink();
                 _private.getWebsiteData(model.website).finally(function() {
                     SpinnerService.close();
                 });
-            };
-
-            self.updateActionLink = function() {
-                var link = _private.generateLink(self.actionLink);
-                self.card.links.Action = link;
-                self.actionLink = link;
             };
 
             self.signUp = function(device) {

@@ -8,6 +8,7 @@
             async: 'lib/async',
             jquery: 'https://lib.reelcontent.com/jquery/2.0.3-0-gf576d00/jquery.min',
             jqueryui: 'lib/jquery-ui.min',
+            jquerymasked: 'lib/jquery.maskedinput.min',
             hammer: 'https://lib.reelcontent.com/hammer.js/1.1.3-0-gc6a0b6f/hammer.min',
             modernizr: 'https://lib.reelcontent.com/modernizr/modernizr.custom.71747',
             youtube: 'lib/youtube',
