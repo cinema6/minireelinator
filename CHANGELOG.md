@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.47.1.rc1]*
+  * [FIX]: Fix for an issue that prevented the preview to default to the mobile tab on mobile devices
+
 ## v1.47.0 (May 10, 2016)
 * *[v1.47.0.rc1]*
   * [FEATURE]: Allow creating a campaign with a click-to-call CTA button

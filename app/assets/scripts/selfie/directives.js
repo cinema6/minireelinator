@@ -743,7 +743,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                         var mobileOnly = cardForPlayer.params.action &&
                             cardForPlayer.params.action.group === 'phone';
                         SelfiePreviewCtrl.mobileOnly = mobileOnly;
-                        $scope.device = (c6BrowserInfo.profile === 'phone' || mobileOnly) ?
+                        $scope.device = (c6BrowserInfo.profile.device === 'phone' || mobileOnly) ?
                             'phone' : 'desktop';
                     });
             }
