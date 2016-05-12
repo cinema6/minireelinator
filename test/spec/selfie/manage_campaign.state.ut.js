@@ -124,7 +124,6 @@ define(['app'], function(appModule) {
                     updateRequestDeferred = $q.defer();
                     advertiserDeferred = $q.defer();
 
-                    spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
 
                     spyOn(cinema6.db, 'find').and.callFake(function(type) {
                         var response;
@@ -143,14 +142,6 @@ define(['app'], function(appModule) {
 
                     campaignState.campaign = campaign;
                     campaign.org = 'o-999';
-                });
-
-                it('should get the account balance', function() {
-                    $rootScope.$apply(function() {
-                        campaignState.model().then(success, failure);
-                    });
-
-                    expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
                 describe('when the campaign has an updateRequest', function() {
@@ -176,8 +167,7 @@ define(['app'], function(appModule) {
 
                             expect(success).toHaveBeenCalledWith({
                                 updateRequest: updateRequest,
-                                advertiser: advertiser,
-                                balance: {}
+                                advertiser: advertiser
                             });
                         });
                     });
@@ -215,8 +205,7 @@ define(['app'], function(appModule) {
 
                             expect(success).toHaveBeenCalledWith({
                                 updateRequest: null,
-                                advertiser: advertiser,
-                                balance: {}
+                                advertiser: advertiser
                             });
                         });
                     });
@@ -240,6 +229,7 @@ define(['app'], function(appModule) {
                 beforeEach(function() {
                     interestsDeferred = $q.defer();
 
+                    spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
                     spyOn(cinema6.db, 'findAll').and.returnValue(interestsDeferred.promise);
 
                     model = {
@@ -261,6 +251,11 @@ define(['app'], function(appModule) {
 
                     expect(campaignState.isAdmin).toBe(true);
                     expect(campaignState.updateRequest).toBe(updateRequest)
+                });
+
+                it('should get the account balance', function() {
+                    campaignState.afterModel(model);
+                    expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
                 describe('when there is an update request', function() {

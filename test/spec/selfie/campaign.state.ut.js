@@ -244,18 +244,6 @@ define(['app'], function(appModule) {
                     spyOn(SelfieLogoService, 'getLogos').and.returnValue($q.when(logos));
                     spyOn(SpinnerService, 'display');
                     spyOn(SpinnerService, 'close');
-                    spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
-                });
-
-                it('should get the account balance', function() {
-                    campaignState.campaign = campaign;
-                    campaignState.user = user;
-
-                    $rootScope.$apply(function() {
-                        campaignState.model().then(success, failure);
-                    });
-
-                    expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
                 describe('when campaign has an org', function() {
@@ -271,8 +259,7 @@ define(['app'], function(appModule) {
                         expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(campaign.org);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
-                            logos: logos,
-                            balance: {}
+                            logos: logos
                         });
 
                         expect(SpinnerService.display).toHaveBeenCalled();
@@ -294,8 +281,7 @@ define(['app'], function(appModule) {
                         expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(user.org.id);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
-                            logos: logos,
-                            balance: {}
+                            logos: logos
                         });
 
                         expect(SpinnerService.display).toHaveBeenCalled();
@@ -332,12 +318,14 @@ define(['app'], function(appModule) {
                             }
                         }
                     };
+                    spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
                     spyOn(CampaignService, 'getSchema').and.returnValue($q.when(schema));
 
                     $rootScope.$apply(function() {
                         campaignState.afterModel();
                     });
 
+                    expect(PaymentService.getBalance).toHaveBeenCalled();
                     expect(CampaignService.getSchema).toHaveBeenCalled();
                     expect(campaignState.schema).toEqual(schema);
                 });

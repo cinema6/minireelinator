@@ -222,6 +222,14 @@ define(['app','angular'], function(appModule, angular) {
                         expect(PaymentService.getBalance).toHaveBeenCalled();
                     });
 
+                    it('should close the modal regardless of balance check request', function() {
+                        it('should close the modal', function() {
+                            expect(AddFundsModalCtrl.resolve).toHaveBeenCalled();
+                            expect(AddFundsModalCtrl.pendingConfirmation).toBe(false);
+                            expect(AddFundsModalCtrl.paymentMethodError).toBeFalsy();
+                        });
+                    });
+
                     describe('when balance is resolved', function() {
                         beforeEach(function() {
                             $scope.$apply(function() {
