@@ -113,11 +113,22 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
         describe('afterModel()', function() {
             it('should get account balance', function() {
+                var deferred = $q.defer();
+
+                PaymentService.getBalance.and.returnValue(deferred.promise);
+
                 $rootScope.$apply(function() {
                     PaymentHistoryState.afterModel();
                 });
 
+                expect(SpinnerService.display).toHaveBeenCalled();
+                expect(SpinnerService.close).not.toHaveBeenCalled();
                 expect(PaymentService.getBalance).toHaveBeenCalled();
+
+                $rootScope.$apply(function() {
+                    deferred.resolve(balance);
+                });
+                expect(SpinnerService.close).toHaveBeenCalled();
                 expect(PaymentHistoryState.accounting).toBe(balance);
             });
         });

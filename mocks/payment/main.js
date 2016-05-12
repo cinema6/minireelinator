@@ -118,11 +118,11 @@ module.exports = function(http) {
     });
 
     http.whenGET('/api/accounting/balance', function(request) {
-        return this.respond(200, {
+        return this.respond(200, Q.when({
             balance: getAllCredit(),
             outstandingBudget: getTotalCampaignBudget(),
             totalSpend: 567.87
-        });
+        }).delay(1000));
     });
 
     http.whenPOST('/api/payments', function(request) {
