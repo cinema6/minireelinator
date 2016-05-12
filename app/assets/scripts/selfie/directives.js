@@ -1426,7 +1426,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
 
             this.makePayment = function() {
                 return PaymentService.makePayment(this.model.chosenMethod.token, this.model.deposit)
-                    .then(PaymentService.getBalance)
+                    .then(function() {
+                        PaymentService.getBalance();
+                    })
                     .then(this.resolve)
                     .catch(function() {
                         self.paymentMethodError = true;

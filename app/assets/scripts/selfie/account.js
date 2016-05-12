@@ -245,12 +245,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function() {
-                    return $q.all({
-                        methods: cinema6.db.findAll('paymentMethod'),
-                        balance: PaymentService.getBalance()
-                    }).then(function(promises) {
-                        SelfieAccountState.paymentMethods = promises.methods;
-                    });
+                    PaymentService.getBalance();
+
+                    return cinema6.db.findAll('paymentMethod')
+                        .then(function(methods) {
+                            SelfieAccountState.paymentMethods = methods;
+                        });
                 };
 
                 this.enter = function() {
@@ -594,9 +594,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function() {
+                    SpinnerService.display();
+
                     return PaymentService.getBalance()
                         .then(function(accounting) {
                             self.accounting = accounting;
+                        })
+                        .finally(function() {
+                            SpinnerService.close();
                         });
                 };
             }]);

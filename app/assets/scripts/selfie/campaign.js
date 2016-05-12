@@ -150,7 +150,7 @@ function( angular , c6State  , PaginatedListState,
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.hasCampaigns = this.cParent.hasCampaigns;
 
-                    return PaymentService.getBalance();
+                    PaymentService.getBalance();
                 };
             }]);
         }])
@@ -633,7 +633,6 @@ function( angular , c6State  , PaginatedListState,
                     SpinnerService.display();
 
                     return $q.all({
-                        balance: PaymentService.getBalance(),
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
                         logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id)
                     }).catch(function() {
@@ -647,6 +646,8 @@ function( angular , c6State  , PaginatedListState,
 
                 this.afterModel = function() {
                     var cState = this;
+
+                    PaymentService.getBalance();
 
                     return CampaignService.getSchema()
                         .then(function(schema) {
@@ -1994,7 +1995,6 @@ function( angular , c6State  , PaginatedListState,
                         null;
 
                     return $q.all({
-                        balance: PaymentService.getBalance(),
                         advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId),
                         updateRequest: updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
@@ -2011,6 +2011,8 @@ function( angular , c6State  , PaginatedListState,
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.updateRequest = model.updateRequest;
+
+                    PaymentService.getBalance();
 
                     if (interests.length) {
                         return cinema6.db.findAll('category', {ids: interests.join(',')})
