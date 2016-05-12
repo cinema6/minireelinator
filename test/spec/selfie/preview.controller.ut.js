@@ -205,7 +205,7 @@ define(['app'], function(appModule) {
 
                     it('should always be "phone" on mobile devices', function() {
                         convertedCard.params.action = { group: 'website' };
-                        c6BrowserInfo.profile = 'phone';
+                        c6BrowserInfo.profile.device = 'phone';
                         applyDeferreds();
                         expect($scope.device).toBe('phone');
                         expect(SelfiePreviewCtrl.mobileOnly).toBe(false);
@@ -213,7 +213,7 @@ define(['app'], function(appModule) {
 
                     it('should be "phone" on desktop if the card is click-to-call', function() {
                         convertedCard.params.action = { group: 'phone' };
-                        c6BrowserInfo.profile = 'desktop';
+                        c6BrowserInfo.profile.device = 'desktop';
                         applyDeferreds();
                         expect($scope.device).toBe('phone');
                         expect(SelfiePreviewCtrl.mobileOnly).toBe(true);
@@ -221,7 +221,7 @@ define(['app'], function(appModule) {
 
                     it('should sometimes be "desktop"', function() {
                         convertedCard.params.action = { group: 'website' };
-                        c6BrowserInfo.profile = 'desktop';
+                        c6BrowserInfo.profile.device = 'desktop';
                         applyDeferreds();
                         expect($scope.device).toBe('desktop');
                         expect(SelfiePreviewCtrl.mobileOnly).toBe(false);
