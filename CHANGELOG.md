@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## v1.47.2 (May 12, 2016)
+* *[v1.47.2.rc1]*
+  * [FIX]: Fix for an issue where requests to fetch the account balance
+    resulted in blank screens until the response was received
+* *[/v1.47.2.rc1]*
+
 ## v1.47.1 (May 12, 2016)
 * *[v1.47.1.rc1]*
   * [FIX]: Fix for an issue that prevented the preview to default to the mobile tab on mobile devices
