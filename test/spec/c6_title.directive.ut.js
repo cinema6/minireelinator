@@ -83,6 +83,22 @@ define(['c6_state'], function(c6StateModule) {
             main.cTitle = 'Main Title!';
         });
 
+        afterEach(function() {
+            $c6Title.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            c6State = null;
+            $scope = null;
+            $c6Title = null;
+            application = null;
+            home = null;
+            about = null;
+            main = null;
+        });
+
         it('should be replaced with a title tag', function() {
             expect($c6Title.length).toBe(1);
             expect($c6Title.prop('tagName')).toBe('TITLE');

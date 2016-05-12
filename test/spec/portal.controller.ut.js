@@ -44,6 +44,17 @@ define(['app'], function(appModule) {
             PortalCtrl = instantiate();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            AuthService = null;
+            $q = null;
+            $scope = null;
+            PortalCtrl = null;
+            user = null;
+        });
+
         it('should exist', function() {
             expect(PortalCtrl).toEqual(jasmine.any(Object));
         });

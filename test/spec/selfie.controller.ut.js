@@ -55,6 +55,19 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             SelfieCtrl = instantiate();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            AuthService = null;
+            $q = null;
+            $scope = null;
+            SelfieCtrl = null;
+            PaymentService = null;
+            user = null;
+            intercom = null;
+        });
+
         it('should exist', function() {
             expect(SelfieCtrl).toEqual(jasmine.any(Object));
         });

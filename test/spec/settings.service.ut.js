@@ -27,6 +27,14 @@ define( ['app', 'angular'], function(appModule, angular) {
             c6LocalStorage.removeAll();
         });
 
+        afterAll(function() {
+            SettingsServiceProvider = null;
+            SettingsService = null;
+            c6LocalStorage = null;
+            $rootScope = null;
+            $timeout = null;
+        });
+
         it('should exist', function() {
             expect(SettingsService).toEqual(jasmine.any(Object));
         });

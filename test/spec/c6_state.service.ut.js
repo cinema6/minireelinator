@@ -59,6 +59,18 @@
                 });
             });
 
+            afterAll(function() {
+                c6StateProvider = null;
+                $injector = null;
+                c6State = null;
+                $rootScope = null;
+                $httpBackend = null;
+                $q = null;
+                $location = null;
+                $timeout = null;
+                _private = null;
+            });
+
             describe('provider', function() {
                 it('should exist', function() {
                     expect(c6StateProvider).toEqual(jasmine.any(Object));

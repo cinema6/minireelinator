@@ -25,6 +25,17 @@ define(['app', 'jquery'], function(appModule, $) {
             });
         });
 
+        afterEach(function() {
+            $dropdown.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $dropdown = null;
+        });
+
         describe('button label', function() {
             describe('if there are element contents', function() {
                 var $label;
