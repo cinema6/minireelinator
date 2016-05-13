@@ -10,6 +10,11 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
         isArray = angular.isArray,
         equals = angular.equals;
 
+    function pad(num) {
+        var norm = Math.abs(Math.floor(num));
+        return (norm < 10 ? '0' : '') + norm;
+    }
+
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
             var targetValue = target[prop];
@@ -1378,6 +1383,153 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                     validation.budget = !!budget;
                 } else {
                     validation.budget = false;
+                }
+            };
+        }])
+
+        .directive('selfieFlightDates', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    campaign: '=',
+                    masterCampaign: '=',
+                    validation: '='
+                },
+                templateUrl: 'views/selfie/directives/flight_dates.html',
+                controller: 'SelfieFlightDatesController',
+                controllerAs: 'SelfieFlightDatesCtrl'
+            };
+        }])
+
+        .controller('SelfieFlightDatesController', ['$scope',
+        function                                   ( $scope ) {
+            var SelfieFlightDatesCtrl = this,
+                originalCampaign = $scope.masterCampaign,
+                campaign = $scope.campaign,
+                card = campaign.cards[0],
+                campaignHash = card.campaign;
+
+            var now = new Date();
+            now.setHours(0,0,1);
+
+            function fromISO(string) {
+                if (!string) { return; }
+
+                var date = new Date(string);
+
+                return pad(date.getMonth() + 1) +
+                    '/' + pad(date.getDate()) +
+                    '/' + date.getFullYear();
+            }
+
+            function toISO(type, string) {
+                if (!string) { return; }
+
+                var date = new Date(string);
+
+                date.setHours.apply(date, (type === 'start' ? [0,1] : [23,59]));
+
+                return date.toISOString();
+            }
+
+            function setDatesOnCard() {
+                var self = SelfieFlightDatesCtrl;
+
+                campaignHash.startDate = self.validStartDate ?
+                    toISO('start', self.startDate) : campaignHash.startDate;
+                campaignHash.endDate = self.validEndDate ?
+                    toISO('end', self.endDate) : campaignHash.endDate;
+            }
+
+            Object.defineProperties(this, {
+                validStartDate: {
+                    get: function() {
+                        var startDate = this.startDate && new Date(this.startDate),
+                            endDate = this.endDate && new Date(this.endDate);
+
+                        // need this in case user chooses today.
+                        // set to end of day so startDate > now
+                        if (startDate) {
+                            startDate.setHours(23,59);
+                        }
+                        if (endDate) {
+                            endDate.setHours(23,59);
+                        }
+
+                        return !startDate || !this.editableStartDate ||
+                            (startDate && startDate instanceof Date && startDate > now &&
+                                (!endDate || (endDate && startDate <= endDate)));
+                    }
+                },
+                validEndDate: {
+                    get: function() {
+                        var startDate = this.startDate && new Date(this.startDate),
+                            endDate = this.endDate && new Date(this.endDate);
+
+                        // need this in case user chooses today.
+                        // set to end of day so endDate > now
+                        if (endDate) {
+                            endDate.setHours(23,59);
+                        }
+
+                        return !endDate || (endDate && endDate instanceof Date && endDate > now &&
+                            (!startDate || (startDate && endDate > startDate)));
+                    }
+                },
+                editableStartDate: {
+                    get: function() {
+                        var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
+
+                        return (!startDate || startDate > now) ||
+                            (!campaign.status || campaign.status === 'draft' ||
+                                originalCampaign.status === 'pending');
+                    }
+                },
+                canShowError: {
+                    get: function() {
+                        return !originalCampaign.status ||
+                            originalCampaign.status === 'draft' ||
+                            this.hasChanged;
+                    }
+                },
+                imminentDates: {
+                    get: function() {
+                        var start = this.startDate,
+                            end = this.endDate,
+                            today = fromISO(now),
+                            tomorrow = new Date(now);
+
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        tomorrow = fromISO(tomorrow);
+
+                        return this.editableStartDate && this.validStartDate && this.validEndDate &&
+                            ((start && (start === today || start === tomorrow)) ||
+                            (end && (end === today || end === tomorrow)));
+                    }
+                }
+            });
+
+            this.startDate = fromISO(campaignHash.startDate);
+            this.endDate = fromISO(campaignHash.endDate);
+            this.hasChanged = false;
+            this.hasDates = !!this.startDate || !!this.endDate;
+            this.isPending = originalCampaign.status === 'pending';
+
+            this.setDates = function() {
+                if (this.startDate !== fromISO(campaignHash.startDate) ||
+                    this.endDate !== fromISO(campaignHash.endDate)) {
+                    this.hasChanged = true;
+                }
+
+                setDatesOnCard();
+            };
+
+            this.setTimelineOption = function() {
+                if (!this.hasDates) {
+                    campaignHash.startDate = undefined;
+                    campaignHash.endDate = undefined;
+                } else {
+                    setDatesOnCard();
                 }
             };
         }])
