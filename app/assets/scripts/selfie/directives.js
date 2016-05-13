@@ -1585,7 +1585,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 this.model.onCancel();
             };
 
-            this.onConfirm = function() {
+            this.confirm = function() {
                 // this is on the Confirmation button
                 var token = this.model.paymentMethod.token;
 

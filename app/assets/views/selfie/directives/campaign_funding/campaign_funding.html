@@ -70,7 +70,7 @@
             <!-- Confirm Footer -->
             <footer ng-switch-when="false" class="modalFooter__group">
                 <button class="btnAction btnAction btnAction--first" ng-click="CampaignFundingCtrl.goBack()" title="Back">Back</button>
-                <button ng-click="CampaignFundingCtrl.onConfirm()" title="Confirm" ng-class="{ 'btnSpinner__waiting' : CampaignFundingCtrl.confirmationPending }" class="btnAction btnAction--success btnAction--last">Confirm</button>
+                <button ng-click="CampaignFundingCtrl.confirm()" title="Confirm" ng-class="{ 'btnSpinner__waiting' : CampaignFundingCtrl.confirmationPending }" class="btnAction btnAction--success btnAction--last">Confirm</button>
             </footer>
             <!-- /Confirm Footer -->
         </div>
