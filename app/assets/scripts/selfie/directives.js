@@ -1534,6 +1534,207 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             };
         }])
 
+        .directive('campaignFundingModal', [function() {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/campaign_funding/campaign_funding.html',
+                controller: 'CampaignFundingController',
+                controllerAs: 'CampaignFundingCtrl'
+            };
+        }])
+
+        .controller('CampaignFundingController', ['CampaignFundingService','PaymentService','$q',
+                                                  'cinema6',
+        function                                 ( CampaignFundingService , PaymentService , $q ,
+                                                   cinema6 ) {
+            var self = this;
+
+            this.model = CampaignFundingService.model;
+
+            Object.defineProperties(this, {
+                depositError: {
+                    get: function() {
+                        if (this.model.minDeposit &&
+                            (!this.model.deposit || this.model.deposit < this.model.minDeposit)) {
+                            // a deposit of at least {{minDeposit}} is required
+                            return 1;
+                        }
+
+                        if ((this.model.minDeposit && this.model.deposit < 1) ||
+                            (this.model.deposit && this.model.deposit < 1)) {
+                            // a deposit must be at least $1
+                            return 2;
+                        }
+
+                        return false;
+                    }
+                }
+            });
+
+            this.close = function() {
+                // this is on the "X" button in upper right
+                this.paymentError = false;
+                this.model.show = false;
+                this.model.onClose();
+            };
+
+            this.cancel = function() {
+                // this is on the Deposit "back/cancel" button
+                this.paymentError = false;
+                this.model.show = false;
+                this.model.onCancel();
+            };
+
+            this.onConfirm = function() {
+                // this is on the Confirmation button
+                var token = this.model.paymentMethod.token;
+
+                this.confirmationPending = true;
+
+                return (!!this.model.deposit ?
+                        PaymentService.makePayment(token, this.model.deposit) :
+                        $q.when(null))
+                    .then(function() {
+                        $q.when(self.model.onSuccess())
+                            .finally(function() {
+                                self.model.show = false;
+                            });
+                    }, function() {
+                        self.paymentError = true;
+                    }).finally(function() {
+                        self.confirmationPending = false;
+                    });
+            };
+
+            this.nextStep = function() {
+                // this is on the Deposit "continue" button
+                // and should transition from Deposit to Confirm UI
+                // and should submit new method if form is active
+
+                if (this.model.showCreditCardForm) {
+                    this.newMethodPending = true;
+                } else {
+                    this.model.deposit = this.model.deposit || 0;
+                    this.model.showDepositView = false;
+                }
+            };
+
+            this.successfulPaymentMethod = function(method) {
+                // this is passed to braintree directives and
+                // called if braintree succeeds
+
+                extend(this.model.newMethod, {
+                    cardholderName: method.cardholderName,
+                    paymentMethodNonce: method.nonce
+                });
+
+                self.paymentMethodError = false;
+
+                return this.model.newMethod.save()
+                    .then(function(method) {
+                        self.model.showCreditCardForm = false;
+                        self.model.paymentMethods.unshift(method);
+                        self.model.paymentMethod = method;
+                        self.model.newMethod = cinema6.db.create('paymentMethod', {});
+                        self.model.deposit = self.model.deposit || 0;
+
+                        if (method.type === 'creditCard') {
+                            self.model.showDepositView = false;
+                        }
+                    })
+                    .catch(function() {
+                        self.paymentMethodError = true;
+                    })
+                    .finally(function() {
+                        self.newMethodPending = false;
+                    });
+            };
+
+            this.failedPaymentmethod = function() {
+                // this is passed to braintree directives and
+                // called if braintree fails
+                this.newMethodPending = false;
+            };
+
+            this.goBack = function() {
+                // this method is on the Confirm "back" button
+
+                if (this.model.skipDeposit) {
+                    // if we skipped Deposit then this
+                    // is the same as canceling
+                    this.cancel();
+                } else {
+                    // this will show the Deposit UI
+                    this.model.showDepositView = true;
+                }
+            };
+        }])
+
+        .service('CampaignFundingService', ['$q','c6State','cinema6','CampaignService',
+                                            'PaymentService',
+        function                           ( $q , c6State , cinema6 , CampaignService ,
+                                             PaymentService ) {
+            var model = {};
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.fund = function(config) {
+                var campId = config.originalCampaign.id,
+                    orgId = config.originalCampaign.org,
+                    budget = config.campaign.pricing.budget;
+
+                extend(model, config);
+
+                model.show = true;
+                model.loading = true;
+                model.showDepositView = true;
+                model.newPaymentType = 'creditcard';
+                model.isDraft = model.originalCampaign.status === 'draft';
+                model.newBudget = budget;
+                model.oldBudget = !!model.updateRequest ?
+                    model.updateRequest.data.pricing.budget :
+                    model.originalCampaign.pricing.budget;
+                model.budgetChange = !model.isDraft ?
+                    model.newBudget - model.oldBudget :
+                    model.newBudget;
+
+                $q.all({
+                    token: PaymentService.getToken(),
+                    balance: PaymentService.getBalance(),
+                    newMethod: cinema6.db.create('paymentMethod', {}),
+                    paymentMethods: cinema6.db.findAll('paymentMethod'),
+                    creditCheck: PaymentService.creditCheck(campId, orgId, budget)
+                }).then(function(promises) {
+                    var SelfieUser = c6State.get('Selfie').cModel,
+                        paymentOptional = SelfieUser.entitlements.paymentOptional,
+                        hasPaymentMethods = !!promises.paymentMethods.length;
+
+                    model.loading = false;
+                    model.token = promises.token;
+                    model.newMethod = promises.newMethod;
+                    model.accounting = PaymentService.balance;
+                    model.showCreditCardForm = !hasPaymentMethods;
+                    model.minDeposit = promises.creditCheck.depositAmount;
+                    model.skipDeposit = (hasPaymentMethods || paymentOptional) && !model.minDeposit;
+                    model.showDepositView = !model.skipDeposit;
+                    model.deposit = model.minDeposit;
+                    model.paymentMethods = promises.paymentMethods;
+                    model.paymentMethod = model.paymentMethods.filter(function(method) {
+                        return !!method.default;
+                    })[0];
+                    model.cpv = CampaignService.getCpv(model.campaign, model.schema);
+                    model.summary = CampaignService.getSummary({
+                        campaign: model.campaign,
+                        interests: config.interests
+                    });
+                });
+            };
+        }])
+
         .directive('braintreeCreditCard', [function() {
             return {
                 restrict: 'E',

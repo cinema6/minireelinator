@@ -89,7 +89,7 @@ module.exports = function(http) {
             path.resolve(__dirname, '../campaign/campaigns/' + request.body.campaign + '.json')
         );
 
-        budgetChange = (request.body.newBudget || campaign.pricing.budget) - campaign.pricing.budget;
+        budgetChange = (request.body.newBudget || campaign.pricing.budget) - (campaign.status !== 'draft' ? campaign.pricing.budget : 0);
 
         if (campaign.updateRequest) {
             updateRequest = grunt.file.readJSON(

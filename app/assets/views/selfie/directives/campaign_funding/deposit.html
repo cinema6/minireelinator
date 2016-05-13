@@ -1,0 +1,208 @@
+<div class="reviewOrder__group">
+    <div class="grid">
+        <div class="grid__item one-half">
+            <div class="orderItems text--left">
+                <ul>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            <h1 class="tk--hdr">Deposit Details</h1>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            Total Campaign Budget
+                        </div><!--
+                        --><div class="grid__item one-third">
+                            <div class="text--right">
+                                {{CampaignFundingCtrl.model.campaign.pricing.budget | dollars:2}}
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            Available Funds
+                        </div><!--
+                        --><div class="grid__item one-third">
+                            <div class="text--right">
+                                {{CampaignFundingCtrl.model.accounting.remainingFunds | dollars:2}}
+                            </div>
+                        </div>
+                    </li>
+                    <li ng-if="!CampaignFundingCtrl.model.isDraft">
+                        <div class="grid__item two-thirds orderItem__label">
+                            Budget Change
+                        </div><!--
+                        --><div class="grid__item one-third">
+                            <div ng-if="CampaignFundingCtrl.model.budgetChange > 0"
+                                class="text--right">
+                                +{{CampaignFundingCtrl.model.budgetChange | dollars:2}}
+                            </div>
+                            <div ng-if="CampaignFundingCtrl.model.budgetChange <= 0"
+                                class="text--right">
+                                {{CampaignFundingCtrl.model.budgetChange | dollars:2}}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            <h1 class="tk--hdr">Deposit Funds</h1>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="depositFunds text--center">
+                            <div class="form__items">
+                                <fieldset class="form__item form__item--shortInput"
+                                    ng-class="{ 'ui--hasError': CampaignFundingCtrl.depositError }">
+                                    <input c6-fill-check
+                                        ng-model="CampaignFundingCtrl.model.deposit"
+                                        class="form__textBox form__textBox--units form__fillCheck"
+                                        type="number"
+                                        id="c6-fund-campaign">
+                                    <span class="input__unit">$</span>
+                                    <label class="form__label" for="c6-fund-campaign">
+                                        <i class="fa fa-times ui--error"></i>
+                                        Deposit Amount
+                                    </label>
+                                    <!--<div class="form__helpBox form__helpBox--right">
+                                        <div class="form__helpText">
+                                            Please enter the amount you want to add to your Balance.
+                                        </div>
+                                    </div>-->
+                                    <div class="form__errorBox">
+                                        <p class="form__errorMsg">
+                                            <i class="fa fa-exclamation-triangle"></i>
+                                            <span ng-if="CampaignFundingCtrl.depositError === 1">
+                                                A deposit of at least {{CampaignFundingCtrl.model.minDeposit | dollars:2}} is required
+                                            </span>
+                                            <span ng-if="CampaignFundingCtrl.depositError === 2">
+                                                Deposits must be at least $1
+                                            </span>
+                                        </p>
+                                    </div>
+                                </fieldset>
+                                <span class="alertMessage alert__success text--center"
+                                    ng-show="!CampaignFundingCtrl.model.minDeposit">
+                                    <strong>You have enough funds to run your campaign!</strong><br>
+                                    <span ng-if="!CampaignFundingCtrl.model.paymentMethods.length">
+                                        We need a payment method on file to approve your campaign.
+                                    </span>
+                                </span>
+
+                                <span class="alertMessage text--center"
+                                    ng-show="CampaignFundingCtrl.model.minDeposit">
+                                    You need to deposit at least {{CampaignFundingCtrl.model.minDeposit | dollars:2}} into your account to run this campaign.
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div><!--
+        --><div class="grid__item one-half">
+            <div class="orderItems text--left">
+                <ul>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            <h1 ng-if="!CampaignFundingCtrl.model.paymentMethods.length"
+                                class="tk--hdr">
+                                Add a Payment Method
+                            </h1>
+                            <h1 ng-if="CampaignFundingCtrl.model.paymentMethods.length"
+                                class="tk--hdr">
+                                Choose a Payment Method
+                            </h1>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="paymentForm">
+
+                            <!-- HIDDEN PAYPAL DIRECTIVE -->
+                            <braintree-paypal on-success="CampaignFundingCtrl.successfulPaymentMethod(method)">
+                                <div id="c6-paypal"></div>
+                            </braintree-paypal>
+
+                            <!-- IF PAYMENT METHODS LENGTH === 0, SHOW RADIO BUTTONS -->
+                            <div ng-if="!CampaignFundingCtrl.model.paymentMethods.length" class="paymentMethod__options">
+                                <div class="paymentMethod__optionTypes">
+                                    <input type="radio"
+                                        name="paymentType"
+                                        id="paymentType__auto"
+                                        value="creditcard"
+                                        ng-model="CampaignFundingCtrl.model.newPaymentType">
+                                    <label for="paymentType__auto">
+                                        <span class="radio__input"></span>Credit Card
+                                    </label>
+                                    <input type="radio"
+                                        name="paymentType"
+                                        id="paymentType__selected"
+                                        value="paypal"
+                                        ng-model="CampaignFundingCtrl.model.newPaymentType"
+                                        hidden-input-click="braintree-paypal-button">
+                                    <label for="paymentType__selected">
+                                        <span class="radio__input"></span>PayPal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div ng-show="CampaignFundingCtrl.model.paymentMethods.length && !CampaignFundingCtrl.model.showCreditCardForm">
+                                <selfie-payment-methods
+                                    chosen-method="CampaignFundingCtrl.model.paymentMethod"
+                                    methods="CampaignFundingCtrl.model.paymentMethods">
+                                </selfie-payment-methods>
+                            </div>
+
+                            <!-- BRAINTREE CREDIT CARD FORM -->
+                            <div ng-if="CampaignFundingCtrl.model.newMethod">
+                                <div ng-show="CampaignFundingCtrl.model.newPaymentType === 'creditcard' && CampaignFundingCtrl.model.showCreditCardForm">
+                                    <button class="paymentMethod__optionTypes"
+                                        ng-if="CampaignFundingCtrl.model.paymentMethods.length"
+                                        ng-click="CampaignFundingCtrl.model.showCreditCardForm = false">
+                                        <i class="fa fa-chevron-left" aria-hidden="true"></i> Use existing payment method
+                                    </button>
+                                    <braintree-credit-card
+                                        hide-save-button="true"
+                                        client-token="{{CampaignFundingCtrl.model.token}}"
+                                        method="CampaignFundingCtrl.model.newMethod"
+                                        on-success="CampaignFundingCtrl.successfulPaymentMethod(method)"
+                                        on-cancel="CampaignFundingCtrl.cancel()"
+                                        on-failure="CampaignFundingCtrl.failedPaymentmethod()">
+                                    </braintree-credit-card>
+                                </div>
+                            </div>
+
+                            <div ng-if="CampaignFundingCtrl.model.paymentMethods.length && !CampaignFundingCtrl.model.showCreditCardForm" class="paymentOption__buttonGroup paymentButton__divider text--center">
+                                <button hidden-input-click="braintree-paypal-button"
+                                    class="action__btnSecondary action__btnSecondary--big palm--one-whole">
+                                    <i class="faa fa-plus"></i> PayPal
+                                </button><!--
+                                --><button ng-click="CampaignFundingCtrl.model.showCreditCardForm = true"
+                                    class="action__btnSecondary action__btnSecondary--big palm--one-whole">
+                                    <i class="faa fa-plus"></i> Credit Card
+                                </button>
+                            </div>
+
+                            <span ng-if="CampaignFundingCtrl.paymentMethodError"
+                                class="alertMessage alert__failure text--center">
+                                There was a problem saving your payment method. Please try again or use another payment method.
+                            </span>
+
+                            <div class="payment__seals grid__item one-whole">
+                                <div class="payment__sealItem braintree--seal">
+                                    <span class="payment__itemText text--left">
+                                        <i class="fa fa-lock"></i> Secure payments
+                                    </span>
+                                    <a href="https://www.braintreegateway.com/merchants/hrmsqg32vjw32sjz/verified" target="_blank">
+                                        <img src="img/credit-cards-transparent.png" border="0"/>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
