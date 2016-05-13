@@ -29,11 +29,8 @@ define(['app'], function(appModule) {
 
         function compileCtrl() {
             $scope = $rootScope.$new();
-            $scope.SelfieCampaignCtrl = {
-                originalCampaign: originalCampaign,
-                campaign: campaign,
-                card: campaign.cards[0]
-            };
+            $scope.campaign = campaign;
+            $scope.masterCampaign = originalCampaign;
 
             $scope.$apply(function() {
                 SelfieFlightDatesCtrl = $controller('SelfieFlightDatesController', {
