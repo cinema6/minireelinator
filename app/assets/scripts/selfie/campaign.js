@@ -764,10 +764,12 @@ function( angular , c6State  , PaginatedListState,
                                                  'c6Debounce','c6AsyncQueue','ConfirmDialogService',
                                                  'CampaignService','PaymentService',
                                                  'SoftAlertService','intercom',
+                                                 'CampaignFundingService',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
                                                   c6Debounce , c6AsyncQueue , ConfirmDialogService ,
                                                   CampaignService , PaymentService ,
-                                                  SoftAlertService , intercom ) {
+                                                  SoftAlertService , intercom ,
+                                                  CampaignFundingService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -991,42 +993,28 @@ function( angular , c6State  , PaginatedListState,
 
                 return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
                     .then(function() {
-                        return c6State.goTo('Selfie:Campaign:Fund');
-                    })
-                    .catch(showErrorModal)
-                    .finally(function() {
                         SelfieCampaignCtrl.pending = false;
-                        SelfieCampaignCtrl.confirmationError = false;
-                    });
-            }, this);
 
-            this.confirmSubmission = queue.debounce(function() {
-                var paymentMethod = arguments[0],
-                    amount = arguments[1],
-                    self = this;
-
-                this.confirmationPending = true;
-
-                return (!!amount ?
-                        PaymentService.makePayment(paymentMethod.token, amount) :
-                        $q.when(null))
-                    .then(createUpdateRequest)
-                    .then(setPending)
-                    .then(returnToDashboard)
-                    .catch(function(err) {
-                        var updateError,
-                            paymentError;
-
-                        if (!err || !err.config) { return; }
-
-                        updateError = (err.config.url || '').indexOf('updates') > -1;
-                        paymentError = (err.config.url || '').indexOf('payments') > -1;
-
-                        self.confirmationError = (updateError && 1) || (paymentError && 2);
-                    })
-                    .finally(function() {
-                        self.confirmationPending = false;
-                    });
+                        CampaignFundingService.fund({
+                            onClose: function() {
+                                c6State.goTo(cState.cName);
+                            },
+                            onCancel: function() {
+                                c6State.goTo(cState.cName);
+                            },
+                            onSuccess: function() {
+                                return createUpdateRequest()
+                                    .then(setPending)
+                                    .then(returnToDashboard)
+                                    .catch(showErrorModal);
+                            },
+                            originalCampaign: cState._campaign,
+                            updateRequest: cState._updateRequest,
+                            campaign: SelfieCampaignCtrl.campaign,
+                            interests: SelfieCampaignCtrl.categories,
+                            schema: SelfieCampaignCtrl.schema
+                        });
+                    }).catch(showErrorModal);
             }, this);
 
             // debounce the auto-save
