@@ -1,0 +1,161 @@
+<div class="reviewOrder__group">
+    <div class="grid">
+        <div class="grid__item one-half">
+            <div class="orderItems text--left">
+                <ul>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            <h1 class="tk--hdr">Campaign Details</h1>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="grid__item one-third orderItem__label">Campaign Name</div><!--
+                        --><div class="grid__item two-thirds">
+                            <div class="orderItem__cost text--right">{{CampaignFundingCtrl.model.campaign.name}}</div>
+                        </div>
+                    </li>
+                    <li>
+                    <div class="grid__item one-third orderItem__label">Timeline</div><!--
+                    --><div class="grid__item two-thirds">
+                            <div class="orderItem__cost text--right">{{CampaignFundingCtrl.model.summary.duration}}</div>
+                        </div>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            <h1 class="tk--hdr">Total Budget</h1>
+                        </div><!--
+                        --><div class="grid__item one-third orderItem__label">
+                            <h1 class="tk--hdr">{{CampaignFundingCtrl.model.campaign.pricing.budget | dollars:2}}</h1>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="grid__item one-third orderItem__label">Daily Budget</div><!--
+                        --><div class="grid__item two-thirds">
+                            <div ng-if="CampaignFundingCtrl.model.campaign.pricing.dailyLimit" class="orderItem__label text--right">{{CampaignFundingCtrl.model.campaign.pricing.dailyLimit | dollars:2}}</div>
+                            <div ng-if="!CampaignFundingCtrl.model.campaign.pricing.dailyLimit" class="orderItem__label text--right">No limit</div>
+                        </div>
+                    </li>
+                    <li>
+                    <div class="grid__item one-third orderItem__label">Est. Views</div><!--
+                    --><div class="grid__item two-thirds">
+                            <div class="orderItem__label text--right">{{(CampaignFundingCtrl.model.campaign.pricing.budget / CampaignFundingCtrl.model.cpv) | number:0}}</div>
+                        </div>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            <h1 class="tk--hdr">Total CPV</h1>
+                        </div><!--
+                        --><div class="grid__item one-third orderItem__label">
+                            <h1 class="tk--hdr">{{CampaignFundingCtrl.model.cpv | dollars:2}}</h1>
+                        </div>
+
+                    </li>
+                    <li class="orderItem__subHdr">
+                        <div class="grid__item one-third orderItem__label">Base CPV</div><!--
+                        --><div class="grid__item two-thirds">
+                            <div class="orderItem__label text--right">{{CampaignFundingCtrl.model.schema.pricing.cost.__base | dollars:2}}</div>
+                        </div>
+                    </li>
+                    <li ng-show="CampaignFundingCtrl.model.summary.interests">
+                        <div class="grid__item one-third orderItem__label">Interests:</div><!--
+                        --><div class="grid__item two-thirds">
+                            <div class="orderItem__label text--right">{{CampaignFundingCtrl.model.schema.pricing.cost.__priceForInterests | dollars:2}}</div>
+                        </div>
+                    </li>
+                    <li ng-show="CampaignFundingCtrl.model.summary.interests" class="orderItem__subItem">
+                        <div class="grid__item orderItem__label">{{CampaignFundingCtrl.model.summary.interests}}</div>
+                    </li>
+                    <li ng-show="CampaignFundingCtrl.model.summary.demographics.age.list || CampaignFundingCtrl.model.summary.demographics.gender.list || CampaignFundingCtrl.model.summary.demographics.income.list">
+                        <div class="grid__item one-third orderItem__label">Demographics:</div><!--
+                        --><div class="grid__item two-thirds">
+                            <div class="orderItem__label text--right">{{CampaignFundingCtrl.model.schema.pricing.cost.__priceForDemoTargeting | dollars:2}}</div>
+                        </div>
+                    </li>
+                    <li ng-show="CampaignFundingCtrl.model.summary.demographics.age.list || CampaignFundingCtrl.model.summary.demographics.gender.list || CampaignFundingCtrl.model.summary.demographics.income.list" class="orderItem__subItem">
+                        <div ng-if="demo.list" ng-repeat="demo in CampaignFundingCtrl.model.summary.demographics" class="grid__item orderItem__label">{{demo.name}}: {{demo.list}}</div>
+                    </li>
+                    <li ng-show="CampaignFundingCtrl.model.summary.geo.states.list || CampaignFundingCtrl.model.summary.geo.dmas.list || CampaignFundingCtrl.model.summary.geo.zipcodes.list">
+                        <div class="grid__item one-third orderItem__label">Location:</div><!--
+                        --><div class="grid__item two-thirds">
+                            <div class="orderItem__label text--right">{{CampaignFundingCtrl.model.schema.pricing.cost.__priceForGeoTargeting | dollars:2}}</div>
+                        </div>
+                    </li>
+                    <li ng-show="CampaignFundingCtrl.model.summary.geo.states.list || CampaignFundingCtrl.model.summary.geo.dmas.list || CampaignFundingCtrl.model.summary.geo.zipcodes.list" class="orderItem__subItem">
+                        <div ng-if="geo.list" ng-repeat="geo in CampaignFundingCtrl.model.summary.geo" class="grid__item orderItem__label">{{geo.name}}: {{geo.list}}</div>
+                    </li>
+                </ul>
+            </div>
+        </div><!--
+        --><div class="grid__item one-half">
+            <div class="orderItems text--left">
+                <ul>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            <h1 class="tk--hdr">Deposit Details</h1>
+                        </div>
+                    </li>
+                    <li ng-if="!!CampaignFundingCtrl.model.budgetChange">
+                        <div class="grid__item two-thirds orderItem__label">
+                            <span ng-if="CampaignFundingCtrl.model.isDraft">Total Campaign Budget</span>
+                            <span ng-if="!CampaignFundingCtrl.model.isDraft">Total Campaign Budget Change</span>
+                        </div><!--
+                        --><div class="grid__item one-third">
+                            <div class="text--right">{{CampaignFundingCtrl.model.budgetChange | dollars:2}}</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">Available Funds</div><!--
+                        --><div class="grid__item one-third">
+                            <div class="text--right">{{CampaignFundingCtrl.model.accounting.remainingFunds | dollars:2}}</div>
+                        </div>
+                    </li>
+                    <li ng-if="CampaignFundingCtrl.model.deposit > CampaignFundingCtrl.model.minDeposit">
+                        <div class="grid__item two-thirds orderItem__label">Additional Funds</div><!--
+                        --><div class="grid__item one-third">
+                            <div class="text--right">{{CampaignFundingCtrl.model.deposit - CampaignFundingCtrl.model.minDeposit | dollars:2}}</div>
+                        </div>
+                    </li>
+
+                </ul>
+                <ul ng-if="CampaignFundingCtrl.model.paymentMethod && CampaignFundingCtrl.model.deposit" c6-alias="CampaignFundingCtrl.model.paymentMethod as method">
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">
+                            <h1 class="tk--hdr">Total Charge:</h1>
+                        </div><!--
+                        --><div class="grid__item one-third orderItem__label">
+                            <h1 class="tk--hdr">{{CampaignFundingCtrl.model.deposit | dollars:2}}</h1>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="grid__item two-thirds orderItem__label">Payment Method</div><!--
+                        --><div class="grid__item one-third">
+                            <div ng-if="method.type === 'creditCard'" class="text--right">{{method.cardType | paymentType}} **** {{method.last4}}</div>
+                            <div ng-if="method.type === 'paypal'" class="text--right">PayPal</div>
+                        </div>
+                    </li>
+                    <li>
+                    <div class="grid__item one-third orderItem__label">
+                        <i ng-if="method.type === 'creditCard'">{{method.cardholderName}}</i>
+                    </div><!--
+                    --><div class="grid__item two-thirds">
+                            <div ng-if="method.type === 'creditCard'" class="text--right"><i>Exp. {{method.expirationDate}}</i></div>
+                            <div ng-if="method.type === 'paypal'" class="text--right"><i>{{method.email}}</i></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <span class="alertMessage alert__success text--center" ng-show="!CampaignFundingCtrl.model.deposit">
+                <strong>You have enough funds to run your campaign!</strong>
+            </span>
+
+            <span ng-if="CampaignFundingCtrl.paymentError" class="alertMessage alert__failure text--center">
+                The payment was declined. Please try again or <button ng-click="CampaignFundingCtrl.model.showDepositView = true;CampaignFundingCtrl.paymentError = null;">go back</button> and choose a different payment method.
+            </span>
+        </div>
+    </div>
+</div>
