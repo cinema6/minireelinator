@@ -21,6 +21,13 @@ define(['account/app'], function(accountModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            AccountCtrl = null;
+        });
+
         it('should exist', function() {
             expect(AccountCtrl).toEqual(jasmine.any(Object));
         });

@@ -32,6 +32,16 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
             }]);
         });
 
+        afterAll(function() {
+            $httpBackend = null;
+            $timeout = null;
+            $http = null;
+            AccountService = null;
+            successSpy = null;
+            failureSpy = null;
+            c6UrlMaker = null;
+        });
+
         describe('changeEmail method', function(){
 
             beforeEach(function(){
