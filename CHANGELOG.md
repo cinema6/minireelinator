@@ -3,6 +3,8 @@
 * *[v1.48.0.rc1]*
   * [DEV]: Convert Flight Date inputs into Angular directives
   * [DEV]: Add a service and directive to replace Campaign Funding Modals
+  * [DEV]: Use new funding directive in campaign creation screen and
+    remove old funding states
 
 ## v1.47.2 (May 12, 2016)
 * *[v1.47.2.rc1]*
