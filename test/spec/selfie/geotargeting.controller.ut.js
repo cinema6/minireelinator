@@ -112,6 +112,20 @@ define(['app'], function(appModule) {
             compileCtrl();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            GeoService = null;
+            CampaignService = null;
+            SelfieGeotargetingCtrl = null;
+            campaign = null;
+            schema = null;
+            validation = null;
+            costData = null;
+        });
+
         it('should exist', function() {
             expect(SelfieGeotargetingCtrl).toEqual(jasmine.any(Object));
         });

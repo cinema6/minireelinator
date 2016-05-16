@@ -29,6 +29,15 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            c6State = null;
+            SelfieManageCampaignPlacementTagCtrl = null;
+            placement = null;
+        });
+
         it('should exist', function() {
             expect(SelfieManageCampaignPlacementTagCtrl).toEqual(jasmine.any(Object));
         });

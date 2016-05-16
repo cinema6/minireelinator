@@ -21,6 +21,17 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterEach(function() {
+            $fieldset.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $fieldset = null;
+        });
+
         describe('before the input comes into focus', function() {
             it('should not have the "ui--hasError" class', function() {
                 expect($fieldset.hasClass('ui--hasError')).toBe(false);

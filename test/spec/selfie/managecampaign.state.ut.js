@@ -49,6 +49,18 @@ define(['app'], function(appModule) {
 
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                c6State = null;
+                cinema6 = null;
+                manageCampaignState = null;
+                CampaignService = null;
+                card = null;
+                campaign = null;
+                user = null;
+            });
+
             it('should exist', function() {
                 expect(manageCampaignState).toEqual(jasmine.any(Object));
             });

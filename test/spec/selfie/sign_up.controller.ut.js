@@ -51,6 +51,18 @@ define(['app'], function(appModule) {
             initCtrl('Selfie:SignUp:Full');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            cState = null;
+            AccountService = null;
+            $q = null;
+            $scope = null;
+            SelfieSignUpCtrl = null;
+            user = null;
+        });
+
         it('should exist', function() {
             expect(SelfieSignUpCtrl).toEqual(jasmine.any(Object));
         });

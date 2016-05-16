@@ -20,6 +20,13 @@ define(['app'], function(appModule) {
                 WebsiteState = c6State.get(stateName);
             });
 
+            afterAll(function() {
+                c6State = null;
+                $rootScope = null;
+                $q = null;
+                WebsiteState = null;
+            });
+
             it('should exist', function() {
                 expect(WebsiteState).toEqual(jasmine.any(Object));
             });

@@ -66,6 +66,18 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
+        afterAll(function() {
+            CampaignAdapter = null;
+            adapter = null;
+            $rootScope = null;
+            $q = null;
+            $httpBackend = null;
+            cinema6 = null;
+            MiniReelService = null;
+            success = null;
+            failure = null;
+        });
+
         it('should exist', function() {
             expect(adapter).toEqual(jasmine.any(Object));
         });

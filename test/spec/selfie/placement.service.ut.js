@@ -101,6 +101,13 @@ define(['app'], function(appModule) {
             };
         });
 
+        afterAll(function() {
+            c6State = null;
+            PlacementService = null;
+            selfieApp = null;
+            paramModel = null;
+        });
+
         it('should exist', function() {
             expect(PlacementService).toEqual(jasmine.any(Object));
         });

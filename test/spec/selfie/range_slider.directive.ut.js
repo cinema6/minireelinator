@@ -20,6 +20,18 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterEach(function() {
+            $input.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $input = null;
+            $timeout = null;
+        });
+
         describe('when max is greater than 100', function() {
             it('should properly set the value in UI', function() {
                 $scope.value = 130;

@@ -88,6 +88,23 @@ define(['app'], function(appModule) {
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                campaignState = null;
+                selfieState = null;
+                newCampaignState = null;
+                c6State = null;
+                cinema6 = null;
+                MiniReelService = null;
+                card = null;
+                updateRequest = null;
+                updateRequestPojo = null;
+                campaign = null;
+                campaignPojo = null;
+                paymentMethods = null;
+            });
+
             it('should exist', function() {
                 expect(campaignState).toEqual(jasmine.any(Object));
             });
@@ -126,21 +143,21 @@ define(['app'], function(appModule) {
                             campaignState.afterModel();
                         });
                     });
-                    
+
                     it('should set pojoified objects on the state', function() {
                         expect(campaign.pojoify).toHaveBeenCalledWith();
                         expect(updateRequest.pojoify).toHaveBeenCalledWith();
                         expect(campaignState.campaign).toBe(campaignPojo);
                         expect(campaignState.updateRequest).toBe(updateRequestPojo);
                     });
-                    
+
                     it('should only make one request for interests', function() {
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {
                             ids: 'cat-1,cat-2,cat-3,cat-4'
                         });
                         expect(cinema6.db.findAll.calls.count()).toBe(1);
                     });
-                    
+
                     it('should decorate the proper objects with the interest data', function() {
                         var interestData = {
                             'cat-1': {id: 'cat-1'},
@@ -152,7 +169,7 @@ define(['app'], function(appModule) {
                         expect(campaignState._decorateInterests).toHaveBeenCalledWith(campaignState.updateRequest.data, interestData);
                     });
                 });
-                
+
                 describe('when there is no update request', function() {
                     beforeEach(function() {
                         campaignState.cParent.campaign = campaign;
@@ -167,21 +184,21 @@ define(['app'], function(appModule) {
                             campaignState.afterModel();
                         });
                     });
-                    
+
                     it('should set pojoified objects on the state', function() {
                         expect(campaign.pojoify).toHaveBeenCalled();
                         expect(updateRequest.pojoify).not.toHaveBeenCalled();
                         expect(campaignState.campaign).toBe(campaignPojo);
                         expect(campaignState.updateRequest).toBeNull();
                     });
-                    
+
                     it('should only make one request for interests', function() {
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {
                             ids: 'cat-1,cat-2'
                         });
                         expect(cinema6.db.findAll.calls.count()).toBe(1);
                     });
-                    
+
                     it('should decorate the proper objects with the interest data', function() {
                         var interestData = {
                             'cat-1': {id: 'cat-1'},
@@ -191,7 +208,7 @@ define(['app'], function(appModule) {
                         expect(campaignState._decorateInterests.calls.count()).toBe(1);
                     });
                 });
-                
+
                 describe('when there are no interests on the campaign or updateRequest', function() {
                     beforeEach(function() {
                         delete campaign.targeting;
@@ -199,20 +216,20 @@ define(['app'], function(appModule) {
                         delete updateRequest.data.targeting;
                         campaignState._updateRequest = updateRequest;
                     });
-                    
+
                     it('should not make a request for interest data', function() {
                         expect(cinema6.db.findAll).not.toHaveBeenCalled();
                     });
-                    
+
                     it('should not attempt to decorate entities with interests', function() {
                         expect(campaignState._decorateInterests).not.toHaveBeenCalled();
                     });
                 });
             });
-            
+
             describe('_decorateInterests', function() {
                 var interestData;
-                
+
                 beforeEach(function() {
                     campaignState._decorateInterests.and.callThrough();
                     interestData = {
@@ -222,7 +239,7 @@ define(['app'], function(appModule) {
                         'cat-4': {id: 'cat-4'}
                     };
                 });
-                
+
                 it('should be able to decorate the interests on a campaign', function() {
                     var campaign = {
                         targeting: {
@@ -236,7 +253,7 @@ define(['app'], function(appModule) {
                         }
                     });
                 });
-                
+
                 it('should be able to handle campaigns without interests', function() {
                     var campaign = {
                         targeting: { }
@@ -247,12 +264,12 @@ define(['app'], function(appModule) {
                     });
                 });
             });
-            
+
             describe('_undecorateInterests', function() {
                 beforeEach(function() {
-                    
+
                 });
-                
+
                 it('should be able to undecorate the interests on a campaign', function() {
                     var campaign = {
                         targeting: {
@@ -266,7 +283,7 @@ define(['app'], function(appModule) {
                         }
                     });
                 });
-                
+
                 it('should be able to handle campaigns without interests', function() {
                     var campaign = {
                         targeting: { }
@@ -296,12 +313,12 @@ define(['app'], function(appModule) {
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage', null, null, true);
                 });
             });
-            
+
             describe('saveUpdateRequest', function() {
                 beforeEach(function() {
                     spyOn(campaignState, '_undecorateInterests').and.callThrough();
                 });
-                
+
                 it('should extend the db model with any changes', function() {
                     campaignState._updateRequest = updateRequest;
                     campaignState.updateRequest = updateRequestPojo;
@@ -321,14 +338,14 @@ define(['app'], function(appModule) {
                         save: jasmine.any(Function)
                     });
                 });
-                
+
                 it('should save the db model', function() {
                     campaignState._updateRequest = updateRequest;
                     campaignState.updateRequest = updateRequestPojo;
                     campaignState.saveUpdateRequest({});
                     expect(updateRequest.save).toHaveBeenCalled();
                 });
-                
+
                 it('should undecorate any interests in the changes object', function() {
                     campaignState._updateRequest = updateRequest;
                     var changes = {

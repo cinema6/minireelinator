@@ -57,6 +57,23 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
             });
         });
 
+        afterEach(function() {
+            $form.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $timeout = null;
+            $form = null;
+            $q = null;
+            scope = null;
+            PaymentService = null;
+            token = null;
+            config = null;
+        });
+
         describe('initialization', function() {
             beforeEach(function() {
                 compileDirective();

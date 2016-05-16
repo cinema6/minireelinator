@@ -40,6 +40,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $httpBackend = null;
+            PaymentService = null;
+            c6UrlMaker = null;
+            cinema6 = null;
+            $q = null;
+            success = null;
+            failure = null;
+        });
+
         it('should be defined', function() {
             expect(PaymentService).toEqual(jasmine.any(Object));
         });

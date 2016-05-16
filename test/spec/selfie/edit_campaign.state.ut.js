@@ -59,6 +59,20 @@ define(['app'], function(appModule) {
             spyOn(CampaignService, 'normalize').and.returnValue(campaign);
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            c6State = null;
+            cinema6 = null;
+            editCampaignState = null;
+            CampaignService = null;
+            card = null;
+            campaign = null;
+            advertiser = null;
+            user = null;
+            updateRequest = null;
+        });
+
         it('should exist', function() {
             expect(editCampaignState).toEqual(jasmine.any(Object));
         });

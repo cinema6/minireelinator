@@ -52,6 +52,15 @@ define(['app'], function(appModule) {
             compileCtrl();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            SelfieCategoriesCtrl = null;
+            campaign = null;
+            categories = null;
+        });
+
         it('should exist', function() {
             expect(SelfieCategoriesCtrl).toEqual(jasmine.any(Object));
         });

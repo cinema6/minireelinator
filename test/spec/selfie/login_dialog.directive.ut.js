@@ -24,6 +24,18 @@
                 });
             });
 
+            afterEach(function() {
+                $login.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                SelfieLoginDialogService = null;
+                $login = null;
+            });
+
             it('should set its scope.model propertry to be the SelfieLoginDialogService\'s model', function() {
                 expect($login.isolateScope().model).toBe(SelfieLoginDialogService.model);
             });

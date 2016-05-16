@@ -70,6 +70,20 @@ define(['app'], function(appModule) {
             compileCtrl();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $scope = null;
+            $q = null;
+            MiniReelService = null;
+            SelfiePreviewCtrl = null;
+            c6BrowserInfo = null;
+            experience = null;
+            card = null;
+            miniReelDeferred = null;
+            cardDeferred = null;
+        });
+
         it('should exist', function() {
             expect(SelfiePreviewCtrl).toEqual(jasmine.any(Object));
         });

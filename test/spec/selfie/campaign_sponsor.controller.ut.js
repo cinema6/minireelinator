@@ -54,6 +54,19 @@ define(['app'], function(appModule) {
             compileCtrl();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $scope = null;
+            $q = null;
+            c6State = null;
+            CollateralService = null;
+            SelfieCampaignSponsorCtrl = null;
+            advertiser = null;
+            card = null;
+            logos = null;
+        });
+
         it('should exist', function() {
             expect(SelfieCampaignSponsorCtrl).toEqual(jasmine.any(Object));
         });

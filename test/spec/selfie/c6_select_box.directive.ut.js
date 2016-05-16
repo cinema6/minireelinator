@@ -40,6 +40,19 @@ define(['app','angular','select2'], function(appModule, angular) {
             });
         });
 
+        afterEach(function() {
+            $select.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $timeout = null;
+            $select = null;
+            $ = null;
+        });
+
         describe('initiating select2 jquery plugin', function() {
             it('should call the select2 method', function() {
                 $scope.$apply(function() {

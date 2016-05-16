@@ -25,6 +25,13 @@ define(['app'], function(appModule) {
                 };
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                c6State = null;
+                CampaignService = null;
+                selfieCampaignStats = null;
+            });
+
             it('should exist', function() {
                 expect(selfieCampaignStats).toEqual(jasmine.any(Object));
             });

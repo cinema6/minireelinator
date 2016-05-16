@@ -32,6 +32,16 @@ define(['app'], function(appModule) {
             SelfieConfirmAcctState = c6State.get('Selfie:ConfirmAccount');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            $location = null;
+            c6State = null;
+            cinema6 = null;
+            AccountService = null;
+            SelfieConfirmAcctState = null;
+        });
+
         it('should exist', function() {
             expect(SelfieConfirmAcctState).toEqual(jasmine.any(Object));
         });

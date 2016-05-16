@@ -1,9 +1,9 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    var state, SettingsService, CampaignService;
-
     describe('Selfie:Demo', function() {
+        var state, SettingsService, CampaignService;
+
         beforeEach(function() {
             module(appModule.name);
 
@@ -16,6 +16,12 @@ define(['app'], function(appModule) {
             spyOn(SettingsService, 'register');
             spyOn(CampaignService, 'create');
             state = c6State.get('Selfie:Demo');
+        });
+
+        afterAll(function() {
+            state = null;
+            SettingsService = null;
+            CampaignService = null;
         });
 
         describe('model', function() {

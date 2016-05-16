@@ -85,6 +85,23 @@ define(['app','angular'], function(appModule, angular) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            model = null;
+            $scope = null;
+            $q = null;
+            cinema6 = null;
+            PaymentService = null;
+            CampaignFundingService = null;
+            CampaignFundingCtrl = null;
+            paymentMethods = null;
+            campaign = null;
+            saveDeferred = null;
+            summary = null;
+        });
+
         it('should exist', function() {
             expect(CampaignFundingCtrl).toEqual(jasmine.any(Object));
         });

@@ -54,6 +54,17 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
+        afterAll(function() {
+            PaymentAdapter = null;
+            adapter = null;
+            $rootScope = null;
+            $q = null;
+            $httpBackend = null;
+            cinema6 = null;
+            success = null;
+            failure = null;
+        });
+
         it('should exist', function() {
             expect(adapter).toEqual(jasmine.any(Object));
         });

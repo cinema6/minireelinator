@@ -13,6 +13,10 @@
                 });
             });
 
+            afterAll(function() {
+                SpinnerService = null;
+            });
+
             it('should exist', function() {
                 expect(SpinnerService).toEqual(jasmine.any(Object));
             });

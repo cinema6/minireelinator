@@ -34,6 +34,18 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            AuthService = null;
+            AccountService = null;
+            $q = null;
+            $scope = null;
+            SelfieResendActivationCtrl = null;
+            intercom = null;
+        });
+
         it('should exist', function() {
             expect(SelfieResendActivationCtrl).toEqual(jasmine.any(Object));
         });

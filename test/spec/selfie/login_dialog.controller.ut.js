@@ -33,6 +33,17 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            AuthService = null;
+            SelfieLoginDialogService = null;
+            LoginCtrl = null;
+            intercom = null;
+        });
+
         it('should exist', function() {
             expect(LoginCtrl).toEqual(jasmine.any(Object));
         });
