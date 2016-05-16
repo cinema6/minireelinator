@@ -993,8 +993,6 @@ function( angular , c6State  , PaginatedListState,
 
                 return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
                     .then(function() {
-                        SelfieCampaignCtrl.pending = false;
-
                         CampaignFundingService.fund({
                             onClose: function() {
                                 c6State.goTo(cState.cName);
@@ -1014,7 +1012,10 @@ function( angular , c6State  , PaginatedListState,
                             interests: SelfieCampaignCtrl.categories,
                             schema: SelfieCampaignCtrl.schema
                         });
-                    }).catch(showErrorModal);
+                    }).catch(showErrorModal)
+                    .finally(function() {
+                        SelfieCampaignCtrl.pending = false;
+                    });
             }, this);
 
             // debounce the auto-save
