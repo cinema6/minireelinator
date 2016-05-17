@@ -46,6 +46,18 @@
                 NewCardState = c6State.get('MR:Editor.NewCard');
             });
 
+            afterAll(function() {
+                $injector = null;
+                $rootScope = null;
+                $q = null;
+                c6State = null;
+                MiniReelService = null;
+                PortalState = null;
+                NewCardState = null;
+                user = null;
+                card = null;
+            });
+
             it('should exist', function() {
                 expect(NewCardState).toEqual(jasmine.any(Object));
             });

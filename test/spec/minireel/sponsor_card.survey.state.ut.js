@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            c6State = null;
+            sponsorCardSurvey = null;
+        });
+
         it('should exist', function() {
             expect(sponsorCardSurvey).toEqual(jasmine.any(Object));
         });

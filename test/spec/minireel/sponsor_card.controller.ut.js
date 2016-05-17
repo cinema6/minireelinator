@@ -75,6 +75,24 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
             });
         });
 
+        afterAll(function() {
+            $injector = null;
+            $rootScope = null;
+            $controller = null;
+            $q = null;
+            $location = null;
+            cinema6 = null;
+            c6State = null;
+            MiniReelService = null;
+            EditorService = null;
+            $scope = null;
+            sponsorCard = null;
+            SponsorManagerCtrl = null;
+            SponsorCardCtrl = null;
+            minireel = null;
+            card = null;
+        });
+
         it('should exist', function() {
             expect(SponsorCardCtrl).toEqual(jasmine.any(Object));
         });

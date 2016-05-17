@@ -104,6 +104,19 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $q = null;
+            cinema6 = null;
+            $scope = null;
+            ConfirmDialogService = null;
+            CampaignCtrl = null;
+            MiniReelCtrl = null;
+            campaign = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(CampaignCtrl).toEqual(jasmine.any(Object));
         });

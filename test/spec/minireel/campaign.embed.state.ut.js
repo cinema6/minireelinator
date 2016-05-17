@@ -17,6 +17,11 @@
                         });
                     });
 
+                    afterAll(function() {
+                        CampaignEmbedState = null;
+                        c6State = null;
+                    });
+
                     it('should exist', function() {
                         expect(CampaignEmbedState).toEqual(jasmine.any(Object));
                     });

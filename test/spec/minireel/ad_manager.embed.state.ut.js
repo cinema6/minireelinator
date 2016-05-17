@@ -25,6 +25,15 @@
                 });
             });
 
+            afterAll(function() {
+                $injector = null;
+                cinema6 = null;
+                $q = null;
+                c6State = null;
+                $rootScope = null;
+                AdManagerEmbedState = null;
+            });
+
             it('should exist', function() {
                 expect(AdManagerEmbedState).toEqual(jasmine.any(Object));
             });

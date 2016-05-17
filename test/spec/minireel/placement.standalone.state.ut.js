@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             placementStandalone = c6State.get('MR:Placement.Standalone');
         });
 
+        afterAll(function() {
+            c6State = null;
+            placementStandalone = null;
+        });
+
         it('should exist', function() {
             expect(placementStandalone).toEqual(jasmine.any(Object));
         });

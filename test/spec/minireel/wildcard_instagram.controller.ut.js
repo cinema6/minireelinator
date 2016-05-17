@@ -45,6 +45,22 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $injector = null;
+            $rootScope = null;
+            $controller = null;
+            $scope = null;
+            $q = null;
+            MiniReelService = null;
+            c6State = null;
+            portal = null;
+            WildcardInstagramCtrl = null;
+            InstagramService = null;
+            c6Debounce = null;
+            card = null;
+            debounceFunc = null;
+        });
+
         it('should exist', function() {
             expect(WildcardInstagramCtrl).toEqual(jasmine.any(Object));
         });

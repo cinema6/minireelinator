@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             sponsorCardPlacement = c6State.get('MR:SponsorCard.Placement');
         });
 
+        afterAll(function() {
+            c6State = null;
+            sponsorCardPlacement = null;
+        });
+
         it('should exist', function() {
             expect(sponsorCardPlacement).toEqual(jasmine.any(Object));
         });

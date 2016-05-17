@@ -13,6 +13,10 @@
                 });
             });
 
+            afterAll(function() {
+                VideoService = null;
+            });
+
             it('should exist', function() {
                 expect(VideoService).toEqual(jasmine.any(Object));
             });

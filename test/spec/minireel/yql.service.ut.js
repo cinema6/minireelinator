@@ -26,6 +26,12 @@ define(['minireel/services'], function(servicesModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $httpBackend = null;
+            YQLService = null;
+        });
+
         it('should exist', function() {
             expect(YQLService).toEqual(jasmine.any(Object));
         });

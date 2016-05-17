@@ -20,6 +20,12 @@ define(['minireel/mixins/VideoCardController','minireel/services'], function(Vid
             });
         });
 
+        afterAll(function() {
+            VideoCardCtrl = null;
+            VideoService = null;
+            model = null;
+        });
+
         it('should exist', function() {
             expect(VideoCardCtrl).toEqual(jasmine.any(Object));
         });
@@ -44,7 +50,7 @@ define(['minireel/mixins/VideoCardController','minireel/services'], function(Vid
                         model.data.videoid = '12345';
                         model.data.hostname = 'cinema6.wistia.com';
                         expect(VideoCardCtrl.videoUrl).toBe('https://cinema6.wistia.com/medias/12345?preview=true');
-                        
+
                         model.data.service = 'brightcove';
                         model.data.videoid = '4655415742001';
                         model.data.playerid = '71cf5be9-7515-44d8-bb99-29ddc6224ff8';
@@ -77,7 +83,7 @@ define(['minireel/mixins/VideoCardController','minireel/services'], function(Vid
                         expect(model.data.service).toBe('wistia');
                         expect(model.data.videoid).toBe('12345');
                         expect(model.data.hostname).toBe('cinema6.wistia.com');
-                        
+
                         VideoCardCtrl.videoUrl = 'https://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=4655415742001';
                         expect(model.data.service).toBe('brightcove');
                         expect(model.data.videoid).toBe('4655415742001');
@@ -124,7 +130,7 @@ define(['minireel/mixins/VideoCardController','minireel/services'], function(Vid
 
                         VideoCardCtrl.videoUrl = 'http://www.dailymotion.com/v';
                         expect(VideoCardCtrl.videoUrl).toBe('http://www.dailymotion.com/v');
-                        
+
                         VideoCardCtrl.videoUrl = 'https://players.brightcove.net/';
                         expect(VideoCardCtrl.videoUrl).toBe('https://players.brightcove.net/');
                     });

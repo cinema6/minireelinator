@@ -20,6 +20,13 @@
                 });
             });
 
+            afterAll(function() {
+                requireCJS = null;
+                $rootScope = null;
+                $q = null;
+                $httpBackend = null;
+            });
+
             it('should exist', function() {
                 expect(requireCJS).toEqual(jasmine.any(Function));
             });

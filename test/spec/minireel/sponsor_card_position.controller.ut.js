@@ -61,6 +61,18 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            EditorService = null;
+            MiniReelService = null;
+            $scope = null;
+            SponsorCardCtrl = null;
+            SponsorCardPositionCtrl = null;
+            minireelcard = null;
+        });
+
         it('should exist', function() {
             expect(SponsorCardPositionCtrl).toEqual(jasmine.any(Object));
         });

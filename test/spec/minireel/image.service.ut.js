@@ -21,6 +21,16 @@
                 failure = jasmine.createSpy('failure()');
             });
 
+            afterAll(function() {
+                ImageService = null;
+                $q = null;
+                $http = null;
+                $rootScope = null;
+                c6ImagePreloader = null;
+                success = null;
+                failure = null;
+            });
+
             it('should exist', function() {
                 expect(ImageService).toEqual(jasmine.any(Object));
             });

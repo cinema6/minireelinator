@@ -26,6 +26,14 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $scope = null;
+            CampaignMiniReelGroupsCtrl = null;
+            groups = null;
+        });
+
         it('should exist', function() {
             expect(CampaignMiniReelGroupsCtrl).toEqual(jasmine.any(Object));
         });

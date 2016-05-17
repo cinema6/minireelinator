@@ -26,6 +26,14 @@ define(['minireel/campaign','minireel/mixins/LinksController'], function(campaig
             });
         });
 
+        afterAll(function() {
+            $injector = null;
+            $rootScope = null;
+            $controller = null;
+            $scope = null;
+            WildcardLinksCtrl = null;
+        });
+
         it('should exist', function() {
             expect(WildcardLinksCtrl).toEqual(jasmine.any(Object));
         });

@@ -116,6 +116,15 @@
                 frame.destroy();
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $window = null;
+                $timeout = null;
+                scope = null;
+            });
+
             it('should initialize the timestamps', function() {
                 expect(scope.startStamp).toBe('0:00');
                 expect(scope.endStamp).toBe('1:00');

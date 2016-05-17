@@ -78,6 +78,16 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                FileService = null;
+                SelfieLoginDialogService = null;
+                $window = null;
+                formData = null;
+                xhr = null;
+            });
+
             it('should exist', function() {
                 expect(FileService).toEqual(jasmine.any(Object));
             });

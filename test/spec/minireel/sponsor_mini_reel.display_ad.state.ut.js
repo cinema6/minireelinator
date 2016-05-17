@@ -71,6 +71,16 @@ define(['app'], function(appModule) {
             sponsorMiniReelDisplayAd = c6State.get('MR:SponsorMiniReel.DisplayAd');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            c6State = null;
+            SettingsService = null;
+            EditorService = null;
+            sponsorMiniReel = null;
+            sponsorMiniReelDisplayAd = null;
+            minireel = null;
+        });
+
         it('should exist', function() {
             expect(sponsorMiniReelDisplayAd).toEqual(jasmine.any(Object));
         });

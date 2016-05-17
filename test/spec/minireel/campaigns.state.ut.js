@@ -39,6 +39,15 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             });
         });
 
+        afterAll(function() {
+            c6State = null;
+            paginatedDbList = null;
+            portal = null;
+            campaigns = null;
+            dbList = null;
+            promise = null;
+        });
+
         it('should exist', function() {
             expect(campaigns).toEqual(jasmine.any(Object));
         });

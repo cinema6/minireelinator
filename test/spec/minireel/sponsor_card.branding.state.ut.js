@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             sponsorCardBranding = c6State.get('MR:SponsorCard.Branding');
         });
 
+        afterAll(function() {
+            c6State = null;
+            sponsorCardBranding = null;
+        });
+
         it('should exist', function() {
             expect(sponsorCardBranding).toEqual(jasmine.any(Object));
         });

@@ -36,6 +36,18 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
             });
         });
 
+        afterAll(function() {
+            $injector = null;
+            $rootScope = null;
+            $controller = null;
+            MiniReelService = null;
+            $scope = null;
+            c6State = null;
+            portal = null;
+            WildcardVideoCtrl = null;
+            card = null;
+        });
+
         it('should exist', function() {
             expect(WildcardVideoCtrl).toEqual(jasmine.any(Object));
         });

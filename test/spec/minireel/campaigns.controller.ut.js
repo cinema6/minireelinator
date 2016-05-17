@@ -74,6 +74,21 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $q = null;
+            cinema6 = null;
+            c6State = null;
+            ConfirmDialogService = null;
+            paginatedDbList = null;
+            $scope = null;
+            CampaignsCtrl = null;
+            campaigns = null;
+            model = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(CampaignsCtrl).toEqual(jasmine.any(Object));
         });

@@ -205,6 +205,26 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                cinema6 = null;
+                MiniReelService = null;
+                VoteService = null;
+                EditorService = null;
+                CollateralService = null;
+                ThumbnailService = null;
+                SettingsService = null;
+                c6UrlParser = null;
+                c6State = null;
+                portal = null;
+                _private = null;
+                minireel = null;
+                editorMinireel = null;
+                queue = null;
+                queuedFns = null;
+            });
+
             it('should exist', function() {
                 expect(EditorService).toEqual(jasmine.any(Object));
             });

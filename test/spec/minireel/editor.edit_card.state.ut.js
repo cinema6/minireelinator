@@ -57,6 +57,17 @@
                 EditCardState = c6State.get('MR:EditCard');
             });
 
+            afterAll(function() {
+                EditCardState = null;
+                $rootScope = null;
+                $injector = null;
+                MiniReelService = null;
+                EditorService = null;
+                c6State = null;
+                $q = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(EditCardState).toEqual(jasmine.any(Object));
             });

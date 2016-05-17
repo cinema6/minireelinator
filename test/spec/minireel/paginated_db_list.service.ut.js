@@ -25,6 +25,15 @@ define(['minireel/services'], function(servicesModule) {
             ScopedPromise = scopePromise($q.defer().promise).constructor;
         });
 
+        afterAll(function() {
+            cinema6 = null;
+            $rootScope = null;
+            scopePromise = null;
+            $q = null;
+            paginatedDbList = null;
+            ScopedPromise = null;
+        });
+
         it('should exist', function() {
             expect(paginatedDbList).toEqual(jasmine.any(Function));
         });

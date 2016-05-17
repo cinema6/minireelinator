@@ -106,6 +106,24 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $q = null;
+            c6State = null;
+            cinema6 = null;
+            MiniReelService = null;
+            scopePromise = null;
+            ScopedPromise = null;
+            $scope = null;
+            CampaignPlacementsState = null;
+            CampaignCtrl = null;
+            PortalCtrl = null;
+            CampaignPlacementsCtrl = null;
+            staticCardMap = null;
+            myWildcard = null;
+        });
+
         it('should exist', function() {
             expect(CampaignPlacementsCtrl).toEqual(jasmine.any(Object));
         });

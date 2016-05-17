@@ -28,6 +28,14 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $animate = null;
+                testFrame = null;
+            });
+
             it('should make its data available via jqLite .data()', function() {
                 var $dragSpace, $zone, scope, Ctrl;
 

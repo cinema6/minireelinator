@@ -40,6 +40,17 @@ define(['minireel/mixins/MiniReelSearchController', 'app'], function(MiniReelSea
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $q = null;
+            cinema6 = null;
+            ScopedPromise = null;
+            $scope = null;
+            PortalCtrl = null;
+            MiniReelSearchCtrl = null;
+        });
+
         it('should exist', function() {
             expect(MiniReelSearchCtrl).toEqual(jasmine.any(Object));
         });

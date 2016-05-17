@@ -22,6 +22,15 @@ define(['minireel/services'], function(servicesModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            YouTubeDataService = null;
+            VimeoDataService = null;
+            DailymotionDataService = null;
+            VideoDataService = null;
+        });
+
         it('should exist', function() {
             expect(VideoDataService).toEqual(jasmine.any(Object));
         });

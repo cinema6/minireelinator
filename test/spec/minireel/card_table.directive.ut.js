@@ -84,6 +84,20 @@
                 spyOn(Ctrl, 'setScrollerRect');
             });
 
+            afterEach(function() {
+                cardTable.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $window = null;
+                $timeout = null;
+                cardTable = null;
+                Ctrl = null;
+            });
+
             describe('initialization', function() {
                 it('should set props on the Ctrl', function() {
                     $timeout.flush();

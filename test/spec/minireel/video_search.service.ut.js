@@ -23,6 +23,14 @@ define(['minireel/services'], function(servicesModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            VideoDataService = null;
+            VideoSearchService = null;
+            $httpBackend = null;
+        });
+
         it('should exist', function() {
             expect(VideoSearchService).toEqual(jasmine.any(Object));
         });

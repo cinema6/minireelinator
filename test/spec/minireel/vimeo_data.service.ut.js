@@ -16,6 +16,12 @@ define(['minireel/services'], function(servicesModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $httpBackend = null;
+            VimeoDataService = null;
+        });
+
         it('should exist', function() {
             expect(VimeoDataService).toEqual(jasmine.any(Object));
         });

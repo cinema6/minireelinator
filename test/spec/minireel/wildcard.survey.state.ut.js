@@ -16,6 +16,11 @@ define(['app'], function(appModule) {
                 });
             });
 
+            afterAll(function() {
+                c6State = null;
+                wildcardSurvey = null;
+            });
+
             it('should exist', function() {
                 expect(wildcardSurvey).toEqual(jasmine.any(Object));
             });

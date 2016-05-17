@@ -24,6 +24,13 @@ define(['minireel/app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            PaginatorControlsCtrl = null;
+        });
+
         it('should exist', function() {
             expect(PaginatorControlsCtrl).toEqual(jasmine.any(Object));
         });

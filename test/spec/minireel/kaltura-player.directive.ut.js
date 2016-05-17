@@ -28,6 +28,19 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
+        afterEach(function() {
+            player.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $compile = null;
+            player = null;
+            mockIFrame = null;
+            mockSpan = null;
+        });
+
         it('it should append the proper script, div, and have the proper class', function() {
             var appendedElements = angular.element.prototype.append.calls.allArgs();
             var appendedDiv = appendedElements[0][0];
@@ -49,7 +62,7 @@ define(['app', 'angular'], function(appModule, angular) {
             var script = angular.element.prototype.append.calls.mostRecent().args[0];
             expect(script.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/partner-1337\/sp\/partner-133700\/embedIframeJs\/uiconf_id\/123-456-def\/partner_id\/partner-1337\?autoembed=true&entry_id=different&playerId=kaltura_player_\d{10}&cache_st=\d{10}&flashvars\[autoPlay\]=false/);
         });
-        
+
         it('should watch the partnerid and reload the video', function() {
             angular.element.prototype.append.calls.reset();
             $scope.$apply(function() {
@@ -59,7 +72,7 @@ define(['app', 'angular'], function(appModule, angular) {
             var script = angular.element.prototype.append.calls.mostRecent().args[0];
             expect(script.attr('src')).toMatch(/https:\/\/cdnapisec\.kaltura\.com\/p\/different\/sp\/different00\/embedIframeJs\/uiconf_id\/123-456-def\/partner_id\/different\?autoembed=true&entry_id=abc123&playerId=kaltura_player_\d{10}&cache_st=\d{10}&flashvars\[autoPlay\]=false/);
         });
-        
+
         it('should watch the playerid and reload the video', function() {
             angular.element.prototype.append.calls.reset();
             $scope.$apply(function() {

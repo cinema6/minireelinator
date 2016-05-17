@@ -65,6 +65,20 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                $q = null;
+                c6State = null;
+                $window = null;
+                SettingsService = null;
+                PortalCtrl = null;
+                MiniReelCtrl = null;
+                tracker = null;
+                user = null;
+            });
+
             it('should exist',function() {
                 expect(MiniReelCtrl).toBeDefined();
             });
@@ -150,7 +164,7 @@
                         expect(tracker.pageview.calls.mostRecent().args)
                             .toEqual(['/mini-reel-maker/manager',
                                 'Some Title - manager']);
-                       
+
                         MiniReelCtrl.trackStateChange({
                             templateUrl : 'assets/views/manager/experience.html' ,
                             name        : 'experience'
