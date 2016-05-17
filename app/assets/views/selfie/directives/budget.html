@@ -1,4 +1,4 @@
-<p class="formSection__introText">Based on your targeting selections, your cost per video view is <strong>${{SelfieBudgetCtrl.cpv | number:2}}</strong>.
+<p ng-show="!hideEstimates" class="formSection__introText">Based on your targeting selections, your cost per video view is <strong>${{SelfieBudgetCtrl.cpv | number:2}}</strong>.
 </p>
 
 <div class="form__items">
@@ -46,6 +46,6 @@
         </div>
     </fieldset>
 
-    <span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget" style="display:block">Estimated views: <strong>{{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</strong></span>
+    <span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget && !hideEstimates" style="display:block">Estimated views: <strong>{{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</strong></span>
 
 </div>

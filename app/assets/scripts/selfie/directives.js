@@ -1266,7 +1266,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 scope: {
                     campaign: '=',
                     validation: '=',
-                    schema: '='
+                    schema: '=',
+                    hideEstimates: '='
                 },
                 templateUrl: 'views/selfie/directives/budget.html',
                 controller: 'SelfieBudgetController',

@@ -1628,9 +1628,9 @@ function( angular , c6State  , PaginatedListState,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
-                                                             'PaymentService',
+                                                             'PaymentService','CampaignService',
             function                                        ( cinema6 , $q , c6State ,
-                                                              PaymentService ) {
+                                                              PaymentService , CampaignService ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -1650,6 +1650,7 @@ function( angular , c6State  , PaginatedListState,
                         null;
 
                     return $q.all({
+                        schema: CampaignService.getSchema(),
                         advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId),
                         updateRequest: updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
@@ -1666,6 +1667,7 @@ function( angular , c6State  , PaginatedListState,
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.updateRequest = model.updateRequest;
+                    this.schema = model.schema;
 
                     PaymentService.getBalance();
 
@@ -1693,9 +1695,11 @@ function( angular , c6State  , PaginatedListState,
         .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue','$q',
                                                        'c6State', 'CampaignService','cinema6',
                                                        'ConfirmDialogService',
+                                                       'CampaignFundingService',
         function                                      ( $scope , cState , c6AsyncQueue , $q ,
                                                         c6State ,  CampaignService , cinema6 ,
-                                                        ConfirmDialogService ) {
+                                                        ConfirmDialogService ,
+                                                        CampaignFundingService ) {
             var SelfieManageCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -1826,6 +1830,11 @@ function( angular , c6State  , PaginatedListState,
                     get: function() {
                         return (/expired|canceled|pending/).test(this.campaign.status);
                     }
+                },
+                canRenew: {
+                    get: function() {
+                        return (/expired|canceled|outOfBudget/).test(this.campaign.status);
+                    }
                 }
             });
 
@@ -1837,6 +1846,8 @@ function( angular , c6State  , PaginatedListState,
                 this.campaign = cState.campaign;
                 this.showAdminTab = cState.isAdmin;
                 this.user = cState.user;
+                this.schema = cState.schema;
+                this.interests = cState.interests;
 
                 this.categories = model.categories;
                 this.updateRequest = model.updateRequest;
@@ -1851,6 +1862,53 @@ function( angular , c6State  , PaginatedListState,
                 });
 
                 this._proxyCampaign = copy(cState.campaign);
+            };
+
+            this.initRenew = function() {
+                this.renewalCampaign = this.campaign.pojoify();
+                this.showRenewModal = true;
+                // TODO:
+                // - need to pass validation object into the
+                //   flight dates directive
+                // - need to get clever with budget directive:
+                //   ability to handle "Additional Budget" input
+                //   and add it to existing budget when validating
+                //   daily limit.
+                // - what do we do about validating budget when
+                //   a lot of the budget is already spent? do we
+                //   validate based on remaining budget + additional
+                //   budget?? this is going to get very complicated
+            };
+
+            this.confirmRenewal = function() {
+                var self = this;
+
+                this.showRenewModal = false;
+
+                CampaignFundingService.fund({
+                    onClose: function() {
+                        self.showRenewModal = false;
+                    },
+                    onCancel: function() {
+                        self.showRenewModal = true;
+                    },
+                    onSuccess: function() {
+                        console.log(SelfieManageCampaignCtrl.renewalCampaign);
+
+                        // need to add renewalCampaign data to actual campaign or UR
+                        // and then create an update request
+
+                        // return submitUpdate('pending')
+                        //     .then(setPending)
+                        //     .then(returnToDashboard)
+                        //     .catch(showErrorModal);
+                    },
+                    originalCampaign: this.campaign,
+                    updateRequest: this.updateRequest,
+                    campaign: this.renewalCampaign,
+                    interests: this.interests,
+                    schema: this.schema
+                });
             };
 
             this.update = function(action) {
