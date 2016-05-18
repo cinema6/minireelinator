@@ -635,8 +635,8 @@ function( angular , c6State  , PaginatedListState,
                     return $q.all({
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
                         logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id),
-                        stats: (!this.campaign.id || this._campaign.status === 'draft') ? $q.when(null) :
-                            CampaignService.getAnalytics({ids: this.campaign.id})
+                        stats: (!this.campaign.id || this._campaign.status === 'draft') ?
+                            $q.when(null) : CampaignService.getAnalytics({ids: this.campaign.id})
                     }).catch(function() {
                         c6State.goTo('Selfie:CampaignDashboard');
                         return $q.reject();

@@ -29,7 +29,7 @@
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-increase-budget">
             <i class="fa fa-times ui--error"></i>
-            Increase Budget<span class="text--small"> (required) </span>
+            Increase Budget By<span class="text--small"> (required) </span>
         </label>
         <!--<div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
@@ -45,7 +45,7 @@
         </div>
     </fieldset>
 
-    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError }">
+    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError && SelfieBudgetCtrl.dailyLimitError.code !== 5 }">
         <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-daily-limit" ng-model="SelfieBudgetCtrl.limit" ng-blur="SelfieBudgetCtrl.setBudget()" step="0.01">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-daily-limit">
@@ -66,8 +66,8 @@
         </div>
     </fieldset>
 
-    <p ng-if="SelfieBudgetCtrl.dailyLimitError.code === 5" class="alertMessage alert__warning two-thirds" style="margin:0 auto;">Warning: based on your flight dates your limit should be at least ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}}</p>
+    <p ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget">Estimated views: <strong>{{ SelfieBudgetCtrl.totalBudget / SelfieBudgetCtrl.cpv | number:0}}</strong></p>
 
-    <span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget" style="display:block">Estimated views: <strong>{{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</strong></span>
+    <p ng-if="SelfieBudgetCtrl.dailyLimitError.code === 5" class="alertMessage alert__warning two-thirds" style="margin:0 auto;">Warning: based on your flight dates your limit should be at least ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}}</p>
 
 </div>
