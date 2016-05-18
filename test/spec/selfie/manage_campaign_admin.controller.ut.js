@@ -188,7 +188,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 saveUpdateRequest: jasmine.createSpy('saveUpdateRequest()').and.returnValue($q.when())
             };
 
-            compileCtrl(cState, {});
+            this.mockAnalytics = {
+                analytics: {
+                    summary: {
+                        totalSpend: 123.456
+                    }
+                }
+            };
+
+            compileCtrl(cState, this.mockAnalytics);
         });
 
         afterAll(function() {
@@ -238,16 +246,28 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             updateRequest.data.cards[0].data.duration = -1;
                             card.data.duration = undefined;
 
-                            compileCtrl(cState, {});
+                            compileCtrl(cState, this.mockAnalytics);
 
                             expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(false);
 
                             updateRequest.data.cards[0].data.duration = 30;
                             card.data.duration = undefined;
 
-                            compileCtrl(cState, {});
+                            compileCtrl(cState, this.mockAnalytics);
 
                             expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(true);
+                        });
+                    });
+
+                    describe('totalSpend', function() {
+                        it('should come from the model', function() {
+                            expect(SelfieManageCampaignAdminCtrl.totalSpend).toBe(123.456);
+                        });
+
+                        it('should default to zero', function() {
+                            compileCtrl(cState, { });
+
+                            expect(SelfieManageCampaignAdminCtrl.totalSpend).toBe(0);
                         });
                     });
                 });
@@ -255,8 +275,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 describe('when there is no updateRequest', function() {
                     beforeEach(function() {
                         cState.updateRequest = null;
-                        compileCtrl(cState, {});
-                    })
+                        compileCtrl(cState, this.mockAnalytics);
+                    });
 
                     it('should set properties on the Ctrl', function() {
                         expect(SelfieManageCampaignAdminCtrl.showApproval).toBe(false);
@@ -273,15 +293,27 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                             card.data.duration = -1;
 
-                            compileCtrl(cState, {});
+                            compileCtrl(cState, this.mockAnalytics);
 
                             expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(false);
 
                             card.data.duration = 30;
 
-                            compileCtrl(cState, {});
+                            compileCtrl(cState, this.mockAnalytics);
 
                             expect(SelfieManageCampaignAdminCtrl.hasDuration).toBe(true);
+                        });
+                    });
+
+                    describe('totalSpend', function() {
+                        it('should come from the model', function() {
+                            expect(SelfieManageCampaignAdminCtrl.totalSpend).toBe(123.456);
+                        });
+
+                        it('should default to zero', function() {
+                            compileCtrl(cState, { });
+
+                            expect(SelfieManageCampaignAdminCtrl.totalSpend).toBe(0);
                         });
                     });
                 });
