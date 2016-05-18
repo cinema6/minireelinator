@@ -25,6 +25,16 @@ define(['app'], function(appModule) {
             selfie = c6State.get('Selfie');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            $location = null;
+            c6State = null;
+            cinema6 = null;
+            AuthService = null;
+            selfie = null;
+        });
+
         it('should exist', function() {
             expect(selfie).toEqual(jasmine.any(Object));
         });

@@ -24,6 +24,17 @@
                 });
             });
 
+            afterEach(function() {
+                $input.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $input = null;
+            });
+
             describe('ng-model', function() {
                 it('should one-way data bind to the file', function() {
                     var file = {};

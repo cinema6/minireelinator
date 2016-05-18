@@ -9,6 +9,10 @@ describe('readableTableKey', function() {
         });
     });
 
+    afterAll(function() {
+        readableTableValue = null;
+    });
+
     it('should make table values readable', function() {
         var input = [
             null,
@@ -32,7 +36,7 @@ describe('readableTableKey', function() {
     it('should make dates readable', function() {
         expect(readableTableValue('1995-06-27T00:00:00.000Z')).toMatch(/Jun (26|27), 1995 .+/);
     });
-    
+
     it('should make an array of interest objects readable', function() {
         var input = [
             { type: 'interest', label: 'cat-123', externalId: 'IAB-1' },

@@ -23,6 +23,15 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            c6State = null;
+            cinema6 = null;
+            CampaignState = null;
+            MiniReelService = null;
+            editMinireel = null;
+        });
+
         it('should exist', function() {
             expect(editMinireel).toEqual(jasmine.any(Object));
         });

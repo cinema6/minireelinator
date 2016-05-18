@@ -79,6 +79,17 @@ define(['app'], function(appModule) {
             compileCtrl();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            CampaignService = null;
+            Ctrl = null;
+            campaign = null;
+            updatedCampaign = null;
+            updateRequest = null;
+        });
+
         it('should exist', function() {
             expect(Ctrl).toEqual(jasmine.any(Object));
         });

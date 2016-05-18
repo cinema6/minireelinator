@@ -20,6 +20,14 @@ define(['app'], function(appModule) {
             selfieContainer = c6State.get('Selfie:New:Container');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            c6State = null;
+            selfieContainer = null;
+            selfieState = null;
+            cinema6 = null;
+        });
+
         it('should exist', function() {
             expect(selfieContainer).toEqual(jasmine.any(Object));
         });

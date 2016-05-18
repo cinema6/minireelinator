@@ -21,6 +21,13 @@
                 });
             });
 
+            afterAll(function() {
+                $injector = null;
+                c6State = null;
+                EditorService = null;
+                SetModeState = null;
+            });
+
             it('should exist', function() {
                 expect(SetModeState).toEqual(jasmine.any(Object));
             });

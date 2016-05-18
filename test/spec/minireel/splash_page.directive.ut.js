@@ -81,6 +81,19 @@
                 $splash.remove();
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $q = null;
+                $httpBackend = null;
+                requireCJS = null;
+                splashJS = null;
+                delegate = null;
+                $splash = null;
+                scope = null;
+            });
+
             it('should set up an isolate scope with bindings', function() {
                 expect(scope.title).toBe($scope.model.data.title);
                 $scope.model.data.title = 'Foo';

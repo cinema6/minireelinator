@@ -19,6 +19,11 @@ define(['minireel/services'], function(servicesModule) {
             });
         });
 
+        afterAll(function() {
+            YouTubeDataService = null;
+            $httpBackend = null;
+        });
+
         it('should exist', function() {
             expect(YouTubeDataService).toEqual(jasmine.any(Object));
         });

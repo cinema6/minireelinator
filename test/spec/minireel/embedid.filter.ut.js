@@ -14,6 +14,11 @@ define(['minireel/app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            VideoService = null;
+            embedid = null;
+        });
+
         it('should exist', function() {
             expect(embedid).toEqual(jasmine.any(Function));
         });

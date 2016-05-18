@@ -93,6 +93,23 @@ define(['app', 'minireel/mixins/WizardController', 'angular'], function(appModul
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $q = null;
+            c6State = null;
+            MiniReelService = null;
+            cinema6 = null;
+            $scope = null;
+            WildcardState = null;
+            CampaignCtrl = null;
+            CampaignCardsCtrl = null;
+            WildcardCtrl = null;
+            campaign = null;
+            card = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(WildcardCtrl).toEqual(jasmine.any(Object));
         });

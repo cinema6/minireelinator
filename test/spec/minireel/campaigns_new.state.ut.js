@@ -35,6 +35,15 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            c6State = null;
+            cinema6 = null;
+            campaignsNew = null;
+            dbModel = null;
+        });
+
         it('should exist', function() {
             expect(campaignsNew).toEqual(jasmine.any(Object));
         });

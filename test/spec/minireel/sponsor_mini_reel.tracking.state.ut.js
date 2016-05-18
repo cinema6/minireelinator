@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             sponsorMiniReelTracking = c6State.get('MR:SponsorMiniReel.Tracking');
         });
 
+        afterAll(function() {
+            c6State = null;
+            sponsorMiniReelTracking = null;
+        });
+
         it('should exist', function() {
             expect(sponsorMiniReelTracking).toEqual(jasmine.any(Object));
         });

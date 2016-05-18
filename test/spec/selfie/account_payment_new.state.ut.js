@@ -38,6 +38,16 @@ define(['app'], function(appModule) {
             expect(PaymentState).toEqual(jasmine.any(Object));
         });
 
+        afterAll(function() {
+            c6State = null;
+            $rootScope = null;
+            $q = null;
+            PaymentState = null;
+            cinema6 = null;
+            PaymentService = null;
+            paymentModel = null;
+        });
+
         describe('model()', function() {
             it('should create a new payment method DB model', function() {
                 var model = PaymentState.model();

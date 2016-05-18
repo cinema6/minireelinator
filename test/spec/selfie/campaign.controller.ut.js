@@ -204,6 +204,36 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $timeout = null;
+            $q = null;
+            c6State = null;
+            c6Debounce = null;
+            cinema6 = null;
+            CampaignService = null;
+            MiniReelService = null;
+            ConfirmDialogService = null;
+            CampaignFundingService = null;
+            SelfieCampaignCtrl = null;
+            SoftAlertService = null;
+            PaymentService = null;
+            intercom = null;
+            cState = null;
+            campaign = null;
+            card = null;
+            categories = null;
+            logos = null;
+            advertiser = null;
+            user = null;
+            schema = null;
+            targetingCostData = null;
+            saveCampaignDeferred = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(SelfieCampaignCtrl).toEqual(jasmine.any(Object));
         });

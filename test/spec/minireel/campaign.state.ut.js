@@ -21,6 +21,14 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            c6State = null;
+            $rootScope = null;
+            $q = null;
+            cinema6 = null;
+            campaign = null;
+        });
+
         it('should exist', function() {
             expect(campaign).toEqual(jasmine.any(Object));
         });

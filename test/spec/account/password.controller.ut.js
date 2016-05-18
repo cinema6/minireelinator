@@ -31,6 +31,16 @@ define(['account/app'], function(accountModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            AccountService = null;
+            PasswordCtrl = null;
+            AccountCtrl = null;
+        });
+
         it('should exist', function() {
             expect(PasswordCtrl).toEqual(jasmine.any(Object));
         });

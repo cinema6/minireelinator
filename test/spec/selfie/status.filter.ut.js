@@ -12,6 +12,10 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            statusFilter = null;
+        });
+
         it('should exist', function() {
             expect(statusFilter).toEqual(jasmine.any(Function));
         });

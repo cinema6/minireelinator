@@ -46,6 +46,17 @@
                     });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $animate = null;
+                testFrame = null;
+                domEvents = null;
+                Finger=helpers.Finger = null;
+                TestFrame=helpers.TestFrame = null;
+            });
+
             it('should make the element draggable', function() {
                 var finger = new Finger(),
                     $div;

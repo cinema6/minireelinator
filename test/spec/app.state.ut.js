@@ -16,6 +16,12 @@
                 });
             });
 
+            afterAll(function() {
+                c6State = null;
+                application = null;
+                c6Defines = null;
+            });
+
             it('should exist', function() {
                 application = c6State.get('Application');
 

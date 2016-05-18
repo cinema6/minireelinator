@@ -112,6 +112,20 @@ define(['angular', 'app'], function(angular, appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            cinema6 = null;
+            c6State = null;
+            MiniReelService = null;
+            $scope = null;
+            CampaignCtrl = null;
+            CampaignPlacementsCtrl = null;
+            PlacementsMiniReelCtrl = null;
+            campaign = null;
+            entry = null;
+        });
+
         it('should exist', function() {
             expect(PlacementsMiniReelCtrl).toEqual(jasmine.any(Object));
         });

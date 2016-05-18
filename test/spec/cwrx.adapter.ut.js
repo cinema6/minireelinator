@@ -63,6 +63,22 @@
                 });
             });
 
+            afterAll(function() {
+                CWRXAdapter = null;
+                adapter = null;
+                $q = null;
+                VoteAdapter = null;
+                ContentAdapter = null;
+                voteAdapter = null;
+                contentAdapter = null;
+                findResult = null;
+                findAllResult = null;
+                findQueryResult = null;
+                createResult = null;
+                eraseResult = null;
+                updateResult = null;
+            });
+
             it('should exist', function() {
                 expect(adapter).toEqual(jasmine.any(Object));
             });

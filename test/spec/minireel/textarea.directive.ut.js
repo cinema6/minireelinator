@@ -22,6 +22,18 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterEach(function() {
+            $textarea.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $compile = null;
+            $textarea = null;
+            $ = null;
+        });
+
         describe('when there is no maxlength attribute', function() {
             it('should not limit the value', function() {
                 var $$textarea;

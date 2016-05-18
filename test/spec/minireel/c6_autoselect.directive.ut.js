@@ -27,6 +27,13 @@ define(['minireel/app', 'jquery'], function(appModule, $) {
             $input.remove();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $input = null;
+        });
+
         describe('when the input is not focused', function() {
             var event;
 

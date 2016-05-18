@@ -46,6 +46,20 @@
                 });
             });
 
+            afterAll(function() {
+                $injector = null;
+                playerMeta = null;
+                EditorState = null;
+                $rootScope = null;
+                $q = null;
+                $location = null;
+                cinema6 = null;
+                EditorService = null;
+                c6State = null;
+                minireel = null;
+                editorMinireel = null;
+            });
+
             it('should exist', function() {
                 expect(EditorState).toEqual(jasmine.any(Object));
             });

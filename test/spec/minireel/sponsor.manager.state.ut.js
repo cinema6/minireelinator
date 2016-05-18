@@ -30,6 +30,17 @@ define(['app'], function(appModule) {
             sponsorManager = c6State.get('MR:Sponsor.Manager');
         });
 
+        afterAll(function() {
+            $injector = null;
+            c6State = null;
+            $location = null;
+            $q = null;
+            scopePromise = null;
+            EditorService = null;
+            miniReel = null;
+            sponsorManager = null;
+        });
+
         it('should exist', function() {
             expect(sponsorManager).toEqual(jasmine.any(Object));
         });

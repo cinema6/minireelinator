@@ -37,6 +37,18 @@ define(['app'], function(appModule) {
             failure = jasmine.createSpy('failure');
         });
 
+        afterAll(function() {
+            TransactionAdapter = null;
+            cinema6 = null;
+            $q = null;
+            $rootScope = null;
+            adapter = null;
+            PaymentService = null;
+            $httpBackend = null;
+            success = null;
+            failure = null;
+        });
+
         it('should exist', function() {
             expect(adapter).toEqual(jasmine.any(Object));
         });

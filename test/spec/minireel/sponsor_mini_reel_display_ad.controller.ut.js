@@ -40,6 +40,15 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            MiniReelService = null;
+            $scope = null;
+            SponsorMiniReelDisplayAdCtrl = null;
+            deck = null;
+        });
+
         it('should exist', function() {
             expect(SponsorMiniReelDisplayAdCtrl).toEqual(jasmine.any(Object));
         });

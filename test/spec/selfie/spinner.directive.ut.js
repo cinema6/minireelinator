@@ -24,6 +24,18 @@
                 });
             });
 
+            afterEach(function() {
+                $spinner.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                SpinnerService = null;
+                $spinner = null;
+            });
+
             it('should set its scope.model propertry to be the SpinnerService\'s model', function() {
                 expect($spinner.isolateScope().model).toBe(SpinnerService.model);
             });

@@ -1212,6 +1212,28 @@
                 delete Object.prototype.jasmineToString;
             });
 
+            afterAll(function() {
+                MiniReelService = null;
+                VoteService = null;
+                CollateralUploadService = null;
+                ThumbnailService = null;
+                OpenGraphService = null;
+                SettingsService = null;
+                ImageService = null;
+                InstagramService = null;
+                VideoService = null;
+                $rootScope = null;
+                c6UrlParser = null;
+                c6ImagePreloader = null;
+                cinema6 = null;
+                c6State = null;
+                portal = null;
+                MiniReelState = null;
+                mocks = null;
+                $q = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(MiniReelService).toEqual(jasmine.any(Object));
             });

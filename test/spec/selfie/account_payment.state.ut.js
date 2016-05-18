@@ -43,6 +43,17 @@ define(['app'], function(appModule) {
             PaymentState = c6State.get('Selfie:Account:Payment');
         });
 
+        afterAll(function() {
+            c6State = null;
+            $rootScope = null;
+            $q = null;
+            PaymentState = null;
+            AccountState = null;
+            cinema6 = null;
+            PaymentService = null;
+            paymentMethods = null;
+        });
+
         it('should exist', function() {
             expect(PaymentState).toEqual(jasmine.any(Object));
         });

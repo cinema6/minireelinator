@@ -77,6 +77,21 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             PaymentHistoryState = c6State.get('Selfie:Account:Payment:History');
         });
 
+        afterAll(function() {
+            c6State = null;
+            paginatedDbList = null;
+            $rootScope = null;
+            $q = null;
+            $injector = null;
+            PaymentHistoryState = null;
+            PaymentService = null;
+            SpinnerService = null;
+            transactions = null;
+            dbList = null;
+            deferred = null;
+            balance = null;
+        });
+
         it('should exist', function() {
             expect(PaymentHistoryState).toEqual(jasmine.any(Object));
         });

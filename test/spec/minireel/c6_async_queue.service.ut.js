@@ -18,6 +18,12 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                c6AsyncQueue = null;
+            });
+
             it('should exist', function() {
                 expect(c6AsyncQueue).toEqual(jasmine.any(Function));
             });

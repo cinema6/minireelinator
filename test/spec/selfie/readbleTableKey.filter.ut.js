@@ -9,6 +9,10 @@ describe('readableTableKey', function() {
         });
     });
 
+    afterAll(function() {
+        readableTableKey = null;
+    });
+
     it('should make table keys readable', function() {
         var input = [
             'Card.data.videoid',

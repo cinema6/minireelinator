@@ -24,6 +24,15 @@
                 });
             });
 
+            afterAll(function() {
+                $injector = null;
+                $rootScope = null;
+                $q = null;
+                cinema6 = null;
+                c6State = null;
+                NewCategoryState = null;
+            });
+
             it('should exist', function() {
                 expect(NewCategoryState).toEqual(jasmine.any(Object));
             });

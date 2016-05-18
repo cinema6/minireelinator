@@ -40,6 +40,17 @@ define(['app','minireel/sponsor','minireel/mixins/LinksController'], function(ap
             });
         });
 
+        afterAll(function() {
+            $injector = null;
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            sponsorMiniReel = null;
+            $scope = null;
+            SponsorMiniReelLinksCtrl = null;
+            links = null;
+        });
+
         it('should exist', function() {
             expect(SponsorMiniReelLinksCtrl).toEqual(jasmine.any(Object));
         });

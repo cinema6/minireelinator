@@ -17,6 +17,12 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            c6State = null;
+            campaignPlacements = null;
+            placementsMiniReel = null;
+        });
+
         it('should exist', function() {
             expect(placementsMiniReel).toEqual(jasmine.any(Object));
         });

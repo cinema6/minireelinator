@@ -58,6 +58,18 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            cinema6 = null;
+            MiniReelService = null;
+            $scope = null;
+            CampaignCtrl = null;
+            MiniReelGroupCardsCtrl = null;
+            cards = null;
+            campaignCards = null;
+        });
+
         it('should exist', function() {
             expect(MiniReelGroupCardsCtrl).toEqual(jasmine.any(Object));
         });

@@ -43,6 +43,20 @@ define(['app'], function(appModule) {
             spyOn(ctrl, 'checkVideoText');
         });
 
+        afterAll(function() {
+            ctrl = null;
+            $controller = null;
+            $scope = null;
+            mockDebounce = null;
+            debounceFn = null;
+            SelfieVideoService = null;
+            $q = null;
+            CampaignService = null;
+            SettingsService = null;
+            c6State = null;
+            $location = null;
+        });
+
         it('should exist', function() {
             expect(ctrl).toBeDefined();
         });

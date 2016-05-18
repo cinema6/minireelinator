@@ -132,6 +132,23 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                c6State = null;
+                cinema6 = null;
+                $q = null;
+                MiniReelService = null;
+                ConfirmDialogService = null;
+                EditorCtrl = null;
+                EditCardCtrl = null;
+                model = null;
+                tabs = null;
+                appDataDeferred = null;
+                appData = null;
+            });
+
             it('should exist', function() {
                 expect(EditCardCtrl).toEqual(jasmine.any(Object));
             });

@@ -20,6 +20,13 @@
                 });
             });
 
+            afterAll(function() {
+                $injector = null;
+                c6State = null;
+                EditCardState = null;
+                EditCardCopyState = null;
+            });
+
             it('should exist', function() {
                 expect(EditCardCopyState).toEqual(jasmine.any(Object));
             });

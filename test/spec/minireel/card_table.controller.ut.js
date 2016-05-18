@@ -66,6 +66,19 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $controller = null;
+                $scope = null;
+                c6EventEmitter = null;
+                $interval = null;
+                ThumbnailService = null;
+                DragCtrl = null;
+                EditorCtrl = null;
+                CardTableCtrl = null;
+                prototype = null;
+            });
+
             it('should exist', function() {
                 expect(CardTableCtrl).toEqual(jasmine.any(Object));
             });

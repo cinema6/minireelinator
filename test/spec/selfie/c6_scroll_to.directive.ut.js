@@ -23,6 +23,18 @@ define(['app','angular'], function(appModule, angular) {
             });
         });
 
+        afterEach(function() {
+            $link.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $link = null;
+            $ = null;
+        });
+
         describe('clicking the link', function() {
             it('should animate a scroll', function() {
                 $scope.$apply(function() {

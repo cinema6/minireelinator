@@ -25,6 +25,18 @@
                 });
             });
 
+            afterEach(function() {
+                $confirm.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                ConfirmDialogService = null;
+                $confirm = null;
+            });
+
             it('should set its scope.model propertry to be the ConfirmDialogService\'s model', function() {
                 expect($confirm.isolateScope().model).toBe(ConfirmDialogService.model);
             });

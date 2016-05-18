@@ -29,6 +29,13 @@
                         });
                     });
 
+                    afterAll(function() {
+                        $rootScope = null;
+                        $controller = null;
+                        CampaignEmbedCtrl = null;
+                        cState = null;
+                    });
+
                     it('should exist', function() {
                         expect(CampaignEmbedCtrl).toEqual(jasmine.any(Object));
                     });

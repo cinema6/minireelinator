@@ -21,6 +21,17 @@ define(['app','angular'], function(appModule, angular) {
             });
         });
 
+        afterEach(function() {
+            $checkbox.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $checkbox = null;
+        });
+
         describe('when value is "indeterminate"', function() {
             it('add the prop', function() {
                 $scope.value = 'indeterminate';

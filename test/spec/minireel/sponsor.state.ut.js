@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             sponsor = c6State.get('MR:Sponsor');
         });
 
+        afterAll(function() {
+            c6State = null;
+            sponsor = null;
+        });
+
         it('should exist', function() {
             expect(sponsor).toEqual(jasmine.any(Object));
         });

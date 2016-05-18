@@ -75,6 +75,19 @@
                 }());
             });
 
+            afterEach(function() {
+                $container.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $container = null;
+                deck = null;
+                domElements = null;
+            });
+
             it('should repeat the DOM element for every item in the collection, making each item available as "$this"', function() {
                 var $lis = $container.find('li');
 

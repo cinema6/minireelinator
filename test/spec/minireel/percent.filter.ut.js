@@ -13,6 +13,10 @@
                 });
             });
 
+            afterAll(function() {
+                percentFilter = null;
+            });
+
             it('should exist', function() {
                 expect(percentFilter).toEqual(jasmine.any(Function));
             });

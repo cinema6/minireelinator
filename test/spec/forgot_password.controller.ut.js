@@ -32,6 +32,16 @@ define(['forgot_password'], function(forgotPasswordModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $q = null;
+            AuthService = null;
+            $scope = null;
+            ForgotPasswordCtrl = null;
+            model = null;
+        });
+
         it('should exist', function() {
             expect(ForgotPasswordCtrl).toEqual(jasmine.any(Object));
         });

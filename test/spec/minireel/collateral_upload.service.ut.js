@@ -16,6 +16,11 @@
                 });
             });
 
+            afterAll(function() {
+                $httpBackend = null;
+                CollateralUploadService = null;
+            });
+
             it('should exist', function() {
                 expect(CollateralUploadService).toEqual(jasmine.any(Object));
             });

@@ -28,6 +28,16 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                $httpBackend = null;
+                CollateralServiceProvider = null;
+                CollateralService = null;
+                ThumbnailService = null;
+                FileService = null;
+            });
+
             it('should exist', function() {
                 expect(CollateralService).toEqual(jasmine.any(Object));
             });

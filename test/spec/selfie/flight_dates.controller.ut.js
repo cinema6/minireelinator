@@ -66,6 +66,21 @@ define(['app'], function(appModule) {
             evenLaterDate = offsetDate(300);
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            SelfieFlightDatesCtrl = null;
+            campaign = null;
+            originalCampaign = null;
+            card = null;
+            laterDate = null;
+            evenLaterDate = null;
+            earlierDate = null;
+            today = null;
+            tomorrow = null;
+        });
+
         it('should exist', function() {
             expect(SelfieFlightDatesCtrl).toEqual(jasmine.any(Object));
         });

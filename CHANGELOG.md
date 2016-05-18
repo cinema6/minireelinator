@@ -1,6 +1,9 @@
 # MiniReelinator
 
 * *[v1.48.0.rc1]*
+  * Show total spend information in campaign administration tab
+  * [FEATURE]: Allow pasting featured Vimeo URLs
+  * [DEV]: Nullify global variables in test specs and cleanup compiled directives
   * [DEV]: Convert Flight Date inputs into Angular directives
   * [DEV]: Add a service and directive to replace Campaign Funding Modals
   * [DEV]: Use new funding directive in campaign creation screen and

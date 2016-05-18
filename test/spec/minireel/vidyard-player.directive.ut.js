@@ -33,6 +33,19 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
+        afterEach(function() {
+            $player.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $compile = null;
+            $player = null;
+            mockIFrame = null;
+            mockSpan = null;
+        });
+
         it('should create a script', function() {
             expect(document.createElement).toHaveBeenCalledWith('script');
         });
