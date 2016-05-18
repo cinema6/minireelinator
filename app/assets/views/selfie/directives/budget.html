@@ -63,9 +63,10 @@
             <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be greater than ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}} </p>
             <p class="form__errorMsg" ng-switch-when="3"><i class="fa fa-exclamation-triangle"></i> Must be less than Total Budget </p>
             <p class="form__errorMsg" ng-switch-when="4"><i class="fa fa-exclamation-triangle"></i> Please enter a valid dollar amount </p>
-            <p class="form__errorMsg" ng-switch-when="5"><i class="fa fa-exclamation-triangle"></i> Based on your flight dates your limit must be at least ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}} </p>
         </div>
     </fieldset>
+
+    <p ng-if="SelfieBudgetCtrl.dailyLimitError.code === 5" class="alertMessage alert__warning two-thirds" style="margin:0 auto;">Warning: based on your flight dates your limit should be at least ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}}</p>
 
     <span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget" style="display:block">Estimated views: <strong>{{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</strong></span>
 

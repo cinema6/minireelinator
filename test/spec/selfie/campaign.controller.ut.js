@@ -42,6 +42,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             card,
             categories,
             logos,
+            stats,
             advertiser,
             user,
             schema,
@@ -177,6 +178,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
             categories = [];
             logos = [];
+            stats = [];
             schema = {};
             user = {
                 id: 'u-123'
@@ -197,7 +199,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             compileCtrl(cState, {
                 categories: categories,
-                logos: logos
+                logos: logos,
+                stats: stats
             });
         });
 
@@ -388,7 +391,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.logos = null;
                         SelfieCampaignCtrl.advertiser = null;
 
-                        SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos });
+                        SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos, stats: stats });
                     });
 
                     expect(SelfieCampaignCtrl.card).toEqual(cState.card);
@@ -401,6 +404,20 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.originalCampaign).toEqual(campaign);
                     expect(SelfieCampaignCtrl.user).toEqual(user);
                     expect(SelfieCampaignCtrl.targetingCost).toEqual(targetingCostData);
+                });
+
+                it('should set stats if stats array contains stats', function() {
+                    var statsObject = {};
+
+                    SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos, stats: stats });
+
+                    expect(SelfieCampaignCtrl.stats).toEqual(null);
+
+                    stats = [statsObject];
+
+                    SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos, stats: stats });
+
+                    expect(SelfieCampaignCtrl.stats).toEqual(statsObject);
                 });
             });
 

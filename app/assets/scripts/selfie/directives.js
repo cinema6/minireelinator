@@ -1326,7 +1326,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                         if (budget > budgetMax) { return 2; }
                         if (!validDecimal) { return 3; }
                         if (!budget && validation.show) { return 4; }
-                        if (status === 'outOfBudget' && budget <= currentBudget) {
+                        if (status === 'outOfBudget' && this.totalBudget <= currentBudget) {
                             return 5;
                         }
 
@@ -1340,12 +1340,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                             status = campaign.status;
 
                         if (budget <= 0) { return 1; }
-                        if (budget > budgetMax) { return 2; }
+                        if (this.totalBudget > budgetMax) { return 2; }
                         if (!validDecimal) { return 3; }
-                        if (!budget && validation.show) { return 4; }
-                        if (status === 'outOfBudget' && budget <= 0) {
-                            return 5;
-                        }
+                        if (status === 'outOfBudget' && !budget && validation.show) { return 4; }
 
                         return false;
                     }
@@ -1394,7 +1391,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             Object.defineProperties(validation, {
                 dailyLimit: {
                     get: function() {
-                        return !SelfieBudgetCtrl.dailyLimitError;
+                        return !SelfieBudgetCtrl.dailyLimitError ||
+                            SelfieBudgetCtrl.dailyLimitError.code === 5;
                     }
                 }
             });
@@ -1404,7 +1402,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             this.setBudget = function() {
                 var Ctrl = SelfieBudgetCtrl;
 
-                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
+                if (Ctrl.validBudget && validation.dailyLimit) {
                     campaign.pricing.budget = Math.round(Ctrl.totalBudget*100)/100;
                     campaign.pricing.dailyLimit = Ctrl.limit;
 

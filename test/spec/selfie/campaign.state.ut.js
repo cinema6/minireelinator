@@ -234,9 +234,12 @@ define(['app'], function(appModule) {
             });
 
             describe('model()', function() {
-                var success, failure;
+                var success, failure, analyticsDeferred, analytics;
 
                 beforeEach(function() {
+                    analyticsDeferred = $q.defer();
+                    analytics = [];
+
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
 
@@ -244,22 +247,74 @@ define(['app'], function(appModule) {
                     spyOn(SelfieLogoService, 'getLogos').and.returnValue($q.when(logos));
                     spyOn(SpinnerService, 'display');
                     spyOn(SpinnerService, 'close');
+                    spyOn(CampaignService, 'getAnalytics').and.returnValue(analyticsDeferred.promise);
+                });
+
+                describe('when campaign has no id and is not a draft', function() {
+                    it('should not get analytics', function() {
+                        campaign.id = undefined;
+                        campaign.status = 'pending';
+                        campaignState.campaign = campaign;
+                        campaignState._campaign = campaign;
+                        campaignState.user = user;
+
+                        $rootScope.$apply(function() {
+                            campaignState.model();
+                        });
+
+                        expect(CampaignService.getAnalytics).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when the _campaign status is draft and has an id', function() {
+                    it('should not get analytics', function() {
+                        campaign.id = 'cam-123';
+                        campaign.status = 'draft';
+                        campaignState.campaign = campaign;
+                        campaignState._campaign = campaign;
+                        campaignState.user = user;
+
+                        $rootScope.$apply(function() {
+                            campaignState.model();
+                        });
+
+                        expect(CampaignService.getAnalytics).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when the campaign has an id and is not draft', function() {
+                    it('should not get analytics', function() {
+                        campaign.id = 'cam-123';
+                        campaign.status = 'pending';
+                        campaignState.campaign = campaign;
+                        campaignState._campaign = campaign;
+                        campaignState.user = user;
+
+                        $rootScope.$apply(function() {
+                            campaignState.model();
+                        });
+
+                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: campaign.id });
+                    });
                 });
 
                 describe('when campaign has an org', function() {
                     it('should get payment methods for that org and all interests and logos', function() {
                         campaign.org = 'o-99999';
                         campaignState.campaign = campaign;
+                        campaignState._campaign = campaign;
 
                         $rootScope.$apply(function() {
                             campaignState.model().then(success, failure);
+                            analyticsDeferred.resolve(analytics);
                         });
 
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
                         expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(campaign.org);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
-                            logos: logos
+                            logos: logos,
+                            stats: analytics
                         });
 
                         expect(SpinnerService.display).toHaveBeenCalled();
@@ -272,16 +327,19 @@ define(['app'], function(appModule) {
                         delete campaign.org;
                         campaignState.campaign = campaign;
                         campaignState.user = user;
+                        campaignState._campaign = campaign;
 
                         $rootScope.$apply(function() {
                             campaignState.model().then(success, failure);
+                            analyticsDeferred.resolve(analytics);
                         });
 
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
                         expect(SelfieLogoService.getLogos).toHaveBeenCalledWith(user.org.id);
                         expect(success).toHaveBeenCalledWith({
                             categories: categories,
-                            logos: logos
+                            logos: logos,
+                            stats: analytics
                         });
 
                         expect(SpinnerService.display).toHaveBeenCalled();
@@ -294,12 +352,14 @@ define(['app'], function(appModule) {
                         campaign.org = 'o-99999';
                         campaignState.campaign = campaign;
                         campaignState.user = user;
+                        campaignState._campaign = campaign;
 
                         spyOn(c6State, 'goTo');
                         SelfieLogoService.getLogos.and.returnValue($q.reject());
 
                         $rootScope.$apply(function() {
                             campaignState.model().then(success, failure);
+                            analyticsDeferred.resolve(analytics);
                         });
 
                         expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
