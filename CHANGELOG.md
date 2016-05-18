@@ -8,6 +8,9 @@
   * [DEV]: Add a service and directive to replace Campaign Funding Modals
   * [DEV]: Use new funding directive in campaign creation screen and
     remove old funding states
+  * [FIX]: Factor in spent budget and elapsed time when validating daily limit
+  * [FIX]: Allow campaigns to be submitted with "invalid" daily limits that
+    don't align with end dates and budget settings
 
 ## v1.47.2 (May 12, 2016)
 * *[v1.47.2.rc1]*

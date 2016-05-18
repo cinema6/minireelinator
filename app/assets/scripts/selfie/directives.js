@@ -1266,7 +1266,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 scope: {
                     campaign: '=',
                     validation: '=',
-                    schema: '='
+                    schema: '=',
+                    stats: '=',
+                    increaseBudget: '='
                 },
                 templateUrl: 'views/selfie/directives/budget.html',
                 controller: 'SelfieBudgetController',
@@ -1280,6 +1282,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 campaign = $scope.campaign,
                 card = campaign.cards[0],
                 validation = $scope.validation || {},
+                stats = $scope.stats || { summary: {} },
                 schema = $scope.schema,
                 pricing = schema.pricing,
                 budgetMin = pricing.budget.__min,
@@ -1293,19 +1296,24 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             this.budgetMin = budgetMin;
             this.budgetMax = budgetMax;
 
-
-
             Object.defineProperties(this, {
                 cpv: {
                     get: function() {
                         return CampaignService.getCpv(campaign, schema);
                     }
                 },
+                totalBudget: {
+                    get: function() {
+                        var budget = parseFloat(this.budget),
+                            additionalBudget = parseFloat(this.additionalBudget);
+
+                        return (budget || 0) + (additionalBudget || 0);
+                    }
+                },
                 validBudget: {
                     get: function() {
-                        var budget = parseFloat(this.budget);
-
-                        return (!budget && !validation.show) || !this.budgetError;
+                        return (!this.totalBudget && !validation.show) ||
+                            (!this.budgetError && !this.additionalBudgetError);
                     }
                 },
                 budgetError: {
@@ -1318,17 +1326,33 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                         if (budget > budgetMax) { return 2; }
                         if (!validDecimal) { return 3; }
                         if (!budget && validation.show) { return 4; }
-                        if (status === 'outOfBudget' && budget <= currentBudget) {
+                        if (status === 'outOfBudget' && this.totalBudget <= currentBudget) {
                             return 5;
                         }
 
                         return false;
                     }
                 },
+                additionalBudgetError: {
+                    get: function() {
+                        var budget = parseFloat(this.additionalBudget),
+                            validDecimal = !budget || (/^[0-9]+(\.[0-9]{1,2})?$/).test(budget),
+                            status = campaign.status;
+
+                        if (budget <= 0) { return 1; }
+                        if (this.totalBudget > budgetMax) { return 2; }
+                        if (!validDecimal) { return 3; }
+                        if (status === 'outOfBudget' && !budget && validation.show) { return 4; }
+
+                        return false;
+                    }
+                },
                 dailyLimitError: {
                     get: function() {
-                        var budget = parseFloat(this.budget),
-                            max = parseFloat(this.limit),
+                        var max = parseFloat(this.limit),
+                            spent = parseFloat(stats.summary.totalSpend),
+                            totalBudget = this.totalBudget,
+                            calculatedBudget = totalBudget - (spent || 0),
                             validDecimal = !max || (/^[0-9]+(\.[0-9]{1,2})?$/).test(max),
                             startDate = card.campaign && card.campaign.startDate &&
                                 new Date(card.campaign.startDate),
@@ -1336,24 +1360,27 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                                 new Date(card.campaign.endDate),
                             oneDay = 24*60*60*1000,
                             tomorrow = new Date(),
+                            today = new Date(),
                             days;
 
-                        if (budget && endDate) {
+                        if (totalBudget && endDate) {
                             tomorrow.setDate(tomorrow.getDate() + 1);
 
-                            startDate = startDate || tomorrow;
+                            startDate = (startDate && startDate > today) ? startDate : tomorrow;
 
                             days = Math.round(
                                 Math.abs((endDate.getTime() - startDate.getTime()) / oneDay)
                             ) || 1;
                         }
 
-                        if (max && !budget) { return { code: 1 }; }
-                        if (max < budget * limitMinPercent) { return { code: 2 }; }
-                        if (max > budget) { return { code: 3 }; }
+                        if (max && !totalBudget) { return { code: 1 }; }
+                        if (max < totalBudget * limitMinPercent) {
+                            return { code: 2, min: totalBudget * limitMinPercent };
+                        }
+                        if (max > totalBudget) { return { code: 3 }; }
                         if (!validDecimal) { return { code: 4 }; }
-                        if (max && budget && days && max < (budget / days)) {
-                            return { code: 5, min: budget / days };
+                        if (max && totalBudget && days && max < (calculatedBudget / days)) {
+                            return { code: 5, min: calculatedBudget / days };
                         }
 
                         return false;
@@ -1364,7 +1391,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             Object.defineProperties(validation, {
                 dailyLimit: {
                     get: function() {
-                        return !SelfieBudgetCtrl.dailyLimitError;
+                        return !SelfieBudgetCtrl.dailyLimitError ||
+                            SelfieBudgetCtrl.dailyLimitError.code === 5;
                     }
                 }
             });
@@ -1372,15 +1400,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             validation.budget = !!this.budget && this.validBudget;
 
             this.setBudget = function() {
-                var Ctrl = SelfieBudgetCtrl,
-                    budget = Ctrl.budget,
-                    limit = Ctrl.limit;
+                var Ctrl = SelfieBudgetCtrl;
 
-                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
-                    campaign.pricing.budget = budget;
-                    campaign.pricing.dailyLimit = limit;
+                if (Ctrl.validBudget && validation.dailyLimit) {
+                    campaign.pricing.budget = Math.round(Ctrl.totalBudget*100)/100;
+                    campaign.pricing.dailyLimit = Ctrl.limit;
 
-                    validation.budget = !!budget;
+                    validation.budget = !!Ctrl.totalBudget;
                 } else {
                     validation.budget = false;
                 }

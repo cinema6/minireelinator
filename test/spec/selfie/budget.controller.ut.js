@@ -10,8 +10,9 @@ define(['app'], function(appModule) {
 
         var campaign;
 
-        function compileCtrl() {
+        function compileCtrl(scopeProps) {
             $scope = $rootScope.$new();
+            angular.extend($scope, scopeProps);
             $scope.schema = {
                 pricing: {
                     budget: {
@@ -172,29 +173,127 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('totalBudget', function() {
+                it('should be 0 if budget and additionalBudget are not set', function() {
+                    SelfieBudgetCtrl.budget = null;
+                    SelfieBudgetCtrl.additionalBudget = null;
+
+                    expect(SelfieBudgetCtrl.totalBudget).toBe(0);
+                });
+
+                it('should be the budget if additionalBudget is not set', function() {
+                    SelfieBudgetCtrl.budget = 123.67;
+                    SelfieBudgetCtrl.additionalBudget = null;
+
+                    expect(SelfieBudgetCtrl.totalBudget).toBe(123.67);
+                });
+
+                it('should be the additionalBudget if budget is not set', function() {
+                    SelfieBudgetCtrl.budget = null;
+                    SelfieBudgetCtrl.additionalBudget = 765.98;
+
+                    expect(SelfieBudgetCtrl.totalBudget).toBe(765.98);
+                });
+
+                it('should be the sum of budget and additionalBudget when both are set', function() {
+                    SelfieBudgetCtrl.budget = 100.45;
+                    SelfieBudgetCtrl.additionalBudget = 20.16;
+
+                    expect(SelfieBudgetCtrl.totalBudget).toBe(120.61);
+                });
+            });
+
             describe('validBudget', function() {
-                it('should be true if not set and validation.show is false or is set between 50 and 20,000', function() {
+                it('should be true if budget and additionalBudget are not set and validation.show is false', function() {
+                    SelfieBudgetCtrl.budget = null;
+                    SelfieBudgetCtrl.additionalBudget = null;
+
                     expect(SelfieBudgetCtrl.validBudget).toBe(true);
+
+                    $scope.validation.show = true;
+
+                    expect(SelfieBudgetCtrl.validBudget).toBe(false);
+                });
+
+                it('should be true if validation.show is true and there are no budget errors', function() {
+                    $scope.validation.show = true;
 
                     SelfieBudgetCtrl.budget = 100;
+                    SelfieBudgetCtrl.additionalBudget = null;
 
                     expect(SelfieBudgetCtrl.validBudget).toBe(true);
 
-                    SelfieBudgetCtrl.budget = 25;
+                    SelfieBudgetCtrl.budget = 100.25;
+                    SelfieBudgetCtrl.additionalBudget = 100.67;
+
+                    expect(SelfieBudgetCtrl.validBudget).toBe(true);
+
+                    campaign.status = 'outOfBudget';
+                    campaign.pricing.budget = 1000;
+
+                    compileCtrl();
+
+                    SelfieBudgetCtrl.budget = 1000.25;
+                    expect(SelfieBudgetCtrl.validBudget).toBe(true);
+
+                    SelfieBudgetCtrl.budget = 500;
+                    SelfieBudgetCtrl.additionalBudget = 500.67;
+                    expect(SelfieBudgetCtrl.validBudget).toBe(true);
+                });
+
+                it('should be false if there are budget errors', function() {
+                    SelfieBudgetCtrl.budget = 10;
+                    SelfieBudgetCtrl.additionalBudget = null;
 
                     expect(SelfieBudgetCtrl.validBudget).toBe(false);
 
-                    SelfieBudgetCtrl.budget = 15000;
+                    SelfieBudgetCtrl.budget = 1000000;
+                    SelfieBudgetCtrl.additionalBudget = null;
 
-                    expect(SelfieBudgetCtrl.validBudget).toBe(true);
+                    expect(SelfieBudgetCtrl.validBudget).toBe(false);
 
-                    SelfieBudgetCtrl.budget = 25000;
+                    SelfieBudgetCtrl.budget = 100.345;
+                    SelfieBudgetCtrl.additionalBudget = null;
 
                     expect(SelfieBudgetCtrl.validBudget).toBe(false);
 
                     SelfieBudgetCtrl.budget = null;
-                    expect(SelfieBudgetCtrl.validBudget).toBe(true);
+                    SelfieBudgetCtrl.additionalBudget = -100;
+
+                    expect(SelfieBudgetCtrl.validBudget).toBe(false);
+
+                    SelfieBudgetCtrl.budget = null;
+                    SelfieBudgetCtrl.additionalBudget = 100.567;
+
+                    expect(SelfieBudgetCtrl.validBudget).toBe(false);
+
+                    SelfieBudgetCtrl.budget = 13000;
+                    SelfieBudgetCtrl.additionalBudget = 13000;
+
+                    expect(SelfieBudgetCtrl.validBudget).toBe(false);
+
+                    campaign.status = 'outOfBudget';
+                    campaign.pricing.budget = 1000;
+
+                    compileCtrl();
+
+                    SelfieBudgetCtrl.budget = 999.25;
+                    expect(SelfieBudgetCtrl.validBudget).toBe(false);
+                });
+
+                it('should be false if validation.show is true and there are budget errors', function() {
                     $scope.validation.show = true;
+
+                    SelfieBudgetCtrl.budget = null;
+                    SelfieBudgetCtrl.additionalBudget = null;
+
+                    expect(SelfieBudgetCtrl.validBudget).toBe(false);
+
+                    campaign.status = 'outOfBudget';
+
+                    SelfieBudgetCtrl.budget = 100.25;
+                    SelfieBudgetCtrl.additionalBudget = null;
+
                     expect(SelfieBudgetCtrl.validBudget).toBe(false);
                 });
             });
@@ -223,97 +322,291 @@ define(['app'], function(appModule) {
 
                     SelfieBudgetCtrl.budget = 2000;
                     expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                    SelfieBudgetCtrl.budget = 300;
+                    SelfieBudgetCtrl.additionalBudget = 300;
+                    expect(SelfieBudgetCtrl.budgetError).toBe(false);
+                });
+            });
+
+            describe('additionalBudgetError', function() {
+                it('should be false if within the limits or have a status code number when true', function() {
+                    expect(SelfieBudgetCtrl.additionalBudgetError).toBe(false);
+
+                    SelfieBudgetCtrl.additionalBudget = -20;
+                    expect(SelfieBudgetCtrl.additionalBudgetError).toBe(1);
+
+                    SelfieBudgetCtrl.additionalBudget = 200000000;
+                    expect(SelfieBudgetCtrl.additionalBudgetError).toBe(2);
+
+                    SelfieBudgetCtrl.budget = 15000;
+                    SelfieBudgetCtrl.additionalBudget = 15000;
+                    expect(SelfieBudgetCtrl.additionalBudgetError).toBe(2);
+                    SelfieBudgetCtrl.budget = null;
+
+                    SelfieBudgetCtrl.additionalBudget = 200.123;
+                    expect(SelfieBudgetCtrl.additionalBudgetError).toBe(3);
+
+                    campaign.status = 'outOfBudget';
+                    compileCtrl();
+                    $scope.validation.show = true;
+                    SelfieBudgetCtrl.additionalBudget = null;
+                    expect(SelfieBudgetCtrl.additionalBudgetError).toBe(4);
+
+                    SelfieBudgetCtrl.additionalBudget = 2000;
+                    expect(SelfieBudgetCtrl.additionalBudgetError).toBe(false);
                 });
             });
 
             describe('dailyLimitError', function() {
-                it('should be false if budget and limit are not defined or if the limit is between the 1.5% to 100% of the budget and is a valid decimal', function() {
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+                describe('when limit is set and budget is not', function() {
+                    it('should return code 1', function() {
+                        SelfieBudgetCtrl.limit = 50;
+                        SelfieBudgetCtrl.budget = null;
+                        SelfieBudgetCtrl.additionalBudget = null;
 
-                    SelfieBudgetCtrl.budget = 100;
-                    SelfieBudgetCtrl.limit = 50;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
-                    expect($scope.validation.dailyLimit).toBe(true);
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:1});
 
-                    SelfieBudgetCtrl.budget = 100;
-                    SelfieBudgetCtrl.limit = 2;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
-                    expect($scope.validation.dailyLimit).toBe(true);
+                        SelfieBudgetCtrl.limit = 50;
+                        SelfieBudgetCtrl.budget = 100;
+                        SelfieBudgetCtrl.additionalBudget = null;
 
-                    SelfieBudgetCtrl.budget = 100;
-                    SelfieBudgetCtrl.limit = 100;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
-                    expect($scope.validation.dailyLimit).toBe(true);
+                        expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
 
-                    SelfieBudgetCtrl.budget = 100.25;
-                    SelfieBudgetCtrl.limit = 50.50;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
-                    expect($scope.validation.dailyLimit).toBe(true);
+                        SelfieBudgetCtrl.limit = 50;
+                        SelfieBudgetCtrl.budget = null;
+                        SelfieBudgetCtrl.additionalBudget = 100;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+                    });
                 });
 
-                it('should contain an error status number if limit is set but budget is not or the limit is not between 1.5% to 100% of total budget', function() {
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+                describe('when max is less than the minimum percentage of total budget', function() {
+                    it('should return code 2 with the minimum value', function() {
+                        SelfieBudgetCtrl.limit = 1;
+                        SelfieBudgetCtrl.budget = 100;
+                        SelfieBudgetCtrl.additionalBudget = 100;
 
-                    SelfieBudgetCtrl.budget = null;
-                    SelfieBudgetCtrl.limit = 20;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({ code: 1 });
-                    expect($scope.validation.dailyLimit).toBe(false);
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:2, min: 200 * 0.015});
 
-                    SelfieBudgetCtrl.budget = 100;
-                    SelfieBudgetCtrl.limit = 1;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({ code: 2 });
-                    expect($scope.validation.dailyLimit).toBe(false);
+                        SelfieBudgetCtrl.limit = 1;
+                        SelfieBudgetCtrl.budget = null;
+                        SelfieBudgetCtrl.additionalBudget = 200;
 
-                    SelfieBudgetCtrl.budget = 100;
-                    SelfieBudgetCtrl.limit = 101;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({ code: 3 });
-                    expect($scope.validation.dailyLimit).toBe(false);
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:2, min: 200 * 0.015});
 
-                    SelfieBudgetCtrl.budget = 100;
-                    SelfieBudgetCtrl.limit = 20.123;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({ code: 4 });
-                    expect($scope.validation.dailyLimit).toBe(false);
+                        SelfieBudgetCtrl.limit = 1;
+                        SelfieBudgetCtrl.budget = 200;
+                        SelfieBudgetCtrl.additionalBudget = null;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:2, min: 200 * 0.015});
+
+                        SelfieBudgetCtrl.limit = 3;
+                        SelfieBudgetCtrl.budget = 100;
+                        SelfieBudgetCtrl.additionalBudget = 100;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+                    });
                 });
 
-                it('should have error code and min value if flight dates do not work with daily limit', function() {
-                    var today = new Date(),
+                describe('when max is greater than total budget', function() {
+                    it('should return code 3', function() {
+                        SelfieBudgetCtrl.limit = 100;
+                        SelfieBudgetCtrl.budget = 50;
+                        SelfieBudgetCtrl.additionalBudget = null;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:3});
+
+                        SelfieBudgetCtrl.limit = 100;
+                        SelfieBudgetCtrl.budget = null;
+                        SelfieBudgetCtrl.additionalBudget = 50;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:3});
+
+                        SelfieBudgetCtrl.limit = 100;
+                        SelfieBudgetCtrl.budget = 25;
+                        SelfieBudgetCtrl.additionalBudget = 25;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:3});
+
+                        SelfieBudgetCtrl.limit = 100;
+                        SelfieBudgetCtrl.budget = 100;
+                        SelfieBudgetCtrl.additionalBudget = null;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+
+                        SelfieBudgetCtrl.limit = 100;
+                        SelfieBudgetCtrl.budget = null;
+                        SelfieBudgetCtrl.additionalBudget = 100;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+
+                        SelfieBudgetCtrl.limit = 100;
+                        SelfieBudgetCtrl.budget = 50;
+                        SelfieBudgetCtrl.additionalBudget = 50;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+                    });
+                });
+
+                describe('when max is not a valid decimal', function() {
+                    it('should return code 4', function() {
+                        SelfieBudgetCtrl.limit = 100.123;
+                        SelfieBudgetCtrl.budget = 150;
+                        SelfieBudgetCtrl.additionalBudget = null;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:4});
+
+                        SelfieBudgetCtrl.limit = 100.123;
+                        SelfieBudgetCtrl.budget = null;
+                        SelfieBudgetCtrl.additionalBudget = 150;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:4});
+
+                        SelfieBudgetCtrl.limit = 100.123;
+                        SelfieBudgetCtrl.budget = 75;
+                        SelfieBudgetCtrl.additionalBudget = 75;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:4});
+
+                        SelfieBudgetCtrl.limit = 100.12;
+                        SelfieBudgetCtrl.budget = 150;
+                        SelfieBudgetCtrl.additionalBudget = null;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+
+                        SelfieBudgetCtrl.limit = 100.12;
+                        SelfieBudgetCtrl.budget = null;
+                        SelfieBudgetCtrl.additionalBudget = 150;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+
+                        SelfieBudgetCtrl.limit = 100.12;
+                        SelfieBudgetCtrl.budget = 75;
+                        SelfieBudgetCtrl.additionalBudget = 75;
+
+                        expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
+                    });
+                });
+
+                describe('when there is an end date', function() {
+                    var today, tomorrow, threeDays, sevenDays, tenDaysPast, tenDaysFuture;
+
+                    beforeEach(function() {
+                        today = new Date(),
                         tomorrow = new Date(),
                         threeDays = new Date(),
                         sevenDays = new Date();
+                        tenDaysPast = new Date();
+                        tenDaysFuture = new Date();
 
-                    tomorrow.setDate(today.getDate() + 1);
-                    threeDays.setDate(today.getDate() + 3);
-                    sevenDays.setDate(today.getDate() + 7);
-
-                    SelfieBudgetCtrl.budget = 100;
-                    SelfieBudgetCtrl.limit = 10;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
-                    expect($scope.validation.dailyLimit).toBe(true);
-
-                    campaign.cards[0].campaign = {
-                        endDate: threeDays.toISOString()
-                    };
-
-                    expect($scope.validation.dailyLimit).toBe(false);
-                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({
-                        code: 5,
-                        min: 100 / 2
+                        tomorrow.setDate(today.getDate() + 1);
+                        threeDays.setDate(today.getDate() + 3);
+                        sevenDays.setDate(today.getDate() + 7);
+                        tenDaysPast.setDate(today.getDate() - 10);
                     });
 
-                    campaign.cards[0].campaign = {
-                        startDate: threeDays.toISOString(),
-                        endDate: sevenDays.toISOString()
-                    };
+                    describe('when there is no start date', function() {
+                        it('should calculate starting tomorrow', function() {
+                            SelfieBudgetCtrl.limit = 100;
+                            SelfieBudgetCtrl.budget = 5000;
+                            SelfieBudgetCtrl.additionalBudget = null;
 
-                    expect($scope.validation.dailyLimit).toBe(false);
-                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual({
-                        code: 5,
-                        min: 100 / 4
+                            campaign.cards[0].campaign = {
+                                endDate: threeDays.toISOString()
+                            };
+
+                            // dividing budget by 2 days remaining
+                            expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:5, min: 5000 / 2});
+
+                            SelfieBudgetCtrl.limit = 100;
+                            SelfieBudgetCtrl.budget = 2000;
+                            SelfieBudgetCtrl.additionalBudget = 3000;
+
+                            campaign.cards[0].campaign = {
+                                endDate: threeDays.toISOString()
+                            };
+
+                            // dividing budget by 2 days remaining
+                            expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:5, min: 5000 / 2});
+                        });
                     });
 
-                    SelfieBudgetCtrl.limit = 50;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toEqual(false);
-                    expect($scope.validation.dailyLimit).toBe(true);
+                    describe('when start date is in the past', function() {
+                        it('should calculate starting tomorrow', function() {
+                            SelfieBudgetCtrl.limit = 100;
+                            SelfieBudgetCtrl.budget = 5000;
+                            SelfieBudgetCtrl.additionalBudget = null;
+
+                            campaign.cards[0].campaign = {
+                                endDate: threeDays.toISOString(),
+                                startDate: tenDaysPast.toISOString()
+                            };
+
+                            // dividing budget by 2 days remaining
+                            expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:5, min: 5000 / 2});
+
+                            SelfieBudgetCtrl.limit = 100;
+                            SelfieBudgetCtrl.budget = 2000;
+                            SelfieBudgetCtrl.additionalBudget = 3000;
+
+                            campaign.cards[0].campaign = {
+                                endDate: threeDays.toISOString(),
+                                startDate: tenDaysPast.toISOString()
+                            };
+
+                            // dividing budget by 2 days remaining
+                            expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:5, min: 5000 / 2});
+                        });
+                    });
+
+                    describe('when start date is in the future', function() {
+                        it('should calculate using defined start date', function() {
+                            SelfieBudgetCtrl.limit = 100;
+                            SelfieBudgetCtrl.budget = 5000;
+                            SelfieBudgetCtrl.additionalBudget = null;
+
+                            campaign.cards[0].campaign = {
+                                endDate: sevenDays.toISOString(),
+                                startDate: threeDays.toISOString()
+                            };
+
+                            // dividing budget by 4 days
+                            expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:5, min: 5000 / 4});
+
+                            SelfieBudgetCtrl.limit = 100;
+                            SelfieBudgetCtrl.budget = 2000;
+                            SelfieBudgetCtrl.additionalBudget = 3000;
+
+                            campaign.cards[0].campaign = {
+                                endDate: sevenDays.toISOString(),
+                                startDate: threeDays.toISOString()
+                            };
+
+                            // dividing budget by 4 days
+                            expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:5, min: 5000 / 4});
+                        });
+                    });
+
+                    describe('when the campaign has spent some budget', function() {
+                        it('should factor it into the calculation', function() {
+                            compileCtrl({
+                                stats: { summary: { totalSpend: 100 } }
+                            });
+
+                            SelfieBudgetCtrl.limit = 100;
+                            SelfieBudgetCtrl.budget = 5000;
+                            SelfieBudgetCtrl.additionalBudget = null;
+
+                            campaign.cards[0].campaign = {
+                                endDate: sevenDays.toISOString(),
+                                startDate: threeDays.toISOString()
+                            };
+
+                            // subtracting 100 spent from 5000 total budget
+                            expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:5, min: 4900 / 4});
+                        });
+                    });
                 });
             });
         });
@@ -342,14 +635,51 @@ define(['app'], function(appModule) {
                     expect($scope.validation.budget).toBe(false);
                 });
             });
+
+            describe('validation.dailyLimit', function() {
+                it('should be true when daily limit error is false or code 5', function() {
+                    var threeDays = new Date();
+                    threeDays.setDate(threeDays.getDate() + 3);
+
+                    SelfieBudgetCtrl.limit = 100;
+                    SelfieBudgetCtrl.budget = null;
+                    SelfieBudgetCtrl.additionalBudget = null;
+
+                    expect($scope.validation.dailyLimit).toBe(false);
+
+                    SelfieBudgetCtrl.limit = 10;
+                    SelfieBudgetCtrl.budget = 100;
+                    SelfieBudgetCtrl.additionalBudget = null;
+
+                    campaign.cards[0].campaign = {
+                        endDate: threeDays.toISOString()
+                    };
+
+                    expect(SelfieBudgetCtrl.dailyLimitError.code).toBe(5);
+                    expect($scope.validation.dailyLimit).toBe(true);
+
+                    SelfieBudgetCtrl.limit = 100;
+                    SelfieBudgetCtrl.budget = 100;
+                    SelfieBudgetCtrl.additionalBudget = null;
+
+                    campaign.cards[0].campaign = {};
+
+                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+                    expect($scope.validation.dailyLimit).toBe(true);
+                });
+            });
         });
 
         describe('setBudget()', function() {
             it('should set the budget and limit on the campaign if valid', function() {
+                var threeDays = new Date();
+                threeDays.setDate(threeDays.getDate() + 3);
+
                 expect(campaign.pricing.budget).toBeUndefined();
                 expect(campaign.pricing.dailyLimit).toBeUndefined();
 
-                SelfieBudgetCtrl.budget = 300000000;
+                SelfieBudgetCtrl.budget = 3000000;
+                SelfieBudgetCtrl.additionalBudget = 3000000;
 
                 SelfieBudgetCtrl.setBudget();
 
@@ -357,11 +687,12 @@ define(['app'], function(appModule) {
                 expect(campaign.pricing.dailyLimit).toBe(undefined);
                 expect($scope.validation.budget).toBe(false);
 
-                SelfieBudgetCtrl.budget = 3000;
+                SelfieBudgetCtrl.budget = 3000.12;
+                SelfieBudgetCtrl.additionalBudget = 3000.07;
 
                 SelfieBudgetCtrl.setBudget();
 
-                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.budget).toBe(6000.19);
                 expect(campaign.pricing.dailyLimit).toBe(null);
                 expect($scope.validation.budget).toBe(true);
 
@@ -369,7 +700,7 @@ define(['app'], function(appModule) {
 
                 SelfieBudgetCtrl.setBudget();
 
-                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.budget).toBe(6000.19);
                 expect(campaign.pricing.dailyLimit).toBe(null);
                 expect($scope.validation.budget).toBe(false);
 
@@ -377,7 +708,7 @@ define(['app'], function(appModule) {
 
                 SelfieBudgetCtrl.setBudget();
 
-                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.budget).toBe(6000.19);
                 expect(campaign.pricing.dailyLimit).toBe(300);
                 expect($scope.validation.budget).toBe(true);
 
@@ -385,7 +716,7 @@ define(['app'], function(appModule) {
 
                 SelfieBudgetCtrl.setBudget();
 
-                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.budget).toBe(6000.19);
                 expect(campaign.pricing.dailyLimit).toBe(null);
                 expect($scope.validation.budget).toBe(true);
 
@@ -393,17 +724,33 @@ define(['app'], function(appModule) {
 
                 SelfieBudgetCtrl.setBudget();
 
-                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.budget).toBe(6000.19);
                 expect(campaign.pricing.dailyLimit).toBe(null);
                 expect($scope.validation.budget).toBe(false);
 
                 SelfieBudgetCtrl.budget = 5000;
+                SelfieBudgetCtrl.additionalBudget = null;
                 SelfieBudgetCtrl.limit = 500;
 
                 SelfieBudgetCtrl.setBudget();
 
                 expect(campaign.pricing.budget).toBe(5000);
                 expect(campaign.pricing.dailyLimit).toBe(500);
+                expect($scope.validation.budget).toBe(true);
+
+                SelfieBudgetCtrl.budget = 5000;
+                SelfieBudgetCtrl.additionalBudget = 1000;
+                SelfieBudgetCtrl.limit = 400;
+
+                campaign.cards[0].campaign = {
+                    endDate: threeDays.toISOString()
+                };
+
+                SelfieBudgetCtrl.setBudget();
+
+                expect(SelfieBudgetCtrl.dailyLimitError.code).toBe(5);
+                expect(campaign.pricing.budget).toBe(6000);
+                expect(campaign.pricing.dailyLimit).toBe(400);
                 expect($scope.validation.budget).toBe(true);
             });
         });

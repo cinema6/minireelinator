@@ -634,7 +634,9 @@ function( angular , c6State  , PaginatedListState,
 
                     return $q.all({
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
-                        logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id)
+                        logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id),
+                        stats: (!this.campaign.id || this._campaign.status === 'draft') ?
+                            $q.when(null) : CampaignService.getAnalytics({ids: this.campaign.id})
                     }).catch(function() {
                         c6State.goTo('Selfie:CampaignDashboard');
                         return $q.reject();
@@ -932,6 +934,7 @@ function( angular , c6State  , PaginatedListState,
             this.initWithModel = function(model) {
                 this.logos = model.logos;
                 this.categories = model.categories;
+                this.stats = (model.stats && model.stats.length) ? model.stats[0] : null;
 
                 this.card = cState.card;
                 this.campaign = cState.campaign;
