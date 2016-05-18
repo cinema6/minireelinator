@@ -1335,7 +1335,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             },
                             vimeo: function(url) {
                                 return {
-                                    id: url.pathname.replace(/^\//, '')
+                                    id: url.pathname.replace(/^\/(channels\/.+\/)?/, '')
                                 };
                             },
                             dailymotion: function(url) {

@@ -132,6 +132,11 @@
                                 id: '89495751',
                                 data: { }
                             });
+                            expect(fromUrl('https://vimeo.com/channels/mercedesbenz/156395271')).toEqual({
+                                service: 'vimeo',
+                                id: '156395271',
+                                data: { }
+                            });
                         });
 
                         it('should parse a vimeo embed code', function() {
