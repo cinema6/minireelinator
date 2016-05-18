@@ -36,6 +36,17 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
             });
         });
 
+        afterAll(function() {
+            $injector = null;
+            $rootScope = null;
+            $controller = null;
+            MiniReelService = null;
+            $scope = null;
+            c6Stateportal = null;
+            SponsorCardVideoCtrl = null;
+            card = null;
+        });
+
         it('should exist', function() {
             expect(SponsorCardVideoCtrl).toEqual(jasmine.any(Object));
         });

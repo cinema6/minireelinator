@@ -33,6 +33,19 @@
                 failure = jasmine.createSpy('failure');
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                OpenGraphService = null;
+                ImageService = null;
+                ThumbnailService = null;
+                VideoService = null;
+                success = null;
+                failure = null;
+                $httpBackend = null;
+                _private = null;
+            });
+
             it('should exist', function() {
                 expect(ThumbnailService).toEqual(jasmine.any(Object));
             });

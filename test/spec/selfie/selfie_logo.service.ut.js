@@ -115,6 +115,19 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             c6State.get('Selfie').cModel = { org: { id: 'o-123' } };
         });
 
+        afterAll(function() {
+            $q = null;
+            $rootScope = null;
+            $httpBackend = null;
+            c6UrlMaker = null;
+            c6State = null;
+            SelfieLogoService = null;
+            campaigns = null;
+            cards = null;
+            success = null;
+            failure = null;
+        });
+
         it('should exist', function() {
             expect(SelfieLogoService).toEqual(jasmine.any(Object));
         });

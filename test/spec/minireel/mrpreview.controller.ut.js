@@ -102,6 +102,26 @@ define(['app','angular'], function(appModule, angular) {
             responseCallback = jasmine.createSpy('responseCallback()');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            $scope = null;
+            $controller = null;
+            c6UrlMaker = null;
+            PreviewCtrl = null;
+            MiniReelService = null;
+            c6EventEmitter = null;
+            c6BrowserInfo = null;
+            c6State = null;
+            portal = null;
+            postMessage = null;
+            responseCallback = null;
+            editorExperience = null;
+            playerExperience = null;
+            session = null;
+            playerMeta = null;
+        });
+
         describe('initialization', function() {
             it('should exist', function() {
                 expect(PreviewCtrl).toEqual(jasmine.any(Object));

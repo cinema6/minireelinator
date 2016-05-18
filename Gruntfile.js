@@ -74,7 +74,11 @@ module.exports = function(grunt) {
         'jshint:all',
         'clean:build',
         'ngtemplates:test',
-        'karma:unit'
+        'karma:directives',
+        'karma:controllers',
+        'karma:states',
+        'karma:services',
+        'karma:other'
     ]);
 
     grunt.registerTask('test:unit:debug', 'run unit tests whenever files change', [
@@ -106,7 +110,7 @@ module.exports = function(grunt) {
             grunt.task.run('watch:e2e:' + (browser || ''));
         }
     );
-    
+
     grunt.registerTask('test:htmlinspect:selfie', 'validate html', function() {
         var secure = grunt.option('secure');
 

@@ -24,6 +24,17 @@
                 });
             });
 
+            afterEach(function() {
+                $input.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $input = null;
+            });
+
             it('should exist', function() {
                 expect($input).toBeDefined();
             });

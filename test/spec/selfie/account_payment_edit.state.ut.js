@@ -39,6 +39,15 @@ define(['app'], function(appModule) {
             };
         });
 
+        afterAll(function() {
+            c6State = null;
+            $rootScope = null;
+            $q = null;
+            PaymentState = null;
+            PaymentService = null;
+            allMethods = null;
+        });
+
         it('should exist', function() {
             expect(PaymentState).toEqual(jasmine.any(Object));
         });

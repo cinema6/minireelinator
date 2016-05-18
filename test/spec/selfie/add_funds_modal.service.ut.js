@@ -37,6 +37,19 @@ define(['app'], function(appModule) {
             paymentMethod = {};
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            cinema6 = null;
+            PaymentService = null;
+            AddFundsModalService = null;
+            paymentMethod = null;
+            paymentMethods = null;
+            paymentMethodDeferred = null;
+            paymentMethodsDeferred = null;
+            tokenDeferred = null;
+        });
+
         it('should exist', function() {
             expect(AddFundsModalService).toEqual(jasmine.any(Object));
         });

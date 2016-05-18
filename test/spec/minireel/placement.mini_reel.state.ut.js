@@ -55,6 +55,15 @@ define(['app'], function(appModule) {
             placementMiniReel = c6State.get('MR:Placement.MiniReel');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            c6State = null;
+            SettingsService = null;
+            EditorService = null;
+            placementMiniReel = null;
+            model = null;
+        });
+
         it('should exist', function() {
             expect(placementMiniReel).toEqual(jasmine.any(Object));
         });

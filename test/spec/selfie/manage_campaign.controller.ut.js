@@ -164,6 +164,28 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            c6State = null;
+            cinema6 = null;
+            CampaignService = null;
+            ConfirmDialogService = null;
+            MiniReelService = null;
+            SelfieManageCampaignCtrl = null;
+            cState = null;
+            campaign = null;
+            card = null;
+            categories = null;
+            updateRequest = null;
+            user = null;
+            advertiser = null;
+            interests = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(SelfieManageCampaignCtrl).toEqual(jasmine.any(Object));
         });

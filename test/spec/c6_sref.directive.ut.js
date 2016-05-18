@@ -87,6 +87,20 @@
                 });
             });
 
+            afterEach(function() {
+                $sref.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                c6State = null;
+                $location = null;
+                current = null;
+                $sref = null;
+            });
+
             describe('on a non-anchor tag', function() {
                 beforeEach(function() {
                     Object.defineProperty(c6State, 'current', {

@@ -53,6 +53,25 @@
                 expect($preview.find('iframe').length).toBe(0);
             });
 
+            afterEach(function() {
+                $preview.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $timeout = null;
+                c6EventEmitter = null;
+                c6VideoService = null;
+                $q = null;
+                $preview = null;
+                $httpBackend = null;
+                YouTubeDataService = null;
+                VideoService = null;
+                scope = null;
+            });
+
             describe('scope.disableTrimmer', function() {
                 describe('for Vine', function() {
                     beforeEach(function() {

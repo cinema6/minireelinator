@@ -12,6 +12,10 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            dollarsFilter = null;
+        });
+
         it('should exist', function() {
             expect(dollarsFilter).toEqual(jasmine.any(Function));
         });

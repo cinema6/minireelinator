@@ -191,6 +191,25 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             compileCtrl(cState, {});
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $timeout = null;
+            $q = null;
+            c6State = null;
+            cinema6 = null;
+            MiniReelService = null;
+            SelfieManageCampaignAdminCtrl = null;
+            c6Debounce = null;
+            cState = null;
+            campaign = null;
+            card = null;
+            updateRequest = null;
+            interests = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(SelfieManageCampaignAdminCtrl).toEqual(jasmine.any(Object));
         });

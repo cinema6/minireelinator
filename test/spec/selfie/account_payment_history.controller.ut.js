@@ -51,6 +51,19 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $injector = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            cState = null;
+            AddFundsModalService = null;
+            NotificationService = null;
+            AccountPaymentHistoryCtrl = null;
+            model = null;
+        });
+
         it('should exist', function() {
             expect(AccountPaymentHistoryCtrl).toEqual(jasmine.any(Object));
         });

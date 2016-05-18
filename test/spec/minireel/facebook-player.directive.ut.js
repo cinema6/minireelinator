@@ -26,6 +26,19 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
+        afterEach(function() {
+            player.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $compile = null;
+            player = null;
+            mockIFrame = null;
+            mockSpan = null;
+        });
+
         it('it should append the proper script, div, and have the proper class', function() {
             expect(angular.element.prototype.empty).toHaveBeenCalledWith();
             var children = player.children();

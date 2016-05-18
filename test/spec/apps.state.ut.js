@@ -48,6 +48,18 @@ define(['app'], function(appModule) {
             apps = c6State.get('Apps');
         });
 
+        afterAll(function() {
+            c6State = null;
+            $rootScope = null;
+            $q = null;
+            cinema6 = null;
+            portal = null;
+            apps = null;
+            c6Defines = null;
+            AuthService = null;
+            $window = null;
+        });
+
         it('should exist', function() {
             expect(apps).toEqual(jasmine.any(Object));
         });

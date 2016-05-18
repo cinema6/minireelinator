@@ -53,6 +53,19 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            cState = null;
+            $scope = null;
+            $q = null;
+            SelfieAccountDetailsCtrl = null;
+            cinema6 = null;
+            user = null;
+            userDeferred = null;
+        });
+
         it('should exist', function() {
             expect(SelfieAccountDetailsCtrl).toEqual(jasmine.any(Object));
         });

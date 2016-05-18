@@ -48,6 +48,19 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            SelfieContainersCtrl = null;
+            c6State = null;
+            c6AsyncQueue = null;
+            ConfirmDialogService = null;
+            container = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(SelfieContainersCtrl).toEqual(jasmine.any(Object));
         });

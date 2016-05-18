@@ -39,6 +39,17 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            MiniReelService = null;
+            $scope = null;
+            WildcardCtrl = null;
+            WildcardSurveyCtrl = null;
+            card = null;
+        });
+
         it('should exist', function() {
             expect(WildcardSurveyCtrl).toEqual(jasmine.any(Object));
         });

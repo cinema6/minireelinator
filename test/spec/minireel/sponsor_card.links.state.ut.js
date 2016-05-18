@@ -21,6 +21,13 @@ define(['app'], function(appModule) {
             sponsorCardLinks = c6State.get('MR:SponsorCard.Links');
         });
 
+        afterAll(function() {
+            c6State = null;
+            MiniReelService = null;
+            sponsorCard = null;
+            sponsorCardLinks = null;
+        });
+
         it('should exist', function() {
             expect(sponsorCardLinks).toEqual(jasmine.any(Object));
         });

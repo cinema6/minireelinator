@@ -133,6 +133,24 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                $q = null;
+                c6State = null;
+                cState = null;
+                ConfirmDialogService = null;
+                AdManagerCtrl = null;
+                PortalCtrl = null;
+                MiniReelCtrl = null;
+                MiniReelService = null;
+                scopePromise = null;
+                model = null;
+                user = null;
+                config = null;
+            });
+
             it('should exist', function() {
                 expect(AdManagerCtrl).toEqual(jasmine.any(Object));
             });

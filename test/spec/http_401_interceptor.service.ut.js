@@ -34,6 +34,19 @@ define(['app'], function(appModule) {
             spyOn(SelfieLoginDialogService, 'display').and.callThrough();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            $http = null;
+            $interval = null;
+            $httpBackend = null;
+            _$httpProvider_ = null;
+            SelfieLoginDialogService = null;
+            Unauthorized401Interceptor = null;
+            success = null;
+            failure = null;
+        });
+
         it('should exist', function() {
             expect(Unauthorized401Interceptor).toEqual(jasmine.any(Object));
             expect(_$httpProvider_.interceptors).toContain('Unauthorized401Interceptor');

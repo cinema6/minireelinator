@@ -58,6 +58,21 @@
                 });
             });
 
+            afterAll(function() {
+                UpdateRequestAdapter = null;
+                cinema6 = null;
+                $q = null;
+                $rootScope = null;
+                MiniReelService = null;
+                adapter = null;
+                success = null;
+                failure = null;
+                $httpBackend = null;
+                convertCardForPlayerDeferred = null;
+                convertCardForEditorDeferred = null;
+                card = null;
+            });
+
             it('should exist', function() {
                 expect(adapter).toEqual(jasmine.any(Object));
             });

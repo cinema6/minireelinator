@@ -61,6 +61,20 @@
                 });
             });
 
+            afterAll(function() {
+                $httpBackend = null;
+                $timeout = null;
+                AuthService = null;
+                successSpy = null;
+                failureSpy = null;
+                c6UrlMaker = null;
+                cinema6 = null;
+                $q = null;
+                org = null;
+                user = null;
+                advertiser = null;
+            });
+
             describe('resetPassword(userId, token, password)', function() {
                 var userJSON,
                     success, failure;
@@ -293,4 +307,3 @@
 
     });
 }());
-

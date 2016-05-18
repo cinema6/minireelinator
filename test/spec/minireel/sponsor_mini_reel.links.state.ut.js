@@ -23,6 +23,15 @@ define(['app'], function(appModule) {
             sponsorMiniReelLinks = c6State.get('MR:SponsorMiniReel.Links');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            c6State = null;
+            SettingsService = null;
+            EditorService = null;
+            sponsorMiniReel = null;
+            sponsorMiniReelLinks = null;
+        });
+
         it('should exist', function() {
             expect(sponsorMiniReelLinks).toEqual(jasmine.any(Object));
         });

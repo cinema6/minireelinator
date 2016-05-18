@@ -13,6 +13,10 @@
                 });
             });
 
+            afterAll(function() {
+                ConfirmDialogService = null;
+            });
+
             it('should exist', function() {
                 expect(ConfirmDialogService).toEqual(jasmine.any(Object));
             });

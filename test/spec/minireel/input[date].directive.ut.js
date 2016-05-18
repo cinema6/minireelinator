@@ -36,6 +36,19 @@ define(['minireel/app', 'jquery'], function(appModule, $) {
             });
         });
 
+        afterEach(function() {
+            $form.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $form = null;
+            $input = null;
+            TzDate = null;
+        });
+
         it('should not apply to inputs of other types', function() {
             $scope.$apply(function() {
                 $input = $compile('<input name="date" type="text" ng-model="foo" />')($scope);

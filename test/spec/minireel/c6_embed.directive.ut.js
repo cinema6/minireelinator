@@ -80,6 +80,18 @@ function( appModule, c6embed , $      ) {
             $c6Embed.remove();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $q = null;
+            $timeout = null;
+            c6EventEmitter = null;
+            MiniReelService = null;
+            $scope = null;
+            $c6Embed = null;
+            player = null;
+        });
+
         describe('$watchers', function() {
             describe('experience', function() {
                 describe('when set', function() {

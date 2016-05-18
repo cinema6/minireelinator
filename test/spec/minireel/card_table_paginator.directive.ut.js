@@ -88,6 +88,15 @@
                 paginator.remove();
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                paginator = null;
+                scope = null;
+                Finger = null;
+            });
+
             describe('$watchers', function() {
                 describe('ready', function() {
                     it('should set scope variables when true', function() {

@@ -16,6 +16,12 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $timeout = null;
+            NotificationService = null;
+        });
+
         it('should exist', function() {
             expect(NotificationService).toEqual(jasmine.any(Object));
         });

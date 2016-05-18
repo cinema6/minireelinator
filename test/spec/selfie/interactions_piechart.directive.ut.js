@@ -63,6 +63,26 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterEach(function() {
+            $pie.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $canvas = null;
+            $legend = null;
+            $compile = null;
+            $timeout = null;
+            $pie = null;
+            $scope = null;
+            scope = null;
+            Chart = null;
+            Doughnut = null;
+            generateLegend = null;
+            pieData = null;
+            pieOptions = null;
+        });
+
         describe('initialization', function() {
             describe('when there are no stats', function() {
                 it('should not render a chart', function() {

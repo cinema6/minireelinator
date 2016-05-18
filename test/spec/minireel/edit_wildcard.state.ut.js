@@ -23,6 +23,15 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            c6State = null;
+            cinema6 = null;
+            MiniReelService = null;
+            CampaignState = null;
+            editWildcard = null;
+        });
+
         it('should exist', function() {
             expect(editWildcard).toEqual(jasmine.any(Object));
         });

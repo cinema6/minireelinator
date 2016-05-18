@@ -20,6 +20,18 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterEach(function() {
+            $input.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $timeout = null;
+            $input = null;
+        });
+
         describe('when an input element has a value', function() {
             it('should add a class', function() {
                 $scope.value = 'Filling in the input';

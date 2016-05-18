@@ -16,6 +16,11 @@ define(['app'], function(appModule) {
                 });
             });
 
+            afterAll(function() {
+                c6State = null;
+                miniReelGroupGeneral = null;
+            });
+
             it('should exist', function() {
                 expect(miniReelGroupGeneral).toEqual(jasmine.any(Object));
             });

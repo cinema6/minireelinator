@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             forgotPassword = c6State.get('Selfie:ForgotPassword');
         });
 
+        afterAll(function() {
+            c6State = null;
+            forgotPassword = null;
+        });
+
         it('should exist', function() {
             expect(forgotPassword).toEqual(jasmine.any(Object));
         });

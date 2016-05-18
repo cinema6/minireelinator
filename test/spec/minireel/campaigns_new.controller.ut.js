@@ -107,6 +107,22 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            $controller = null;
+            cinema6 = null;
+            c6State = null;
+            paginatedDbList = null;
+            $scope = null;
+            CampaignsCtrl = null;
+            CampaignsNewCtrl = null;
+            campaign = null;
+            advertisers = null;
+            model = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(CampaignsNewCtrl).toEqual(jasmine.any(Object));
         });

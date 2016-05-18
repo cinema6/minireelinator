@@ -102,6 +102,25 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $log = null;
+                $q = null;
+                $controller = null;
+                VideoService = null;
+                c6State = null;
+                SettingsService = null;
+                MiniReelService = null;
+                EditorService = null;
+                PortalState = null;
+                MiniReelCtrl = null;
+                EditorCtrl = null;
+                NewCardCtrl = null;
+                model = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(NewCardCtrl).toEqual(jasmine.any(Object));
             });

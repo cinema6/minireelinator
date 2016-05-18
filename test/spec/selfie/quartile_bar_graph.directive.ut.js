@@ -113,6 +113,27 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
         });
 
+        afterEach(function() {
+            $graph.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $canvas = null;
+            $compile = null;
+            $timeout = null;
+            $graph = null;
+            $scope = null;
+            scope = null;
+            Chart = null;
+            barSkinny = null;
+            _barSkinny = null;
+            graphData = null;
+            graphOptions = null;
+            datasets = null;
+            c6Debounce = null;
+        });
+
         describe('initialization', function() {
             it('should extend the Bar Chart type', function() {
                 compileDirective();

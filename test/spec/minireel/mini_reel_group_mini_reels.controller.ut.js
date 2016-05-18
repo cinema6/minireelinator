@@ -57,6 +57,18 @@ define(['app', 'minireel/mixins/MiniReelSearchController'], function(appModule, 
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            cinema6 = null;
+            MiniReelService = null;
+            $scope = null;
+            CampaignCtrl = null;
+            MiniReelGroupMiniReelsCtrl = null;
+            campaign = null;
+            miniReels = null;
+        });
+
         it('should exist', function() {
             expect(MiniReelGroupMiniReelsCtrl).toEqual(jasmine.any(Object));
         });

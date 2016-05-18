@@ -65,6 +65,17 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            cinema6 = null;
+            paginatedDbList = null;
+            $scope = null;
+            PaginatedListCtrl = null;
+            state = null;
+            model = null;
+        });
+
         it('should exist', function() {
             expect(PaginatedListCtrl).toEqual(jasmine.any(Object));
         });

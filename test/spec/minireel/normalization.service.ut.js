@@ -12,6 +12,10 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            NormalizationService = null;
+        });
+
         it('should exist', function() {
             expect(NormalizationService).toEqual(jasmine.any(Object));
         });

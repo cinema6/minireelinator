@@ -16,6 +16,11 @@ define(['app'], function(appModule) {
                 wildcardAdvertising = c6State.get(stateName);
             });
 
+            afterAll(function() {
+                c6State = null;
+                wildcardAdvertising = null;
+            });
+
             it('should exist', function() {
                 expect(wildcardAdvertising).toEqual(jasmine.any(Object));
             });

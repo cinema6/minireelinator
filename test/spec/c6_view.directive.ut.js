@@ -36,6 +36,17 @@
                 $view.remove();
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $controller = null;
+                $location = null;
+                c6State = null;
+                $body = null;
+                $view = null;
+            });
+
             it('should register the view', function() {
                 $scope.$apply(function() {
                     $view = $('<c6-view></c6-view>');

@@ -18,6 +18,17 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterEach(function() {
+            $input.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $input = null;
+        });
+
         it('should convert input value to an integer when setting ng-model value', function() {
             $scope.$apply(function() {
                 $input = $compile('<input parse-as-int ng-model="value" type="range">')($scope);

@@ -39,6 +39,11 @@
                 });
             });
 
+            afterAll(function() {
+                splashPageSrcFilter = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(splashPageSrcFilter).toEqual(jasmine.any(Function));
             });

@@ -128,6 +128,21 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                $scope = null;
+                $controller = null;
+                c6State = null;
+                EditorService = null;
+                PortalCtrl = null;
+                MiniReelCtrl = null;
+                EditorCtrl = null;
+                NewCtrl = null;
+                modes = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(NewCtrl).toEqual(jasmine.any(Object));
             });

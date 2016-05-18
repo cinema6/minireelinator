@@ -25,6 +25,16 @@ define(['app'], function(appModule) {
             sponsorMiniReel = c6State.get('MR:SponsorMiniReel');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            c6State = null;
+            cinema6 = null;
+            $q = null;
+            SettingsService = null;
+            EditorService = null;
+            sponsorMiniReel = null;
+        });
+
         it('should exist', function() {
             expect(sponsorMiniReel).toEqual(jasmine.any(Object));
         });

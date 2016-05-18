@@ -1,9 +1,9 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    var state, SettingsService, c6State;
-
     describe('Selfie:Demo:Preview:Full', function() {
+        var state, SettingsService, c6State;
+
         beforeEach(function() {
             module(appModule.name);
 
@@ -14,6 +14,12 @@ define(['app'], function(appModule) {
             spyOn(SettingsService, 'register').and.returnValue(SettingsService);
             spyOn(c6State, 'goTo');
             state = c6State.get('Selfie:Demo:Preview:Full');
+        });
+
+        afterAll(function() {
+            state = null;
+            SettingsService = null;
+            c6State = null;
         });
 
         it('should be using the correct template', function() {
@@ -71,6 +77,8 @@ define(['app'], function(appModule) {
     });
 
     describe('Selfie:Demo:Preview:Frame', function() {
+        var state, SettingsService, c6State;
+
         beforeEach(function() {
             module(appModule.name);
 
@@ -81,6 +89,12 @@ define(['app'], function(appModule) {
             spyOn(SettingsService, 'register').and.returnValue(SettingsService);
             spyOn(c6State, 'goTo');
             state = c6State.get('Selfie:Demo:Preview:Frame');
+        });
+
+        afterAll(function() {
+            state = null;
+            SettingsService = null;
+            c6State = null;
         });
 
         it('should be using the correct template', function() {

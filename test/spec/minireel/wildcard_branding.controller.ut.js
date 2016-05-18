@@ -34,6 +34,16 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            MiniReelService = null;
+            $scope = null;
+            WildcardCtrl = null;
+            WildcardBrandingCtrl = null;
+        });
+
         it('should exist', function() {
             expect(WildcardBrandingCtrl).toEqual(jasmine.any(Object));
         });

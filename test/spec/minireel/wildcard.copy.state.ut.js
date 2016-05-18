@@ -16,6 +16,11 @@ define(['app'], function(appModule) {
                 wildcardCopy = c6State.get(stateName);
             });
 
+            afterAll(function() {
+                c6State = null;
+                wildcardCopy = null;
+            });
+
             it('should exist', function() {
                 expect(wildcardCopy).toEqual(jasmine.any(Object));
             });

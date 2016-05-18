@@ -32,6 +32,18 @@ define(['app'], function(appModule) {
             spyOn(ctrl._private, 'getWebsiteData');
         });
 
+        afterAll(function() {
+            ctrl = null;
+            $controller = null;
+            $scope = null;
+            CollateralService = null;
+            $q = null;
+            c6State = null;
+            SpinnerService = null;
+            $location = null;
+            cState = null;
+        });
+
         it('should exist', function() {
             expect(ctrl).toBeDefined();
         });

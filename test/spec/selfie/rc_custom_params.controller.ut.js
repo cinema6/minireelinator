@@ -23,6 +23,13 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            RcCustomParamsCtrl = null;
+        });
+
         it('should exist', function() {
             expect(RcCustomParamsCtrl).toEqual(jasmine.any(Object));
         });

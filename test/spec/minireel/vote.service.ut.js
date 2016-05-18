@@ -224,6 +224,16 @@
                 c6State.get('Portal').cModel = {};
             });
 
+            afterAll(function() {
+                VoteService = null;
+                cinema6 = null;
+                c6State = null;
+                $q = null;
+                $rootScope = null;
+                MiniReelService = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(VoteService).toEqual(jasmine.any(Object));
             });

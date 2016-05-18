@@ -105,6 +105,34 @@ define(['app'], function(appModule) {
             onSuccess = jasmine.createSpy('onSuccess()');
         });
 
+        afterAll(function() {
+            c6State = null;
+            $rootScope = null;
+            $q = null;
+            CampaignFundingService = null;
+            cinema6 = null;
+            CampaignService = null;
+            PaymentService = null;
+            paymentModel = null;
+            paymentMethods = null;
+            SelfieState = null;
+            success = null;
+            failure = null;
+            paymentMethodsDeferred = null;
+            creditCheckDeferred = null;
+            summary = null;
+            balance = null;
+            token = null;
+            campaign = null;
+            originalCampaign = null;
+            updateRequest = null;
+            schema = null;
+            interests = null;
+            onClose = null;
+            onCancel = null;
+            onSuccess = null;
+        });
+
         it('should exist', function() {
             expect(CampaignFundingService).toEqual(jasmine.any(Object));
         });

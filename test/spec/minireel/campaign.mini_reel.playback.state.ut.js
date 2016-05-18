@@ -16,6 +16,11 @@ define(['app'], function(appModule) {
                 });
             });
 
+            afterAll(function() {
+                c6State = null;
+                creativesMiniReelPlayback = null;
+            });
+
             it('should exist', function() {
                 expect(creativesMiniReelPlayback).toEqual(jasmine.any(Object));
             });

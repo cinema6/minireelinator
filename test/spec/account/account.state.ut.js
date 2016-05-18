@@ -20,6 +20,12 @@ define(['app'], function(appModule) {
             account = c6State.get('Account');
         });
 
+        afterAll(function() {
+            c6State = null;
+            portal = null;
+            account = null;
+        });
+
         it('should exist', function() {
             expect(account).toEqual(jasmine.any(Object));
         });

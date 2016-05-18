@@ -109,6 +109,30 @@ define(['app'], function(appModule) {
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                campaignState = null;
+                selfieState = null;
+                newCampaignState = null;
+                c6State = null;
+                cinema6 = null;
+                MiniReelService = null;
+                SelfieLogoService = null;
+                CampaignService = null;
+                ConfirmDialogService = null;
+                SpinnerService = null;
+                intercom = null;
+                PaymentService = null;
+                card = null;
+                categories = null;
+                campaign = null;
+                logos = null;
+                updateRequest = null;
+                advertiser = null;
+                user = null;
+            });
+
             it('should exist', function() {
                 expect(campaignState).toEqual(jasmine.any(Object));
             });

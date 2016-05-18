@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             password = c6State.get('Account:Password');
         });
 
+        afterAll(function() {
+            c6State = null;
+            password = null;
+        });
+
         it('should exist', function() {
             expect(password).toEqual(jasmine.any(Object));
         });

@@ -54,6 +54,20 @@ define(['login', 'app'], function(loginModule, appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            $location = null;
+            c6State = null;
+            AuthService = null;
+            LoginCtrl = null;
+            c6Defines = null;
+            model = null;
+            ApplicationState = null;
+        });
+
         it('should exist', function() {
             expect(LoginCtrl).toEqual(jasmine.any(Object));
         });

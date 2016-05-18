@@ -27,6 +27,17 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
+        afterEach(function() {
+            $player.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $compile = null;
+            $player = null;
+        });
+
         it('should empty the element', function() {
             expect(angular.element.prototype.empty).toHaveBeenCalled();
         });

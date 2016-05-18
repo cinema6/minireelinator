@@ -30,6 +30,18 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            $http = null;
+            $interval = null;
+            $httpBackend = null;
+            _$httpProvider_ = null;
+            Accepted202Interceptor = null;
+            success = null;
+            failure = null;
+        });
+
         it('should exist', function() {
             expect(Accepted202Interceptor).toEqual(jasmine.any(Object));
             expect(_$httpProvider_.interceptors).toContain('Accepted202Interceptor');

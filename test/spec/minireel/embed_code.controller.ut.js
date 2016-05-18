@@ -94,6 +94,20 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                $q = null;
+                SettingsService = null;
+                c6State = null;
+                MiniReelState = null;
+                EmbedCodeCtrl = null;
+                ensureFulfillmentDeferred = null;
+                $attrs = null;
+                orgSettings = null;
+            });
+
             it('should exist', function() {
                 expect(EmbedCodeCtrl).toEqual(jasmine.any(Object));
             });

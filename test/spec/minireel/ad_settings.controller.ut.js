@@ -175,6 +175,23 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                $q = null;
+                PortalCtrl = null;
+                MiniReelCtrl = null;
+                c6State = null;
+                cState = null;
+                AdSettingsCtrl = null;
+                MiniReelService = null;
+                model = null;
+                minireels = null;
+                settings = null;
+                initCtrl = null;
+            });
+
             describe('initialization', function() {
                 it('should go to Ad Manager if there is no model to bind', function() {
                     initCtrl();

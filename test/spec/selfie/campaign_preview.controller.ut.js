@@ -62,6 +62,18 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             compileCtrl();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $timeout = null;
+            c6Debounce = null;
+            SelfieCampaignCtrl = null;
+            SelfieCampaignPreviewCtrl = null;
+            card = null;
+            campaign = null;
+        });
+
         it('should exist', function() {
             expect(SelfieCampaignPreviewCtrl).toEqual(jasmine.any(Object));
         });

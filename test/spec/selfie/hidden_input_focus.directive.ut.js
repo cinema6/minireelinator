@@ -39,6 +39,21 @@ define(['app','angular'], function(appModule, angular) {
             $span = $compile('<span hidden-input-focus="input_1">Click Here</span>')($scope);
         });
 
+        afterEach(function() {
+            $span.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $document = null;
+            $span = null;
+            $ = null;
+            hiddenInput = null;
+            hiddenFocusSpy = null;
+        });
+
         describe('when element is clicked on', function() {
             beforeEach(function() {
                 $span.trigger('click');

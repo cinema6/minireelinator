@@ -35,6 +35,15 @@
                 });
             });
 
+            afterAll(function() {
+                ContentAdapter = null;
+                adapter = null;
+                $q = null;
+                $rootScope = null;
+                cinema6 = null;
+                $httpBackend = null;
+            });
+
             it('should exist', function() {
                 expect(adapter).toEqual(jasmine.any(Object));
             });

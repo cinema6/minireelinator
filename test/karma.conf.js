@@ -10,22 +10,6 @@ module.exports = function(config) {
 
         frameworks: ['requirejs', 'jasmine'],
 
-        // list of files / patterns to load in the browser
-        files: [
-            { pattern: 'settings.json', included: false },
-            { pattern: (settings.appDir + '/assets/scripts/**/*.js'), included: false },
-            { pattern: (settings.appDir + '/assets/views/**/*.html'), included: false },
-            { pattern: '.tmp/templates.js', included: false },
-            { pattern: 'test/spec/**/*.js', included: false },
-            { pattern: 'test/helpers/*.js', included: false },
-            'test/test-main.js'
-        ],
-
-        // list of files to exclude
-        exclude: [
-            (settings.appDir + '/assets/scripts/main.js')
-        ],
-
         preprocessors: {
             '**/*.html': ['ng-html2js']
         },

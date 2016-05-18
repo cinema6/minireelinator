@@ -31,6 +31,20 @@ define(['app','angular'], function(appModule, angular) {
 
         });
 
+        afterEach(function() {
+            $input.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $timeout = null;
+            $document = null;
+            $input = null;
+            $ = null;
+        });
+
         describe('initializing datepicker jquery ui plugin', function() {
             it('should call the datepicker method with options', function() {
                 $input = $compile('<input datepicker min-date="minDate" max-date="maxDate" default-date="defaultDate"></input>')($scope);

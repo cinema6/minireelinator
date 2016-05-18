@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             sponsorCardCopy = c6State.get('MR:SponsorCard.Copy');
         });
 
+        afterAll(function() {
+            c6State = null;
+            sponsorCardCopy = null;
+        });
+
         it('should exist', function() {
             expect(sponsorCardCopy).toEqual(jasmine.any(Object));
         });
