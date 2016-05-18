@@ -67,6 +67,20 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            cState = null;
+            $scope = null;
+            $q = null;
+            cinema6 = null;
+            SelfieAccountPaymentCtrl = null;
+            ConfirmDialogService = null;
+            paymentMethods = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(SelfieAccountPaymentCtrl).toEqual(jasmine.any(Object));
         });

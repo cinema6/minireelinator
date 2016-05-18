@@ -86,6 +86,21 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
             };
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            VideoSearchService = null;
+            $q = null;
+            $scope = null;
+            MiniReelService = null;
+            c6State = null;
+            VideoService = null;
+            PortalCtrl = null;
+            VideoSearchCtrl = null;
+            EditorCtrl = null;
+            videoCard = null;
+        });
+
         it('should exist', function() {
             expect(VideoSearchCtrl).toEqual(jasmine.any(Object));
         });

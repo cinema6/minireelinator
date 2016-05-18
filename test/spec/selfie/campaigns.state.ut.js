@@ -80,6 +80,23 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 });
             });
 
+            afterAll(function() {
+                c6State = null;
+                paginatedDbList = null;
+                campaigns = null;
+                SelfieState = null;
+                $location = null;
+                $injector = null;
+                $rootScope = null;
+                $q = null;
+                SettingsService = null;
+                SpinnerService = null;
+                PaymentService = null;
+                dbList = null;
+                deferred = null;
+                user = null;
+            });
+
             it('should exist', function() {
                 expect(campaigns).toEqual(jasmine.any(Object));
             });

@@ -60,6 +60,23 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
             });
         });
 
+        afterEach(function() {
+            $form.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $timeout = null;
+            $form = null;
+            scope = null;
+            $q = null;
+            $ = null;
+            token = null;
+            config = null;
+        });
+
         describe('initialization', function() {
             it('should initialize braintree', function() {
                 compileDirective();

@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            c6State = null;
+            resetPassword = null;
+        });
+
         it('should exist', function() {
             expect(resetPassword).toEqual(jasmine.any(Object));
         });

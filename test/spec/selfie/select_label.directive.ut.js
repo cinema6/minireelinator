@@ -36,6 +36,21 @@ define(['app','angular'], function(appModule, angular) {
             $label = $compile('<label select-label for="my_select"> My Label </label>')($scope);
         });
 
+        afterEach(function() {
+            $label.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $compile = null;
+            $scope = null;
+            $document = null;
+            $label = null;
+            $ = null;
+            select = null;
+            select2Spy = null;
+        });
+
         describe('when label is clicked on', function() {
             it('should find the select input', function() {
                 $label.trigger('click');

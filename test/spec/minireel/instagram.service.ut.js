@@ -109,6 +109,17 @@
 
             });
 
+            afterAll(function() {
+                InstagramService = null;
+                $q = null;
+                $http = null;
+                $httpBackend = null;
+                $rootScope = null;
+                success = null;
+                failure = null;
+                mocks = null;
+            });
+
             it('should exist', function() {
                 expect(InstagramService).toEqual(jasmine.any(Object));
             });

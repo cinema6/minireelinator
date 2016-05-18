@@ -12,6 +12,10 @@ define(['minireel/app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            hugeNumberFilter = null;
+        });
+
         it('should exist', function() {
             expect(hugeNumberFilter).toEqual(jasmine.any(Function));
         });

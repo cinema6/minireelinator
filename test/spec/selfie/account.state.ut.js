@@ -48,6 +48,18 @@ define(['app'], function(appModule) {
             AccountState = c6State.get('Selfie:Account');
         });
 
+        afterAll(function() {
+            c6State = null;
+            $rootScope = null;
+            $q = null;
+            AccountState = null;
+            SelfieState = null;
+            cinema6 = null;
+            user = null;
+            paymentMethods = null;
+            PaymentService = null;
+        });
+
         it('should exist', function() {
             expect(AccountState).toEqual(jasmine.any(Object));
         });

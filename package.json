@@ -24,7 +24,7 @@
     "grunt-contrib-requirejs": "^0.4.4",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-git-assist": "git+ssh://git@github.com:cinema6/grunt-git-assist",
-    "grunt-karma": "^0.12.0",
+    "grunt-karma": "^1.0.0",
     "grunt-open": "~0.2.2",
     "grunt-text-replace": "^0.3.12",
     "http-mock": "cinema6/http-mock",

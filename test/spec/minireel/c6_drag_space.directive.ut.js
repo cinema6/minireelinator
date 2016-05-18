@@ -25,6 +25,13 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                testFrame = null;
+            });
+
             describe('attributes', function() {
                 describe('controller-as', function() {
                     it('should make its controller available on the $scope as the provided name', function() {

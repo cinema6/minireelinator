@@ -35,6 +35,15 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            NotificationService = null;
+            SelfieNotificationCtrl = null;
+            model = null;
+        });
+
         it('should exist', function() {
             expect(SelfieNotificationCtrl).toEqual(jasmine.any(Object));
         });

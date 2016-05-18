@@ -31,6 +31,16 @@
                 spyOn(MiniReelService, 'create').and.returnValue(minireel);
             });
 
+            afterAll(function() {
+                $injector = null;
+                $rootScope = null;
+                $q = null;
+                MiniReelService = null;
+                c6State = null;
+                ManagerNewState = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(ManagerNewState).toEqual(jasmine.any(Object));
             });

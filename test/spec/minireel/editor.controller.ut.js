@@ -218,6 +218,29 @@
                 spyOn(ConfirmDialogService, 'close');
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $childScope = null;
+                $controller = null;
+                $q = null;
+                $timeout = null;
+                $log = null;
+                c6State = null;
+                cinema6 = null;
+                EditorService = null;
+                MiniReelService = null;
+                ConfirmDialogService = null;
+                CollateralService = null;
+                VideoErrorService = null;
+                MiniReelCtrl = null;
+                PortalCtrl = null;
+                EditorCtrl = null;
+                lastCreatedCard = null;
+                minireel = null;
+                cModel = null;
+            });
+
             it('should exist', function() {
                 expect(EditorCtrl).toEqual(jasmine.any(Object));
             });

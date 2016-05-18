@@ -20,6 +20,12 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                SelfieLoginDialogService = null;
+                intercom = null;
+            });
+
             it('should exist', function() {
                 expect(SelfieLoginDialogService).toEqual(jasmine.any(Object));
             });

@@ -13,6 +13,10 @@
                 });
             });
 
+            afterAll(function() {
+                VideoService = null;
+            });
+
             it('should exist', function() {
                 expect(VideoService).toEqual(jasmine.any(Object));
             });
@@ -126,6 +130,11 @@
                             expect(fromUrl('http://vimeo.com/89495751')).toEqual({
                                 service: 'vimeo',
                                 id: '89495751',
+                                data: { }
+                            });
+                            expect(fromUrl('https://vimeo.com/channels/mercedesbenz/156395271')).toEqual({
+                                service: 'vimeo',
+                                id: '156395271',
                                 data: { }
                             });
                         });

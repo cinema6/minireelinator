@@ -23,6 +23,13 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                PaginatorCtrl = null;
+            });
+
             it('should exist', function() {
                 expect(PaginatorCtrl).toEqual(jasmine.any(Object));
             });

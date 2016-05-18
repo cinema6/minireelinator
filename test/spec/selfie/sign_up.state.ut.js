@@ -32,6 +32,15 @@ define(['app'], function(appModule) {
                 expect(signUp).toEqual(jasmine.any(Object));
             });
 
+            afterAll(function() {
+                c6State = null;
+                $rootScope = null;
+                $q = null;
+                $location = null;
+                SettingsService = null;
+                signUp = null;
+            });
+
             describe('beforeModel()', function() {
                 describe('when there is a ref=code query param', function() {
                     it('should register the code with the SettingsService', function() {

@@ -49,6 +49,14 @@ define(['app'], function(appModule) {
             compileCtrl();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            SelfiePaymentMethodsCtrl = null;
+            paymentMethods = null;
+        });
+
         it('should exist', function() {
             expect(SelfiePaymentMethodsCtrl).toEqual(jasmine.any(Object));
         });

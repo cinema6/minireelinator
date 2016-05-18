@@ -15,6 +15,11 @@
                 });
             });
 
+            afterAll(function() {
+                SoftAlertService = null;
+                $timeout = null;
+            });
+
             it('should exist', function() {
                 expect(SoftAlertService).toEqual(jasmine.any(Object));
             });

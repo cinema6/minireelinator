@@ -17,6 +17,12 @@ define(['minireel/services'], function(servicesModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $httpBackend = null;
+            DailymotionDataService = null;
+        });
+
         it('should exist', function() {
             expect(DailymotionDataService).toEqual(jasmine.any(Object));
         });

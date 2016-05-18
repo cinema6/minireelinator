@@ -52,6 +52,17 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                $q = null;
+                c6State = null;
+                CollateralService = null;
+                EditorSplashCtrl = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(EditorSplashCtrl).toEqual(jasmine.any(Object));
             });

@@ -54,6 +54,20 @@ define (['app'], function(appModule) {
             portal.cModel = user;
         });
 
+        afterAll(function() {
+            c6State = null;
+            SettingsService = null;
+            scopePromise = null;
+            $q = null;
+            cinema6 = null;
+            $rootScope = null;
+            portal = null;
+            minireel = null;
+            apps = null;
+            minireelExp = null;
+            user = null;
+        });
+
         it('should exist', function() {
             expect(minireel).toEqual(jasmine.any(Object));
         });

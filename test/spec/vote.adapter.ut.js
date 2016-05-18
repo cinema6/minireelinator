@@ -32,6 +32,14 @@
                 });
             });
 
+            afterAll(function() {
+                VoteAdapter = null;
+                $rootScope = null;
+                $q = null;
+                adapter = null;
+                $httpBackend = null;
+            });
+
             it('should exist', function() {
                 expect(adapter).toEqual(jasmine.any(Object));
             });

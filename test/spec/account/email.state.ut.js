@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             email = c6State.get('Account:Email');
         });
 
+        afterAll(function() {
+            c6State = null;
+            email = null;
+        });
+
         it('should exist', function() {
             expect(email).toEqual(jasmine.any(Object));
         });

@@ -36,6 +36,18 @@
                 $('body').append($scroller);
             });
 
+            afterEach(function() {
+                $scroller.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $timeout = null;
+                $scroller = null;
+            });
+
             it('should bind from the data to the element', function() {
                 expect($scroller.scrollLeft()).toBe(0);
                 expect($scroller.scrollTop()).toBe(0);

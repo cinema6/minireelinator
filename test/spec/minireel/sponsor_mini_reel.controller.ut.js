@@ -84,6 +84,21 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            SettingsService = null;
+            EditorService = null;
+            c6State = null;
+            $timeout = null;
+            $q = null;
+            sponsorMiniReel = null;
+            $scope = null;
+            SponsorMiniReelCtrl = null;
+            minireel = null;
+            proxy = null;
+        });
+
         it('should exist', function() {
             expect(SponsorMiniReelCtrl).toEqual(jasmine.any(Object));
         });

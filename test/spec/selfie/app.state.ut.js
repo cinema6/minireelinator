@@ -65,6 +65,21 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
             };
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            c6State = null;
+            SettingsService = null;
+            CampaignService = null;
+            selfie = null;
+            selfieApps = null;
+            selfieApp = null;
+            cinema6 = null;
+            selfieExperience = null;
+            user = null;
+            intercom = null;
+        });
+
         it('should exist', function() {
             expect(selfieApp).toEqual(jasmine.any(Object));
         });

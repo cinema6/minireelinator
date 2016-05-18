@@ -18,6 +18,12 @@ define(['app'], function(appModule) {
             sponsorCardVideo = c6State.get('MR:SponsorCard.Video');
         });
 
+        afterAll(function() {
+            c6State = null;
+            sponsorCard = null;
+            sponsorCardVideo = null;
+        });
+
         it('should exist', function() {
             expect(sponsorCardVideo).toEqual(jasmine.any(Object));
         });

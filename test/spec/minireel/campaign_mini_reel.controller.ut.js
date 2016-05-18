@@ -102,6 +102,23 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $q = null;
+            cinema6 = null;
+            c6State = null;
+            CampaignMiniReelState = null;
+            MiniReelService = null;
+            $scope = null;
+            CampaignCtrl = null;
+            CampaignMiniReelsCtrl = null;
+            CampaignMiniReelCtrl = null;
+            minireel = null;
+            campaign = null;
+            debouncedFns = null;
+        });
+
         it('should exist', function() {
             expect(CampaignMiniReelCtrl).toEqual(jasmine.any(Object));
         });

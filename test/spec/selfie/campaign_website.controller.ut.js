@@ -37,6 +37,17 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            c6State = null;
+            cState = null;
+            CollateralService = null;
+            WebsiteCtrl = null;
+        });
+
         it('should exist', function() {
             expect(WebsiteCtrl).toEqual(jasmine.any(Object));
         });

@@ -76,6 +76,21 @@
                 spyOn(EditorService, 'beforeSync').and.callThrough();
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                $q = null;
+                c6State = null;
+                FileService = null;
+                CollateralService = null;
+                EditorService = null;
+                SplashImageCtrl = null;
+                EditorSplashCtrl = null;
+                EditorCtrl = null;
+                minireel = null;
+            });
+
             it('should exist', function() {
                 expect(SplashImageCtrl).toEqual(jasmine.any(Object));
             });

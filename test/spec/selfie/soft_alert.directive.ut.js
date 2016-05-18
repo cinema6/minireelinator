@@ -24,6 +24,18 @@
                 });
             });
 
+            afterEach(function() {
+                $alert.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                SoftAlertService = null;
+                $alert = null;
+            });
+
             it('should set its scope.model propertry to be the SoftAlertService\'s model', function() {
                 expect($alert.isolateScope().model).toBe(SoftAlertService.model);
             });

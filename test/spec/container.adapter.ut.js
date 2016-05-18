@@ -29,6 +29,15 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            ContainerAdapter = null;
+            adapter = null;
+            $rootScope = null;
+            $httpBackend = null;
+            success = null;
+            failure = null;
+        });
+
         it('should exist', function() {
             expect(adapter).toEqual(jasmine.any(Object));
         });

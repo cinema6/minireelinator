@@ -55,6 +55,19 @@ define(['app','angular'], function(appModule, angular) {
             compileCtrl();
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            cinema6 = null;
+            PaymentService = null;
+            AddFundsModalService = null;
+            AddFundsModalCtrl = null;
+            model = null;
+            newMethod = null;
+        });
+
         it('should exist', function() {
             expect(AddFundsModalCtrl).toEqual(jasmine.any(Object));
         });

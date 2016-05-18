@@ -18,6 +18,12 @@
                 });
             });
 
+            afterAll(function() {
+                $injector = null;
+                c6State = null;
+                SplashImageState = null;
+            });
+
             it('should exist', function() {
                 expect(SplashImageState).toEqual(jasmine.any(Object));
             });

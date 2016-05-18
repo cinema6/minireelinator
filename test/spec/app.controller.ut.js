@@ -46,6 +46,17 @@ define(['app', 'version', 'c6_defines'], function(appModule, version, c6Defines)
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            _$rootScope_ = null;
+            $controller = null;
+            $scope = null;
+            AppCtrl = null;
+            CSSLoadingService = null;
+            c6State = null;
+            tracker = null;
+        });
+
         it('should exist', function() {
             expect(AppCtrl).toEqual(jasmine.any(Object));
         });

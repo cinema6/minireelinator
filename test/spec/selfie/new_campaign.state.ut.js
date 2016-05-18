@@ -70,6 +70,19 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            c6State = null;
+            selfieState = null;
+            newCampaignState = null;
+            CampaignService = null;
+            cinema6 = null;
+            campaign = null;
+            card = null;
+            advertisers = null;
+        });
+
         it('should exist', function() {
             expect(newCampaignState).toEqual(jasmine.any(Object));
         });

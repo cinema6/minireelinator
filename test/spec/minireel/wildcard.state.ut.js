@@ -26,6 +26,15 @@ define(['app', 'angular'], function(appModule, angular) {
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                c6State = null;
+                cinema6 = null;
+                MiniReelService = null;
+                wildcard = null;
+            });
+
             it('should exist', function() {
                 expect(wildcard).toEqual(jasmine.any(Object));
             });

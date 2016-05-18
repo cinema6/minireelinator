@@ -25,6 +25,14 @@ define(['minireel/sponsor'], function(sponsorModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6EventEmitter = null;
+            $scope = null;
+            AdPlayerCtrl = null;
+        });
+
         it('should exist', function() {
             expect(AdPlayerCtrl).toEqual(jasmine.any(Object));
         });

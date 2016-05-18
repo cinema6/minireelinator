@@ -60,6 +60,21 @@
                 };
             });
 
+            afterAll(function() {
+                ManagerState = null;
+                minireel = null;
+                $rootScope = null;
+                $q = null;
+                $location = null;
+                cinema6 = null;
+                $injector = null;
+                c6State = null;
+                scopePromise = null;
+                portal = null;
+                currentUser = null;
+                experiences = null;
+            });
+
             describe('filter', function() {
                 it('should be all', function() {
                     expect(ManagerState.filter).toBe('all');

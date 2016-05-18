@@ -86,6 +86,20 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            SettingsService = null;
+            MiniReelService = null;
+            portal = null;
+            $scope = null;
+            SponsorCardCtrl = null;
+            PlacementStandaloneCtrl = null;
+            card = null;
+            minireel = null;
+        });
+
         it('should exist', function() {
             expect(PlacementStandaloneCtrl).toEqual(jasmine.any(Object));
         });

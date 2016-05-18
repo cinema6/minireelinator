@@ -58,6 +58,18 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            cinema6 = null;
+            c6State = null;
+            $scope = null;
+            ThumbnailService = null;
+            CampaignCtrl = null;
+            CampaignCardsCtrl = null;
+            campaign = null;
+        });
+
         it('should exist', function() {
             expect(CampaignCardsCtrl).toEqual(jasmine.any(Object));
         });

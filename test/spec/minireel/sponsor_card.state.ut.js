@@ -45,6 +45,20 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
             sponsorCard = c6State.get('MR:SponsorCard');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            c6State = null;
+            cinema6 = null;
+            SettingsService = null;
+            EditorService = null;
+            MiniReelService = null;
+            $location = null;
+            $q = null;
+            sponsorCard = null;
+            portal = null;
+            card = null;
+        });
+
         it('should exist', function() {
             expect(sponsorCard).toEqual(jasmine.any(Object));
         });

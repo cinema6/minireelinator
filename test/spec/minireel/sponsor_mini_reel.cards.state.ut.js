@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             sponsorMiniReelCards = c6State.get('MR:SponsorMiniReel.Cards');
         });
 
+        afterAll(function() {
+            c6State = null;
+            sponsorMiniReelCards = null;
+        });
+
         it('should exist', function() {
             expect(sponsorMiniReelCards).toEqual(jasmine.any(Object));
         });

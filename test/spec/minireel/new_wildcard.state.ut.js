@@ -35,6 +35,15 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             });
         });
 
+        afterAll(function() {
+            c6State = null;
+            cinema6 = null;
+            MiniReelService = null;
+            campaign = null;
+            newWildcard = null;
+            card = null;
+        });
+
         it('should exist', function() {
             expect(newWildcard).toEqual(jasmine.any(Object));
         });

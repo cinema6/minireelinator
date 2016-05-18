@@ -30,6 +30,17 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $httpBackend = null;
+            $q = null;
+            SelfieVideoService = null;
+            YouTubeDataService = null;
+            VimeoDataService = null;
+            DailymotionDataService = null;
+            metagetta = null;
+        });
+
         it('should exist', function() {
             expect(SelfieVideoService).toEqual(jasmine.any(Object));
         });

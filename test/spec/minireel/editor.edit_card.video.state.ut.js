@@ -22,6 +22,14 @@
                 });
             });
 
+            afterAll(function() {
+                $injector = null;
+                c6State = null;
+                MiniReelService = null;
+                EditCardState = null;
+                VideoState = null;
+            });
+
             it('should exist', function() {
                 expect(VideoState).toEqual(jasmine.any(Object));
             });

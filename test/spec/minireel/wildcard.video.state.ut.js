@@ -16,6 +16,11 @@ define(['app'], function(appModule) {
                 wildcardVideo = c6State.get(stateName);
             });
 
+            afterAll(function() {
+                c6State = null;
+                wildcardVideo = null;
+            });
+
             it('should exist', function() {
                 expect(wildcardVideo).toEqual(jasmine.any(Object));
             });

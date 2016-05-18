@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             studio = c6State.get('MR:Studio');
         });
 
+        afterAll(function() {
+            c6State = null;
+            studio = null;
+        });
+
         it('should exist', function() {
             expect(studio).toEqual(jasmine.any(Object));
         });

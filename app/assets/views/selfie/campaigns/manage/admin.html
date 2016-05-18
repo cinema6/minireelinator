@@ -3,8 +3,11 @@
         <h2 class="tabContent__title tk--hdr">Campaign Administration</h2>
         <span class="tabContent__subtitle">Here you can perform administrative actions on a campaign.</span>
         <h3 ng-if="SelfieManageCampaignCtrl.showAdminTab" class="tk--hdr">
-                Campaign ID: {{campaign.id}}<br>
-                Card ID: {{campaign.cards[0].id}}
+            Campaign ID: {{campaign.id}}<br>
+            Card ID: {{campaign.cards[0].id}}<br>
+            Total Spend: ${{Ctrl.totalSpend | number:2}}<br>
+            Budget: ${{campaign.pricing.budget | number:2}}<br>
+            Spent: {{(Ctrl.totalSpend / campaign.pricing.budget * 100) | number:2}}%
         </h3>
 
         <div class="action__btnGroup" ng-show="!Ctrl.showApproval && Ctrl.campaign.status === 'pending'">

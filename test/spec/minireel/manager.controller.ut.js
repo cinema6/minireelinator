@@ -109,6 +109,23 @@
                 spyOn(ConfirmDialogService, 'close');
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $controller = null;
+                $q = null;
+                c6State = null;
+                scopePromise = null;
+                EditorService = null;
+                ConfirmDialogService = null;
+                MiniReelService = null;
+                ManagerCtrl = null;
+                minireel = null;
+                manager = null;
+                MiniReelCtrl = null;
+                model = null;
+            });
+
             it('should exist', function() {
                 expect(ManagerCtrl).toEqual(jasmine.any(Object));
             });

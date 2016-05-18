@@ -15,6 +15,11 @@ define(['app'], function(appModule) {
             error = c6State.get('Error');
         });
 
+        afterAll(function() {
+            c6State = null;
+            error = null;
+        });
+
         it('should have properties', function() {
             expect(error).toEqual(jasmine.objectContaining({
                 templateUrl: jasmine.any(String)

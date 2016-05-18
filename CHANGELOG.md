@@ -1,10 +1,16 @@
 # MiniReelinator
 
 * *[v1.48.0.rc1]*
+  * Show total spend information in campaign administration tab
+  * [FEATURE]: Allow pasting featured Vimeo URLs
+  * [DEV]: Nullify global variables in test specs and cleanup compiled directives
   * [DEV]: Convert Flight Date inputs into Angular directives
   * [DEV]: Add a service and directive to replace Campaign Funding Modals
   * [DEV]: Use new funding directive in campaign creation screen and
     remove old funding states
+  * [FIX]: Factor in spent budget and elapsed time when validating daily limit
+  * [FIX]: Allow campaigns to be submitted with "invalid" daily limits that
+    don't align with end dates and budget settings
 
 ## v1.47.2 (May 12, 2016)
 * *[v1.47.2.rc1]*

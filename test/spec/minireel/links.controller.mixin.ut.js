@@ -30,6 +30,14 @@ define(['angular','minireel/mixins/LinksController'], function(angular, LinksCon
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            LinksCtrl = null;
+            parent = null;
+            links = null;
+        });
+
         it('should exist', function() {
             expect(LinksCtrl).toEqual(jasmine.any(Object));
         });

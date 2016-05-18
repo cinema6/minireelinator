@@ -28,6 +28,15 @@ define (['app'], function(appModule) {
             portal = c6State.get('Portal');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            c6State = null;
+            cinema6 = null;
+            AuthService = null;
+            portal = null;
+        });
+
         it('should exist', function() {
             expect(portal).toEqual(jasmine.any(Object));
         });

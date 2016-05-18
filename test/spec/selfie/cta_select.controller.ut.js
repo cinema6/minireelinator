@@ -51,6 +51,14 @@ define(['app'], function(appModule) {
             spyOn(ctrl._private, 'generatePhoneLink');
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            ctrl = null;
+            card = null;
+        });
+
         it('should exist', function() {
             expect(ctrl).toEqual(jasmine.any(Object));
         });

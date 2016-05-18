@@ -2,7 +2,7 @@
 </p>
 
 <div class="form__items">
-    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
+    <fieldset ng-if="!increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
         <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-campaign-budget" ng-model="SelfieBudgetCtrl.budget" ng-blur="SelfieBudgetCtrl.setBudget()">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-budget">
@@ -24,7 +24,28 @@
         </div>
     </fieldset>
 
-    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError }">
+    <fieldset ng-if="increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
+        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-campaign-increase-budget" ng-model="SelfieBudgetCtrl.additionalBudget" ng-blur="SelfieBudgetCtrl.setBudget()">
+        <span class="input__unit">$</span>
+        <label class="form__label" for="c6-campaign-increase-budget">
+            <i class="fa fa-times ui--error"></i>
+            Increase Budget By<span class="text--small"> (required) </span>
+        </label>
+        <!--<div class="form__helpBox form__helpBox--right">
+            <div class="form__helpText">
+                Please enter the budget for your campaign.
+            </div>
+
+        </div>-->
+        <div class="form__errorBox" ng-switch="SelfieBudgetCtrl.additionalBudgetError">
+            <p class="form__errorMsg" ng-switch-when="1"><i class="fa fa-exclamation-triangle"></i> Must be greater than $0 </p>
+            <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be less than ${{SelfieBudgetCtrl.budgetMax - SelfieBudgetCtrl.budget | number:2}} </p>
+            <p class="form__errorMsg" ng-switch-when="3"><i class="fa fa-exclamation-triangle"></i> Please enter a valid dollar amount </p>
+            <p class="form__errorMsg" ng-switch-when="4"><i class="fa fa-exclamation-triangle"></i> Budget increase is required </p>
+        </div>
+    </fieldset>
+
+    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError && SelfieBudgetCtrl.dailyLimitError.code !== 5 }">
         <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-daily-limit" ng-model="SelfieBudgetCtrl.limit" ng-blur="SelfieBudgetCtrl.setBudget()" step="0.01">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-daily-limit">
@@ -39,13 +60,14 @@
         </div>
         <div class="form__errorBox" ng-switch="SelfieBudgetCtrl.dailyLimitError.code">
             <p class="form__errorMsg" ng-switch-when="1"><i class="fa fa-exclamation-triangle"></i> Please enter your Total Budget first </p>
-            <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be greater than ${{SelfieBudgetCtrl.limitMinPercent * SelfieBudgetCtrl.budget | number:2}} </p>
+            <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be greater than ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}} </p>
             <p class="form__errorMsg" ng-switch-when="3"><i class="fa fa-exclamation-triangle"></i> Must be less than Total Budget </p>
             <p class="form__errorMsg" ng-switch-when="4"><i class="fa fa-exclamation-triangle"></i> Please enter a valid dollar amount </p>
-            <p class="form__errorMsg" ng-switch-when="5"><i class="fa fa-exclamation-triangle"></i> Based on your flight dates your limit must be at least ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}} </p>
         </div>
     </fieldset>
 
-    <span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget && !hideEstimates" style="display:block">Estimated views: <strong>{{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</strong></span>
+    <p ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget && !hideEstimates">Estimated views: <strong>{{ SelfieBudgetCtrl.totalBudget / SelfieBudgetCtrl.cpv | number:0}}</strong></p>
+
+    <p ng-if="SelfieBudgetCtrl.dailyLimitError.code === 5" class="alertMessage alert__warning two-thirds" style="margin:0 auto;">Warning: based on your flight dates your limit should be at least ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}}</p>
 
 </div>

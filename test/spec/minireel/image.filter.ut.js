@@ -30,6 +30,13 @@
                 });
             });
 
+            afterAll(function() {
+                imageFilter = null;
+                FileService = null;
+                fileWrapper = null;
+                file = null;
+            });
+
             it('should exist', function() {
                 expect(imageFilter).toEqual(jasmine.any(Function));
             });

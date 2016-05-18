@@ -29,6 +29,19 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
+        afterEach(function() {
+            player.remove();
+        });
+
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $compile = null;
+            player = null;
+            mockIFrame = null;
+            mockSpan = null;
+        });
+
         it('should append the correct iframe', function() {
             expect(angular.element.prototype.append).toHaveBeenCalled();
             var iframe = angular.element.prototype.append.calls.mostRecent().args[0];
@@ -44,11 +57,11 @@ define(['app', 'angular'], function(appModule, angular) {
             expect(iframe.attr('style')).toContain('left: 0px;');
             expect(iframe.attr('style')).toContain('right: 0px;');
         });
-        
+
         it('should have the proper class', function() {
             expect(player.hasClass('brightcovePreview')).toBe(true);
         });
-        
+
         it('should watch the videoid and reload the video', function() {
             angular.element.prototype.append.calls.reset();
             $scope.$apply(function() {
@@ -58,7 +71,7 @@ define(['app', 'angular'], function(appModule, angular) {
             var iframe = angular.element.prototype.append.calls.mostRecent().args[0];
             expect(iframe.attr('src')).toBe('//players.brightcove.net/acct-1337/123-456-def_default/index.html?videoId=different');
         });
-        
+
         it('should watch the accountid and reload the video', function() {
             angular.element.prototype.append.calls.reset();
             $scope.$apply(function() {
@@ -68,7 +81,7 @@ define(['app', 'angular'], function(appModule, angular) {
             var iframe = angular.element.prototype.append.calls.mostRecent().args[0];
             expect(iframe.attr('src')).toBe('//players.brightcove.net/different/123-456-def_default/index.html?videoId=abc123');
         });
-        
+
         it('should watch the playerid and reload the video', function() {
             angular.element.prototype.append.calls.reset();
             $scope.$apply(function() {
@@ -78,7 +91,7 @@ define(['app', 'angular'], function(appModule, angular) {
             var iframe = angular.element.prototype.append.calls.mostRecent().args[0];
             expect(iframe.attr('src')).toBe('//players.brightcove.net/acct-1337/different_default/index.html?videoId=abc123');
         });
-        
+
         it('should watch the embedid and relaod the video', function() {
             angular.element.prototype.append.calls.reset();
             $scope.$apply(function() {

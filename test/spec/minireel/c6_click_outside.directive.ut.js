@@ -49,6 +49,22 @@
                 $timeout.flush();
             });
 
+            afterEach(function() {
+                $clickOutside.remove();
+            });
+
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+                $timeout = null;
+                $clickOutside = null;
+                $testBox = null;
+                $test1 = null;
+                $test2 = null;
+                $test3 = null;
+            });
+
             it('should only evaluate the expression when an element other than itself is clicked', function() {
                 $clickOutside.click();
                 expect($scope.spy).not.toHaveBeenCalled();

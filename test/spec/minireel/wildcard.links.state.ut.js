@@ -20,6 +20,12 @@ define(['app'], function(appModule) {
                 wildcardLinks.cParent.cModel = MiniReelService.createCard('video');
             });
 
+            afterAll(function() {
+                c6State = null;
+                MiniReelService = null;
+                wildcardLinks = null;
+            });
+
             it('should exist', function() {
                 expect(wildcardLinks).toEqual(jasmine.any(Object));
             });

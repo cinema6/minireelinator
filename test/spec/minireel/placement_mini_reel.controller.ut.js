@@ -55,6 +55,14 @@ define(['minireel/sponsor'], function(sponsorModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            $scope = null;
+            PlacementMiniReelCtrl = null;
+            minireel = null;
+        });
+
         it('should exist', function() {
             expect(PlacementMiniReelCtrl).toEqual(jasmine.any(Object));
         });

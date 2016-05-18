@@ -19,6 +19,13 @@ define(['minireel/services'], function(servicesModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $q = null;
+            YQLService = null;
+            OpenGraphService = null;
+        });
+
         it('should exist', function() {
             expect(OpenGraphService).toEqual(jasmine.any(Object));
         });

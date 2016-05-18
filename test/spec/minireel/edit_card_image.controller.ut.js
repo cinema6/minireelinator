@@ -55,6 +55,20 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $scope = null;
+            $controller = null;
+            $q = null;
+            MiniReelService = null;
+            PortalCtrl = null;
+            EditorCtrl = null;
+            EditCardCtrl = null;
+            EditCardImageCtrl = null;
+            ImageService = null;
+            model = null;
+        });
+
         it('should exist', function() {
             expect(EditCardImageCtrl).toEqual(jasmine.any(Object));
         });

@@ -19,6 +19,12 @@ define(['app','minireel/mixins/WizardController'], function(appModule, WizardCon
             spyOn(c6State, 'goTo');
         });
 
+        afterAll(function() {
+            c6State = null;
+            $timeout = null;
+            WizardCtrl = null;
+        });
+
         it('should exist', function() {
             expect(WizardCtrl).toEqual(jasmine.any(Object));
         });

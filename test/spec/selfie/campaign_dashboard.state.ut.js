@@ -39,6 +39,18 @@ define(['app'], function(appModule) {
                 selfieCampaignDashboard = c6State.get(stateName);
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                c6State = null;
+                selfieCampaignDashboard = null;
+                selfieState = null;
+                cinema6 = null;
+                CampaignService = null;
+                $q = null;
+                deferredOrgs = null;
+                deferredAdvertisers = null;
+            });
+
             it('should exist', function() {
                 expect(selfieCampaignDashboard).toEqual(jasmine.any(Object));
             });

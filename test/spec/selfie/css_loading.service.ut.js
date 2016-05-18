@@ -14,6 +14,11 @@ define(['app','angular'], function(appModule, angular) {
             });
         });
 
+        afterAll(function() {
+            $document = null;
+            CSSLoadingService = null;
+        });
+
         it('should exist', function() {
             expect(CSSLoadingService).toEqual(jasmine.any(Object));
         });

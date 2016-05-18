@@ -52,6 +52,16 @@ define(['app'], function(appModule) {
             });
         });
 
+        afterAll(function() {
+            $rootScope = null;
+            $controller = null;
+            cinema6 = null;
+            $scope = null;
+            CampaignCtrl = null;
+            CampaignAssetsCtrl = null;
+            campaign = null;
+        });
+
         it('should exist', function() {
             expect(CampaignAssetsCtrl).toEqual(jasmine.any(Object));
         });

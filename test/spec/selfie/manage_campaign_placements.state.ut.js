@@ -63,6 +63,23 @@ define(['app'], function(appModule) {
                 };
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $q = null;
+                c6State = null;
+                selfieContainer = null;
+                selfieState = null;
+                cinema6 = null;
+                campaign = null;
+                containers = null;
+                placements = null;
+                newPlacement = null;
+                containersDeferred = null;
+                placementsDeferred = null;
+                success = null;
+                failure = null;
+            });
+
             it('should exist', function() {
                 expect(selfieContainer).toEqual(jasmine.any(Object));
             });

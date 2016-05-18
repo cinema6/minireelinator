@@ -16,6 +16,10 @@ define(['app'], function(appModule) {
             expect(absFilter).toEqual(jasmine.any(Function));
         });
 
+        afterAll(function() {
+            absFilter = null;
+        });
+
         describe('if passed a number less than 0', function() {
             it('should return the absolute value', function() {
                 expect(absFilter(-555)).toBe(555);

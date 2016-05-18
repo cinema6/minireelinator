@@ -32,6 +32,16 @@ define(['minireel/sponsor','app','minireel/mixins/MiniReelListController'], func
             });
         });
 
+        afterAll(function() {
+            $injector = null;
+            $rootScope = null;
+            $controller = null;
+            c6State = null;
+            sponsorManager = null;
+            $scope = null;
+            SponsorManagerCtrl = null;
+        });
+
         it('should exist', function() {
             expect(SponsorManagerCtrl).toEqual(jasmine.any(Object));
         });

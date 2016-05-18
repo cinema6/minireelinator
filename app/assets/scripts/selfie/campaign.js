@@ -634,7 +634,9 @@ function( angular , c6State  , PaginatedListState,
 
                     return $q.all({
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
-                        logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id)
+                        logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id),
+                        stats: (!this.campaign.id || this._campaign.status === 'draft') ?
+                            $q.when(null) : CampaignService.getAnalytics({ids: this.campaign.id})
                     }).catch(function() {
                         c6State.goTo('Selfie:CampaignDashboard');
                         return $q.reject();
@@ -932,6 +934,7 @@ function( angular , c6State  , PaginatedListState,
             this.initWithModel = function(model) {
                 this.logos = model.logos;
                 this.categories = model.categories;
+                this.stats = (model.stats && model.stats.length) ? model.stats[0] : null;
 
                 this.card = cState.card;
                 this.campaign = cState.campaign;
@@ -2174,7 +2177,9 @@ function( angular , c6State  , PaginatedListState,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign:Admin', ['cinema6','$q','c6State',
-            function                                              ( cinema6 , $q , c6State ) {
+                                                                   'CampaignService',
+            function                                              ( cinema6 , $q , c6State ,
+                                                                    CampaignService ) {
                 this.templateUrl = 'views/selfie/campaigns/manage/admin.html';
                 this.controller = 'SelfieManageCampaignAdminController';
                 this.controllerAs = 'SelfieManageCampaignAdminCtrl';
@@ -2185,6 +2190,16 @@ function( angular , c6State  , PaginatedListState,
                 this.beforeModel = function() {
                     this._campaign = this.cParent.campaign;
                     this._updateRequest = this.cParent.updateRequest;
+                };
+
+                this.model = function() {
+                    return CampaignService.getAnalytics({
+                        ids: this._campaign.id
+                    }).then(function(analytics) {
+                        return {
+                            analytics: analytics[0]
+                        };
+                    });
                 };
 
                 this.afterModel = function() {
@@ -2263,7 +2278,7 @@ function( angular , c6State  , PaginatedListState,
                                                              $scope ,  c6Debounce ){
             var self = this;
 
-            this.initWithModel = function() {
+            this.initWithModel = function(model) {
                 var campaign = cState.campaign;
                 var updateRequest = cState.updateRequest;
                 var updatedCampaign = (updateRequest) ? updateRequest.data : campaign;
@@ -2276,7 +2291,8 @@ function( angular , c6State  , PaginatedListState,
                     rejectionReason: '',
                     error: null,
                     hasDuration: !!updatedCampaign.cards[0].data.duration &&
-                        updatedCampaign.cards[0].data.duration !== -1
+                        updatedCampaign.cards[0].data.duration !== -1,
+                    totalSpend: (model.analytics) ? model.analytics.summary.totalSpend : 0
                 });
             };
 

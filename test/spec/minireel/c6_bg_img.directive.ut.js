@@ -22,6 +22,12 @@
                 });
             });
 
+            afterAll(function() {
+                $rootScope = null;
+                $scope = null;
+                $compile = null;
+            });
+
             describe('if a truthy value is passed in', function() {
                 var $div;
 
