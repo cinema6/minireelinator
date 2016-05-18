@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.48.0.rc1]*
+  * [FIX]: Fix for an issue that would prevent some wistia thumbnails from being fetched
   * Show total spend information in campaign administration tab
   * [FEATURE]: Allow pasting featured Vimeo URLs
   * [DEV]: Nullify global variables in test specs and cleanup compiled directives

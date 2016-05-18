@@ -60,7 +60,7 @@
                 c6uilib: libUrl('c6ui/v3.7.4-0-g734d5f3/c6uilib'),
                 c6log: libUrl('c6ui/v3.7.4-0-g734d5f3/c6log'),
                 c6embed: libUrl('c6embed/v1/utils'),
-                metagetta: libUrl('metagetta/v0.4.0-0-gb1cc671/metagetta'),
+                metagetta: libUrl('metagetta/v0.4.1-0-gaf1c37d/metagetta'),
                 braintree: 'lib/braintree',
                 intercom: [
                     'https://widget.intercom.io/widget/xpkkvhlv',
