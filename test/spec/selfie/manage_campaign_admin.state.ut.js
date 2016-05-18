@@ -7,7 +7,6 @@ define(['app'], function(appModule) {
                 $q,
                 campaignState,
                 selfieState,
-                newCampaignState,
                 c6State,
                 cinema6,
                 MiniReelService;
@@ -18,6 +17,8 @@ define(['app'], function(appModule) {
                 paymentMethods;
 
             beforeEach(function() {
+                var self = this;
+
                 module(appModule.name);
 
                 inject(function($injector) {
@@ -26,6 +27,7 @@ define(['app'], function(appModule) {
                     c6State = $injector.get('c6State');
                     cinema6 = $injector.get('cinema6');
                     MiniReelService = $injector.get('MiniReelService');
+                    self.CampaignService = $injector.get('CampaignService');
 
                     card = cinema6.db.create('card', MiniReelService.createCard('video'));
                     updateRequest = {
@@ -85,6 +87,7 @@ define(['app'], function(appModule) {
 
                     spyOn(cinema6.db, 'findAll');
                     spyOn(campaignState, '_decorateInterests');
+                    spyOn(self.CampaignService, 'getAnalytics');
                 });
             });
 
@@ -93,7 +96,6 @@ define(['app'], function(appModule) {
                 $q = null;
                 campaignState = null;
                 selfieState = null;
-                newCampaignState = null;
                 c6State = null;
                 cinema6 = null;
                 MiniReelService = null;
@@ -122,6 +124,22 @@ define(['app'], function(appModule) {
                     campaignState.beforeModel();
                     expect(campaignState._campaign).toEqual(campaign);
                     expect(campaignState._updateRequest).toEqual(updateRequest);
+                });
+            });
+
+            describe('model()', function() {
+                it('should fetch analytics and store them on the model', function(done) {
+                    var self = this;
+                    this.CampaignService.getAnalytics.and.returnValue($q.when(['analytics']));
+                    campaignState._campaign = campaign;
+                    $rootScope.$apply(function() {
+                        campaignState.model().then(function(model) {
+                            expect(self.CampaignService.getAnalytics).toHaveBeenCalledWith({ ids: 'cam-123' });
+                            expect(model).toEqual({
+                                analytics: 'analytics'
+                            });
+                        }).then(done, done.fail);
+                    });
                 });
             });
 
