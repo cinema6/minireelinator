@@ -1,4 +1,4 @@
-<p class="formSection__introText">Select your campaign schedule</p>
+<p ng-if="!hideHeader" class="formSection__introText">Select your campaign schedule</p>
 <div class="timeline__selectOption">
     <input type="radio" name="hasDates" id="setDate__auto" ng-model="SelfieFlightDatesCtrl.hasDates" ng-value="false" ng-change="SelfieFlightDatesCtrl.setTimelineOption()"> <label for="setDate__auto"><span class="radio__input"></span>Run continuously once approved</label>
     <input type="radio" name="hasDates" id="setDate__selected" ng-model="SelfieFlightDatesCtrl.hasDates" ng-value="true" ng-change="SelfieFlightDatesCtrl.setTimelineOption()"> <label for="setDate__selected"><span class="radio__input"></span>Set start and end dates</label>

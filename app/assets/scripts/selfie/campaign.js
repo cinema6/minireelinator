@@ -1654,6 +1654,7 @@ function( angular , c6State  , PaginatedListState,
 
                     return $q.all({
                         schema: CampaignService.getSchema(),
+                        stats: CampaignService.getAnalytics({ids: this.campaign.id}),
                         advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId),
                         updateRequest: updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
@@ -1734,7 +1735,9 @@ function( angular , c6State  , PaginatedListState,
             function createUpdateRequest(action) {
                 var Ctrl = SelfieManageCampaignCtrl,
                     updateRequest = Ctrl.updateRequest,
-                    campaign = (updateRequest || {}).data || Ctrl.campaign.pojoify(),
+                    renewalCampaign = Ctrl.renewalCampaign,
+                    campaign = renewalCampaign || (updateRequest || {}).data ||
+                        Ctrl.campaign.pojoify(),
                     id = Ctrl.campaign.id;
 
                 if (action === 'delete') {
@@ -1774,6 +1777,10 @@ function( angular , c6State  , PaginatedListState,
                     campaign.updateRequest = updateRequest.id.split(':')[1];
                     SelfieManageCampaignCtrl.updateRequest = updateRequest;
                     cState.updateRequest = updateRequest;
+
+                    if (updateRequest.data.status === 'pending') {
+                        campaign.status = 'pending';
+                    }
                 }
 
                 return campaign;
@@ -1808,6 +1815,18 @@ function( angular , c6State  , PaginatedListState,
                     .catch(handleError);
             }
 
+            function getExpirationDate(campaign) {
+                var entry = campaign.statusHistory.filter(function(entry) {
+                    return entry.status === campaign.status;
+                })[0] || {};
+
+                return entry.date;
+            }
+
+            function testStatus(regex) {
+                return regex.test(SelfieManageCampaignCtrl.campaign.status);
+            }
+
             Object.defineProperties(this, {
                 canSubmit: {
                     get: function() {
@@ -1834,16 +1853,27 @@ function( angular , c6State  , PaginatedListState,
                         return (/expired|canceled|pending/).test(this.campaign.status);
                     }
                 },
-                canRenew: {
+                validRenewal: {
                     get: function() {
-                        return (/expired|canceled|outOfBudget/).test(this.campaign.status);
+                        if (!this.renewalCampaign) { return false; }
+
+                        var campaign = this.renewalCampaign,
+                            pricingData = campaign.pricing;
+
+                        return this.validation.budget && this.validation.dailyLimit &&
+                            this.validation.startDate && this.validation.endDate &&
+                            (campaign.status !== 'outOfBudget' ||
+                                pricingData.budget > this.campaign.pricing.budget);
+                    }
+                },
+                renewalText: {
+                    get: function() {
+                        return (testStatus(/pending|active|paused/) && 'Extend') ||
+                            (testStatus(/expired|canceled|outOfBudget/) && 'Restart') ||
+                            'Extend';
                     }
                 }
             });
-
-            this.backToDashboard = function() {
-                c6State.goTo.apply(null, dashboardStateArgs(cState));
-            };
 
             this.initWithModel = function(model) {
                 this.campaign = cState.campaign;
@@ -1855,62 +1885,86 @@ function( angular , c6State  , PaginatedListState,
                 this.categories = model.categories;
                 this.updateRequest = model.updateRequest;
                 this.advertiser = model.advertiser;
+                this.stats = model.stats[0];
 
                 this.card = (this.updateRequest && this.updateRequest.data &&
                     this.updateRequest.data.cards[0]) || cState.card;
 
-                this.summary = CampaignService.getSummary({
-                    campaign: (this.updateRequest && this.updateRequest.data) || this.campaign,
-                    interests: cState.interests || []
-                });
+                this.setSummary();
 
                 this._proxyCampaign = copy(cState.campaign);
             };
 
+            this.backToDashboard = function() {
+                c6State.goTo.apply(null, dashboardStateArgs(cState));
+            };
+
+            this.setSummary = function() {
+                this.summary = CampaignService.getSummary({
+                    campaign: (this.updateRequest && this.updateRequest.data) || this.campaign,
+                    interests: cState.interests || []
+                });
+            };
+
             this.initRenew = function() {
-                this.renewalCampaign = this.campaign.pojoify();
-                this.showRenewModal = true;
-                // TODO:
-                // - need to pass validation object into the
-                //   flight dates directive
-                // - need to get clever with budget directive:
-                //   ability to handle "Additional Budget" input
-                //   and add it to existing budget when validating
-                //   daily limit.
-                // - what do we do about validating budget when
-                //   a lot of the budget is already spent? do we
-                //   validate based on remaining budget + additional
-                //   budget?? this is going to get very complicated
+                this.renewalCampaign = (this.updateRequest && this.updateRequest.pojoify().data) ||
+                    this.campaign.pojoify();
+                this.expirationDate = getExpirationDate(this.renewalCampaign);
+                this.validation = {
+                    budget: true,
+                    startDate: true,
+                    endDate: true,
+                    show: false
+                };
+
+                if (this.renewalCampaign.status === 'expired') {
+                    this.renewalCampaign.cards[0].campaign.endDate = undefined;
+                    this.renewalCampaign.cards[0].campaign.startDate = undefined;
+                }
+
+                this.renderModal = true;
+                this.showModal = true;
+            };
+
+            this.destoryRenewModal = function() {
+                this.showModal = false;
+                this.renderModal = false;
+                this.renewalCampaign = null;
             };
 
             this.confirmRenewal = function() {
                 var self = this;
 
-                this.showRenewModal = false;
+                this.showModal = false;
 
                 CampaignFundingService.fund({
                     onClose: function() {
-                        self.showRenewModal = false;
+                        self.destoryRenewModal();
                     },
                     onCancel: function() {
-                        self.showRenewModal = true;
+                        self.showModal = true;
                     },
                     onSuccess: function() {
-                        console.log(SelfieManageCampaignCtrl.renewalCampaign);
+                        var campaign = self.renewalCampaign;
 
-                        // need to add renewalCampaign data to actual campaign or UR
-                        // and then create an update request
+                        campaign.status = (/expired|outOfBudget|canceled/).test(campaign.status) ?
+                            'pending' : campaign.status;
 
-                        // return submitUpdate('pending')
-                        //     .then(setPending)
-                        //     .then(returnToDashboard)
-                        //     .catch(showErrorModal);
+                        return createUpdateRequest()
+                            .then(setUpdateRequest)
+                            .then(updateProxy)
+                            .then(function() {
+                                self.setSummary();
+                                self.destoryRenewModal();
+                            })
+                            .catch(handleError);
                     },
                     originalCampaign: this.campaign,
                     updateRequest: this.updateRequest,
                     campaign: this.renewalCampaign,
                     interests: this.interests,
-                    schema: this.schema
+                    schema: this.schema,
+                    depositCancelButtonText: 'Back'
                 });
             };
 

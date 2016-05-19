@@ -2,7 +2,7 @@
 </p>
 
 <div class="form__items">
-    <fieldset ng-if="!increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
+    <fieldset ng-if="!increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.budgetError }">
         <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-campaign-budget" ng-model="SelfieBudgetCtrl.budget" ng-blur="SelfieBudgetCtrl.setBudget()">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-budget">
@@ -24,7 +24,7 @@
         </div>
     </fieldset>
 
-    <fieldset ng-if="increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
+    <fieldset ng-if="increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.additionalBudgetError }">
         <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-campaign-increase-budget" ng-model="SelfieBudgetCtrl.additionalBudget" ng-blur="SelfieBudgetCtrl.setBudget()">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-increase-budget">
