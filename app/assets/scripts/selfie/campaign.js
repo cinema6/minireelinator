@@ -1816,7 +1816,7 @@ function( angular , c6State  , PaginatedListState,
             }
 
             function getExpirationDate(campaign) {
-                var entry = campaign.statusHistory.filter(function(entry) {
+                var entry = (campaign.statusHistory || []).filter(function(entry) {
                     return entry.status === campaign.status;
                 })[0] || {};
 
@@ -1857,11 +1857,12 @@ function( angular , c6State  , PaginatedListState,
                     get: function() {
                         if (!this.renewalCampaign) { return false; }
 
-                        var campaign = this.renewalCampaign,
+                        var validation = this.validation,
+                            campaign = this.renewalCampaign,
                             pricingData = campaign.pricing;
 
-                        return this.validation.budget && this.validation.dailyLimit &&
-                            this.validation.startDate && this.validation.endDate &&
+                        return validation.budget && validation.dailyLimit &&
+                            validation.startDate && validation.endDate &&
                             (campaign.status !== 'outOfBudget' ||
                                 pricingData.budget > this.campaign.pricing.budget);
                     }
@@ -1906,7 +1907,7 @@ function( angular , c6State  , PaginatedListState,
                 });
             };
 
-            this.initRenew = function() {
+            this.initRenew = queue.debounce(function() {
                 this.renewalCampaign = (this.updateRequest && this.updateRequest.pojoify().data) ||
                     this.campaign.pojoify();
                 this.expirationDate = getExpirationDate(this.renewalCampaign);
@@ -1924,22 +1925,22 @@ function( angular , c6State  , PaginatedListState,
 
                 this.renderModal = true;
                 this.showModal = true;
-            };
+            }, this);
 
-            this.destoryRenewModal = function() {
+            this.destroyRenewModal = function() {
                 this.showModal = false;
                 this.renderModal = false;
                 this.renewalCampaign = null;
             };
 
-            this.confirmRenewal = function() {
+            this.confirmRenewal = queue.debounce(function() {
                 var self = this;
 
                 this.showModal = false;
 
                 CampaignFundingService.fund({
                     onClose: function() {
-                        self.destoryRenewModal();
+                        self.destroyRenewModal();
                     },
                     onCancel: function() {
                         self.showModal = true;
@@ -1955,9 +1956,11 @@ function( angular , c6State  , PaginatedListState,
                             .then(updateProxy)
                             .then(function() {
                                 self.setSummary();
-                                self.destoryRenewModal();
                             })
-                            .catch(handleError);
+                            .catch(handleError)
+                            .finally(function() {
+                                self.destroyRenewModal();
+                            });
                     },
                     originalCampaign: this.campaign,
                     updateRequest: this.updateRequest,
@@ -1966,7 +1969,7 @@ function( angular , c6State  , PaginatedListState,
                     schema: this.schema,
                     depositCancelButtonText: 'Back'
                 });
-            };
+            }, this);
 
             this.update = function(action) {
                 ConfirmDialogService.display({

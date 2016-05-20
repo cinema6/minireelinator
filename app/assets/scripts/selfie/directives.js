@@ -1541,8 +1541,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             this.hasDates = (function() {
                 var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
 
-                return !!campaignHash.endDate ||
-                    (!!startDate && startDate > now);
+                return (!!startDate && (startDate > now || campaign.status === 'draft')) ||
+                        !!campaignHash.endDate;
             }());
             this.editableStartDate = (function() {
                 var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
@@ -1733,10 +1733,11 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
         }])
 
         .controller('CampaignFundingController', ['CampaignFundingService','PaymentService','$q',
-                                                  'cinema6',
+                                                  'cinema6','c6AsyncQueue',
         function                                 ( CampaignFundingService , PaymentService , $q ,
-                                                   cinema6 ) {
-            var self = this;
+                                                   cinema6 , c6AsyncQueue ) {
+            var self = this,
+                queue = c6AsyncQueue();
 
             this.model = CampaignFundingService.model;
 
@@ -1774,7 +1775,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 this.model.onCancel();
             };
 
-            this.confirm = function() {
+            this.confirm = queue.debounce(function() {
                 // this is on the Confirmation button
                 var token = this.model.paymentMethod.token;
 
@@ -1793,7 +1794,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                     }).finally(function() {
                         self.confirmationPending = false;
                     });
-            };
+            }, this);
 
             this.nextStep = function() {
                 // this is on the Deposit "continue" button

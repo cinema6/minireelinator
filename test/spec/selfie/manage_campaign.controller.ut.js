@@ -29,6 +29,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             CampaignService,
             ConfirmDialogService,
             MiniReelService,
+            CampaignFundingService,
             SelfieManageCampaignCtrl;
 
         var cState,
@@ -38,7 +39,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             updateRequest,
             user,
             advertiser,
-            interests;
+            interests,
+            stats;
 
         var debouncedFns;
 
@@ -81,6 +83,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 CampaignService = $injector.get('CampaignService');
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
                 MiniReelService = $injector.get('MiniReelService');
+                CampaignFundingService = $injector.get('CampaignFundingService');
             });
 
             spyOn(ConfirmDialogService, 'display');
@@ -148,6 +151,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     id: 'cat-2'
                 }
             ];
+            stats = [];
 
             cState = {
                 cParent: {
@@ -155,12 +159,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 },
                 campaign: campaign,
                 card: card,
-                interests: interests
+                interests: interests,
+                schema: {}
             };
 
             compileCtrl(cState, {
                 categories: categories,
-                updateRequest: updateRequest
+                updateRequest: updateRequest,
+                stats: stats
             });
         });
 
@@ -174,6 +180,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             CampaignService = null;
             ConfirmDialogService = null;
             MiniReelService = null;
+            CampaignFundingService = null;
             SelfieManageCampaignCtrl = null;
             cState = null;
             campaign = null;
@@ -184,6 +191,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             advertiser = null;
             interests = null;
             debouncedFns = null;
+            stats = null;
         });
 
         it('should exist', function() {
@@ -194,7 +202,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             describe('canSubmit', function() {
                 it('should be false if campaign has not changed', function() {
                     compileCtrl(cState, {
-                        categories: categories
+                        categories: categories,
+                        stats: stats
                     });
 
                     expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
@@ -296,6 +305,143 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl.canDelete).toBe(false);
                 });
             });
+
+            describe('validRenewal', function() {
+                describe('when there is no renewalCampaign object', function() {
+                    it('should be false', function() {
+                        SelfieManageCampaignCtrl.renewalCampaign = null;
+
+                        expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
+                    });
+                });
+
+                describe('when there is a renewalCampaign object', function() {
+                    describe('when the status is outOfBudget', function() {
+                        it('should be false if the new budget is not greater than current budget', function() {
+                            campaign.pricing.budget = 100;
+                            SelfieManageCampaignCtrl.campaign = campaign.pojoify();
+
+                            campaign.status = 'outOfBudget';
+                            SelfieManageCampaignCtrl.renewalCampaign = campaign.pojoify();
+
+                            SelfieManageCampaignCtrl.validation = {
+                                budget: true,
+                                dailyLimit: true,
+                                startDate: true,
+                                endDate: true
+                            };
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
+
+                            SelfieManageCampaignCtrl.renewalCampaign.pricing.budget = 110;
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(true);
+                        });
+                    });
+                    describe('when the status is not outOfBudget', function() {
+                        it('should rely on the validation object', function() {
+                            campaign.status = 'active';
+                            SelfieManageCampaignCtrl.renewalCampaign = campaign.pojoify();
+
+                            SelfieManageCampaignCtrl.validation = {
+                                budget: true,
+                                dailyLimit: true,
+                                startDate: true,
+                                endDate: true
+                            };
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(true);
+
+                            SelfieManageCampaignCtrl.validation.budget = false;
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
+
+                            SelfieManageCampaignCtrl.validation.budget = true;
+                            SelfieManageCampaignCtrl.validation.dailyLimit = false;
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
+
+                            SelfieManageCampaignCtrl.validation.dailyLimit = true;
+                            SelfieManageCampaignCtrl.validation.startDate = false;
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
+
+                            SelfieManageCampaignCtrl.validation.startDate = true;
+                            SelfieManageCampaignCtrl.validation.endDate = false;
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
+
+                            SelfieManageCampaignCtrl.validation.endDate = true;
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(true);
+                        });
+                    });
+                });
+            });
+
+            describe('renewalText', function() {
+                describe('when campaign status is pending, active or paused', function() {
+                    it('should be "Extend"', function() {
+                        SelfieManageCampaignCtrl.campaign = campaign;
+
+                        campaign.status = 'pending';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Extend');
+
+                        campaign.status = 'active';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Extend');
+
+                        campaign.status = 'paused';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Extend');
+
+                        campaign.status = 'expired';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Restart');
+                    });
+                });
+
+                describe('when campaign status is expired, canceled or outOfBudget', function() {
+                    it('should be "Restart"', function() {
+                        SelfieManageCampaignCtrl.campaign = campaign;
+
+                        campaign.status = 'expired';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Restart');
+
+                        campaign.status = 'canceled';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Restart');
+
+                        campaign.status = 'outOfBudget';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Restart');
+
+                        campaign.status = 'pending';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Extend');
+                    });
+                });
+
+                describe('when campaign status is anything else', function() {
+                    it('should be "Extend"', function() {
+                        SelfieManageCampaignCtrl.campaign = campaign;
+
+                        campaign.status = 'draft';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Extend');
+
+                        campaign.status = 'something';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Extend');
+
+                        campaign.status = 'outOfBudget';
+
+                        expect(SelfieManageCampaignCtrl.renewalText).toBe('Restart');
+                    });
+                });
+            });
         });
 
         describe('methods', function() {
@@ -325,15 +471,69 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
             });
 
+            describe('setSummary()', function() {
+                var summary;
+
+                beforeEach(function() {
+                    summary = {};
+
+                    SelfieManageCampaignCtrl.campaign = campaign;
+
+                    spyOn(CampaignService, 'getSummary').and.returnValue(summary);
+                });
+
+                describe('when there is an updateRequest', function() {
+                    it('should use it to fetch a summary', function() {
+                        updateRequest = { data: {} };
+
+                        SelfieManageCampaignCtrl.updateRequest = updateRequest;
+
+                        SelfieManageCampaignCtrl.setSummary();
+
+                        expect(CampaignService.getSummary).toHaveBeenCalledWith({
+                            campaign: SelfieManageCampaignCtrl.updateRequest.data,
+                            interests: cState.interests
+                        });
+
+                        expect(SelfieManageCampaignCtrl.summary).toBe(summary);
+                    });
+                });
+
+                describe('when there is no updateRequest', function() {
+                    it('should use the campaign to fetch a summary', function() {
+                        SelfieManageCampaignCtrl.updateRequest = null;
+
+                        SelfieManageCampaignCtrl.setSummary();
+
+                        expect(CampaignService.getSummary).toHaveBeenCalledWith({
+                            campaign: SelfieManageCampaignCtrl.campaign,
+                            interests: cState.interests
+                        });
+
+                        expect(SelfieManageCampaignCtrl.summary).toBe(summary);
+                    });
+                });
+            });
+
             describe('initWithModel(model)', function() {
                 it('should set properties on the Ctrl', function() {
+                    var statsObject = {
+                        summary: {
+                            totalSpend: 100
+                        }
+                    };
+
+                    stats.push(statsObject);
+
+                    spyOn(SelfieManageCampaignCtrl, 'setSummary');
+
                     $scope.$apply(function() {
                         SelfieManageCampaignCtrl.card = null;
                         SelfieManageCampaignCtrl.campaign = null;
                         SelfieManageCampaignCtrl.categories = null;
                         SelfieManageCampaignCtrl._proxyCampaign = null;
 
-                        SelfieManageCampaignCtrl.initWithModel({categories: categories, updateRequest: updateRequest, advertiser: advertiser});
+                        SelfieManageCampaignCtrl.initWithModel({categories: categories, updateRequest: updateRequest, advertiser: advertiser, stats: stats});
                     });
 
                     expect(SelfieManageCampaignCtrl.card).toEqual(card);
@@ -341,6 +541,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
                     expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
                     expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
+                    expect(SelfieManageCampaignCtrl.interests).toBe(cState.interests);
+                    expect(SelfieManageCampaignCtrl.schema).toBe(cState.schema);
+                    expect(SelfieManageCampaignCtrl.stats).toBe(statsObject);
+                    expect(SelfieManageCampaignCtrl.setSummary).toHaveBeenCalled();
                 });
 
                 describe('when there is an updateRequest', function() {
@@ -361,7 +565,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                         spyOn(CampaignService, 'getSummary').and.returnValue(summary);
 
-                        SelfieManageCampaignCtrl.initWithModel({updateRequest: updateRequest});
+                        SelfieManageCampaignCtrl.initWithModel({updateRequest: updateRequest, stats: stats});
                     });
 
                     it('should use the card on it', function() {
@@ -386,17 +590,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                         spyOn(CampaignService, 'getSummary').and.returnValue(summary);
 
-                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null});
+                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null, stats: stats});
                     });
 
                     it('should use the card on the campaign', function() {
-                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null});
+                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null, stats: stats});
 
                         expect(SelfieManageCampaignCtrl.card).toBe(card);
                     });
 
                     it('should use the campaign to fetch a summary', function() {
-                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null});
+                        SelfieManageCampaignCtrl.initWithModel({updateRequest: null, stats: stats});
 
                         expect(CampaignService.getSummary).toHaveBeenCalledWith({
                             campaign: campaign,
@@ -404,6 +608,571 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         expect(SelfieManageCampaignCtrl.summary).toBe(summary);
+                    });
+                });
+            });
+
+            describe('initRenew()', function() {
+                describe('when there is an update request', function() {
+                    beforeEach(function() {
+                        updateRequest = {
+                            data: {
+                                cards: [
+                                    {
+                                        campaign: {
+                                            startDate: '2015-03-26T00:00:00.000Z',
+                                            endDate: '2015-05-26T00:00:00.000Z'
+                                        }
+                                    }
+                                ],
+                                statusHistory: [
+                                    {
+                                        status: 'outOfBudget',
+                                        date: '2015-06-26T00:00:00.000Z'
+                                    },
+                                    {
+                                        status: 'expired',
+                                        date: '2015-05-26T00:00:00.000Z'
+                                    },
+                                    {
+                                        status: 'active',
+                                        date: '2015-06-26T00:00:00.000Z'
+                                    }
+                                ]
+                            }
+                        };
+                        updateRequest.pojoify = jasmine.createSpy('pojoify()').and.returnValue(updateRequest);
+
+                        spyOn(campaign, 'pojoify');
+
+                        SelfieManageCampaignCtrl.updateRequest = updateRequest;
+                        SelfieManageCampaignCtrl.campaign = campaign;
+
+                        $scope.$apply(function() {
+                            SelfieManageCampaignCtrl.initRenew();
+                        });
+                    });
+
+                    it('should be wrapped in a c6AsyncQueue', function() {
+                        expect(debouncedFns).toContain(SelfieManageCampaignCtrl.initRenew);
+                    });
+
+                    it('should set renewalCampaign to be the data from a pojoified update request', function() {
+                        expect(SelfieManageCampaignCtrl.renewalCampaign).toEqual(updateRequest.pojoify().data);
+                    });
+
+                    it('should not pojoify the actual campaign', function() {
+                        expect(campaign.pojoify).not.toHaveBeenCalled();
+                    });
+
+                    it('should set the expiration date from the status history', function() {
+                        updateRequest.data.status = 'outOfBudget';
+                        $scope.$apply(function() {
+                            SelfieManageCampaignCtrl.initRenew();
+                        });
+
+                        expect(SelfieManageCampaignCtrl.expirationDate).toEqual('2015-06-26T00:00:00.000Z');
+
+                        updateRequest.data.status = 'expired';
+                        $scope.$apply(function() {
+                            SelfieManageCampaignCtrl.initRenew();
+                        });
+
+                        expect(SelfieManageCampaignCtrl.expirationDate).toEqual('2015-05-26T00:00:00.000Z');
+
+                        updateRequest.data.status = 'paused';
+                        $scope.$apply(function() {
+                            SelfieManageCampaignCtrl.initRenew();
+                        });
+
+                        expect(SelfieManageCampaignCtrl.expirationDate).toEqual(undefined);
+                    });
+
+                    it('should set a validation object', function() {
+                        expect(SelfieManageCampaignCtrl.validation).toEqual({
+                            budget: true,
+                            startDate: true,
+                            endDate: true,
+                            show: false
+                        });
+                    });
+
+                    it('should set modal rending flags to true', function() {
+                        expect(SelfieManageCampaignCtrl.renderModal).toBe(true);
+                        expect(SelfieManageCampaignCtrl.showModal).toBe(true);
+                    });
+
+                    describe('when status is "expired"', function() {
+                        it('should remove start and end dates', function() {
+                            updateRequest.data.status = 'expired';
+                            SelfieManageCampaignCtrl.initRenew();
+
+                            expect(SelfieManageCampaignCtrl.renewalCampaign.cards[0].campaign.startDate).toBe(undefined);
+                            expect(SelfieManageCampaignCtrl.renewalCampaign.cards[0].campaign.endDate).toBe(undefined);
+                        });
+                    });
+                });
+
+                describe('when there is no update request', function() {
+                    beforeEach(function() {
+                        campaign.cards[0].campaign = {
+                            startDate: '2015-03-26T00:00:00.000Z',
+                            endDate: '2015-05-26T00:00:00.000Z'
+                        };
+                        campaign.statusHistory = [
+                            {
+                                status: 'outOfBudget',
+                                date: '2015-06-26T00:00:00.000Z'
+                            },
+                            {
+                                status: 'expired',
+                                date: '2015-05-26T00:00:00.000Z'
+                            },
+                            {
+                                status: 'active',
+                                date: '2015-06-26T00:00:00.000Z'
+                            }
+                        ];
+
+                        spyOn(campaign, 'pojoify').and.returnValue(campaign);
+
+                        SelfieManageCampaignCtrl.updateRequest = null;
+                        SelfieManageCampaignCtrl.campaign = campaign;
+
+                        $scope.$apply(function() {
+                            SelfieManageCampaignCtrl.initRenew();
+                        });
+                    });
+
+                    it('should be wrapped in a c6AsyncQueue', function() {
+                        expect(debouncedFns).toContain(SelfieManageCampaignCtrl.initRenew);
+                    });
+
+                    it('should set renewalCampaign to be the data from a pojoified update request', function() {
+                        expect(SelfieManageCampaignCtrl.renewalCampaign).toEqual(campaign.pojoify());
+                    });
+
+                    it('should set the expiration date from the status history', function() {
+                        campaign.status = 'outOfBudget';
+                        $scope.$apply(function() {
+                            SelfieManageCampaignCtrl.initRenew();
+                        });
+
+                        expect(SelfieManageCampaignCtrl.expirationDate).toEqual('2015-06-26T00:00:00.000Z');
+
+                        campaign.status = 'expired';
+                        $scope.$apply(function() {
+                            SelfieManageCampaignCtrl.initRenew();
+                        });
+
+                        expect(SelfieManageCampaignCtrl.expirationDate).toEqual('2015-05-26T00:00:00.000Z');
+
+                        campaign.status = 'paused';
+                        $scope.$apply(function() {
+                            SelfieManageCampaignCtrl.initRenew();
+                        });
+
+                        expect(SelfieManageCampaignCtrl.expirationDate).toEqual(undefined);
+                    });
+
+                    it('should set a validation object', function() {
+                        expect(SelfieManageCampaignCtrl.validation).toEqual({
+                            budget: true,
+                            startDate: true,
+                            endDate: true,
+                            show: false
+                        });
+                    });
+
+                    it('should set modal rending flags to true', function() {
+                        expect(SelfieManageCampaignCtrl.renderModal).toBe(true);
+                        expect(SelfieManageCampaignCtrl.showModal).toBe(true);
+                    });
+
+                    describe('when status is "expired"', function() {
+                        it('should remove start and end dates', function() {
+                            campaign.status = 'expired';
+                            SelfieManageCampaignCtrl.initRenew();
+
+                            expect(SelfieManageCampaignCtrl.renewalCampaign.cards[0].campaign.startDate).toBe(undefined);
+                            expect(SelfieManageCampaignCtrl.renewalCampaign.cards[0].campaign.endDate).toBe(undefined);
+                        });
+                    });
+                });
+            });
+
+            describe('destroyRenewModal()', function() {
+                it('should set the render modal flags to false and null out existing renewalCampaign', function() {
+                    SelfieManageCampaignCtrl.renewalCampaign = campaign.pojoify();
+                    SelfieManageCampaignCtrl.renderModal = true;
+                    SelfieManageCampaignCtrl.showModal = true;
+
+                    SelfieManageCampaignCtrl.destroyRenewModal();
+
+                    expect(SelfieManageCampaignCtrl.showModal).toBe(false);
+                    expect(SelfieManageCampaignCtrl.renderModal).toBe(false);
+                    expect(SelfieManageCampaignCtrl.renewalCampaign).toBe(null);
+                });
+            });
+
+            describe('confirmRenewal()', function() {
+                beforeEach(function() {
+                    SelfieManageCampaignCtrl.campaign.id = 'cam-123';
+                    spyOn(SelfieManageCampaignCtrl.campaign, 'pojoify').and.callThrough();
+
+                    spyOn(CampaignFundingService, 'fund');
+                    spyOn(SelfieManageCampaignCtrl, 'setSummary');
+                    spyOn(SelfieManageCampaignCtrl, 'destroyRenewModal');
+                });
+
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieManageCampaignCtrl.confirmRenewal);
+                });
+
+                describe('when there is an updateRequest', function() {
+                    var updateRequestSaveDeferred;
+
+                    beforeEach(function() {
+                        updateRequestSaveDeferred = $q.defer();
+
+                        updateRequest = {
+                            id: 'cam-123:ur-1234',
+                            data: {},
+                            save: jasmine.createSpy('save()').and.returnValue(updateRequestSaveDeferred.promise)
+                        }
+
+                        SelfieManageCampaignCtrl.updateRequest = updateRequest;
+                        SelfieManageCampaignCtrl.renewalCampaign = copy(updateRequest.data);
+
+                        SelfieManageCampaignCtrl.confirmRenewal();
+                    });
+
+                    it('should set showModal flag to false', function() {
+                        expect(SelfieManageCampaignCtrl.showModal).toBe(false);
+                    });
+
+                    it('should call CampaignFundingService.fund() with configuration', function() {
+                        expect(CampaignFundingService.fund).toHaveBeenCalledWith({
+                            onClose: jasmine.any(Function),
+                            onCancel: jasmine.any(Function),
+                            onSuccess: jasmine.any(Function),
+                            originalCampaign: SelfieManageCampaignCtrl.campaign,
+                            updateRequest: SelfieManageCampaignCtrl.updateRequest,
+                            campaign: SelfieManageCampaignCtrl.renewalCampaign,
+                            interests: SelfieManageCampaignCtrl.interests,
+                            schema: SelfieManageCampaignCtrl.schema,
+                            depositCancelButtonText: 'Back'
+                        });
+                    });
+
+                    describe('funding service callbacks', function() {
+                        var onClose, onCancel, onSuccess;
+
+                        beforeEach(function() {
+                            onClose = CampaignFundingService.fund.calls.mostRecent().args[0].onClose;
+                            onCancel = CampaignFundingService.fund.calls.mostRecent().args[0].onCancel;
+                            onSuccess = CampaignFundingService.fund.calls.mostRecent().args[0].onSuccess;
+                        });
+
+                        describe('onClose()', function() {
+                            it('should destroy the modal', function() {
+                                onClose();
+                                expect(SelfieManageCampaignCtrl.destroyRenewModal).toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('onCancel()', function() {
+                            it('should show the modal again', function() {
+                                onCancel();
+                                expect(SelfieManageCampaignCtrl.showModal).toBe(true);
+                            });
+                        });
+
+                        describe('onSuccess()', function() {
+                            ['pending','active','paused','outOfBudget','expired','canceled'].forEach(function(status) {
+                                describe('when the campaign status is ' + status, function() {
+                                    beforeEach(function() {
+                                        spyOn(cinema6.db, 'create');
+
+                                        SelfieManageCampaignCtrl.renewalCampaign.status = status;
+
+                                        campaign.pojoify.calls.reset();
+
+                                        onSuccess();
+                                    });
+
+                                    it('should set the status to pending if the status is expired, outOfBudget or canceled', function() {
+                                        if ((/expired|outOfBudget|canceled/).test(status)) {
+                                            expect(SelfieManageCampaignCtrl.renewalCampaign.status).toBe('pending');
+                                        }
+                                    });
+
+                                    it('should put the renewalCampaign on the updateRequest and save', function() {
+                                        expect(SelfieManageCampaignCtrl.updateRequest.data).toBe(SelfieManageCampaignCtrl.renewalCampaign);
+                                        expect(SelfieManageCampaignCtrl.updateRequest.save).toHaveBeenCalled();
+                                        expect(cinema6.db.create).not.toHaveBeenCalled();
+                                        expect(SelfieManageCampaignCtrl.campaign.pojoify).not.toHaveBeenCalled();
+                                    });
+
+                                    describe('when the update request saves', function() {
+                                        describe('when updateRequest status is not approved', function() {
+                                            beforeEach(function() {
+                                                $scope.$apply(function() {
+                                                    updateRequestSaveDeferred.resolve(SelfieManageCampaignCtrl.updateRequest);
+                                                });
+                                            });
+
+                                            it('should put the id on the campaign', function() {
+                                                expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
+                                            });
+
+                                            it('should put the updateRequest on the Ctrl and cState', function() {
+                                                expect(cState.updateRequest).toBe(SelfieManageCampaignCtrl.updateRequest);
+                                            });
+
+                                            it('should set the campaign status to "pending" if the update request data has "pending" status', function() {
+                                                if ((/expired|outOfBudget|canceled/).test(status)) {
+                                                    expect(SelfieManageCampaignCtrl.campaign.status).toBe('pending');
+                                                }
+                                            });
+
+                                            it('should update the _proxyCampaign', function() {
+                                                expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                            });
+
+                                            it('should reset the summary and destroy the modal', function() {
+                                                expect(SelfieManageCampaignCtrl.setSummary).toHaveBeenCalled();
+                                                expect(SelfieManageCampaignCtrl.destroyRenewModal).toHaveBeenCalled();
+                                            });
+                                        });
+
+                                        describe('when the update request status is approved', function() {
+                                            beforeEach(function() {
+                                                $scope.$apply(function() {
+                                                    SelfieManageCampaignCtrl.updateRequest.status = 'approved';
+                                                    updateRequestSaveDeferred.resolve(SelfieManageCampaignCtrl.updateRequest);
+                                                });
+                                            });
+
+                                            it('should put not the id on the campaign', function() {
+                                                expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
+                                            });
+
+                                            it('should put the updateRequest on the Ctrl and cState', function() {
+                                                expect(SelfieManageCampaignCtrl.updateRequest).toBeDefined();
+                                                expect(cState.updateRequest).toBeFalsy();
+                                            });
+
+                                            it('should set the campaign status to "pending" if the update request data has "pending" status', function() {
+                                                expect(SelfieManageCampaignCtrl.campaign.status).toBe('draft');
+                                            });
+
+                                            it('should reset the summary and destroy the modal', function() {
+                                                expect(SelfieManageCampaignCtrl.setSummary).toHaveBeenCalled();
+                                                expect(SelfieManageCampaignCtrl.destroyRenewModal).toHaveBeenCalled();
+                                            });
+                                        });
+                                    });
+
+                                    describe('when the update request fails', function() {
+                                        it('should display an error modal', function() {
+                                            $scope.$apply(function() {
+                                                updateRequestSaveDeferred.reject('BAD');
+                                            });
+
+                                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                        });
+
+                                        it('should reset the summary and destroy the modal', function() {
+                                            $scope.$apply(function() {
+                                                updateRequestSaveDeferred.reject('BAD');
+                                            });
+
+                                            expect(SelfieManageCampaignCtrl.setSummary).not.toHaveBeenCalled();
+                                            expect(SelfieManageCampaignCtrl.destroyRenewModal).toHaveBeenCalled();
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+
+                describe('when there is not an updateRequest', function() {
+                    beforeEach(function() {
+                        SelfieManageCampaignCtrl.updateRequest = null;
+                        SelfieManageCampaignCtrl.renewalCampaign = campaign.pojoify();
+                        campaign.pojoify.calls.reset();
+
+                        SelfieManageCampaignCtrl.confirmRenewal();
+                    });
+
+                    it('should set showModal flag to false', function() {
+                        expect(SelfieManageCampaignCtrl.showModal).toBe(false);
+                    });
+
+                    it('should call CampaignFundingService.fund() with configuration', function() {
+                        expect(CampaignFundingService.fund).toHaveBeenCalledWith({
+                            onClose: jasmine.any(Function),
+                            onCancel: jasmine.any(Function),
+                            onSuccess: jasmine.any(Function),
+                            originalCampaign: SelfieManageCampaignCtrl.campaign,
+                            updateRequest: null,
+                            campaign: SelfieManageCampaignCtrl.renewalCampaign,
+                            interests: SelfieManageCampaignCtrl.interests,
+                            schema: SelfieManageCampaignCtrl.schema,
+                            depositCancelButtonText: 'Back'
+                        });
+                    });
+
+                    describe('funding service callbacks', function() {
+                        var onClose, onCancel, onSuccess;
+
+                        beforeEach(function() {
+                            onClose = CampaignFundingService.fund.calls.mostRecent().args[0].onClose;
+                            onCancel = CampaignFundingService.fund.calls.mostRecent().args[0].onCancel;
+                            onSuccess = CampaignFundingService.fund.calls.mostRecent().args[0].onSuccess;
+                        });
+
+                        describe('onClose()', function() {
+                            it('should destroy the modal', function() {
+                                onClose();
+                                expect(SelfieManageCampaignCtrl.destroyRenewModal).toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('onCancel()', function() {
+                            it('should show the modal again', function() {
+                                onCancel();
+                                expect(SelfieManageCampaignCtrl.showModal).toBe(true);
+                            });
+                        });
+
+                        describe('onSuccess()', function() {
+                            var updateRequestDeferred;
+
+                            beforeEach(function() {
+                                updateRequest = {};
+                                updateRequestDeferred = $q.defer();
+
+                                spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
+                                    updateRequest.status = 'pending';
+                                    updateRequest.id = 'cam-123:ur-1234';
+                                    updateRequest.data = obj.data;
+                                    updateRequest.campaign = obj.campaign;
+                                    updateRequest.save = jasmine.createSpy('update.save()').and.returnValue(updateRequestDeferred.promise);
+                                    return updateRequest;
+                                });
+                            });
+
+                            ['pending','active','paused','outOfBudget','expired','canceled'].forEach(function(status) {
+                                describe('when the campaign status is ' + status, function() {
+                                    beforeEach(function() {
+                                        SelfieManageCampaignCtrl.renewalCampaign.status = status;
+
+
+                                        onSuccess();
+                                    });
+
+                                    it('should set the status to pending if the status is expired, outOfBudget or canceled', function() {
+                                        if ((/expired|outOfBudget|canceled/).test(status)) {
+                                            expect(SelfieManageCampaignCtrl.renewalCampaign.status).toBe('pending');
+                                        }
+                                    });
+
+                                    it('should create an update request with the renewalCampaign data and save it', function() {
+                                        expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                                            data: SelfieManageCampaignCtrl.renewalCampaign,
+                                            campaign: SelfieManageCampaignCtrl.campaign.id
+                                        });
+
+                                        expect(updateRequest.save).toHaveBeenCalled();
+                                        expect(SelfieManageCampaignCtrl.campaign.pojoify).not.toHaveBeenCalled();
+                                        expect(SelfieManageCampaignCtrl.updateRequest).toBe(null);
+                                    });
+
+                                    describe('when the update request saves', function() {
+                                        describe('when updateRequest status is not approved', function() {
+                                            beforeEach(function() {
+                                                $scope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+                                            });
+
+                                            it('should put the id on the campaign', function() {
+                                                expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
+                                            });
+
+                                            it('should put the updateRequest on the Ctrl and cState', function() {
+                                                expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest)
+                                                expect(cState.updateRequest).toEqual(updateRequest);
+                                            });
+
+                                            it('should set the campaign status to "pending" if the update request data has "pending" status', function() {
+                                                if ((/expired|outOfBudget|canceled/).test(status)) {
+                                                    expect(SelfieManageCampaignCtrl.campaign.status).toBe('pending');
+                                                }
+                                            });
+
+                                            it('should update the _proxyCampaign', function() {
+                                                expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                            });
+
+                                            it('should reset the summary and destroy the modal', function() {
+                                                expect(SelfieManageCampaignCtrl.setSummary).toHaveBeenCalled();
+                                                expect(SelfieManageCampaignCtrl.destroyRenewModal).toHaveBeenCalled();
+                                            });
+                                        });
+
+                                        describe('when the update request status is approved', function() {
+                                            beforeEach(function() {
+                                                $scope.$apply(function() {
+                                                    updateRequest.status = 'approved';
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+                                            });
+
+                                            it('should put not the id on the campaign', function() {
+                                                expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
+                                            });
+
+                                            it('should put the updateRequest on the Ctrl and cState', function() {
+                                                expect(SelfieManageCampaignCtrl.updateRequest).toBeFalsy();
+                                                expect(cState.updateRequest).toBeFalsy();
+                                            });
+
+                                            it('should set the campaign status to "pending" if the update request data has "pending" status', function() {
+                                                expect(SelfieManageCampaignCtrl.campaign.status).toBe('draft');
+                                            });
+
+                                            it('should reset the summary and destroy the modal', function() {
+                                                expect(SelfieManageCampaignCtrl.setSummary).toHaveBeenCalled();
+                                                expect(SelfieManageCampaignCtrl.destroyRenewModal).toHaveBeenCalled();
+                                            });
+                                        });
+                                    });
+
+                                    describe('when the update request fails', function() {
+                                        it('should display an error modal', function() {
+                                            $scope.$apply(function() {
+                                                updateRequestDeferred.reject('BAD');
+                                            });
+
+                                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                        });
+
+                                        it('should reset the summary and destroy the modal', function() {
+                                            $scope.$apply(function() {
+                                                updateRequestDeferred.reject('BAD');
+                                            });
+
+                                            expect(SelfieManageCampaignCtrl.setSummary).not.toHaveBeenCalled();
+                                            expect(SelfieManageCampaignCtrl.destroyRenewModal).toHaveBeenCalled();
+                                        });
+                                    });
+                                });
+                            });
+                        });
                     });
                 });
             });
@@ -418,7 +1187,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     campaign.id = 'cam-123';
 
                     compileCtrl(cState, {
-                        categories: categories
+                        categories: categories,
+                        stats: stats
                     });
 
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
@@ -686,6 +1456,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                                                     updateRequest.status = 'pending';
                                                     updateRequest.id = 'cam-123:ur-1234';
+                                                    updateRequest.data = SelfieManageCampaignCtrl.updateRequest.data;
 
                                                     $rootScope.$apply(function() {
                                                         updateRequestDeferred.resolve(updateRequest);
@@ -707,6 +1478,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                                                     updateRequest.status = 'pending';
                                                     updateRequest.id = 'cam-123:ur-1234';
+                                                    updateRequest.data = SelfieManageCampaignCtrl.updateRequest.data;
 
                                                     $rootScope.$apply(function() {
                                                         updateRequestDeferred.resolve(updateRequest);
@@ -725,6 +1497,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                             beforeEach(function() {
                                                 updateRequest.status = 'pending';
                                                 updateRequest.id = 'cam-123:ur-1234';
+                                                updateRequest.data = SelfieManageCampaignCtrl.updateRequest.data;
 
                                                 $rootScope.$apply(function() {
                                                     updateRequestDeferred.resolve(updateRequest);
@@ -811,7 +1584,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         cState.cParent.cName = 'Selfie:Pending:CampaignDashboard';
 
                                         $rootScope.$apply(function() {
-                                            eraseDeferred.resolve(campaign);
+                                            eraseDeferred.resolve(null);
                                         });
 
                                         expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, {pending: 'true'}, true);
@@ -823,7 +1596,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         cState.cParent.cName = 'Selfie:All:CampaignDashboard';
 
                                         $rootScope.$apply(function() {
-                                            eraseDeferred.resolve(campaign);
+                                            eraseDeferred.resolve(null);
                                         });
 
                                         expect(c6State.goTo).toHaveBeenCalledWith(cState.cParent.cName, null, null, true);
@@ -833,7 +1606,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                 describe('regardless of parent dashboard state', function() {
                                     beforeEach(function() {
                                         $rootScope.$apply(function() {
-                                            eraseDeferred.resolve(campaign);
+                                            eraseDeferred.resolve(null);
                                         });
                                     });
 

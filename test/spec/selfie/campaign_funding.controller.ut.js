@@ -20,8 +20,26 @@ define(['app','angular'], function(appModule, angular) {
             saveDeferred,
             summary;
 
+        var debouncedFns;
+
         beforeEach(function() {
+            debouncedFns = [];
+
             module(appModule.name);
+            module(function($provide) {
+                $provide.decorator('c6AsyncQueue', function($delegate) {
+                    return jasmine.createSpy('c6AsyncQueue()').and.callFake(function() {
+                        var queue = $delegate.apply(this, arguments);
+                        var debounce = queue.debounce;
+                        spyOn(queue, 'debounce').and.callFake(function() {
+                            var fn = debounce.apply(queue, arguments);
+                            debouncedFns.push(fn);
+                            return fn;
+                        });
+                        return queue;
+                    });
+                });
+            });
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -229,6 +247,10 @@ define(['app','angular'], function(appModule, angular) {
                     CampaignFundingCtrl.paymentError = false;
                     CampaignFundingCtrl.confirmationPending = false;
                     CampaignFundingCtrl.model.show = true;
+                });
+
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(CampaignFundingCtrl.confirm);
                 });
 
                 describe('when making a deposit', function() {
