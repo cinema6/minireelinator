@@ -20,7 +20,7 @@
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-trim="false" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" ng-focus="SelfieCampaignCtrl.disableVideoTitleOverwrite = 'true'" maxlength="{{SelfieCampaignCtrl.maxHeadlineLength}}">
                 <label class="form__label" for="c6-video-title">
                     <i class="fa fa-times ui--error"></i>
-                    Headline<span class="text--small"> (required) </span><span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxHeadlineLength - card.title.length}}</span>
+                    Headline<span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span><span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxHeadlineLength - card.title.length}}</span>
                 </label>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">

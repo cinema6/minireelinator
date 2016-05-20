@@ -3,7 +3,7 @@
     <select c6-select-box data-options="CtaSelectCtrl.actionLabelOptions" ng-options="option.label group by CtaSelectCtrl.groupLabels[option.group] for option in CtaSelectCtrl.actionLabelOptions" class="form__selectBox form__selectBox--single form__textBox" id="c6-video-ctaPresetText"  ng-trim="false" ng-model="CtaSelectCtrl.actionLabel" ng-change="CtaSelectCtrl.updateActionLabel()"></select><!-- TO DO: big time selector customization -->
     <label class="form__label" for="c6-video-ctaPresetText">
         <i class="fa fa-times ui--error"></i>
-        Call To Action Button <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{maxLength - card.params.action.label.length}}</span>
+        Call To Action Button <span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span> <span class="text--small form__counter item--right">{{maxLength - card.params.action.label.length}}</span>
     </label>
     <!--<div class="form__helpBox form__helpBox--right">
         <div class="form__helpText">
@@ -20,7 +20,7 @@
     <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaCustomText" ng-trim="false" ng-model="card.params.action.label" maxlength="{{maxLength}}">
     <label class="form__label" for="c6-video-ctaCustomText">
         <i class="fa fa-times ui--error"></i>
-        Custom Button Text <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{maxLength - card.params.action.label.length}}</span>
+        Custom Button Text <span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span> <span class="text--small form__counter item--right">{{maxLength - card.params.action.label.length}}</span>
     </label>
     <!--<div class="form__helpBox form__helpBox--right">
         <div class="form__helpText">
@@ -37,7 +37,7 @@
     <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaUrl" ng-model="CtaSelectCtrl.actionWebsite" ng-focus="CtaSelectCtrl.bindLinkToWebsite = false" ng-blur="CtaSelectCtrl.updateActionLink(CtaSelectCtrl.actionWebsite, 'website')">
     <label class="form__label" for="c6-video-ctaUrl">
         <i class="fa fa-times ui--error"></i>
-        Call To Action URL <span class="text--small"> (required) </span>
+        Call To Action URL <span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span>
     </label>
     <!--<div class="form__helpBox form__helpBox--right">
         <div class="form__helpText">
@@ -57,7 +57,7 @@
     <input input-mask="+1 (999) 999-9999" c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaPhone" ng-model="CtaSelectCtrl.actionPhone" ng-change="CtaSelectCtrl.updateActionLink(CtaSelectCtrl.actionPhone, 'phone')">
     <label class="form__label" for="c6-video-ctaUrl">
         <i class="fa fa-times ui--error"></i>
-        Phone Number <span class="text--small"> (required) </span>
+        Phone Number <span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span>
     </label>
     <!--<div class="form__helpBox form__helpBox--right">
         <div class="form__helpText">
