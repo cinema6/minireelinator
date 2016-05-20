@@ -11,6 +11,8 @@
   * [FIX]: Factor in spent budget and elapsed time when validating daily limit
   * [FIX]: Allow campaigns to be submitted with "invalid" daily limits that
     don't align with end dates and budget settings
+  * [FEATURE]: Allow users to submit changes to flight dates and budget from
+    the Manage Campaign tab
 
 ## v1.47.2 (May 12, 2016)
 * *[v1.47.2.rc1]*
