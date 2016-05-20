@@ -4,6 +4,7 @@
             <h2 class="tabContent__title tk--hdr">Campaign: {{campaign.name}}</h2>
             <span class="tabContent__subtitle">Your campaign is currently <strong>{{campaign.status | status}}</strong></span>
             <p class="lockedMsg__info" ng-if="campaign.updateRequest && campaign.status !== 'pending'">Your requested changes are pending approval.</p>
+            <div class="clearfix"></div>
             <br><button ng-click="SelfieManageCampaignCtrl.initRenew()" class="btn btn--primary btn--small btn__nav btn__nav--primary">{{SelfieManageCampaignCtrl.renewalText}} Campaign</button>
         </div><!--
         --><div class="grid__item one-quarter text--right" ng-if="(campaign.status === 'active' || campaign.status === 'paused') && SelfieManageCampaignCtrl.updateRequest.data.status !== 'canceled'">
