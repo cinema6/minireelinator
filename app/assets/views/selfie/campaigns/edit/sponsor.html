@@ -15,7 +15,7 @@
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="campaign.advertiserDisplayName">
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
-                    Advertiser Name<span class="text--small"> (required) </span>
+                    Advertiser Name<span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span>
                 </label>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
@@ -34,7 +34,7 @@
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-website" ng-model="SelfieCampaignSponsorCtrl.website" ng-focus="SelfieCampaignSponsorCtrl.checkImportability()" ng-blur="SelfieCampaignSponsorCtrl.checkWebsite()">
                 <label class="form__label" for="c6-sponsor-website">
                     <i class="fa fa-times ui--error"></i>
-                    <i class="fa fa-link tk--active tk--link"></i> Website <span class="text--small"> (required) </span>
+                    <i class="fa fa-link tk--active tk--link"></i> Website<span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span>
                 </label>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">

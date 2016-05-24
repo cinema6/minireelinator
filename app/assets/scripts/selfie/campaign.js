@@ -1631,9 +1631,9 @@ function( angular , c6State  , PaginatedListState,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
-                                                             'PaymentService',
+                                                             'PaymentService','CampaignService',
             function                                        ( cinema6 , $q , c6State ,
-                                                              PaymentService ) {
+                                                              PaymentService , CampaignService ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -1653,6 +1653,8 @@ function( angular , c6State  , PaginatedListState,
                         null;
 
                     return $q.all({
+                        schema: CampaignService.getSchema(),
+                        stats: CampaignService.getAnalytics({ids: this.campaign.id}),
                         advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId),
                         updateRequest: updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
@@ -1669,6 +1671,7 @@ function( angular , c6State  , PaginatedListState,
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.updateRequest = model.updateRequest;
+                    this.schema = model.schema;
 
                     PaymentService.getBalance();
 
@@ -1696,9 +1699,11 @@ function( angular , c6State  , PaginatedListState,
         .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue','$q',
                                                        'c6State', 'CampaignService','cinema6',
                                                        'ConfirmDialogService',
+                                                       'CampaignFundingService',
         function                                      ( $scope , cState , c6AsyncQueue , $q ,
                                                         c6State ,  CampaignService , cinema6 ,
-                                                        ConfirmDialogService ) {
+                                                        ConfirmDialogService ,
+                                                        CampaignFundingService ) {
             var SelfieManageCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -1730,7 +1735,9 @@ function( angular , c6State  , PaginatedListState,
             function createUpdateRequest(action) {
                 var Ctrl = SelfieManageCampaignCtrl,
                     updateRequest = Ctrl.updateRequest,
-                    campaign = (updateRequest || {}).data || Ctrl.campaign.pojoify(),
+                    renewalCampaign = Ctrl.renewalCampaign,
+                    campaign = renewalCampaign || (updateRequest || {}).data ||
+                        Ctrl.campaign.pojoify(),
                     id = Ctrl.campaign.id;
 
                 if (action === 'delete') {
@@ -1770,6 +1777,10 @@ function( angular , c6State  , PaginatedListState,
                     campaign.updateRequest = updateRequest.id.split(':')[1];
                     SelfieManageCampaignCtrl.updateRequest = updateRequest;
                     cState.updateRequest = updateRequest;
+
+                    if (updateRequest.data.status === 'pending') {
+                        campaign.status = 'pending';
+                    }
                 }
 
                 return campaign;
@@ -1804,6 +1815,18 @@ function( angular , c6State  , PaginatedListState,
                     .catch(handleError);
             }
 
+            function getExpirationDate(campaign) {
+                var entry = (campaign.statusHistory || []).filter(function(entry) {
+                    return entry.status === campaign.status;
+                })[0] || {};
+
+                return entry.date;
+            }
+
+            function testStatus(regex) {
+                return regex.test(SelfieManageCampaignCtrl.campaign.status);
+            }
+
             Object.defineProperties(this, {
                 canSubmit: {
                     get: function() {
@@ -1829,32 +1852,124 @@ function( angular , c6State  , PaginatedListState,
                     get: function() {
                         return (/expired|canceled|pending/).test(this.campaign.status);
                     }
+                },
+                validRenewal: {
+                    get: function() {
+                        if (!this.renewalCampaign) { return false; }
+
+                        var validation = this.validation,
+                            campaign = this.renewalCampaign,
+                            pricingData = campaign.pricing;
+
+                        return validation.budget && validation.dailyLimit &&
+                            validation.startDate && validation.endDate &&
+                            (campaign.status !== 'outOfBudget' ||
+                                pricingData.budget > this.campaign.pricing.budget);
+                    }
+                },
+                renewalText: {
+                    get: function() {
+                        return (testStatus(/pending|active|paused/) && 'Extend') ||
+                            (testStatus(/expired|canceled|outOfBudget/) && 'Restart') ||
+                            'Extend';
+                    }
                 }
             });
-
-            this.backToDashboard = function() {
-                c6State.goTo.apply(null, dashboardStateArgs(cState));
-            };
 
             this.initWithModel = function(model) {
                 this.campaign = cState.campaign;
                 this.showAdminTab = cState.isAdmin;
                 this.user = cState.user;
+                this.schema = cState.schema;
+                this.interests = cState.interests;
 
                 this.categories = model.categories;
                 this.updateRequest = model.updateRequest;
                 this.advertiser = model.advertiser;
+                this.stats = model.stats[0];
 
                 this.card = (this.updateRequest && this.updateRequest.data &&
                     this.updateRequest.data.cards[0]) || cState.card;
 
+                this.setSummary();
+
+                this._proxyCampaign = copy(cState.campaign);
+            };
+
+            this.backToDashboard = function() {
+                c6State.goTo.apply(null, dashboardStateArgs(cState));
+            };
+
+            this.setSummary = function() {
                 this.summary = CampaignService.getSummary({
                     campaign: (this.updateRequest && this.updateRequest.data) || this.campaign,
                     interests: cState.interests || []
                 });
-
-                this._proxyCampaign = copy(cState.campaign);
             };
+
+            this.initRenew = queue.debounce(function() {
+                this.renewalCampaign = (this.updateRequest && this.updateRequest.pojoify().data) ||
+                    this.campaign.pojoify();
+                this.expirationDate = getExpirationDate(this.renewalCampaign);
+                this.validation = {
+                    budget: true,
+                    startDate: true,
+                    endDate: true,
+                    show: false
+                };
+
+                if (this.renewalCampaign.status === 'expired') {
+                    this.renewalCampaign.cards[0].campaign.endDate = undefined;
+                    this.renewalCampaign.cards[0].campaign.startDate = undefined;
+                }
+
+                this.renderModal = true;
+                this.showModal = true;
+            }, this);
+
+            this.destroyRenewModal = function() {
+                this.showModal = false;
+                this.renderModal = false;
+                this.renewalCampaign = null;
+            };
+
+            this.confirmRenewal = queue.debounce(function() {
+                var self = this;
+
+                this.showModal = false;
+
+                CampaignFundingService.fund({
+                    onClose: function() {
+                        self.destroyRenewModal();
+                    },
+                    onCancel: function() {
+                        self.showModal = true;
+                    },
+                    onSuccess: function() {
+                        var campaign = self.renewalCampaign;
+
+                        campaign.status = (/expired|outOfBudget|canceled/).test(campaign.status) ?
+                            'pending' : campaign.status;
+
+                        return createUpdateRequest()
+                            .then(setUpdateRequest)
+                            .then(updateProxy)
+                            .then(function() {
+                                self.setSummary();
+                            })
+                            .catch(handleError)
+                            .finally(function() {
+                                self.destroyRenewModal();
+                            });
+                    },
+                    originalCampaign: this.campaign,
+                    updateRequest: this.updateRequest,
+                    campaign: this.renewalCampaign,
+                    interests: this.interests,
+                    schema: this.schema,
+                    depositCancelButtonText: 'Back'
+                });
+            }, this);
 
             this.update = function(action) {
                 ConfirmDialogService.display({

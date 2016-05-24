@@ -102,6 +102,7 @@ define(['app'], function(appModule) {
 
                         campaign.status = 'active';
                         card.campaign.startDate = earlierDate;
+                        compileCtrl();
                         expect(SelfieFlightDatesCtrl.validStartDate).toBe(true);
                     });
                 });
@@ -118,6 +119,7 @@ define(['app'], function(appModule) {
 
                         campaign.status = 'active';
                         card.campaign.startDate = earlierDate;
+                        compileCtrl();
                         expect(SelfieFlightDatesCtrl.validStartDate).toBe(true);
                     });
                 });
@@ -278,6 +280,7 @@ define(['app'], function(appModule) {
                         it('should be false', function() {
                             campaign.status = 'paused';
                             campaign.cards[0].campaign.startDate = earlierDate;
+                            compileCtrl();
 
                             expect(SelfieFlightDatesCtrl.editableStartDate).toBe(false);
                         });

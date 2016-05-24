@@ -1,13 +1,13 @@
-<p class="formSection__introText">Based on your targeting selections, your cost per video view is <strong>${{SelfieBudgetCtrl.cpv | number:2}}</strong>.
+<p ng-show="!hideEstimates" class="formSection__introText">Based on your targeting selections, your cost per video view is <strong>${{SelfieBudgetCtrl.cpv | number:2}}</strong>.
 </p>
 
 <div class="form__items">
-    <fieldset ng-if="!increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
+    <fieldset ng-if="!increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.budgetError }">
         <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-campaign-budget" ng-model="SelfieBudgetCtrl.budget" ng-blur="SelfieBudgetCtrl.setBudget()">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-budget">
             <i class="fa fa-times ui--error"></i>
-            Campaign Budget<span class="text--small"> (required) </span>
+            Campaign Budget<span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span>
         </label>
         <!--<div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
@@ -24,12 +24,12 @@
         </div>
     </fieldset>
 
-    <fieldset ng-if="increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
+    <fieldset ng-if="increaseBudget" class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.additionalBudgetError }">
         <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-campaign-increase-budget" ng-model="SelfieBudgetCtrl.additionalBudget" ng-blur="SelfieBudgetCtrl.setBudget()">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-increase-budget">
             <i class="fa fa-times ui--error"></i>
-            Increase Budget By<span class="text--small"> (required) </span>
+            Increase Budget By<span class="form__item--required hint--top" data-hint="Required"> <i class="fa fa-asterisk"></i> </span>
         </label>
         <!--<div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
@@ -66,7 +66,7 @@
         </div>
     </fieldset>
 
-    <p ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget">Estimated views: <strong>{{ SelfieBudgetCtrl.totalBudget / SelfieBudgetCtrl.cpv | number:0}}</strong></p>
+    <p ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget && !hideEstimates">Estimated views: <strong>{{ SelfieBudgetCtrl.totalBudget / SelfieBudgetCtrl.cpv | number:0}}</strong></p>
 
     <p ng-if="SelfieBudgetCtrl.dailyLimitError.code === 5" class="alertMessage alert__warning two-thirds" style="margin:0 auto;">Warning: based on your flight dates your limit should be at least ${{SelfieBudgetCtrl.dailyLimitError.min | number:2}}</p>
 

@@ -11,14 +11,17 @@ define(['app'], function(appModule) {
                 c6State,
                 cinema6,
                 MiniReelService,
-                PaymentService;
+                PaymentService,
+                CampaignService;
 
             var card,
                 categories,
                 campaign,
                 updateRequest,
                 user,
-                advertiser;
+                advertiser,
+                stats,
+                schema;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -30,6 +33,7 @@ define(['app'], function(appModule) {
                     cinema6 = $injector.get('cinema6');
                     MiniReelService = $injector.get('MiniReelService');
                     PaymentService = $injector.get('PaymentService');
+                    CampaignService = $injector.get('CampaignService');
 
                     card = cinema6.db.create('card', MiniReelService.createCard('video'));
                     categories = [
@@ -70,6 +74,8 @@ define(['app'], function(appModule) {
                     advertiser = {
                         id: 'a-123'
                     };
+                    stats = [];
+                    schema = {};
 
                     selfieState = c6State.get('Selfie');
                     selfieState.cModel = {
@@ -95,12 +101,15 @@ define(['app'], function(appModule) {
                 cinema6 = null;
                 MiniReelService = null;
                 PaymentService = null;
+                CampaignService = null;
                 card = null;
                 categories = null;
                 campaign = null;
                 updateRequest = null;
                 user = null;
                 advertiser = null;
+                stats = null;
+                schema = null;
             });
 
             it('should exist', function() {
@@ -142,7 +151,8 @@ define(['app'], function(appModule) {
                     updateRequestDeferred = $q.defer();
                     advertiserDeferred = $q.defer();
 
-
+                    spyOn(CampaignService, 'getSchema').and.returnValue($q.when(schema));
+                    spyOn(CampaignService, 'getAnalytics').and.returnValue($q.when(stats));
                     spyOn(cinema6.db, 'find').and.callFake(function(type) {
                         var response;
 
@@ -176,6 +186,11 @@ define(['app'], function(appModule) {
                         expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
                     });
 
+                    it('should request analytics and schema', function() {
+                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: campaign.id});
+                        expect(CampaignService.getSchema).toHaveBeenCalled();
+                    });
+
                     describe('when the requests are successful', function() {
                         it('should return the model object', function() {
                             $rootScope.$apply(function() {
@@ -185,7 +200,9 @@ define(['app'], function(appModule) {
 
                             expect(success).toHaveBeenCalledWith({
                                 updateRequest: updateRequest,
-                                advertiser: advertiser
+                                advertiser: advertiser,
+                                schema: schema,
+                                stats: stats
                             });
                         });
                     });
@@ -215,6 +232,11 @@ define(['app'], function(appModule) {
                         expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
                     });
 
+                    it('should request analytics and schema', function() {
+                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith({ids: campaign.id});
+                        expect(CampaignService.getSchema).toHaveBeenCalled();
+                    });
+
                     describe('when the requests are successful', function() {
                         it('should return the model object', function() {
                             $rootScope.$apply(function() {
@@ -223,7 +245,9 @@ define(['app'], function(appModule) {
 
                             expect(success).toHaveBeenCalledWith({
                                 updateRequest: null,
-                                advertiser: advertiser
+                                advertiser: advertiser,
+                                schema: schema,
+                                stats: stats
                             });
                         });
                     });
@@ -251,7 +275,8 @@ define(['app'], function(appModule) {
                     spyOn(cinema6.db, 'findAll').and.returnValue(interestsDeferred.promise);
 
                     model = {
-                        updateRequest: updateRequest
+                        updateRequest: updateRequest,
+                        schema: schema
                     };
 
                     interests = [
@@ -268,7 +293,8 @@ define(['app'], function(appModule) {
                     campaignState.afterModel(model);
 
                     expect(campaignState.isAdmin).toBe(true);
-                    expect(campaignState.updateRequest).toBe(updateRequest)
+                    expect(campaignState.updateRequest).toBe(updateRequest);
+                    expect(campaignState.schema).toBe(schema);
                 });
 
                 it('should get the account balance', function() {

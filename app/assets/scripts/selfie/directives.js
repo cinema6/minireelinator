@@ -1268,6 +1268,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                     validation: '=',
                     schema: '=',
                     stats: '=',
+                    hideEstimates: '=',
                     increaseBudget: '='
                 },
                 templateUrl: 'views/selfie/directives/budget.html',
@@ -1419,7 +1420,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 scope: {
                     campaign: '=',
                     masterCampaign: '=',
-                    validation: '='
+                    validation: '=',
+                    hideHeader: '='
                 },
                 templateUrl: 'views/selfie/directives/flight_dates.html',
                 controller: 'SelfieFlightDatesController',
@@ -1433,7 +1435,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 originalCampaign = $scope.masterCampaign,
                 campaign = $scope.campaign,
                 card = campaign.cards[0],
-                campaignHash = card.campaign;
+                campaignHash = card.campaign,
+                validation = $scope.validation || {};
 
             var now = new Date();
             now.setHours(0,0,1);
@@ -1459,12 +1462,17 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             }
 
             function setDatesOnCard() {
-                var self = SelfieFlightDatesCtrl;
+                var self = SelfieFlightDatesCtrl,
+                    validStart = self.validStartDate,
+                    validEnd = self.validEndDate;
 
-                campaignHash.startDate = self.validStartDate ?
+                campaignHash.startDate = validStart ?
                     toISO('start', self.startDate) : campaignHash.startDate;
-                campaignHash.endDate = self.validEndDate ?
+                campaignHash.endDate = validEnd ?
                     toISO('end', self.endDate) : campaignHash.endDate;
+
+                validation.startDate = validStart;
+                validation.endDate = validEnd;
             }
 
             Object.defineProperties(this, {
@@ -1502,15 +1510,6 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                             (!startDate || (startDate && endDate > startDate)));
                     }
                 },
-                editableStartDate: {
-                    get: function() {
-                        var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
-
-                        return (!startDate || startDate > now) ||
-                            (!campaign.status || campaign.status === 'draft' ||
-                                originalCampaign.status === 'pending');
-                    }
-                },
                 canShowError: {
                     get: function() {
                         return !originalCampaign.status ||
@@ -1537,9 +1536,21 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
 
             this.startDate = fromISO(campaignHash.startDate);
             this.endDate = fromISO(campaignHash.endDate);
-            this.hasChanged = false;
-            this.hasDates = !!this.startDate || !!this.endDate;
             this.isPending = originalCampaign.status === 'pending';
+            this.hasChanged = false;
+            this.hasDates = (function() {
+                var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
+
+                return (!!startDate && (startDate > now || campaign.status === 'draft')) ||
+                        !!campaignHash.endDate;
+            }());
+            this.editableStartDate = (function() {
+                var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
+
+                return (!startDate || startDate > now) ||
+                    (!campaign.status || campaign.status === 'draft' ||
+                        originalCampaign.status === 'pending');
+            }());
 
             this.setDates = function() {
                 if (this.startDate !== fromISO(campaignHash.startDate) ||
@@ -1722,10 +1733,11 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
         }])
 
         .controller('CampaignFundingController', ['CampaignFundingService','PaymentService','$q',
-                                                  'cinema6',
+                                                  'cinema6','c6AsyncQueue',
         function                                 ( CampaignFundingService , PaymentService , $q ,
-                                                   cinema6 ) {
-            var self = this;
+                                                   cinema6 , c6AsyncQueue ) {
+            var self = this,
+                queue = c6AsyncQueue();
 
             this.model = CampaignFundingService.model;
 
@@ -1763,7 +1775,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 this.model.onCancel();
             };
 
-            this.confirm = function() {
+            this.confirm = queue.debounce(function() {
                 // this is on the Confirmation button
                 var token = this.model.paymentMethod.token;
 
@@ -1782,7 +1794,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                     }).finally(function() {
                         self.confirmationPending = false;
                     });
-            };
+            }, this);
 
             this.nextStep = function() {
                 // this is on the Deposit "continue" button

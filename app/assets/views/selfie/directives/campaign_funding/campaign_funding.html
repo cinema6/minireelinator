@@ -54,8 +54,8 @@
             <footer ng-switch-when="true" class="modalFooter__group">
                 <button class="btnAction btnAction btnAction--first"
                     ng-click="CampaignFundingCtrl.cancel()"
-                    title="Cancel">
-                    Cancel
+                    title="{{CampaignFundingCtrl.model.depositCancelButtonText || 'Cancel'}}">
+                    {{CampaignFundingCtrl.model.depositCancelButtonText || 'Cancel'}}
                 </button>
                 <button ng-click="CampaignFundingCtrl.nextStep()"
                     hidden-input-click="credit-card-submit"
