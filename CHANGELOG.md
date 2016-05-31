@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.48.0 (May 31, 2016)
 * *[v1.48.0.rc1]*
   * [FIX]: Fix for an issue that would prevent some wistia thumbnails from being fetched
   * Show total spend information in campaign administration tab
@@ -14,6 +15,7 @@
     don't align with end dates and budget settings
   * [FEATURE]: Allow users to submit changes to flight dates and budget from
     the Manage Campaign tab
+* *[/v1.48.0.rc1]*
 
 ## v1.47.2 (May 12, 2016)
 * *[v1.47.2.rc1]*
