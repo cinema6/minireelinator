@@ -1180,7 +1180,7 @@ fa,
     .pageHolder {
         margin:0 0 0 4em;
         position: relative;
-        z-index: 1;
+        /*z-index: 1;*/
 
     }
 
@@ -3313,6 +3313,9 @@ fa,
             border: none;
             outline: 0;
         }
+        .select2-container .select2-search--inline {
+            list-style-type: none !important;
+        }
 
 
     /*  select form classes : multiple selection
@@ -4632,6 +4635,9 @@ fa,
     .modal__renew-campaign p.alertMessage {
         margin: 0 20px;
     }
+    .modal__renew-campaign .formSection__group p.alertMessage {
+        width: 100%;
+    }
     .modal__renew-campaign .renewalModal .timeline__selectOption {
         padding-left: 30px;
         margin-bottom: 0.75em;
@@ -5102,7 +5108,7 @@ div.tree-multiselect span.section-name {
         }
     .ui-datepicker {
         background: #fff;
-        z-index: 1 !important;
+        /*z-index: 1 !important;*/
         box-shadow: 0 0 10px #ccc;
     }
         .ui-datepicker-header {
