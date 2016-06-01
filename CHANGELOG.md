@@ -1,13 +1,14 @@
 # MiniReelinator
 
-## v1.48.0 (May 31, 2016)
+## v1.48.0 (June 1, 2016)
 * *[v1.48.0.rc2]*
   * [FIX]: Do not allow renewal campaign to be submitted unless required changes
     are made to the campaign
   * [FIX]: Fix for an issue where the dashboard broke in Firefox
   * [FIX]: Fix for an issue where the spinner on the funding modal's "Confirm"
     button sometimes disappeared before the modal closed
-  * [FIX]: Fix CSS issues for renewal modal and targeting dropdowns    
+  * [FIX]: Fix CSS issues for renewal modal and targeting dropdowns
+* *[/v1.48.0.rc2]*
 
 * *[v1.48.0.rc1]*
   * [FIX]: Fix for an issue that would prevent some wistia thumbnails from being fetched
