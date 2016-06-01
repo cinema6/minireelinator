@@ -1856,13 +1856,12 @@ function( angular , c6State  , PaginatedListState,
                         if (!this.renewalCampaign) { return false; }
 
                         var validation = this.validation,
-                            campaign = this.renewalCampaign,
-                            pricingData = campaign.pricing;
+                            campaign = this.renewalCampaign;
 
                         return validation.budget && validation.dailyLimit &&
                             validation.startDate && validation.endDate &&
-                            (campaign.status !== 'outOfBudget' ||
-                                pricingData.budget > this.campaign.pricing.budget);
+                            (campaign.status === 'canceled' ||
+                                !equals(campaign, this.renewalProxyCampaign));
                     }
                 },
                 renewalText: {
@@ -1908,6 +1907,7 @@ function( angular , c6State  , PaginatedListState,
             this.initRenew = queue.debounce(function() {
                 this.renewalCampaign = (this.updateRequest && this.updateRequest.pojoify().data) ||
                     this.campaign.pojoify();
+                this.renewalProxyCampaign = copy(this.renewalCampaign);
                 this.expirationDate = getExpirationDate(this.renewalCampaign);
                 this.validation = {
                     budget: true,
@@ -1929,6 +1929,7 @@ function( angular , c6State  , PaginatedListState,
                 this.showModal = false;
                 this.renderModal = false;
                 this.renewalCampaign = null;
+                this.renewalProxyCampaign = null;
             };
 
             this.confirmRenewal = queue.debounce(function() {
