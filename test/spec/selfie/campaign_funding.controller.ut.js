@@ -270,6 +270,7 @@ define(['app','angular'], function(appModule, angular) {
 
                         CampaignFundingCtrl.confirm();
 
+                        expect(CampaignFundingCtrl.confirmationPending).toBe(true);
                         expect(PaymentService.makePayment).not.toHaveBeenCalledWith('pay-111', 1278);
                     });
                 });
@@ -289,17 +290,14 @@ define(['app','angular'], function(appModule, angular) {
                         expect(CampaignFundingCtrl.model.onSuccess).toHaveBeenCalled();
                     });
 
-                    it('should set confirmationPending to false', function() {
-                        expect(CampaignFundingCtrl.confirmationPending).toBe(false);
-                    });
-
                     describe('when onSuccess succeeds', function() {
-                        it('should set model.show to false', function() {
+                        it('should set model.show  and confirmationPending flag to false', function() {
                             $scope.$apply(function() {
                                 successDeferred.resolve();
                             });
 
                             expect(CampaignFundingCtrl.model.show).toBe(false);
+                            expect(CampaignFundingCtrl.confirmationPending).toBe(false);
                         });
                     });
 
@@ -310,6 +308,7 @@ define(['app','angular'], function(appModule, angular) {
                             });
 
                             expect(CampaignFundingCtrl.model.show).toBe(false);
+                            expect(CampaignFundingCtrl.confirmationPending).toBe(false);
                         });
                     });
                 });

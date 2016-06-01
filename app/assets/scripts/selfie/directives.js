@@ -1788,10 +1788,10 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                         $q.when(self.model.onSuccess())
                             .finally(function() {
                                 self.model.show = false;
+                                self.confirmationPending = false;
                             });
                     }, function() {
                         self.paymentError = true;
-                    }).finally(function() {
                         self.confirmationPending = false;
                     });
             }, this);

@@ -76,37 +76,35 @@ function( angular , c6State  , PaginatedListState,
                         orgs = this.cParent.orgs || [],
                         hasSingleOrg = orgs.length === 1 && orgs[0].id === user.org.id,
                         excludeOrgs = (config.platform && config.platform.excludeOrgs) || [],
-                        params = SettingsService.getReadOnly('Selfie::params');
+                        params;
 
-                    if (!params) {
-                        SettingsService.register('Selfie::params', this.params, {
-                            defaults: {
-                                filter: 'error,draft,pending,active,paused,canceled,'+
-                                    'completed,outOfBudget,expired',
-                                filterBy: 'statuses',
-                                sort: 'lastUpdated,-1',
-                                search: null,
-                                excludeOrgs: (!hasSingleOrg && excludeOrgs.join(',')) || null
-                            },
-                            sync: function(settings) {
-                                var savedOrgs = (config.platform || {}).excludeOrgs,
-                                    newOrgs = (!hasSingleOrg && settings.excludeOrgs &&
-                                        settings.excludeOrgs.split(',')) || [];
+                    SettingsService.register('Selfie::params', this.params, {
+                        defaults: {
+                            filter: 'error,draft,pending,active,paused,canceled,'+
+                                'completed,outOfBudget,expired',
+                            filterBy: 'statuses',
+                            sort: 'lastUpdated,-1',
+                            search: null,
+                            excludeOrgs: (!hasSingleOrg && excludeOrgs.join(',')) || null
+                        },
+                        sync: function(settings) {
+                            var savedOrgs = (config.platform || {}).excludeOrgs,
+                                newOrgs = (!hasSingleOrg && settings.excludeOrgs &&
+                                    settings.excludeOrgs.split(',')) || [];
 
-                                if (!equals(savedOrgs, newOrgs)) {
-                                    config.platform = config.platform || {};
-                                    config.platform.excludeOrgs = newOrgs;
-                                    user.save();
-                                }
-                            },
-                            localSync: user.id,
-                            validateLocal: function(currentUserId, prevUserId) {
-                                return currentUserId === prevUserId;
+                            if (!equals(savedOrgs, newOrgs)) {
+                                config.platform = config.platform || {};
+                                config.platform.excludeOrgs = newOrgs;
+                                user.save();
                             }
-                        });
+                        },
+                        localSync: user.id,
+                        validateLocal: function(currentUserId, prevUserId) {
+                            return currentUserId === prevUserId;
+                        }
+                    });
 
-                        params = SettingsService.getReadOnly('Selfie::params');
-                    }
+                    params = SettingsService.getReadOnly('Selfie::params');
 
                     this.filter = params.filter;
                     this.filterBy = params.filterBy;
@@ -1858,13 +1856,12 @@ function( angular , c6State  , PaginatedListState,
                         if (!this.renewalCampaign) { return false; }
 
                         var validation = this.validation,
-                            campaign = this.renewalCampaign,
-                            pricingData = campaign.pricing;
+                            campaign = this.renewalCampaign;
 
                         return validation.budget && validation.dailyLimit &&
                             validation.startDate && validation.endDate &&
-                            (campaign.status !== 'outOfBudget' ||
-                                pricingData.budget > this.campaign.pricing.budget);
+                            (campaign.status === 'canceled' ||
+                                !equals(campaign, this.renewalProxyCampaign));
                     }
                 },
                 renewalText: {
@@ -1910,6 +1907,7 @@ function( angular , c6State  , PaginatedListState,
             this.initRenew = queue.debounce(function() {
                 this.renewalCampaign = (this.updateRequest && this.updateRequest.pojoify().data) ||
                     this.campaign.pojoify();
+                this.renewalProxyCampaign = copy(this.renewalCampaign);
                 this.expirationDate = getExpirationDate(this.renewalCampaign);
                 this.validation = {
                     budget: true,
@@ -1931,6 +1929,7 @@ function( angular , c6State  , PaginatedListState,
                 this.showModal = false;
                 this.renderModal = false;
                 this.renewalCampaign = null;
+                this.renewalProxyCampaign = null;
             };
 
             this.confirmRenewal = queue.debounce(function() {
