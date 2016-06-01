@@ -106,32 +106,54 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             });
 
             describe('beforeModel()', function() {
-                describe('when SettingsService already has settings registered', function() {
-                    var savedParams;
+                var defaults, savedParams;
 
+                beforeEach(function() {
+                    defaults = {
+                        filter: 'error,draft,pending,active,paused,canceled,completed,outOfBudget,expired',
+                        filterBy: 'statuses',
+                        sort: 'lastUpdated,-1',
+                        search: null
+                    };
+
+                    savedParams = {
+                        filter: 'pending,active',
+                        filterBy: 'budget',
+                        sort: 'name,1',
+                        search: 'Hello',
+                        excludeOrgs: 'o-111,o-222'
+                    };
+
+                    SettingsService.getReadOnly.and.returnValue(savedParams);
+                });
+
+                describe('when user only has access to their own org', function() {
                     beforeEach(function() {
-                        savedParams = {
-                            filter: 'pending,active',
-                            filterBy: 'budget',
-                            sort: 'name,1',
-                            search: 'Hello',
-                            excludeOrgs: 'o-111,o-222'
-                        };
-
-                        SettingsService.getReadOnly.and.returnValue(savedParams);
-
-                        campaigns.beforeModel();
+                        campaigns.cParent.orgs = [{ id: 'o-123' }];
                     });
 
-                    it('should not register the params object with the SettingsService', function() {
-                        expect(SettingsService.register).not.toHaveBeenCalled();
+                    it('should register the params object with the SettingsService and pass a default excludeOrgs value of null', function() {
+                        defaults.excludeOrgs = null;
+
+                        campaigns.beforeModel();
+
+                        expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
+                            defaults: defaults,
+                            sync: jasmine.any(Function),
+                            localSync: user.id,
+                            validateLocal: jasmine.any(Function)
+                        });
                     });
 
                     it('should get the params from the SettingsService', function() {
+                        campaigns.beforeModel();
+
                         expect(SettingsService.getReadOnly).toHaveBeenCalledWith('Selfie::params');
                     });
 
                     it('should add the saved params to the State', function() {
+                        campaigns.beforeModel();
+
                         expect(campaigns.filter).toBe('pending,active');
                         expect(campaigns.filterBy).toBe('budget');
                         expect(campaigns.sort).toBe('name,1');
@@ -140,6 +162,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                     });
 
                     it('should add the params to the queryParams object', function() {
+                        campaigns.beforeModel();
+
                         expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
                             filter: '=',
                             filterBy: '=',
@@ -148,42 +172,12 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                             excludeOrgs: '='
                         }));
                     });
-                });
 
-                describe('when SettingsService does not have settings registered', function() {
-                    var defaults, savedParams;
-
-                    beforeEach(function() {
-                        var counter = 0;
-
-                        defaults = {
-                            filter: 'error,draft,pending,active,paused,canceled,completed,outOfBudget,expired',
-                            filterBy: 'statuses',
-                            sort: 'lastUpdated,-1',
-                            search: null
-                        };
-
-                        savedParams = {
-                            filter: 'pending,active',
-                            filterBy: 'budget',
-                            sort: 'name,1',
-                            search: 'Hello',
-                            excludeOrgs: 'o-111,o-222'
-                        };
-
-                        SettingsService.getReadOnly.and.callFake(function() {
-                            if (counter) {
-                                return savedParams;
-                            } else {
-                                counter++;
-                                return null;
-                            }
-                        });
-                    });
-
-                    describe('when user only has access to their own org', function() {
+                    describe('when user has excludeOrgs saved', function() {
                         beforeEach(function() {
-                            campaigns.cParent.orgs = [{ id: 'o-123' }];
+                            user.config.platform = {
+                                excludeOrgs: ['o-111','o-222']
+                            };
                         });
 
                         it('should register the params object with the SettingsService and pass a default excludeOrgs value of null', function() {
@@ -199,304 +193,267 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                             });
                         });
 
-                        it('should add the saved params to the State', function() {
-                            campaigns.beforeModel();
-
-                            expect(campaigns.filter).toBe('pending,active');
-                            expect(campaigns.filterBy).toBe('budget');
-                            expect(campaigns.sort).toBe('name,1');
-                            expect(campaigns.search).toBe('Hello');
-                            expect(campaigns.excludeOrgs).toBe('o-111,o-222');
-                        });
-
-                        it('should add the params to the queryParams object', function() {
-                            campaigns.beforeModel();
-
-                            expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
-                                filter: '=',
-                                filterBy: '=',
-                                sort: '=',
-                                search: '=',
-                                excludeOrgs: '='
-                            }));
-                        });
-
-                        describe('when user has excludeOrgs saved', function() {
-                            beforeEach(function() {
-                                user.config.platform = {
-                                    excludeOrgs: ['o-111','o-222']
-                                };
-                            });
-
-                            it('should register the params object with the SettingsService and pass a default excludeOrgs value of null', function() {
-                                defaults.excludeOrgs = null;
-
+                        describe('sync()', function() {
+                            it('should remove all saved orgs', function() {
                                 campaigns.beforeModel();
 
-                                expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
-                                    defaults: defaults,
-                                    sync: jasmine.any(Function),
-                                    localSync: user.id,
-                                    validateLocal: jasmine.any(Function)
-                                });
-                            });
+                                var sync = SettingsService.register.calls.mostRecent().args[2].sync;
+                                sync(savedParams);
 
-                            describe('sync()', function() {
-                                it('should remove all saved orgs', function() {
-                                    campaigns.beforeModel();
-
-                                    var sync = SettingsService.register.calls.mostRecent().args[2].sync;
-                                    sync(savedParams);
-
-                                    expect(user.save).toHaveBeenCalled();
-                                    expect(user.config.platform.excludeOrgs).toEqual([]);
-                                });
-                            });
-
-                            describe('validateLocal()', function() {
-                                it('should be true if ids match', function() {
-                                    campaigns.beforeModel();
-
-                                    var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
-                                    expect(validateLocal(user.id, user.id)).toBe(true);
-                                });
-
-                                it('should be false if ids do not match', function() {
-                                    campaigns.beforeModel();
-
-                                    var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
-                                    expect(validateLocal('u-999', user.id)).toBe(false);
-                                });
+                                expect(user.save).toHaveBeenCalled();
+                                expect(user.config.platform.excludeOrgs).toEqual([]);
                             });
                         });
 
-                        describe('when user does not have excludeOrgs saved', function() {
-                            beforeEach(function() {
-                                delete user.config.platform;
-                            });
-
-                            it('should register the params object with the SettingsService and pass a default excludeOrgs value of null', function() {
-                                defaults.excludeOrgs = null;
-
+                        describe('validateLocal()', function() {
+                            it('should be true if ids match', function() {
                                 campaigns.beforeModel();
 
-                                expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
-                                    defaults: defaults,
-                                    sync: jasmine.any(Function),
-                                    localSync: user.id,
-                                    validateLocal: jasmine.any(Function)
-                                });
+                                var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
+                                expect(validateLocal(user.id, user.id)).toBe(true);
                             });
 
-                            describe('sync()', function() {
-                                it('should set the excludedOrgs config to an empty array', function() {
-                                    campaigns.beforeModel();
+                            it('should be false if ids do not match', function() {
+                                campaigns.beforeModel();
 
-                                    var sync = SettingsService.register.calls.mostRecent().args[2].sync;
-                                    sync(savedParams);
-
-                                    expect(user.save).toHaveBeenCalled();
-                                    expect(user.config.platform.excludeOrgs).toEqual([]);
-                                });
-                            });
-
-                            describe('validateLocal()', function() {
-                                it('should be true if ids match', function() {
-                                    campaigns.beforeModel();
-
-                                    var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
-                                    expect(validateLocal(user.id, user.id)).toBe(true);
-                                });
-
-                                it('should be false if ids do not match', function() {
-                                    campaigns.beforeModel();
-
-                                    var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
-                                    expect(validateLocal('u-999', user.id)).toBe(false);
-                                });
+                                var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
+                                expect(validateLocal('u-999', user.id)).toBe(false);
                             });
                         });
                     });
 
-                    describe('when user has access to multiple orgs', function() {
+                    describe('when user does not have excludeOrgs saved', function() {
                         beforeEach(function() {
-                            campaigns.cParent.orgs = [{ id: 'o-123' }, { id: 'o-999'}];
+                            delete user.config.platform;
                         });
 
-                        it('should add the saved params to the State', function() {
+                        it('should register the params object with the SettingsService and pass a default excludeOrgs value of null', function() {
+                            defaults.excludeOrgs = null;
+
                             campaigns.beforeModel();
 
-                            expect(campaigns.filter).toBe('pending,active');
-                            expect(campaigns.filterBy).toBe('budget');
-                            expect(campaigns.sort).toBe('name,1');
-                            expect(campaigns.search).toBe('Hello');
-                            expect(campaigns.excludeOrgs).toBe('o-111,o-222');
+                            expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
+                                defaults: defaults,
+                                sync: jasmine.any(Function),
+                                localSync: user.id,
+                                validateLocal: jasmine.any(Function)
+                            });
                         });
 
-                        it('should add the params to the queryParams object', function() {
+                        describe('sync()', function() {
+                            it('should set the excludedOrgs config to an empty array', function() {
+                                campaigns.beforeModel();
+
+                                var sync = SettingsService.register.calls.mostRecent().args[2].sync;
+                                sync(savedParams);
+
+                                expect(user.save).toHaveBeenCalled();
+                                expect(user.config.platform.excludeOrgs).toEqual([]);
+                            });
+                        });
+
+                        describe('validateLocal()', function() {
+                            it('should be true if ids match', function() {
+                                campaigns.beforeModel();
+
+                                var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
+                                expect(validateLocal(user.id, user.id)).toBe(true);
+                            });
+
+                            it('should be false if ids do not match', function() {
+                                campaigns.beforeModel();
+
+                                var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
+                                expect(validateLocal('u-999', user.id)).toBe(false);
+                            });
+                        });
+                    });
+                });
+
+                describe('when user has access to multiple orgs', function() {
+                    beforeEach(function() {
+                        campaigns.cParent.orgs = [{ id: 'o-123' }, { id: 'o-999'}];
+                    });
+
+                    it('should get the params from the SettingsService', function() {
+                        campaigns.beforeModel();
+
+                        expect(SettingsService.getReadOnly).toHaveBeenCalledWith('Selfie::params');
+                    });
+
+                    it('should add the saved params to the State', function() {
+                        campaigns.beforeModel();
+
+                        expect(campaigns.filter).toBe('pending,active');
+                        expect(campaigns.filterBy).toBe('budget');
+                        expect(campaigns.sort).toBe('name,1');
+                        expect(campaigns.search).toBe('Hello');
+                        expect(campaigns.excludeOrgs).toBe('o-111,o-222');
+                    });
+
+                    it('should add the params to the queryParams object', function() {
+                        campaigns.beforeModel();
+
+                        expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
+                            filter: '=',
+                            filterBy: '=',
+                            sort: '=',
+                            search: '=',
+                            excludeOrgs: '='
+                        }));
+                    });
+
+                    describe('when user has excludeOrgs saved', function() {
+                        beforeEach(function() {
+                            user.config.platform = {
+                                excludeOrgs: ['o-111','o-222']
+                            };
+                        });
+
+                        it('should register the params object with the SettingsService and include the excludeOrgs string value', function() {
+                            defaults.excludeOrgs = 'o-111,o-222';
+
                             campaigns.beforeModel();
 
-                            expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
-                                filter: '=',
-                                filterBy: '=',
-                                sort: '=',
-                                search: '=',
-                                excludeOrgs: '='
-                            }));
+                            expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
+                                defaults: defaults,
+                                sync: jasmine.any(Function),
+                                localSync: user.id,
+                                validateLocal: jasmine.any(Function)
+                            });
                         });
 
-                        describe('when user has excludeOrgs saved', function() {
-                            beforeEach(function() {
-                                user.config.platform = {
-                                    excludeOrgs: ['o-111','o-222']
-                                };
-                            });
-
-                            it('should register the params object with the SettingsService and include the excludeOrgs string value', function() {
-                                defaults.excludeOrgs = 'o-111,o-222';
-
-                                campaigns.beforeModel();
-
-                                expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
-                                    defaults: defaults,
-                                    sync: jasmine.any(Function),
-                                    localSync: user.id,
-                                    validateLocal: jasmine.any(Function)
-                                });
-                            });
-
-                            describe('sync()', function() {
-                                describe('when the excludeOrgs have not changed', function() {
-                                    it('should not save the user or change the excludedOrgs config', function() {
-                                        campaigns.beforeModel();
-
-                                        var sync = SettingsService.register.calls.mostRecent().args[2].sync;
-
-                                        savedParams.excludeOrgs = 'o-111,o-222';
-
-                                        sync(savedParams);
-
-                                        expect(user.save).not.toHaveBeenCalled();
-                                        expect(user.config.platform.excludeOrgs).toEqual(['o-111','o-222']);
-                                    });
-                                });
-
-                                describe('when the excludeOrgs have changed', function() {
-                                    it('should update the exlcudeorgs and save the user', function() {
-                                        campaigns.beforeModel();
-
-                                        var sync = SettingsService.register.calls.mostRecent().args[2].sync;
-
-                                        savedParams.excludeOrgs = 'o-xxx,o-yyy';
-
-                                        sync(savedParams);
-
-                                        expect(user.save).toHaveBeenCalled();
-                                        expect(user.config.platform.excludeOrgs).toEqual(['o-xxx','o-yyy']);
-                                    });
-                                });
-                            });
-
-                            describe('validateLocal()', function() {
-                                it('should be true if ids match', function() {
+                        describe('sync()', function() {
+                            describe('when the excludeOrgs have not changed', function() {
+                                it('should not save the user or change the excludedOrgs config', function() {
                                     campaigns.beforeModel();
 
-                                    var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
-                                    expect(validateLocal(user.id, user.id)).toBe(true);
-                                });
+                                    var sync = SettingsService.register.calls.mostRecent().args[2].sync;
 
-                                it('should be false if ids do not match', function() {
+                                    savedParams.excludeOrgs = 'o-111,o-222';
+
+                                    sync(savedParams);
+
+                                    expect(user.save).not.toHaveBeenCalled();
+                                    expect(user.config.platform.excludeOrgs).toEqual(['o-111','o-222']);
+                                });
+                            });
+
+                            describe('when the excludeOrgs have changed', function() {
+                                it('should update the exlcudeorgs and save the user', function() {
                                     campaigns.beforeModel();
 
-                                    var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
-                                    expect(validateLocal('u-999', user.id)).toBe(false);
+                                    var sync = SettingsService.register.calls.mostRecent().args[2].sync;
+
+                                    savedParams.excludeOrgs = 'o-xxx,o-yyy';
+
+                                    sync(savedParams);
+
+                                    expect(user.save).toHaveBeenCalled();
+                                    expect(user.config.platform.excludeOrgs).toEqual(['o-xxx','o-yyy']);
                                 });
                             });
                         });
 
-                        describe('when user does not have excludeOrgs saved', function() {
-                            beforeEach(function() {
-                                delete user.config.platform;
-                            });
-
-                            it('should register the params object with the SettingsService and pass a default excludeOrgs value of null', function() {
-                                defaults.excludeOrgs = null;
-
+                        describe('validateLocal()', function() {
+                            it('should be true if ids match', function() {
                                 campaigns.beforeModel();
 
-                                expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
-                                    defaults: defaults,
-                                    sync: jasmine.any(Function),
-                                    localSync: user.id,
-                                    validateLocal: jasmine.any(Function)
+                                var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
+                                expect(validateLocal(user.id, user.id)).toBe(true);
+                            });
+
+                            it('should be false if ids do not match', function() {
+                                campaigns.beforeModel();
+
+                                var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
+                                expect(validateLocal('u-999', user.id)).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe('when user does not have excludeOrgs saved', function() {
+                        beforeEach(function() {
+                            delete user.config.platform;
+                        });
+
+                        it('should register the params object with the SettingsService and pass a default excludeOrgs value of null', function() {
+                            defaults.excludeOrgs = null;
+
+                            campaigns.beforeModel();
+
+                            expect(SettingsService.register).toHaveBeenCalledWith('Selfie::params', campaigns.params, {
+                                defaults: defaults,
+                                sync: jasmine.any(Function),
+                                localSync: user.id,
+                                validateLocal: jasmine.any(Function)
+                            });
+                        });
+
+                        describe('sync()', function() {
+                            describe('when the user does not have the exclusionOrgs config defined and no excludeOrgs are selected', function() {
+                                it('should initialize the user excludeOrgs to empty array and save the user', function() {
+                                    campaigns.beforeModel();
+
+                                    var sync = SettingsService.register.calls.mostRecent().args[2].sync;
+
+                                    savedParams.excludeOrgs = null;
+
+                                    sync(savedParams);
+
+                                    expect(user.save).toHaveBeenCalled();
+                                    expect(user.config.platform.excludeOrgs).toEqual([]);
                                 });
                             });
 
-                            describe('sync()', function() {
-                                describe('when the user does not have the exclusionOrgs config defined and no excludeOrgs are selected', function() {
-                                    it('should initialize the user excludeOrgs to empty array and save the user', function() {
-                                        campaigns.beforeModel();
+                            describe('when the user does not have the exclusionOrgs config defained and no excludeOrgs are selected', function() {
+                                it('should not change the excludeOrgs config or save the user', function() {
+                                    user.config.platform = {
+                                        excludeOrgs: []
+                                    };
 
-                                        var sync = SettingsService.register.calls.mostRecent().args[2].sync;
+                                    campaigns.beforeModel();
 
-                                        savedParams.excludeOrgs = null;
+                                    var sync = SettingsService.register.calls.mostRecent().args[2].sync;
 
-                                        sync(savedParams);
+                                    savedParams.excludeOrgs = null;
 
-                                        expect(user.save).toHaveBeenCalled();
-                                        expect(user.config.platform.excludeOrgs).toEqual([]);
-                                    });
-                                });
+                                    sync(savedParams);
 
-                                describe('when the user does not have the exclusionOrgs config defained and no excludeOrgs are selected', function() {
-                                    it('should not change the excludeOrgs config or save the user', function() {
-                                        user.config.platform = {
-                                            excludeOrgs: []
-                                        };
-
-                                        campaigns.beforeModel();
-
-                                        var sync = SettingsService.register.calls.mostRecent().args[2].sync;
-
-                                        savedParams.excludeOrgs = null;
-
-                                        sync(savedParams);
-
-                                        expect(user.save).not.toHaveBeenCalled();
-                                        expect(user.config.platform.excludeOrgs).toEqual([]);
-                                    });
-                                });
-
-                                describe('when the excludeOrgs have changed', function() {
-                                    it('should not save the user or change the excludedOrgs config', function() {
-                                        campaigns.beforeModel();
-
-                                        var sync = SettingsService.register.calls.mostRecent().args[2].sync;
-
-                                        savedParams.excludeOrgs = 'o-111,o-222';
-
-                                        sync(savedParams);
-
-                                        expect(user.save).toHaveBeenCalled();
-                                        expect(user.config.platform.excludeOrgs).toEqual(['o-111','o-222']);
-                                    });
+                                    expect(user.save).not.toHaveBeenCalled();
+                                    expect(user.config.platform.excludeOrgs).toEqual([]);
                                 });
                             });
 
-                            describe('validateLocal()', function() {
-                                it('should be true if ids match', function() {
+                            describe('when the excludeOrgs have changed', function() {
+                                it('should not save the user or change the excludedOrgs config', function() {
                                     campaigns.beforeModel();
 
-                                    var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
-                                    expect(validateLocal(user.id, user.id)).toBe(true);
-                                });
+                                    var sync = SettingsService.register.calls.mostRecent().args[2].sync;
 
-                                it('should be false if ids do not match', function() {
-                                    campaigns.beforeModel();
+                                    savedParams.excludeOrgs = 'o-111,o-222';
 
-                                    var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
-                                    expect(validateLocal('u-999', user.id)).toBe(false);
+                                    sync(savedParams);
+
+                                    expect(user.save).toHaveBeenCalled();
+                                    expect(user.config.platform.excludeOrgs).toEqual(['o-111','o-222']);
                                 });
+                            });
+                        });
+
+                        describe('validateLocal()', function() {
+                            it('should be true if ids match', function() {
+                                campaigns.beforeModel();
+
+                                var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
+                                expect(validateLocal(user.id, user.id)).toBe(true);
+                            });
+
+                            it('should be false if ids do not match', function() {
+                                campaigns.beforeModel();
+
+                                var validateLocal = SettingsService.register.calls.mostRecent().args[2].validateLocal;
+                                expect(validateLocal('u-999', user.id)).toBe(false);
                             });
                         });
                     });

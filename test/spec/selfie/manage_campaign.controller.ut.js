@@ -316,32 +316,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 describe('when there is a renewalCampaign object', function() {
-                    describe('when the status is outOfBudget', function() {
-                        it('should be false if the new budget is not greater than current budget', function() {
-                            campaign.pricing.budget = 100;
-                            SelfieManageCampaignCtrl.campaign = campaign.pojoify();
-
-                            campaign.status = 'outOfBudget';
+                    describe('when status is canceled', function() {
+                        it('should be true if all validation passes', function() {
+                            campaign.status = 'canceled';
                             SelfieManageCampaignCtrl.renewalCampaign = campaign.pojoify();
-
-                            SelfieManageCampaignCtrl.validation = {
-                                budget: true,
-                                dailyLimit: true,
-                                startDate: true,
-                                endDate: true
-                            };
-
-                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
-
-                            SelfieManageCampaignCtrl.renewalCampaign.pricing.budget = 110;
-
-                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(true);
-                        });
-                    });
-                    describe('when the status is not outOfBudget', function() {
-                        it('should rely on the validation object', function() {
-                            campaign.status = 'active';
-                            SelfieManageCampaignCtrl.renewalCampaign = campaign.pojoify();
+                            SelfieManageCampaignCtrl.renewalProxyCampaign = campaign.pojoify();
 
                             SelfieManageCampaignCtrl.validation = {
                                 budget: true,
@@ -374,6 +353,32 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             SelfieManageCampaignCtrl.validation.endDate = true;
 
                             expect(SelfieManageCampaignCtrl.validRenewal).toBe(true);
+                        });
+                    });
+
+                    describe('when the status is not canceled', function() {
+                        it('should be true if validation passes and the campaign has been edited', function() {
+                            campaign.status = 'outOfBudget';
+                            campaign.pricing.budget = 1000;
+                            SelfieManageCampaignCtrl.renewalCampaign = campaign.pojoify();
+                            SelfieManageCampaignCtrl.renewalProxyCampaign = campaign.pojoify();
+
+                            SelfieManageCampaignCtrl.validation = {
+                                budget: true,
+                                dailyLimit: true,
+                                startDate: true,
+                                endDate: true
+                            };
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
+
+                            SelfieManageCampaignCtrl.renewalCampaign.pricing.budget = 1100;
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(true);
+
+                            SelfieManageCampaignCtrl.validation.budget = false;
+
+                            expect(SelfieManageCampaignCtrl.validRenewal).toBe(false);
                         });
                     });
                 });
@@ -661,6 +666,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieManageCampaignCtrl.renewalCampaign).toEqual(updateRequest.pojoify().data);
                     });
 
+                    it('should set a renewal campaign proxy', function() {
+                        expect(SelfieManageCampaignCtrl.renewalProxyCampaign).toEqual(SelfieManageCampaignCtrl.renewalCampaign);
+                        expect(SelfieManageCampaignCtrl.renewalProxyCampaign).not.toBe(SelfieManageCampaignCtrl.renewalCampaign);
+                    });
+
                     it('should not pojoify the actual campaign', function() {
                         expect(campaign.pojoify).not.toHaveBeenCalled();
                     });
@@ -734,7 +744,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             }
                         ];
 
-                        spyOn(campaign, 'pojoify').and.returnValue(campaign);
+                        spyOn(campaign, 'pojoify').and.callThrough();
 
                         SelfieManageCampaignCtrl.updateRequest = null;
                         SelfieManageCampaignCtrl.campaign = campaign;
@@ -750,6 +760,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     it('should set renewalCampaign to be the data from a pojoified update request', function() {
                         expect(SelfieManageCampaignCtrl.renewalCampaign).toEqual(campaign.pojoify());
+                    });
+
+                    it('should set a renewal campaign proxy', function() {
+                        expect(SelfieManageCampaignCtrl.renewalProxyCampaign).toEqual(SelfieManageCampaignCtrl.renewalCampaign);
+                        expect(SelfieManageCampaignCtrl.renewalProxyCampaign).not.toBe(SelfieManageCampaignCtrl.renewalCampaign);
                     });
 
                     it('should set the expiration date from the status history', function() {

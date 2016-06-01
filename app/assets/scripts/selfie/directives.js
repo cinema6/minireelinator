@@ -1792,6 +1792,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                             });
                     }, function() {
                         self.paymentError = true;
+                        self.confirmationPending = false;
                     });
             }, this);
 
