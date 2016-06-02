@@ -1,6 +1,12 @@
 # MiniReelinator
 
-## v1.48.0 (June 1, 2016)
+## v1.48.0 (June 2, 2016)
+* *[v1.48.0.rc3]*
+  * [DESIGN]: Fix width of warning message in "renew" modal
+  * [FIX]: When "renewing" campaigns default the budget increase to 0 if no increase
+    is required and default to the minimum allowable budget if an increase is required
+* *[/v1.48.0.rc3]*
+
 * *[v1.48.0.rc2]*
   * [FIX]: Do not allow renewal campaign to be submitted unless required changes
     are made to the campaign

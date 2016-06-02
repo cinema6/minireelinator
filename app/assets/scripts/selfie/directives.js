@@ -1296,6 +1296,14 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             this.limitMinPercent = limitMinPercent;
             this.budgetMin = budgetMin;
             this.budgetMax = budgetMax;
+            this.additionalBudget = (function() {
+                if (!$scope.increaseBudget) { return; }
+
+                var spent = parseFloat(stats.summary.totalSpend) || 0;
+
+                return (campaign.pricing.budget - spent) > 0 ? 0 : budgetMin;
+            }());
+            this.additionalBudgetRequired = !!this.additionalBudget;
 
             Object.defineProperties(this, {
                 cpv: {
@@ -1340,7 +1348,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                             validDecimal = !budget || (/^[0-9]+(\.[0-9]{1,2})?$/).test(budget),
                             status = campaign.status;
 
-                        if (budget <= 0) { return 1; }
+                        if (budget < 0) { return 1; }
                         if (this.totalBudget > budgetMax) { return 2; }
                         if (!validDecimal) { return 3; }
                         if (status === 'outOfBudget' && !budget && validation.show) { return 4; }
@@ -1412,6 +1420,13 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                     validation.budget = false;
                 }
             };
+
+            // if the directive is being used to increase
+            // the budget then we want to trigger setBudget()
+            // so any default increases get applied and validated
+            if ($scope.increaseBudget) {
+                this.setBudget();
+            }
         }])
 
         .directive('selfieFlightDates', [function() {

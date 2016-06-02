@@ -347,6 +347,9 @@ define(['app'], function(appModule) {
                     SelfieBudgetCtrl.additionalBudget = 200.123;
                     expect(SelfieBudgetCtrl.additionalBudgetError).toBe(3);
 
+                    SelfieBudgetCtrl.additionalBudget = 0;
+                    expect(SelfieBudgetCtrl.additionalBudgetError).toBe(false);
+
                     campaign.status = 'outOfBudget';
                     compileCtrl();
                     $scope.validation.show = true;
@@ -605,6 +608,106 @@ define(['app'], function(appModule) {
 
                             // subtracting 100 spent from 5000 total budget
                             expect(SelfieBudgetCtrl.dailyLimitError).toEqual({code:5, min: 4900 / 4});
+                        });
+                    });
+                });
+            });
+
+            describe('additionalBudget', function() {
+                describe('when not increasing budget', function() {
+                    it('should be undefined', function() {
+                        compileCtrl();
+
+                        expect(SelfieBudgetCtrl.additionalBudget).toBe(undefined);
+                    });
+                });
+
+                describe('when increasing budget', function() {
+                    describe('when there is still budget left', function() {
+                        it('should default to 0', function() {
+                            campaign.pricing.budget = 100;
+
+                            var stats = {
+                                summary: {
+                                    totalSpend: 30
+                                }
+                            };
+
+                            compileCtrl({
+                                stats: stats,
+                                increaseBudget: true
+                            });
+
+                            expect(SelfieBudgetCtrl.additionalBudget).toBe(0);
+                        });
+                    });
+
+                    describe('when there is no budget left', function() {
+                        it('should default to the minimum budget', function() {
+                            campaign.pricing.budget = 100;
+
+                            var stats = {
+                                summary: {
+                                    totalSpend: 100
+                                }
+                            };
+
+                            compileCtrl({
+                                stats: stats,
+                                increaseBudget: true
+                            });
+
+                            expect(SelfieBudgetCtrl.additionalBudget).toEqual($scope.schema.pricing.budget.__min);
+                        });
+                    });
+                });
+            });
+
+            describe('additionalBudgetRequired', function() {
+                describe('when not increasing budget', function() {
+                    it('should be false', function() {
+                        compileCtrl();
+
+                        expect(SelfieBudgetCtrl.additionalBudgetRequired).toBe(false);
+                    });
+                });
+
+                describe('when increasing budget', function() {
+                    describe('when there is still budget left', function() {
+                        it('should be false', function() {
+                            campaign.pricing.budget = 100;
+
+                            var stats = {
+                                summary: {
+                                    totalSpend: 30
+                                }
+                            };
+
+                            compileCtrl({
+                                stats: stats,
+                                increaseBudget: true
+                            });
+
+                            expect(SelfieBudgetCtrl.additionalBudgetRequired).toBe(false);
+                        });
+                    });
+
+                    describe('when there is no budget left', function() {
+                        it('should be true', function() {
+                            campaign.pricing.budget = 100;
+
+                            var stats = {
+                                summary: {
+                                    totalSpend: 100
+                                }
+                            };
+
+                            compileCtrl({
+                                stats: stats,
+                                increaseBudget: true
+                            });
+
+                            expect(SelfieBudgetCtrl.additionalBudgetRequired).toEqual(true);
                         });
                     });
                 });
