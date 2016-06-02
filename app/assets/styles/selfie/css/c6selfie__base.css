@@ -4541,7 +4541,7 @@ fa,
     .modalBody__group--tall {
         height: auto;
         width: 40em;
-        top: 34%;
+        top: 24%;
         overflow: hidden;
     }
         .modalBody__group--tall .modalBody__group {
@@ -4636,7 +4636,9 @@ fa,
         margin: 0 20px;
     }
     .modal__renew-campaign .formSection__group p.alertMessage {
-        width: 100%;
+        width: 400px !important;
+        margin-left: -92px !important;
+        text-align: center;
     }
     .modal__renew-campaign .renewalModal .timeline__selectOption {
         padding-left: 30px;
@@ -7141,7 +7143,7 @@ div.tree-multiselect span.remove-selected {
     .modal__subTitle {
         text-align:center;
         color:#5c5c5c;
-        font-weight:400;
+        font-weight:600;
         font-size:1rem;
         margin:0.125em 0 0;
     }
