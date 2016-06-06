@@ -1792,7 +1792,7 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
 
             this.confirm = queue.debounce(function() {
                 // this is on the Confirmation button
-                var token = this.model.paymentMethod.token;
+                var token = (this.model.paymentMethod || {}).token;
 
                 this.confirmationPending = true;
 
