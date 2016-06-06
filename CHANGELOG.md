@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[v1.49.0.rc1]*
+  * [FEATURE]: Display impression tracking pixel in placement tag modal
+  * [FEATURE]: Add separate "Get Tag" button for accessing the placement tag
+    and impression pixel without re-saving first
+
 ## v1.48.0 (June 6, 2016)
 * *[v1.48.0.rc4]*
   * [FIX]: Fix for an issue where a user who does not require a payment method

@@ -2517,10 +2517,7 @@ function( angular , c6State  , PaginatedListState,
                 placementDBModel.tagParams.campaign = this.campaign.id;
                 placementDBModel.externalCost.event = 'view';
 
-                placementDBModel.save()
-                    .then(function(model) {
-                        c6State.goTo('Selfie:Manage:Campaign:Placements:Tag', [model]);
-                    }).catch(showErrorModal);
+                placementDBModel.save().catch(showErrorModal);
             }, this);
 
             this.delete = function(placement) {
@@ -2589,6 +2586,32 @@ function( angular , c6State  , PaginatedListState,
                 }
             }
 
+            function generatePixelURL(model) {
+                var tagParams = model.tagParams,
+                    params = [
+                        'cb=1',
+                        ('placement=' + model.id),
+                        ('event=' + (model.tagType === 'mraid' ? 'impression' : 'dspimpression'))
+                    ];
+
+                params = params.concat(
+                    ['campaign','container','hostApp','network','domain','branding',
+                        'uuid','ex','vr'].reduce(function(result, prop) {
+                            if (tagParams[prop]) {
+                                if (prop === 'uuid') {
+                                    result.push('externalSessionId=' + tagParams[prop]);
+                                } else {
+                                    result.push(prop + '=' + tagParams[prop]);
+                                }
+                            }
+
+                            return result;
+                        }, [])
+                );
+
+                return c6Defines.kAuditUrl + 'pixel.gif?' + params.join('&');
+            }
+
             this.initWithModel = function(model) {
                 var tagType = model.tagType,
                     paramsToShow = Object.keys(model.showInTag).reduce(function(result, name) {
@@ -2607,7 +2630,8 @@ function( angular , c6State  , PaginatedListState,
 
                 this.placement = {
                     name: model.tagParams.container,
-                    tag: generateTag(model.tagType, paramsToShow)
+                    tag: generateTag(model.tagType, paramsToShow),
+                    pixel: generatePixelURL(model)
                 };
             };
 
