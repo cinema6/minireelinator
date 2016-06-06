@@ -2517,10 +2517,7 @@ function( angular , c6State  , PaginatedListState,
                 placementDBModel.tagParams.campaign = this.campaign.id;
                 placementDBModel.externalCost.event = 'view';
 
-                placementDBModel.save()
-                    .then(function(model) {
-                        c6State.goTo('Selfie:Manage:Campaign:Placements:Tag', [model]);
-                    }).catch(showErrorModal);
+                placementDBModel.save().catch(showErrorModal);
             }, this);
 
             this.delete = function(placement) {
