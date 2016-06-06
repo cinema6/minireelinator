@@ -382,16 +382,6 @@ define(['app'], function(appModule) {
                     expect(placement.model.save).toHaveBeenCalled();
                 });
 
-                describe('when the save completes', function() {
-                    it('should go to the Selfie:Manage:Campaign:Placements:Tag state', function() {
-                        $scope.$apply(function() {
-                            saveDeferred.resolve(placement.model);
-                        });
-
-                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Placements:Tag', [placement.model]);
-                    });
-                });
-
                 describe('when save fails', function() {
                     it('should show an error modal', function() {
                         $scope.$apply(function() {
