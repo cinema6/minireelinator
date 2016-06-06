@@ -1,6 +1,11 @@
 # MiniReelinator
 
-## v1.48.0 (June 2, 2016)
+## v1.48.0 (June 6, 2016)
+* *[v1.48.0.rc4]*
+  * [FIX]: Fix for an issue where a user who does not require a payment method
+    and does not have any payment methods is unable to submit campaign changes
+* *[/v1.48.0.rc4]*
+
 * *[v1.48.0.rc3]*
   * [DESIGN]: Fix width of warning message in "renew" modal
   * [FIX]: When "renewing" campaigns default the budget increase to 0 if no increase
