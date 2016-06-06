@@ -194,6 +194,24 @@
           "type": "String",
           "editable": true,
           "options": ["landscape","portrait","none"]
+        },
+        {
+          "name": "domain",
+          "label": "Domain URL",
+          "type": "String",
+          "editable": true
+        },
+        {
+          "name": "ex",
+          "label": "Experiment",
+          "type": "String",
+          "editable": true
+        },
+        {
+          "name": "vr",
+          "label": "Variant",
+          "type": "String",
+          "editable": true
         }
       ]
     }
