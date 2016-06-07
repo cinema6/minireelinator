@@ -41,9 +41,9 @@ function( angular , c6State  , c6uilib , c6Defines ,  account          , demo) {
         }])
 
         .controller('SelfieController', ['AuthService','c6State','intercom',
-                                         'PaymentService',
+                                         'PaymentService','$scope',
         function                        ( AuthService , c6State , intercom ,
-                                          PaymentService ) {
+                                          PaymentService , $scope) {
             this.accounting = PaymentService.balance;
 
             this.initWithModel = function(model) {
@@ -55,6 +55,7 @@ function( angular , c6State  , c6uilib , c6Defines ,  account          , demo) {
                 return AuthService.logout()
                     .then(function transition() {
                         intercom('shutdown');
+                        $scope.$broadcast('SelfieWillLogout');
                         return c6State.goTo('Selfie:Login', null, {});
                     });
             };

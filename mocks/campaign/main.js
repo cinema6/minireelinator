@@ -306,6 +306,8 @@ module.exports = function(http) {
             }),
             badDate = false;
 
+        // return this.respond(401, 'Not Authorized');
+
         function handleDate(obj) {
             var now = new Date(),
                 endDateTime;
