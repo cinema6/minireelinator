@@ -192,6 +192,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 advertiser: advertiser,
                 user: user,
                 schema: schema,
+                allowExit: false,
                 saveCampaign: jasmine.createSpy('cState.saveCampaign()'),
                 saveUpdateRequest: jasmine.createSpy('cState.saveUpdateRequest()'),
                 cName: 'Selfie:Campaign'
@@ -1233,6 +1234,18 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                         expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toEqual('There was a problem processing your request: Error!');
                     });
+                });
+            });
+        });
+
+        describe('$scope.$on', function() {
+            describe('SelfieWillLogout', function() {
+                it('should set the allowExit flag on the cState to true', function() {
+                    expect(cState.allowExit).toBe(false);
+
+                    $rootScope.$broadcast('SelfieWillLogout');
+
+                    expect(cState.allowExit).toBe(true);
                 });
             });
         });

@@ -105,6 +105,7 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
                 beforeEach(function() {
                     spyOn(AuthService, 'logout').and.returnValue($q.when('Success'));
                     spyOn(c6State, 'goTo');
+                    spyOn($scope, '$broadcast');
 
                     $scope.$apply(function() {
                         SelfieCtrl.logout();
@@ -121,6 +122,10 @@ define(['app','c6_defines'], function(appModule, c6Defines) {
 
                 it('should send intercom a "shutdown" event', function() {
                     expect(intercom).toHaveBeenCalledWith('shutdown');
+                });
+
+                it('should $broadcast SelfieWillLogout event', function() {
+                    expect($scope.$broadcast).toHaveBeenCalledWith('SelfieWillLogout');
                 });
             });
         });
