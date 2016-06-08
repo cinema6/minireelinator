@@ -432,22 +432,23 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when master campaign is not in draft', function() {
-                    describe('when master campaign is a new draft without a status yet', function() {
-                        it('should resolve the promise immediately', function() {
-                            campaignState._campaign.status = undefined;
+                    describe('when allowExit is true', function() {
+                        it('should not saveCampaign or display a modal', function() {
+                            campaignState.allowExit = true;
 
                             $rootScope.$apply(function() {
                                 campaignState.exit().then(success, failure);
                             });
 
-                            expect(success).toHaveBeenCalled();
                             expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                            expect(ConfirmDialogService.display).not.toHaveBeenCalled();
+                            expect(success).toHaveBeenCalledWith(null);
                         });
                     });
 
-                    describe('when allowExit is true', function() {
+                    describe('when master campaign is a new draft without a status yet', function() {
                         it('should resolve the promise immediately', function() {
-                            campaignState.allowExit = true;
+                            campaignState._campaign.status = undefined;
 
                             $rootScope.$apply(function() {
                                 campaignState.exit().then(success, failure);
@@ -519,6 +520,20 @@ define(['app'], function(appModule) {
                     });
                 });
 
+                describe('when allowExit is true', function() {
+                    it('should not saveCampaign or display a modal', function() {
+                        campaignState.allowExit = true;
+
+                        $rootScope.$apply(function() {
+                            campaignState.exit().then(success, failure);
+                        });
+
+                        expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                        expect(ConfirmDialogService.display).not.toHaveBeenCalled();
+                        expect(success).toHaveBeenCalledWith(null);
+                    });
+                });
+
                 describe('when the campaign is a draft', function() {
                     beforeEach(function() {
                         campaignState._campaign.status = 'draft';
@@ -529,8 +544,10 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    it('should call saveCampaign', function() {
-                        expect(campaignState.saveCampaign).toHaveBeenCalled();
+                    describe('when allowExit is false', function() {
+                        it('should call saveCampaign', function() {
+                            expect(campaignState.saveCampaign).toHaveBeenCalled();
+                        });
                     });
 
                     describe('if the save succeeds', function() {

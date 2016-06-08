@@ -665,8 +665,12 @@ function( angular , c6State  , PaginatedListState,
                             (!masterCampaign.updateRequest &&
                             equals(masterCampaign.pojoify(), proxyCampaign));
 
+                    if (this.allowExit) {
+                        return $q.when(null);
+                    }
+
                     if (masterCampaign.status !== 'draft') {
-                        if (this.allowExit || isClean || !masterCampaign.status) {
+                        if (isClean || !masterCampaign.status) {
                             return $q.when(null);
                         } else {
                             ConfirmDialogService.display({
@@ -1104,6 +1108,10 @@ function( angular , c6State  , PaginatedListState,
                     data.service
                 ];
             }, watchForPreview);
+
+            $scope.$on('SelfieWillLogout', function() {
+                cState.allowExit = true;
+            });
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService','c6State',
