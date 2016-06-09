@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.49.0 (June 9, 2016)
 * *[v1.49.0.rc1]*
   * [FEATURE]: Display impression tracking pixel in placement tag modal
   * [FEATURE]: Add separate "Get Tag" button for accessing the placement tag
@@ -7,6 +8,7 @@
   * [FIX]: Fix for an issue where clicking the log out button after a user's
     session had expired triggered the login modal instead of directing to
     the login page
+* *[v1.49.0.rc1]*
 
 ## v1.48.0 (June 6, 2016)
 * *[v1.48.0.rc4]*
