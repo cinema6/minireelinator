@@ -1671,8 +1671,8 @@ function( angular , c6State  , PaginatedListState,
                 this.afterModel = function(model) {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
-                        interests = (model.updateRequest && model.updateRequest.data &&
-                            model.updateRequest.data.targeting.interests) ||
+                        updateRequestData = model.updateRequest && model.updateRequest.data,
+                        interests = (updateRequestData && updateRequestData.targeting.interests) ||
                             this.campaign.targeting.interests;
 
                     var requests = {
@@ -1682,7 +1682,7 @@ function( angular , c6State  , PaginatedListState,
                         campaign: this.campaign._error ?
                             this.campaign.refresh() :
                             this.campaign,
-                        updateRequest: model.updateRequest._error ?
+                        updateRequest: !!updateRequestData && model.updateRequest._error ?
                             model.updateRequest.refresh() :
                             model.updateRequest
                     };
