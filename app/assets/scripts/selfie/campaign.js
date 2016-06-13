@@ -1675,18 +1675,29 @@ function( angular , c6State  , PaginatedListState,
                             model.updateRequest.data.targeting.interests) ||
                             this.campaign.targeting.interests;
 
+                    var requests = {
+                        interests: interests.length ?
+                            cinema6.db.findAll('category', {ids: interests.join(',')}) :
+                            null,
+                        campaign: this.campaign._error ?
+                            this.campaign.refresh() :
+                            this.campaign,
+                        updateRequest: model.updateRequest._error ?
+                            model.updateRequest.refresh() :
+                            model.updateRequest
+                    };
+
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
-                    this.updateRequest = model.updateRequest;
                     this.schema = model.schema;
 
                     PaymentService.getBalance();
 
-                    if (interests.length) {
-                        return cinema6.db.findAll('category', {ids: interests.join(',')})
-                            .then(function(interests) {
-                                cState.interests = interests;
+                    return $q.all(requests)
+                        .then(function(promises) {
+                            Object.keys(promises).forEach(function(key) {
+                                cState[key] = promises[key];
                             });
-                    }
+                        });
                 };
 
                 this.enter = function() {
