@@ -678,7 +678,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                                 maintainAspectRatio: true,
                                 tooltipTemplate: '<%if (label){%><%=label %>: <%}%><%= value %>%'
                             },
-                            noDataDefaultSections = ['action','website','share','instagram','vimeo'];
+                            noDataDefaultSections = [
+                                'action','website','share','instagram','vimeo'
+                            ];
 
                         if (!scope.stats || !scope.total) {
                             forEach(pieSections, function(section, key) {
