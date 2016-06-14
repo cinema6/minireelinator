@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[v1.50.0.rc1]*
+  * Update c6ui to v3.9.0
+  * [FIX]: Fix for an issue where unsaved changes were shown in the
+    Manage Campaign tab
+
 ## v1.49.0 (June 9, 2016)
 * *[v1.49.0.rc1]*
   * [FEATURE]: Display impression tracking pixel in placement tag modal

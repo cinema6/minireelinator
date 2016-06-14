@@ -266,10 +266,22 @@ define(['app'], function(appModule) {
             });
 
             describe('afterModel()', function() {
-                var interestsDeferred, model, interests;
+                var interestsDeferred, model, interests, success, failure,
+                    campaignRefreshDeferred, updateRequestRefreshDeferred;
 
                 beforeEach(function() {
                     interestsDeferred = $q.defer();
+                    campaignRefreshDeferred = $q.defer();
+                    updateRequestRefreshDeferred = $q.defer();
+
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    campaign.refresh = jasmine.createSpy('campaign.refresh()')
+                        .and.returnValue(campaignRefreshDeferred.promise);
+
+                    updateRequest.refresh = jasmine.createSpy('updateRequest.refresh()')
+                        .and.returnValue(updateRequestRefreshDeferred.promise);
 
                     spyOn(PaymentService, 'getBalance').and.returnValue($q.when({}));
                     spyOn(cinema6.db, 'findAll').and.returnValue(interestsDeferred.promise);
@@ -287,13 +299,14 @@ define(['app'], function(appModule) {
                             id: 'cat-2'
                         }
                     ];
+
+                    campaignState.campaign = campaign;
                 });
 
                 it('should set the isAdmin flag on the state', function() {
                     campaignState.afterModel(model);
 
                     expect(campaignState.isAdmin).toBe(true);
-                    expect(campaignState.updateRequest).toBe(updateRequest);
                     expect(campaignState.schema).toBe(schema);
                 });
 
@@ -302,33 +315,116 @@ define(['app'], function(appModule) {
                     expect(PaymentService.getBalance).toHaveBeenCalled();
                 });
 
-                describe('when there is an update request', function() {
-                    it('should fetch the categories and put them on the state', function() {
-                        updateRequest.data.targeting.interests = ['cat-1','cat-3'];
+                describe('when the campaign has a previous _error', function() {
+                    beforeEach(function() {
+                        campaignState.campaign._error = true;
 
-                        campaign.targeting.interests = ['cat-2'];
-                        campaignState.campaign = campaign;
-
-                        campaignState.afterModel(model);
-
-                        expect(cinema6.db.findAll).toHaveBeenCalledWith('category', { ids: 'cat-1,cat-3'});
-
-                        $rootScope.$apply(function() {
-                            interestsDeferred.resolve(interests);
-                        });
-
-                        expect(campaignState.interests).toBe(interests);
+                        campaignState.afterModel(model).then(success, failure);
                     });
 
-                    it('should not fetch any interests if there are none', function() {
-                        updateRequest.data.targeting.interests = [];
+                    it('should refresh() the model', function() {
+                        expect(campaign.refresh).toHaveBeenCalled();
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).not.toHaveBeenCalled();
+                    });
 
-                        campaign.targeting.interests = ['cat-2'];
+                    describe('when the refresh() returns', function() {
+                        it('should put the campaign on the state', function() {
+                            var updatedCampaign = {};
+
+                            $rootScope.$apply(function() {
+                                campaignRefreshDeferred.resolve(updatedCampaign);
+                            });
+
+                            expect(campaignState.campaign).toBe(updatedCampaign);
+                            expect(success).toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('when the refresh() fails', function() {
+                        it('should reject', function() {
+                            $rootScope.$apply(function() {
+                                campaignRefreshDeferred.reject('BAD');
+                            });
+
+                            expect(failure).toHaveBeenCalled();
+                        });
+                    });
+                });
+
+                describe('when the campaign does not have a previous _error', function() {
+                    it('should not refresh() the model', function() {
                         campaignState.campaign = campaign;
 
                         campaignState.afterModel(model);
 
-                        expect(cinema6.db.findAll).not.toHaveBeenCalledWith('category', jasmine.any(Object));
+                        expect(campaign.refresh).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when there is an update request', function() {
+                    describe('when the updateRequest has a previous _error', function() {
+                        beforeEach(function() {
+                            updateRequest._error = true;
+
+                            campaignState.afterModel(model).then(success, failure);
+                        });
+
+                        it('should refresh() the model', function() {
+                            expect(updateRequest.refresh).toHaveBeenCalled();
+                        });
+
+                        describe('when the refresh() returns', function() {
+                            it('should put the updateRequest on the state', function() {
+                                var updatedUpdateRequest = {};
+
+                                $rootScope.$apply(function() {
+                                    updateRequestRefreshDeferred.resolve(updatedUpdateRequest);
+                                });
+
+                                expect(campaignState.updateRequest).toBe(updatedUpdateRequest);
+                            });
+                        });
+                    });
+
+                    describe('when the updateRequest does not have a previous _error', function() {
+                        it('should not refresh() the model', function() {
+                            campaignState.afterModel(model).then(success, failure);
+
+                            expect(updateRequest.refresh).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('when there are interests', function() {
+                        it('should fetch the categories and put them on the state', function() {
+                            updateRequest.data.targeting.interests = ['cat-1','cat-3'];
+
+                            campaign.targeting.interests = ['cat-2'];
+                            campaignState.campaign = campaign;
+
+                            campaignState.afterModel(model);
+
+                            expect(cinema6.db.findAll).toHaveBeenCalledWith('category', { ids: 'cat-1,cat-3'});
+
+                            $rootScope.$apply(function() {
+                                interestsDeferred.resolve(interests);
+                            });
+
+                            expect(campaignState.interests).toBe(interests);
+                        });
+                    });
+
+                    describe('when there are no interests', function() {
+                        it('should not fetch any interests if there are none', function() {
+                            updateRequest.data.targeting.interests = [];
+
+                            campaign.targeting.interests = ['cat-2'];
+                            campaignState.campaign = campaign;
+
+                            campaignState.afterModel(model);
+
+                            expect(cinema6.db.findAll).not.toHaveBeenCalledWith('category', jasmine.any(Object));
+                        });
                     });
                 });
 
@@ -371,6 +467,9 @@ define(['app'], function(appModule) {
                         updateRequest: updateRequest
                     };
                     spyOn(c6State, 'goTo');
+                    spyOn(PaymentService, 'getBalance');
+
+                    campaignState.campaign = campaign;
                 });
 
                 it('should go to the Selfie:Manage:Campaign:Manage state if user is not an admin', function() {
@@ -385,7 +484,10 @@ define(['app'], function(appModule) {
                 it('shoud go to the Selfie:Manage:Campaign:Manage state if user is an admin and campaign does not have an update request', function() {
                     selfieState.cModel.entitlements.adminCampaigns = true;
 
-                    campaignState.afterModel(model);
+                    $rootScope.$apply(function() {
+                        campaignState.afterModel(model);
+                    });
+
                     campaignState.updateRequest = null;
                     campaignState.enter();
 
@@ -395,7 +497,10 @@ define(['app'], function(appModule) {
                 it('shoud go to the Selfie:Manage:Campaign:Admin state if user is an admin and campaign has an update request', function() {
                     selfieState.cModel.entitlements.adminCampaigns = true;
 
-                    campaignState.afterModel(model);
+                    $rootScope.$apply(function() {
+                        campaignState.afterModel(model);
+                    });
+
                     campaignState.enter();
 
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Admin', null, null, true);

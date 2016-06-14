@@ -1671,22 +1671,33 @@ function( angular , c6State  , PaginatedListState,
                 this.afterModel = function(model) {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
-                        interests = (model.updateRequest && model.updateRequest.data &&
-                            model.updateRequest.data.targeting.interests) ||
+                        updateRequestData = model.updateRequest && model.updateRequest.data,
+                        interests = (updateRequestData && updateRequestData.targeting.interests) ||
                             this.campaign.targeting.interests;
 
+                    var requests = {
+                        interests: interests.length ?
+                            cinema6.db.findAll('category', {ids: interests.join(',')}) :
+                            null,
+                        campaign: this.campaign._error ?
+                            this.campaign.refresh() :
+                            this.campaign,
+                        updateRequest: !!updateRequestData && model.updateRequest._error ?
+                            model.updateRequest.refresh() :
+                            model.updateRequest
+                    };
+
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
-                    this.updateRequest = model.updateRequest;
                     this.schema = model.schema;
 
                     PaymentService.getBalance();
 
-                    if (interests.length) {
-                        return cinema6.db.findAll('category', {ids: interests.join(',')})
-                            .then(function(interests) {
-                                cState.interests = interests;
+                    return $q.all(requests)
+                        .then(function(promises) {
+                            Object.keys(promises).forEach(function(key) {
+                                cState[key] = promises[key];
                             });
-                    }
+                        });
                 };
 
                 this.enter = function() {
