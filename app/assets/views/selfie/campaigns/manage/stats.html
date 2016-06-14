@@ -245,11 +245,22 @@
     </div>
 
     <div class="grid linksSummary">
-        <div class="grid__item one-whole">
-            <h1 class="tk--hdr stats__hdr stats__linksSummary"><span class="hint--top hint--text-wrap" data-hint="Total count of interactions with your website, share, and social links. Click-through rate (CTR) is the ratio of users who click on a specific link to the number of total users who view your ad.">Engagement</span></h1>
+        <style>
+            .stats__columnGraph { display: none; }
+            .stats__subTable .stats__row i { float:left; margin: 0.125rem 0.375rem 0 0; }
+            .stats__hdr.stats__linksSummary { margin-left: 1.5rem; }
+            .stats__label.stats__label--total{ padding-left: 1.5rem; }
+            .chart__group--noData .pie { -webkit-filter: grayscale(0.55) blur(2px); opacity: 0.25; }
+            .chart__group--noData .doughnut-legend { display: none; }
+        </style>
+
+        <h1 class="tk--hdr stats__hdr stats__linksSummary">
+            <span class="hint--top hint--text-wrap" data-hint="Total count of interactions with your website, share, and social links. Click-through rate (CTR) is the ratio of users who click on a specific link to the number of total users who view your ad.">Engagement</span>
+        </h1>
+
+        <div class="grid__item two-fifths">
             <div class="stats__row stats__sub-hdr">
                 <h3 class="stats__label">Type</h3>
-                <h3 class="stats__rowData stats__rowGraph">Graph</h3>
                 <h3 class="stats__rowData">CTR</h3>
 
                 <h3 class="stats__rowData">Clicks</h3>
@@ -308,15 +319,12 @@
                 </span>
             </div> -->
 
-            <div ng-class="{'stats__row--open': showShareStats, 'stats__row--closed': !showShareStats, 'stats__row--noData': !SelfieManageCampaignStatsCtrl.hasViews }" class="stats__row stats__row--share">
+            <div class="stats__row stats__row--open stats__row--share">
                 <div class="stats__column stats__columnGraph">
                     <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                 </div>
-                <button ng-click="showShareStats = !showShareStats" class="accordion__btn">
-                    <i class="fa fa-chevron-right"></i>
-                    <i class="fa fa-chevron-down"></i>
-                    <h3 class="stats__label stats__label--total">Share Total</h3>
-                </button>
+
+                <h3 class="stats__label stats__label--total">Share Total</h3>
 
                 <span ng-if="!SelfieManageCampaignStatsCtrl.totalShares || !SelfieManageCampaignStatsCtrl.hasViews">
                     <h2 class="stats__rowData stats__rowClicks">--</h2>
@@ -332,7 +340,6 @@
                 <div class="stats__subTable">
                     <div class="stats__row stats__sub-hdr">
                         <h3 class="stats__label">Type</h3>
-                        <h3 class="stats__rowData stats__rowGraph">Graph</h3>
                         <h3 class="stats__rowData">Share Rate</h3>
 
                         <h3 class="stats__rowData">Clicks</h3>
@@ -387,15 +394,12 @@
                 </div>
             </div>
 
-            <div ng-class="{'stats__row--open': showSocialStats, 'stats__row--closed': !showSocialStats, 'stats__row--noData': !SelfieManageCampaignStatsCtrl.hasViews }" class="stats__row stats__row--social">
+            <div class="stats__row stats__row--open stats__row--social">
                 <div class="stats__column stats__columnGraph">
                     <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
                 </div>
-                <button ng-click="showSocialStats = !showSocialStats" class="accordion__btn">
-                    <i class="fa fa-chevron-right"></i>
-                    <i class="fa fa-chevron-down"></i>
-                    <h3 class="stats__label stats__label--total">Social Total</h3>
-                </button>
+
+                <h3 class="stats__label stats__label--total">Social Total</h3>
 
                 <span ng-if="!SelfieManageCampaignStatsCtrl.totalSocialClicks || !SelfieManageCampaignStatsCtrl.hasViews">
                     <h2 class="stats__rowData stats__rowClicks">--</h2>
@@ -410,7 +414,6 @@
                 <div class="stats__subTable">
                     <div class="stats__row stats__sub-hdr">
                         <h3 class="stats__label">Type</h3>
-                        <h3 class="stats__rowData stats__rowGraph">Graph</h3>
                         <h3 class="stats__rowData">CTR</h3>
                         <h3 class="stats__rowData">Clicks</h3>
                     </div>
@@ -421,8 +424,8 @@
                         <i class="fa fa-facebook"></i>
                         <h3 class="stats__label">Facebook</h3>
                         <span ng-if="!stats.linkClicks.facebook || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowClicks">--</h2>
-                            <h2 class="stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
                         </span>
                         <span ng-if="stats.linkClicks.facebook && SelfieManageCampaignStatsCtrl.hasViews">
                             <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.facebook / stats.views) * 100 | number:2}}%</h2>
@@ -506,27 +509,22 @@
                     </div>
                 </div>
             </div>
-        </div><!-- .grid__item .one-whole -->
-    </div><!-- .grid -->
-
-    <!--<div class="grid grid--center">
-        <div class="grid__item one-whole grid--center" ng-if="SelfieManageCampaignCtrl.stats[0].summary">
-            <h1 class="tk--hdr text--center">Interactions</h1>
-            <div class="helpBox helpBox--center">
-                <div class="formhelpText">
-                    This table shows how many viewers watched what percentage of your video.
-                </div>
-            </div>
-            <div interactions-piechart class="chart__wrap grid--right grid--middle" stats="SelfieManageCampaignCtrl.stats[0].summary">
-                <div class="grid__item one-half">
-                    <div class="grid">
-                        <canvas width="800" height="600"></canvas>
+        </div><!--
+        --><div class="grid__item three-fifths">
+            <div class="grid grid--center">
+                <div style="padding-top:2rem" class="grid__item one-whole grid--center">
+                    <div interactions-piechart class="chart__wrap grid--right grid--middle" stats="stats" total="SelfieManageCampaignStatsCtrl.totalInteractions" ng-class="{'chart__group--noData': !SelfieManageCampaignStatsCtrl.totalInteractions || !SelfieManageCampaignStatsCtrl.hasViews }">
+                        <div class="grid__item one-whole">
+                            <div class="grid">
+                                <canvas class="pie" width="800" height="600"></canvas>
+                            </div>
+                        </div><!--
+                        --><div style="display:block;margin-top:-12%;margin-left:-2rem;" class="grid__item one-half">
+                            <div id="js-legend"></div>
+                        </div>
                     </div>
-                </div>--><!--
-                --><!--<div class="grid__item one-quarter">
-                    <div id="js-legend"></div>
                 </div>
-            </div>
+            </div><!--.grid .grid--center-->
         </div>
-    </div><!--.grid .grid--center-->
+    </div><!-- .grid -->
 </div>
