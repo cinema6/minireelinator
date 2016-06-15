@@ -1,9 +1,13 @@
 # MiniReelinator
 
+## v1.50.0 (June 15, 2016)
 * *[v1.50.0.rc1]*
   * Update c6ui to v3.9.0
   * [FIX]: Fix for an issue where unsaved changes were shown in the
     Manage Campaign tab
+  * [FIX]: Fix for an issue where Showcase users logging in to Selfie
+    got stuck in a login redirect loop
+* *[/v1.50.0.rc1]*
 
 ## v1.49.0 (June 9, 2016)
 * *[v1.49.0.rc1]*

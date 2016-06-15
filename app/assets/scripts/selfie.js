@@ -80,11 +80,18 @@ function( angular , c6State  , c6uilib , c6Defines ,  account          , demo) {
                     });
                 };
                 this.enter = function() {
-                    var experiences = this.cModel,
+                    var roles = this.cParent.cModel.roles,
+                        experiences = this.cModel,
                         selfie = experiences.selfie;
 
                     if (selfie) {
                         return c6State.goTo('Selfie:App', [selfie], null, true);
+                    }
+
+                    if (roles.indexOf('showcaseUser') > -1) {
+                        return AuthService.logout().finally(function goToShowcase() {
+                            $window.location.href = c6Defines.kShowcaseAppsHome;
+                        });
                     }
 
                     return AuthService.logout().finally(function goToPortal() {
