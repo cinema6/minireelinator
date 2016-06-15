@@ -12,6 +12,8 @@ define(function() {
         'https://studio-staging.reelcontent.com/' : 'https://studio.reelcontent.com/';
     c6.kPlatformHome = c6.kDebug ?
         'https://platform-staging.reelcontent.com/' : 'https://platform.reelcontent.com/';
+    c6.kShowcaseAppsHome = c6.kDebug ?
+        'https://apps-staging.reelcontent.com/' : 'https://apps.reelcontent.com/';
     c6.kAuditUrl = c6.kDebug ?
         'https://audit-staging.reelcontent.com/' : 'https://audit.reelcontent.com/';
     c6.kHasKarma = false;
