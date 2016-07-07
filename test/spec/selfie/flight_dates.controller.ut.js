@@ -313,20 +313,79 @@ define(['app'], function(appModule) {
             });
 
             describe('hasDates', function() {
-                it('should be true when there is either a start or end date', function() {
-                    expect(SelfieFlightDatesCtrl.hasDates).toBe(false);
+                var past, future;
 
-                    card.campaign.startDate = '2016-06-26T04:59:00.000Z';
+                beforeEach(function() {
+                    past = new Date();
+                    past.setDate(past.getDate() - 100);
 
-                    compileCtrl();
+                    future = new Date();
+                    future.setDate(future.getDate() + 100);
+                });
 
-                    expect(SelfieFlightDatesCtrl.hasDates).toBe(true);
+                describe('when there is an endDate', function() {
+                    it('should be true', function() {
+                        card.campaign.startDate = null;
+                        card.campaign.endDate = '2016-06-26T04:59:00.000Z';
 
-                    card.campaign.endDate = '2016-06-26T04:59:00.000Z';
+                        compileCtrl();
 
-                    compileCtrl();
+                        expect(SelfieFlightDatesCtrl.hasDates).toBe(true);
+                    });
+                });
 
-                    expect(SelfieFlightDatesCtrl.hasDates).toBe(true);
+                describe('when there is no endDate', function() {
+                    beforeEach(function() {
+                        card.campaign.endDate = null;
+                    });
+
+                    describe('when there is a startDate', function() {
+                        describe('when startDate is in the past', function() {
+                            beforeEach(function() {
+                                card.campaign.startDate = past.toISOString();
+                            });
+
+                            describe('when campaign is a draft', function() {
+                                it('should be true', function() {
+                                    campaign.status = 'draft';
+
+                                    compileCtrl();
+
+                                    expect(SelfieFlightDatesCtrl.hasDates).toBe(true);
+                                });
+                            });
+
+                            describe('when campaign is not a draft', function() {
+                                it('should be false', function() {
+                                    campaign.status = 'active';
+
+                                    compileCtrl();
+
+                                    expect(SelfieFlightDatesCtrl.hasDates).toBe(false);
+                                });
+                            });
+                        });
+
+                        describe('when startDate is in the future', function() {
+                            it('should be true', function() {
+                                card.campaign.startDate = future.toISOString();
+
+                                compileCtrl();
+
+                                expect(SelfieFlightDatesCtrl.hasDates).toBe(true);
+                            });
+                        });
+                    });
+
+                    describe('when there is no startDate', function() {
+                        it('should be false', function() {
+                            card.campaign.startDate = null;
+
+                            compileCtrl();
+
+                            expect(SelfieFlightDatesCtrl.hasDates).toBe(false);
+                        });
+                    });
                 });
             });
 

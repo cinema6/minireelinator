@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## v1.51.0 (July 7, 2016)
+* *[v1.51.0.rc1]*
+  * [FEATURE]: Show links and social interactions as a pie chart
+    on stats page
+* *[/v1.51.0.rc1]*
+
 ## v1.50.0 (June 15, 2016)
 * *[v1.50.0.rc1]*
   * Update c6ui to v3.9.0

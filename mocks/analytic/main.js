@@ -52,6 +52,10 @@ module.exports = function(http) {
                         facebook: randomNum(2, 30),
                         instagram: randomNum(2, 50),
                         website: randomNum(2, 20),
+                        youtube: randomNum(2, 20),
+                        vimeo: randomNum(2, 20),
+                        pinterest: randomNum(2, 20),
+                        twitter: randomNum(2, 20),
                         action: randomNum(2, 20)
                     },
                     shareClicks: {
