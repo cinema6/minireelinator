@@ -128,38 +128,85 @@ define(['app'], function(appModule) {
                     spyOn(AuthService, 'logout').and.returnValue(logoutDeferred.promise);
 
                     delete apps.cModel.selfie;
-                    apps.enter();
                 });
 
-                it('should not go to the portal', function() {
-                    expect($window.location.href).not.toBe(c6Defines.kPortalHome);
-                });
-
-                it('should logout the user', function() {
-                    expect(AuthService.logout).toHaveBeenCalled();
-                });
-
-                describe('if the logout() succeeds', function() {
+                describe('if the user has a showcaseUser role', function() {
                     beforeEach(function() {
-                        $rootScope.$apply(function() {
-                            logoutDeferred.resolve(null);
+                        apps.cParent.cModel.roles = ['showcaseUser'];
+
+                        apps.enter();
+                    });
+
+                    it('should not go to the portal', function() {
+                        expect($window.location.href).not.toBe(c6Defines.kPortalHome);
+                    });
+
+                    it('should logout the user', function() {
+                        expect(AuthService.logout).toHaveBeenCalled();
+                    });
+
+                    describe('if the logout() succeeds', function() {
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                logoutDeferred.resolve(null);
+                            });
+                        });
+
+                        it('should go to the showcase app', function() {
+                            expect($window.location.href).toBe(c6Defines.kShowcaseAppsHome);
                         });
                     });
 
-                    it('should go to the portal', function() {
-                        expect($window.location.href).toBe(c6Defines.kPortalHome);
+                    describe('if the logout() fails', function() {
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                logoutDeferred.reject(new Error('SOMETHING WENT WRONG!'));
+                            });
+                        });
+
+                        it('should go to the showcase app', function() {
+                            expect($window.location.href).toBe(c6Defines.kShowcaseAppsHome);
+                        });
                     });
                 });
 
-                describe('if the logout() fails', function() {
+                describe('if the user does not have a showcase role', function() {
                     beforeEach(function() {
-                        $rootScope.$apply(function() {
-                            logoutDeferred.reject(new Error('SOMETHING WENT WRONG!'));
+                        apps.cParent.cModel.roles = [];
+
+                        apps.enter();
+                    });
+
+                    it('should not go to the portal', function() {
+                        expect($window.location.href).not.toBe(c6Defines.kPortalHome);
+                    });
+
+                    it('should logout the user', function() {
+                        expect(AuthService.logout).toHaveBeenCalled();
+                    });
+
+                    describe('if the logout() succeeds', function() {
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                logoutDeferred.resolve(null);
+                            });
+                        });
+
+                        it('should go to the portal', function() {
+                            expect($window.location.href).toBe(c6Defines.kPortalHome);
                         });
                     });
 
-                    it('should go to the portal', function() {
-                        expect($window.location.href).toBe(c6Defines.kPortalHome);
+                    describe('if the logout() fails', function() {
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                logoutDeferred.reject(new Error('SOMETHING WENT WRONG!'));
+                            });
+                        });
+
+                        it('should go to the portal', function() {
+                            expect($window.location.href).toBe(c6Defines.kPortalHome);
+                        });
                     });
                 });
             });
