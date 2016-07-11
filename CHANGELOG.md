@@ -1,9 +1,10 @@
 # MiniReelinator
 
+## v1.51.0 (July 11, 2016)
 * *[v1.51.0.rc2]*
   * [FIX]: Swap the order of social and share breakdown tables to match pie chart
+* *[/v1.51.0.rc2]*
 
-## v1.51.0 (July 7, 2016)
 * *[v1.51.0.rc1]*
   * [FEATURE]: Show links and social interactions as a pie chart
     on stats page
