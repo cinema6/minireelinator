@@ -326,81 +326,6 @@
                 </span>
             </div> -->
 
-            <div class="stats__row stats__row--open stats__row--share">
-                <div class="stats__column stats__columnGraph">
-                    <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
-                </div>
-
-                <h3 class="stats__label stats__label--total">Share Total</h3>
-
-                <span ng-if="!SelfieManageCampaignStatsCtrl.totalShares || !SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowData stats__rowClicks">--</h2>
-                    <h2 class="stats__rowData stats__rowClicks">--</h2>
-                </span>
-
-                <span ng-if="SelfieManageCampaignStatsCtrl.totalShares && SelfieManageCampaignStatsCtrl.hasViews">
-                    <h2 class="stats__rowData stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2}}%</h2>
-                    <h2 class="stats__rowData stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalShares | number:0}}</h2>
-                </span>
-
-
-                <div class="stats__subTable">
-                    <div class="stats__row stats__sub-hdr">
-                        <h3 class="stats__label">Type</h3>
-                        <h3 class="stats__rowData">Share Rate</h3>
-
-                        <h3 class="stats__rowData">Clicks</h3>
-                    </div>
-                    <div class="stats__row stats__row--facebook">
-                        <div class="stats__column stats__columnGraph">
-                            <div ng-style="{'width': ((stats.shareClicks.facebook / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
-                        </div>
-                        <i class="fa fa-facebook"></i>
-                        <h3 class="stats__label">Facebook</h3>
-                        <span ng-if="!stats.shareClicks.facebook || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowData stats__rowClicks">--</h2>
-                            <h2 class="stats__rowData stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="stats.shareClicks.facebook && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.facebook / stats.views) * 100 | number:2}}%</h2>
-                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.facebook | number:0}}</h2>
-                        </span>
-                    </div>
-                    <div class="stats__row stats__row--twitter">
-                        <div class="stats__column stats__columnGraph">
-                            <div ng-style="{'width': ((stats.shareClicks.twitter / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
-                        </div>
-                        <i class="fa fa-twitter"></i>
-                        <h3 class="stats__label">Twitter</h3>
-                        <span ng-if="!stats.shareClicks.twitter || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowData stats__rowClicks">--</h2>
-                            <h2 class="stats__rowData stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="stats.shareClicks.twitter && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.twitter / stats.views) * 100 | number:2}}%</h2>
-                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.twitter | number:0}}</h2>
-                        </span>
-
-                    </div>
-                    <div class="stats__row stats__row--pinterest">
-                        <div class="stats__column stats__columnGraph">
-                            <div ng-style="{'width': ((stats.shareClicks.pinterest / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
-                        </div>
-                        <i class="fa fa-pinterest-p"></i>
-                        <h3 class="stats__label">Pinterest</h3>
-                        <span ng-if="!stats.shareClicks.pinterest || !SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowData stats__rowClicks">--</h2>
-                            <h2 class="stats__rowData stats__rowClicks">--</h2>
-                        </span>
-                        <span ng-if="stats.shareClicks.pinterest && SelfieManageCampaignStatsCtrl.hasViews">
-                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.pinterest / stats.views) * 100 | number:2}}%</h2>
-                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.pinterest | number:0}}</h2>
-                        </span>
-
-                    </div>
-                </div>
-            </div>
-
             <div class="stats__row stats__row--open stats__row--social">
                 <div class="stats__column stats__columnGraph">
                     <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
@@ -513,6 +438,81 @@
                             <h2 class="stats__rowData stats__rowClicks">{{(stats.linkClicks.pinterest / stats.views) * 100 | number:2}}%</h2>
                             <h2 class="stats__rowData stats__rowClicks">{{stats.linkClicks.pinterest | number:0}}</h2>
                         </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats__row stats__row--open stats__row--share">
+                <div class="stats__column stats__columnGraph">
+                    <div ng-style="{'width': ((SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
+                </div>
+
+                <h3 class="stats__label stats__label--total">Share Total</h3>
+
+                <span ng-if="!SelfieManageCampaignStatsCtrl.totalShares || !SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                    <h2 class="stats__rowData stats__rowClicks">--</h2>
+                </span>
+
+                <span ng-if="SelfieManageCampaignStatsCtrl.totalShares && SelfieManageCampaignStatsCtrl.hasViews">
+                    <h2 class="stats__rowData stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2}}%</h2>
+                    <h2 class="stats__rowData stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalShares | number:0}}</h2>
+                </span>
+
+
+                <div class="stats__subTable">
+                    <div class="stats__row stats__sub-hdr">
+                        <h3 class="stats__label">Type</h3>
+                        <h3 class="stats__rowData">Share Rate</h3>
+
+                        <h3 class="stats__rowData">Clicks</h3>
+                    </div>
+                    <div class="stats__row stats__row--facebook">
+                        <div class="stats__column stats__columnGraph">
+                            <div ng-style="{'width': ((stats.shareClicks.facebook / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-facebook"></i>
+                        <h3 class="stats__label">Facebook</h3>
+                        <span ng-if="!stats.shareClicks.facebook || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.facebook && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.facebook / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.facebook | number:0}}</h2>
+                        </span>
+                    </div>
+                    <div class="stats__row stats__row--twitter">
+                        <div class="stats__column stats__columnGraph">
+                            <div ng-style="{'width': ((stats.shareClicks.twitter / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-twitter"></i>
+                        <h3 class="stats__label">Twitter</h3>
+                        <span ng-if="!stats.shareClicks.twitter || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.twitter && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.twitter / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.twitter | number:0}}</h2>
+                        </span>
+
+                    </div>
+                    <div class="stats__row stats__row--pinterest">
+                        <div class="stats__column stats__columnGraph">
+                            <div ng-style="{'width': ((stats.shareClicks.pinterest / stats.views) * 100 | number:2) + '%' }" class="stats__columnGraph--bar"></div>
+                        </div>
+                        <i class="fa fa-pinterest-p"></i>
+                        <h3 class="stats__label">Pinterest</h3>
+                        <span ng-if="!stats.shareClicks.pinterest || !SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                            <h2 class="stats__rowData stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.pinterest && SelfieManageCampaignStatsCtrl.hasViews">
+                            <h2 class="stats__rowData stats__rowClicks">{{(stats.shareClicks.pinterest / stats.views) * 100 | number:2}}%</h2>
+                            <h2 class="stats__rowData stats__rowClicks">{{stats.shareClicks.pinterest | number:0}}</h2>
+                        </span>
+
                     </div>
                 </div>
             </div>
