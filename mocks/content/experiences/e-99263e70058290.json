@@ -2,6 +2,7 @@
   "appUri": "selfie",
   "data": {
     "title": "Selfie",
+    "hiatus": true,
     "callToActionOptions": {
         "groupLabels": {
             "website": "Website Button",

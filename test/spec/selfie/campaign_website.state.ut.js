@@ -6,7 +6,8 @@ define(['app'], function(appModule) {
             var c6State,
                 $rootScope,
                 $q,
-                WebsiteState;
+                WebsiteState,
+                selfieAppState;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -16,6 +17,11 @@ define(['app'], function(appModule) {
 
                     c6State = $injector.get('c6State');
                 });
+
+                selfieAppState = c6State.get('Selfie:App');
+                selfieAppState.cModel = {
+                    data: {}
+                };
 
                 WebsiteState = c6State.get(stateName);
             });

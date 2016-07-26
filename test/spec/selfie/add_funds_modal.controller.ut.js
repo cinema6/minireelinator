@@ -8,8 +8,10 @@ define(['app','angular'], function(appModule, angular) {
             $scope,
             $controller,
             $q,
+            c6State,
             cinema6,
             PaymentService,
+            selfieAppState,
             AddFundsModalService,
             AddFundsModalCtrl;
 
@@ -31,6 +33,7 @@ define(['app','angular'], function(appModule, angular) {
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
+                c6State = $injector.get('c6State');
                 PaymentService = $injector.get('PaymentService');
                 AddFundsModalService = $injector.get('AddFundsModalService');
             });
@@ -52,6 +55,13 @@ define(['app','angular'], function(appModule, angular) {
                 cancel: jasmine.createSpy('cancel()')
             };
 
+            selfieAppState = c6State.get('Selfie:App');
+            selfieAppState.cModel = {
+                data: {
+                    hiatus: true
+                }
+            };
+
             compileCtrl();
         });
 
@@ -61,7 +71,9 @@ define(['app','angular'], function(appModule, angular) {
             $controller = null;
             $q = null;
             cinema6 = null;
+            c6State = null;
             PaymentService = null;
+            selfieAppState = null;
             AddFundsModalService = null;
             AddFundsModalCtrl = null;
             model = null;
@@ -82,6 +94,12 @@ define(['app','angular'], function(appModule, angular) {
             describe('model', function() {
                 it('should be the model from the AddFundsModalService', function() {
                     expect(AddFundsModalCtrl.model).toBe(AddFundsModalService.model);
+                });
+            });
+
+            describe('hiatus', function() {
+                it('should come from the selfie app state', function() {
+                    expect(AddFundsModalCtrl.hiatus).toEqual(selfieAppState.cModel.data.hiatus);
                 });
             });
 

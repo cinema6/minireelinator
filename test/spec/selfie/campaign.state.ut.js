@@ -9,6 +9,7 @@ define(['app'], function(appModule) {
                 $q,
                 campaignState,
                 selfieState,
+                selfieAppState,
                 newCampaignState,
                 c6State,
                 cinema6,
@@ -105,6 +106,12 @@ define(['app'], function(appModule) {
                         id: 'u-123',
                         entitlements: {}
                     };
+                    selfieAppState = c6State.get('Selfie:App');
+                    selfieAppState.cModel = {
+                        data: {
+                            hiatus: true
+                        }
+                    };
                     campaignState = c6State.get(stateName);
                 });
             });
@@ -114,6 +121,7 @@ define(['app'], function(appModule) {
                 $q = null;
                 campaignState = null;
                 selfieState = null;
+                selfieAppState = null;
                 newCampaignState = null;
                 c6State = null;
                 cinema6 = null;
@@ -170,6 +178,12 @@ define(['app'], function(appModule) {
             describe('allowExit', function() {
                 it('should be false', function() {
                     expect(campaignState.allowExit).toBe(false);
+                });
+            });
+
+            describe('hiatus', function() {
+                it('should come from the selfie app state', function() {
+                    expect(campaignState.hiatus).toEqual(selfieAppState.cModel.data.hiatus);
                 });
             });
 

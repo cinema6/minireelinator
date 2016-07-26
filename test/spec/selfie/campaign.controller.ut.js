@@ -193,6 +193,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 user: user,
                 schema: schema,
                 allowExit: false,
+                hiatus: true,
                 saveCampaign: jasmine.createSpy('cState.saveCampaign()'),
                 saveUpdateRequest: jasmine.createSpy('cState.saveUpdateRequest()'),
                 cName: 'Selfie:Campaign'
@@ -435,6 +436,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.originalCampaign).toEqual(campaign);
                     expect(SelfieCampaignCtrl.user).toEqual(user);
                     expect(SelfieCampaignCtrl.targetingCost).toEqual(targetingCostData);
+                    expect(SelfieCampaignCtrl.hiatus).toEqual(cState.hiatus);
                 });
 
                 it('should set stats if stats array contains stats', function() {

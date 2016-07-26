@@ -7,6 +7,7 @@ define(['app'], function(appModule) {
                 $q,
                 campaignState,
                 selfieState,
+                selfieAppState,
                 newCampaignState,
                 c6State,
                 cinema6,
@@ -87,6 +88,12 @@ define(['app'], function(appModule) {
                             adminCampaigns: true
                         }
                     };
+                    selfieAppState = c6State.get('Selfie:App');
+                    selfieAppState.cModel = {
+                        data: {
+                            hiatus: true
+                        }
+                    };
                     campaignState = c6State.get(stateName);
                 });
             });
@@ -96,6 +103,7 @@ define(['app'], function(appModule) {
                 $q = null;
                 campaignState = null;
                 selfieState = null;
+                selfieAppState = null;
                 newCampaignState = null;
                 c6State = null;
                 cinema6 = null;
@@ -308,6 +316,12 @@ define(['app'], function(appModule) {
 
                     expect(campaignState.isAdmin).toBe(true);
                     expect(campaignState.schema).toBe(schema);
+                });
+
+                it('should set the hiatus flag from self app state', function() {
+                    campaignState.afterModel(model);
+
+                    expect(campaignState.hiatus).toEqual(selfieAppState.cModel.data.hiatus);
                 });
 
                 it('should get the account balance', function() {

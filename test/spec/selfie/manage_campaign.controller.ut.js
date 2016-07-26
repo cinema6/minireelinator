@@ -160,7 +160,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 campaign: campaign,
                 card: card,
                 interests: interests,
-                schema: {}
+                schema: {},
+                hiatus: true
             };
 
             compileCtrl(cState, {
@@ -550,6 +551,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl.schema).toBe(cState.schema);
                     expect(SelfieManageCampaignCtrl.stats).toBe(statsObject);
                     expect(SelfieManageCampaignCtrl.setSummary).toHaveBeenCalled();
+                    expect(SelfieManageCampaignCtrl.hiatus).toEqual(cState.hiatus);
                 });
 
                 describe('when there is an updateRequest', function() {

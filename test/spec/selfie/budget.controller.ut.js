@@ -6,6 +6,9 @@ define(['app'], function(appModule) {
             $scope,
             $controller,
             $filter,
+            c6State,
+            PaymentService,
+            selfieAppState,
             SelfieBudgetCtrl;
 
         var campaign;
@@ -39,7 +42,7 @@ define(['app'], function(appModule) {
                 budget: true
             };
             $scope.$apply(function() {
-                SelfieBudgetCtrl = $controller('SelfieBudgetController', { $scope: $scope });
+                SelfieBudgetCtrl = $controller('SelfieBudgetController', { $scope: $scope, PaymentService: PaymentService });
             });
         }
 
@@ -54,6 +57,14 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 $filter = $injector.get('$filter');
+                c6State = $injector.get('c6State');
+
+                selfieAppState = c6State.get('Selfie:App');
+                selfieAppState.cModel = {
+                    data: {
+                        hiatus: false
+                    }
+                };
 
                 campaign = {
                     pricing: {},
@@ -76,6 +87,10 @@ define(['app'], function(appModule) {
                         {   }
                     ]
                 };
+
+                PaymentService = {
+                    balance: {}
+                };
             });
 
             compileCtrl();
@@ -87,6 +102,7 @@ define(['app'], function(appModule) {
             $controller = null;
             $filter = null;
             SelfieBudgetCtrl = null;
+            selfieAppState = null;
             campaign = null;
         });
 
@@ -327,6 +343,111 @@ define(['app'], function(appModule) {
                     SelfieBudgetCtrl.additionalBudget = 300;
                     expect(SelfieBudgetCtrl.budgetError).toBe(false);
                 });
+
+                describe('when hiatus is true', function() {
+                    beforeEach(function() {
+                        selfieAppState.cModel.data.hiatus = true;
+
+                        compileCtrl();
+                    });
+
+                    describe('when additionalBudget is greater than remainingFunds', function() {
+                        it('should return error code 6', function() {
+                            expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                            SelfieBudgetCtrl.additionalBudget = 100;
+                            PaymentService.balance.remainingFunds = 75;
+
+                            expect(SelfieBudgetCtrl.budgetError).toBe(6);
+                        });
+                    });
+
+                    describe('when additionalBudget is less than or equal to remainingFunds', function() {
+                        it('should be false', function() {
+                            expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                            SelfieBudgetCtrl.additionalBudget = 100;
+                            PaymentService.balance.remainingFunds = 100;
+
+                            expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                            SelfieBudgetCtrl.additionalBudget = 100;
+                            PaymentService.balance.remainingFunds = 125;
+
+                            expect(SelfieBudgetCtrl.budgetError).toBe(false);
+                        });
+                    });
+
+                    describe('when a budget increase is greater than remainingFunds', function() {
+                        it('should return error code 6', function() {
+                            campaign.pricing.budget = 100;
+                            campaign.status = 'active';
+
+                            compileCtrl();
+
+                            expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                            SelfieBudgetCtrl.budget = 150;
+                            PaymentService.balance.remainingFunds = 25;
+
+                            expect(SelfieBudgetCtrl.budgetError).toBe(6);
+                        });
+                    });
+
+                    describe('when a budget increase is less than or equal to remainingFunds', function() {
+                        it('should be false', function() {
+                            campaign.pricing.budget = 100;
+                            campaign.status = 'active';
+
+                            compileCtrl();
+
+                            expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                            SelfieBudgetCtrl.budget = 150;
+                            PaymentService.balance.remainingFunds = 50;
+
+                            expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                            SelfieBudgetCtrl.budget = 100;
+                            PaymentService.balance.remainingFunds = 60;
+
+                            expect(SelfieBudgetCtrl.budgetError).toBe(false);
+                        });
+                    });
+
+                    describe('when campaign is a draft', function() {
+                        beforeEach(function() {
+                            $scope.campaign.status = 'draft';
+                        });
+
+                        describe('when budget is greater than remainingFunds', function() {
+                            it('should return error code 6', function() {
+                                expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                                SelfieBudgetCtrl.budget = 100;
+                                PaymentService.balance.remainingFunds = 75;
+
+                                expect(SelfieBudgetCtrl.budgetError).toBe(6);
+                            });
+                        });
+
+                        describe('when budget is les sthan or equal to remainingFunds', function() {
+                            it('should be false', function() {
+                                expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                                SelfieBudgetCtrl.budget = 100;
+                                PaymentService.balance.remainingFunds = 100;
+
+                                expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                                SelfieBudgetCtrl.budget = 100;
+                                PaymentService.balance.remainingFunds = 125;
+
+                                expect(SelfieBudgetCtrl.budgetError).toBe(false);
+                            });
+                        });
+                    });
+                });
             });
 
             describe('additionalBudgetError', function() {
@@ -358,6 +479,41 @@ define(['app'], function(appModule) {
 
                     SelfieBudgetCtrl.additionalBudget = 2000;
                     expect(SelfieBudgetCtrl.additionalBudgetError).toBe(false);
+                });
+
+                describe('when hiatus is true', function() {
+                    beforeEach(function() {
+                        selfieAppState.cModel.data.hiatus = true;
+
+                        compileCtrl();
+                    });
+
+                    describe('when additionalBudget is greater than remainingFunds', function() {
+                        it('should return error code 5', function() {
+                            expect(SelfieBudgetCtrl.additionalBudgetError).toBe(false);
+
+                            SelfieBudgetCtrl.additionalBudget = 100;
+                            PaymentService.balance.remainingFunds = 75;
+
+                            expect(SelfieBudgetCtrl.additionalBudgetError).toBe(5);
+                        });
+                    });
+
+                    describe('when additionalBudget is less than or equal to remainingFunds', function() {
+                        it('should be false', function() {
+                            expect(SelfieBudgetCtrl.additionalBudgetError).toBe(false);
+
+                            SelfieBudgetCtrl.additionalBudget = 100;
+                            PaymentService.balance.remainingFunds = 100;
+
+                            expect(SelfieBudgetCtrl.additionalBudgetError).toBe(false);
+
+                            SelfieBudgetCtrl.additionalBudget = 100;
+                            PaymentService.balance.remainingFunds = 125;
+
+                            expect(SelfieBudgetCtrl.additionalBudgetError).toBe(false);
+                        });
+                    });
                 });
             });
 
