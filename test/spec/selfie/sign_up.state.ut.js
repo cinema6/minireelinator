@@ -93,6 +93,26 @@ define(['app'], function(appModule) {
                         });
                     });
                 });
+
+                describe('when there is a fullAccess=true query param', function() {
+                    it('should add it to the state', function() {
+                        $location.search.and.returnValue({ fullAccess: true });
+
+                        signUp.beforeModel();
+
+                        expect(signUp.fullAccess).toBe(true);
+                    });
+                });
+
+                describe('when there is no fullAccess=true query param', function() {
+                    it('should be undefined on the state', function() {
+                        $location.search.and.returnValue({});
+
+                        signUp.beforeModel();
+
+                        expect(signUp.fullAccess).toBe(undefined);
+                    });
+                });
             });
 
             describe('model()', function() {

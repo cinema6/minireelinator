@@ -79,6 +79,15 @@ define(['app'], function(appModule) {
             expect(SelfieSignUpCtrl.formOnly).toBe(true);
         });
 
+        it('should set the fullAccess flag', function() {
+            expect(SelfieSignUpCtrl.fullAccess).toBe(undefined);
+
+            cState.fullAccess = true;
+            initCtrl('Selfie:SignUp:Form');
+
+            expect(SelfieSignUpCtrl.fullAccess).toBe(true);
+        });
+
         describe('methods', function() {
             describe('submit()', function() {
                 describe('when model is valid', function() {
