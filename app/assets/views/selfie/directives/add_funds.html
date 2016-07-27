@@ -140,9 +140,11 @@
         </div>
 
         <div ng-if="AddFundsModalCtrl.hiatus" class="modalBody__group typo--centered">
-            <p>
-                We are currently not accepting campaigns or funds.
-            </p>
+            <div class="grid__item hiatusMessage">
+                <p class="alertMessage text--center grid__item">
+                    We are currently not accepting campaigns or funds.
+                </p>
+            </div>
         </div>
 
         <footer ng-show="!AddFundsModalCtrl.model.pending || AddFundsModalCtrl.hiatus" class="modalFooter__group">
