@@ -1,6 +1,11 @@
 # MiniReelinator
 
-## v1.51.0 (July 11, 2016)
+## v1.51.0 (July 28, 2016)
+* *[v1.51.0.rc3]*
+  * [FEATURE]: Enable Hiatus Mode, which blocks users from adding funds and
+    creating or extending campaigns once they have run out of funds
+* *[/v1.51.0.rc3]*
+
 * *[v1.51.0.rc2]*
   * [FIX]: Swap the order of social and share breakdown tables to match pie chart
 * *[/v1.51.0.rc2]*
