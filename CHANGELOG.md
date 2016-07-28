@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.51.0 (July 28, 2016)
+* *[v1.51.0.rc4]*
+  * [FIX]: Fix typo that broke sign up page
+* *[/v1.51.0.rc4]*
+
 * *[v1.51.0.rc3]*
   * [FEATURE]: Enable Hiatus Mode, which blocks users from adding funds and
     creating or extending campaigns once they have run out of funds
