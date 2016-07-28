@@ -7317,3 +7317,53 @@ div.tree-multiselect span.remove-selected {
         .demoFooter span.copyright {
             font-size: 0.875rem;
         }
+/*Hiatus mode styles*/
+/*Hubspot form for hiatus mode*/
+    #hubspotForm .hs-form-field {
+        margin-top: 10px;
+    }
+    #hubspotForm input {
+        padding: 0.375rem 0.5rem 0.375rem;
+        border: 1px solid #ddd;
+        font-size: 1.125em;
+        line-height: 1.5rem;
+        color: #1c1c1c;
+        background: #fff;
+        transition: border 0.3s,background 0.3s;
+        width: 100%;
+        font-family: 'Source Sans Pro',Arial,Helvetica,sans-serif;
+        border-radius: 4px;
+    }
+    #hubspotForm input.hs-button {
+        background: #119DA3;
+        color: #fff;
+        border: 0;
+        padding: 0.75rem 1.5rem 0.625rem;
+        margin: 1.125rem 0 1.125rem;
+        font-size: 1.125em;
+        line-height: 1.5rem;
+        transition: color 0.3s,background 0.3s;
+        border-radius: 3px;
+        display: inline-block;
+    }
+    #hubspotForm .hs-error-msgs {
+        font-size: 0.8125em;
+        border-radius: 4px;
+        margin: 0;
+        background: #C90000;
+        color: #fff;
+        padding: 0.125em 0.75em 0.25em 0.75em;
+        text-align: center;
+    }
+    #hubspotForm .submitted-message {
+        background-color: #DBFFEF;
+        color: #007440;
+        border: 1px solid #A1F1CD;
+    }
+    .hiatusMessage {
+        padding-right: 14px;
+    }
+        .hiatusMessage .alertMessage {
+            margin-top: 0;
+            margin-bottom: 24px;
+        }

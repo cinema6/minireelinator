@@ -149,7 +149,11 @@
                 </div>
             </div>
         </div><!--
-        --><div ng-show="!SelfieSignUpCtrl.fullAccess" id="hubspotForm" class="grid__item one-half">
+        --><div ng-show="!SelfieSignUpCtrl.fullAccess" class="grid__item one-half">
+                <p class="alertMessage">We are working on an enhanced version of our platform and are currently not accepting new signups.</p>
+                <p>Stay tuned for additional updates by dropping your contact info here:</p>
+                <div id="hubspotForm" >
+                </div>
         </div><!--
         --><div class="grid__item one-half" ng-if="!SelfieSignUpCtrl.formOnly">
             <section class="productFeatures border--left">
@@ -182,11 +186,13 @@
 
 <script>
     hbspt.forms.create({
+        css: '',
         portalId: '2041560',
-        formId: '1e459e76-4606-413f-a189-172ef3431950',
+        formId: '477ddc00-058f-40f0-a1ab-2204f7fb688b'
         target: '#hubspotForm'
     });
 </script>
+
 
 <!-- Facebook Pixel Code -->
 <script>
