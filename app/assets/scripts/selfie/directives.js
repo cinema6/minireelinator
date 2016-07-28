@@ -1304,8 +1304,10 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             };
         }])
 
-        .controller('SelfieBudgetController', ['$scope','CampaignService',
-        function                              ( $scope , CampaignService ) {
+        .controller('SelfieBudgetController', ['$scope','CampaignService','c6State',
+                                               'PaymentService',
+        function                              ( $scope , CampaignService , c6State ,
+                                                PaymentService ) {
             var SelfieBudgetCtrl = this,
                 campaign = $scope.campaign,
                 card = campaign.cards[0],
@@ -1316,8 +1318,11 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                 budgetMin = pricing.budget.__min,
                 budgetMax = pricing.budget.__max,
                 limitMinPercent = pricing.dailyLimit.__percentMin,
-                currentBudget = campaign.pricing.budget;
+                currentBudget = campaign.pricing.budget,
+                app = c6State.get('Selfie:App').cModel,
+                accounting = PaymentService.balance;
 
+            this.accounting = accounting;
             this.budget = campaign.pricing.budget || null;
             this.limit = campaign.pricing.dailyLimit || null;
             this.limitMinPercent = limitMinPercent;
@@ -1356,7 +1361,8 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                     get: function() {
                         var budget = parseFloat(this.budget),
                             validDecimal = !budget || (/^[0-9]+(\.[0-9]{1,2})?$/).test(budget),
-                            status = campaign.status;
+                            status = campaign.status,
+                            isDraft = status === 'draft' || !status;
 
                         if (budget < budgetMin) { return 1; }
                         if (budget > budgetMax) { return 2; }
@@ -1364,6 +1370,12 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                         if (!budget && validation.show) { return 4; }
                         if (status === 'outOfBudget' && this.totalBudget <= currentBudget) {
                             return 5;
+                        }
+                        if (app.data.hiatus &&
+                            ((this.additionalBudget > accounting.remainingFunds) ||
+                            (isDraft && this.budget > accounting.remainingFunds) ||
+                            ((this.budget - currentBudget) > accounting.remainingFunds))) {
+                            return 6;
                         }
 
                         return false;
@@ -1379,6 +1391,9 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
                         if (this.totalBudget > budgetMax) { return 2; }
                         if (!validDecimal) { return 3; }
                         if (status === 'outOfBudget' && !budget && validation.show) { return 4; }
+                        if (app.data.hiatus && this.additionalBudget > accounting.remainingFunds) {
+                            return 5;
+                        }
 
                         return false;
                     }
@@ -1622,12 +1637,16 @@ function( angular , select2 , braintree , jqueryui , Chart   , jquerymasked , c6
             };
         }])
 
-        .controller('AddFundsModalController', ['AddFundsModalService','PaymentService','cinema6',
-        function                               ( AddFundsModalService , PaymentService , cinema6 ) {
-            var self = this;
+        .controller('AddFundsModalController', ['AddFundsModalService','cinema6','c6State',
+                                                'PaymentService',
+        function                               ( AddFundsModalService , cinema6 , c6State ,
+                                                 PaymentService ) {
+            var self = this,
+                app = c6State.get('Selfie:App').cModel;
 
             this.newPaymentType = 'creditcard';
             this.model = AddFundsModalService.model;
+            this.hiatus = app.data.hiatus;
 
             Object.defineProperties(this, {
                 canSubmit: {

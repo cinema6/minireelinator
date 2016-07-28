@@ -555,7 +555,8 @@ function( angular , c6State  , PaginatedListState,
                                                        CampaignService , ConfirmDialogService ,
                                                        SpinnerService , intercom ,
                                                        PaymentService ) {
-                var SelfieState = c6State.get('Selfie');
+                var SelfieState = c6State.get('Selfie'),
+                    SelfieApp = c6State.get('Selfie:App').cModel;
 
                 function campaignExtend(target, extension) {
                     forEach(extension, function(extensionValue, prop) {
@@ -597,6 +598,8 @@ function( angular , c6State  , PaginatedListState,
                 this._updateRequest = null;
 
                 this.allowExit = false;
+
+                this.hiatus = SelfieApp.data.hiatus;
 
                 this.beforeModel = function() {
                     // we need this for saving the update request
@@ -945,6 +948,7 @@ function( angular , c6State  , PaginatedListState,
                 this.isCreator = cState.isCreator;
                 this.user = cState.user;
                 this.targetingCost = CampaignService.getTargetingCost(this.schema);
+                this.hiatus = cState.hiatus;
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
@@ -1671,6 +1675,7 @@ function( angular , c6State  , PaginatedListState,
                 this.afterModel = function(model) {
                     var cState = this,
                         user = c6State.get('Selfie').cModel,
+                        app = c6State.get('Selfie:App').cModel,
                         updateRequestData = model.updateRequest && model.updateRequest.data,
                         interests = (updateRequestData && updateRequestData.targeting.interests) ||
                             this.campaign.targeting.interests;
@@ -1689,6 +1694,7 @@ function( angular , c6State  , PaginatedListState,
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.schema = model.schema;
+                    this.hiatus = app.data.hiatus;
 
                     PaymentService.getBalance();
 
@@ -1898,6 +1904,7 @@ function( angular , c6State  , PaginatedListState,
                 this.user = cState.user;
                 this.schema = cState.schema;
                 this.interests = cState.interests;
+                this.hiatus = cState.hiatus;
 
                 this.categories = model.categories;
                 this.updateRequest = model.updateRequest;

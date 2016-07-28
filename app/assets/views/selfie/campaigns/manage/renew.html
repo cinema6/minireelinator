@@ -12,6 +12,10 @@
     </header>
 
     <div class="modalBody__group renewalModal typo--centered">
+        <div ng-if="SelfieManageCampaignCtrl.hiatus && !SelfieCtrl.accounting.remainingFunds" class="alertMessage alert__warning item--center two-thirds text--center">
+            We are working on an enhanced version of our platform and are currently not accepting campaign or budget updates. We will notify you when we start allowing campaign or budget updates.
+        </div>
+
         <div class="grid">
             <div class="grid__item">
                 <section class="formSection__group formSection__group--sub">

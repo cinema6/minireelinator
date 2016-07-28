@@ -54,6 +54,8 @@
                 <a c6-sref="Selfie:CampaignDashboard">Back to Campaigns</a>
             </div> -->
 
+            <div ng-if="SelfieCampaignCtrl.hiatus && SelfieCtrl.accounting.remainingFunds === 0" class="alertMessage alert__failure item--center two-thirds">We are working on an enhanced version of our platform and are currently not accepting campaigns. We will notify you when we start accepting campaigns.</div>
+
             <div ng-include="'views/selfie/campaigns/edit/general.html'"></div>
             <div ng-include="'views/selfie/campaigns/edit/sponsor.html'"></div>
             <div ng-include="'views/selfie/campaigns/edit/video.html'"></div>

@@ -76,6 +76,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     var referral = $location.search().ref,
                         promotion = $location.search().promotion;
 
+                    this.fullAccess = $location.search().fullAccess;
+
                     SettingsService.register('Selfie::referral', { referral: referral }, {
                         localSync: referral || true,
                         validateLocal: function(local) {
@@ -112,6 +114,7 @@ function( angular , c6State  , PaginatedListState                    ,
         function                              ( AccountService , c6State , cState ) {
             var SelfieSignUpCtrl = this;
 
+            this.fullAccess = cState.fullAccess;
             this.formOnly = (/Form|Demo/).test(cState.cName);
             this.errors = {
                 show: false

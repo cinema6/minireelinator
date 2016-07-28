@@ -11,7 +11,7 @@
             </button>
         </header>
 
-        <div class="modalBody__group typo--centered">
+        <div ng-if="!AddFundsModalCtrl.hiatus" class="modalBody__group typo--centered">
             <div class="assetLoader ui__connector" ng-show="AddFundsModalCtrl.model.pending">
                 <div class="assetLoader__status">
                     <div class="assetLoader__status--icon">
@@ -139,7 +139,15 @@
             </div>
         </div>
 
-        <footer ng-show="!AddFundsModalCtrl.model.pending" class="modalFooter__group">
+        <div ng-if="AddFundsModalCtrl.hiatus" class="modalBody__group typo--centered">
+            <div class="grid__item hiatusMessage">
+                <p class="alertMessage text--center grid__item">
+                    We are working on an enhanced version of our platform and are currently not accepting funds. We will notify you when we start accepting funds.
+                </p>
+            </div>
+        </div>
+
+        <footer ng-show="!AddFundsModalCtrl.model.pending || AddFundsModalCtrl.hiatus" class="modalFooter__group">
             <button ng-show="!AddFundsModalCtrl.model.methods.length || !AddFundsModalCtrl.model.showCreditCardForm"
                 class="btnAction btnAction btnAction--first"
                 ng-click="AddFundsModalCtrl.cancel()"
